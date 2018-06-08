@@ -1,0 +1,45 @@
+Examples of running the EstimNetDirected program.
+
+The following slurm scripts are used to run the examples:
+
+run_EstimNetDirected_example_slurm_script.sh - 1000 node simulated network
+run_EstimNetDirected_polblogs_slurm_script.sh - political bloggers network
+
+The 1000 node simulated network was simulated by PNet with the following
+ERGM parameters:
+
+  arc	-1.00000
+  reciprocity	4.25000
+  AinS(2.00)	-2.00000
+  AoutS(2.00)	-1.50000
+  AT-T(2.00)	0.60000
+  A2P-TD(2.00)	-0.15000
+  binaryAttribute_interaction	2.00000
+  binaryAttribute_sender	1.50000
+  binaryAttribute_receiver	1.00000
+
+The 2000 node simulated network with continuous attributes
+sample_statistics_n2000_directed_cont_sim7920000000.txt was
+simulated from PNet with the following ERGM parameters:
+
+  arc	-1.00000
+  reciprocity	4.25000
+  AinS(2.00)	-2.00000
+  AoutS(2.00)	-1.00000
+  AT-T(2.00)	1.50000
+  A2P-TD(2.00)	-0.15000
+  continuousAttribute_diff	-0.10000
+  continuousAttribute_diff_reciprocity	-0.20000
+
+The (1490 node) political bloggers network is from:
+
+ L. A. Adamic and N. Glance, "The political blogosphere and the 2004
+ US Election", in Proceedings of the WWW-2005 Workshop on the
+ Weblogging Ecosystem (2005).
+
+downloaded from Newman's webpage  http://www-personal.umich.edu/~mejn/netdata/
+ 
+
+ADS
+Thu Oct 26 16:05:54 AEDT 2017
+

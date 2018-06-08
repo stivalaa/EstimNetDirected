@@ -1,0 +1,20 @@
+utils.o: utils.c utils.h Random123-1.09/include/Random123/threefry.h \
+ Random123-1.09/include/Random123/features/compilerfeatures.h \
+ Random123-1.09/include/Random123/features/gccfeatures.h \
+ Random123-1.09/include/Random123/array.h \
+ Random123-1.09/include/Random123/features/sse.h
+digraph.o: digraph.c digraph.h utils.h
+changeStatisticsDirected.o: changeStatisticsDirected.c \
+ changeStatisticsDirected.h utils.h digraph.h
+basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h \
+ digraph.h basicSampler.h
+equilibriumExpectation.o: equilibriumExpectation.c utils.h digraph.h \
+ basicSampler.h changeStatisticsDirected.h equilibriumExpectation.h \
+ configparser.h
+configparser.o: configparser.c configparser.h utils.h \
+ changeStatisticsDirected.h digraph.h
+EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
+ configparser.h changeStatisticsDirected.h digraph.h \
+ equilibriumExpectation.h
+EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h configparser.h \
+ changeStatisticsDirected.h digraph.h equilibriumExpectation.h

@@ -1,0 +1,31 @@
+Directory for C implementation of EE algorithm for directed networks.
+
+Reference for original algorithm (for undirected networks) is
+
+Byshkin M, Stivala A, Mira A, Robins G, Lomi A: Fast Maximum Likelihood
+estimation via equilibrium expectation for large network data. 
+2017 (submitted for publication)
+
+
+Reference for the change statistics functions is
+
+Wang P, Robins G, Pattison P. PNet: A program for the simulation and
+estimation of exponential random graph models. University of
+Melbourne. 2006.
+
+Uses the Random 123 pseudo-random number generator by D. E. Shaw
+Research. Downloaded from
+
+https://www.deshawresearch.com/downloads/download_random123.cgi/
+
+(version 1.09, downloaded 16 Oct 2017). Ref:
+
+https://www.deshawresearch.com/resources_random123.html
+
+Salmon, J. K., Moraes, M. A., Dror, R. O., & Shaw, D. E. (2011,
+November). Parallel random numbers: as easy as 1, 2, 3. In High
+Performance Computing, Networking, Storage and Analysis (SC), 2011
+International Conference for (pp. 1-12). IEEE.
+
+ADS
+Mon, Oct 16, 2017  6:26:22 PM

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#SBATCH --job-name="@JOBNAME"
+#SBATCH --ntasks=32
+#SBATCH --time=0-1:00:00
+
+SETTINGS_FILE=@SETTINGS
+
+echo -n "started at: "; date
+
+module load R/3.2.1-vlsci_intel-2015.08.25
+
+
+time srun @ROOT/src/EstimNetDirected_mpi ${SETTINGS_FILE}
+
+
+time Rscript @ROOT/scripts/computeEstimNetDirectedCovariance.R theta dzA | tee estimation.out
+time Rscript @ROOT/scripts/plotEstimNetDirectedResults.R theta dzA
+
+times
+echo -n "ended at: "; date
+

@@ -1,0 +1,67 @@
+Directory for simple demonstration implementation of EE algorithm 
+for directed graphs in Python.
+
+EstimNetDirectedSimpleDemo.py is a simple demonstration python implementation
+of EE algorithm for digraphs in Python. 
+The only module (other than default pythone
+ones) it needs is numpy https://www.scipy.org/scipylib/download.html
+just for simple and efficient vector and matrix data types.
+
+
+sample_statistics_n500_directed_binattr_sim420000000.txt and
+binaryAttributes_50_50_n500.txt is a simulated 500 node network 
+with binary attribute, simulated from the following ERGM parameters using PNet:
+
+  Simulation result for digraph with 500 of vertices.
+  Parameter Values of:
+  arc	-1.00000
+  reciprocity	4.25000
+  AinS(2.00)	-2.00000
+  AoutS(2.00)	-1.50000
+  AT-T(2.00)	0.60000
+  A2P-TD(2.00)	-0.15000
+  binaryAttribute_interaction	2.00000
+  binaryAttribute_sender	1.50000
+  binaryAttribute_receiver	1.00000
+  Proposed 1000000000 digraphs.
+  Samples are picked up at 1 per 10000000 digraphs.
+  Accepted 14559418 proposed digraphs.
+
+sample_statistics_n1000_directed_binattr_sim620000000.txt
+binaryAttributes_50_50_n1000.txt are the same, but for 1000 nodes network.
+
+sample_statistics_n2000_directed_sim5000000.txt is a 2000 node network
+with no attributes, and the following parameters:
+
+  Simulation result for digraph with 2000 of vertices.
+  Parameter Values of:
+  arc     -4.00000
+  reciprocity     4.25000
+  AinS(2.00)      -1.00000
+  AoutS(2.00)     -0.50000
+  AT-T(2.00)      1.50000
+  Proposed 500000000 digraphs.
+  Samples are picked up at 1 per 5000000 digraphs.
+
+
+The polblogs/ directory conatins the political bloggers network from
+ L. A. Adamic and N. Glance, "The political blogosphere and the 2004
+ US Election", in Proceedings of the WWW-2005 Workshop on the
+ Weblogging Ecosystem (2005).
+ 
+The following scripts can be used to run the examples:
+
+runExample.py                      - Basic sampler on 500 node network
+runExample_n1000.py                - Basic sampler on 1000 node network
+runExample_n2000.py                - Basic sampler on 1000 node network
+runExampl_polblogs.py              - Basic sampler on polblogs network
+
+Slurm scripts to run the above:
+
+example_slurm_script.sh              - Basic sampler 500 node network
+example_n1000_slurm_script.sh        - Basic sampler 1000 node network
+example_polblogs_slurm_script.sh     - Basic sampler on polblogs network
+
+ADS
+Mon Oct  2 13:29:37 AEDT 2017
+

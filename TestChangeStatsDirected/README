@@ -1,0 +1,20 @@
+
+polblogs_nodepairs.txt generated with:
+./genRandomNodeNums.py 1000 1490 > polblogs_nodepairs.txt
+
+Then the test can be run on this input with:
+./run_test_polblogs.sh
+
+This way the same polblogs_nodepairs.txt can
+be used with the same polblogs network
+to test two-path matrix update and change
+statistics with different implementations
+as they should get the same results repeatably.
+
+polblogs_test_results_baseline.txt is the output from
+PNet code to compare output with as a regression test,
+which is what run_test_polblogs.sh does.
+
+ADS
+Mon, Apr 30, 2018  1:03:02 PM
+

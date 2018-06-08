@@ -1,0 +1,92 @@
+##############################################################################
+#
+# example setting file for EstimNetDirected
+#
+#  note parameter and attribute names are not case sensitive (but filenames are)
+#
+
+################## Algorithm constants #######################################
+
+ACA_S = 0.1     # multiplier for step size in Algorithm S
+
+ACA_EE    = 1e-08  # multiplier for step size in Algorithm EE
+
+compC =  1e-02   # multiplier of sd(theta)/mean(theta) to limit variance
+
+
+samplerSteps= 1000 # sampler iterations (per algorithm step)
+ 
+Ssteps =100 # steps of Algorithm S (multiplied by density adjustment)
+
+
+EEsteps= 500 # steps of Algorithm EE. 
+              # At each of these outer iterations, the theta step size
+              # is adjusted (according to compC) to limit the variance
+              # of the theta values.
+              
+EEinnerSteps = 100 # inner iterations of Algorithm EE (multiplied by
+                   # density adjustment)
+
+
+################## Input filenames ###########################################
+
+
+# Network in Pajek arc list format. In the Pajek format *vertices at
+# top, then followed by one line for each vertex (just vertex number)
+# [note this part is optional for EstimeNetDirected] then *arcs
+# followed by arcs list one per line.
+
+arclistFile = ../pythonDemo/polblogs/polblogs_arclist.txt
+
+# Attribute files
+# binattr_file for binary attributes (0 or 1 only)
+# catattr_file for categorical attributes (any integer)
+# The format of the file is a header line with whitespace
+# delimited attribute names, and each subsequent line
+# the attribute values for each attribute.
+# The first line (after the header) has the values for
+# node 0, then the next line node 1, and so on.
+# 
+# E.g.:
+#
+# gender class
+# 0      1
+# 1      2
+# 1      3
+
+#binattrFile = 
+catattrFile = ../pythonDemo/polblogs/polblogs_catattr.txt
+
+################## Output filenames ##########################################
+
+#
+# Output filenames are constructed from the prefix specified here,
+# with _<rank>.txt added, where <rank> is the MPI rank (task number).
+# So e.g. if thetaFilePrefix = theta then the output files are theta_0.txt etc.
+#
+
+# Theta (estimated parameter) values output file prefix
+
+thetaFilePrefix = theta_polblogs
+
+# dzA (statistics deltas, which should osciallate about zero at equilibrium)
+# values output file prefix 
+
+dzAFilePrefix = dzA_polblogs
+
+
+################## Parameters to estimate ####################################
+
+#
+# Structural parameters
+#
+
+structParams =  {Arc, Reciprocity, AltInStars, AltOutStars, AltKTrianglesT}
+
+#
+# Attribute parameters
+#
+
+attrParams = {MisMatching(value), MisMatchingReciprocity(value)}
+
+
