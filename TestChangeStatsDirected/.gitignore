@@ -1,0 +1,5 @@
+testChangeStatsDirected
+testChangeStatsDirected.exe
+polblogs_test_results.diff
+polblogs_test_results.out
+*.o
