@@ -9,7 +9,7 @@
 
 ACA_S = 0.1     # multiplier for step size in Algorithm S
 
-ACA_EE    = 1e-08  # multiplier for step size in Algorithm EE
+ACA_EE    = 1e-09  # multiplier for step size in Algorithm EE
 
 compC =  1e-02   # multiplier of sd(theta)/mean(theta) to limit variance
 
@@ -19,7 +19,7 @@ samplerSteps= 1000 # sampler iterations (per algorithm step)
 Ssteps =100 # steps of Algorithm S (multiplied by density adjustment)
 
 
-EEsteps= 500 # steps of Algorithm EE. 
+EEsteps= 1500 # steps of Algorithm EE. 
               # At each of these outer iterations, the theta step size
               # is adjusted (according to compC) to limit the variance
               # of the theta values.
@@ -81,12 +81,13 @@ dzAFilePrefix = dzA_polblogs
 # Structural parameters
 #
 
-structParams =  {Arc, Reciprocity, AltInStars, AltOutStars, AltKTrianglesT}
+structParams =  {Arc, Reciprocity, AltInStars, AltOutStars, 
+                 AltTwoPathsTD, AltKTrianglesT }
 
 #
 # Attribute parameters
 #
 
-attrParams = {MisMatching(value), MisMatchingReciprocity(value)}
+attrParams = {Matching(value), MatchingReciprocity(value)}
 
 

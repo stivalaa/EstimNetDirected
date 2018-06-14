@@ -1,0 +1,16 @@
+variance_by_mean.txt
+theta_sim_n1000_sample_*.txt
+theta_polblogs_*.txt
+dzA_sim_n1000_sample_*.txt
+dzA_polblogs_*.txt
+theta_sim_n1000_sample.pdf
+dzA_sim_n1000_sample.pdf
+theta_polblogs.pdf
+dzA_polblogs.pdf
+slurm-*.out
+.Rhistory
+.RData
+theta_sim_n2000_cont_sample_*.txt
+dzA_sim_n2000_cont_sample_*.txt
+theta_sim_n2000_cont_sample.pdf
+dzA_sim_n2000_cont_sample.pdf
