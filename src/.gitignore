@@ -1,0 +1,6 @@
+EstimNetDirected.exe
+EstimNetDirected_mpi.exe
+EstimNetDirected
+EstimNetDirected_mpi
+*.o
+*~

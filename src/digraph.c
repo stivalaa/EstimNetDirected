@@ -56,22 +56,38 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  */
 void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
 {
+  uint_t v,k;
   int incval = isAdd ? 1 : -1;
-  uint_t v;
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */
-  for (v = 0; v < g->num_nodes; v++) {
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
     if (v == i || v == j)
       continue;
-    if (isArc(g, i, v)) {
-      g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
-      g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
-    }
-    if (isArc(g, v, j)) {
-      g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
-      g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
-    }
-    g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += (int)isArc(g,v,i)*incval;
-    g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += (int)isArc(g,j,v)*incval;
+    assert(isArc(g,i,v));
+    g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
+    g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
+  }
+  for (k = 0; k < g->indegree[j]; k++) {
+    v = g->revarclist[j][k];
+    if (v == i || v == j)
+      continue;
+    assert(isArc(g,v,j));
+    g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
+    g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+  }
+  for (k = 0; k < g->indegree[i]; k++)  {
+    v = g->revarclist[i][k];
+    if (v == i || v == j)
+      continue;
+    assert(isArc(g,v,i));
+    g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
+  }
+  for (k = 0; k < g->outdegree[j]; k++) {
+    v = g->arclist[j][k];
+    if (v == i || v == j)
+      continue;
+    assert(isArc(g,j,v));
+    g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
   }
 }
 
@@ -432,9 +448,8 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
   assert(g->arclist[i][k] == j);
   memmove(&g->arclist[i][k], &g->arclist[i][k+1],
           sizeof(uint_t)*(g->outdegree[i]-k));
-  //Isnt't it time consuming to move memory each time the arc is deleted ? Max18
-  //ADS: Perhaps a little, but it is needed to keep the arclist ordered.
-  //     However notice that this code is only used when ORDERD_ARCLIST is
+  //     This is needed to keep the arclist ordered.
+  //     However  this code is only used when ORDERD_ARCLIST is
   //     defined, which it is not, as I decided we did not need it. (We do
   //     not keep the arc list in any order -- but I tested the code to
   //     do it in case we do want to do so in the future).
