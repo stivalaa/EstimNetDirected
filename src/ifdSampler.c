@@ -9,8 +9,6 @@
  * Byshkin, M., Stivala, A., Mira, A., Krause, R., Robins, G., & Lomi,
  * A. (2016). Auxiliary parameter MCMC for exponential random graph
  * models. Journal of Statistical Physics, 165(4), 740-754.
- * the arc.
- *
  *
  ****************************************************************************/
 
