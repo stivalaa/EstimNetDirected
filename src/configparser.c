@@ -99,10 +99,6 @@ static const char   CLOSE_SET_CHAR = '}'; /* set of parameter vals close */
 static const char   OPEN_PAREN_CHAR = '(';
 static const char   CLOSE_PAREN_CHAR = ')';
 
-/* These must be macros not const to use in initializer below */
-#define STRUCT_PARAMS_STR  "structParams"
-#define ATTR_PARAMS_STR    "attrParams"
-#define DYADIC_PARAMS_STR  "dyadicParams"
 
 /* True and False values for Boolean config value type. Not case sensitive */
 const char *TRUE_STR = "true";
@@ -137,6 +133,12 @@ static const config_param_t CONFIG_PARAMS[] = {
 
   {"outputAllSteps", PARAM_TYPE_BOOL,    offsetof(config_t, outputAllSteps),
    "output theta and dzA values on every iteration of EE algorithm)"},
+
+  {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(config_t, useIFDsampler),
+   "use Improved Fixed Density sampler instead of basic sampler"},
+
+  {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(config_t, ifd_K),
+   "multiplier for auxiliary parameter step size in IFD sampler"},
 
   {"arclistFile",   PARAM_TYPE_STRING,   offsetof(config_t, arclist_filename),
   "Network in Pajek arc list format"},
@@ -174,7 +176,7 @@ static const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
  */
 static const struct_param_t STRUCT_PARAMS[] =
 {
-  {"Arc",               changeArc},
+  {ARC_PARAM_STR,       changeArc},
   {"Reciprocity",       changeReciprocity},
   {"AltInStars",        changeAltInStars},
   {"AltOutStars",       changeAltOutStars},
@@ -243,6 +245,8 @@ config_t CONFIG = {
   500,   /* EEsteps */     
   100,   /* EEinnerSteps */
   FALSE, /* outputAllSteps */
+  FALSE, /* useIFDsampler */
+  0.1,   /* ifd_K */
   NULL,  /* arclist_filename */
   NULL,  /* binattr_filename */
   NULL,  /* catattr_filename */
@@ -286,6 +290,8 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* EEsteps */     
   FALSE, /* EEinnerSteps */
   FALSE, /* outputAllSteps */
+  FALSE, /* useIFDsampler */
+  FALSE, /* ifd_K */
   FALSE, /* arclist_filename */
   FALSE, /* binattr_filename */
   FALSE, /* catattr_filename */

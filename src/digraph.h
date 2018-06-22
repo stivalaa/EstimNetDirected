@@ -8,7 +8,8 @@
  *
  * Directed graph data structure. Stored as arc lists (both forward and
  * a "reversed" version, for fast iteration over both in- and out- neighbours)
- * and fast lookup matrices for two-paths.
+ * and fast lookup matrices for two-paths, and flat arcs list for fast 
+ * finding of random arc.
  *
  * Nodes are numbered 0 .. n-1.
  *
@@ -20,18 +21,25 @@
 
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
 #define CAT_NA  -1  /* value for catagorical missing data (otherwise >= 0) */
- 
-  
+
+typedef struct nodepair_s /* pair of nodes (i, j) */
+{
+  uint_t  i;    /* from node */
+  uint_t  j;    /* to node */
+} nodepair_t;
+
+
 typedef struct digraph_s
 {
   uint_t   num_nodes;  /* number of nodes */
   uint_t   num_arcs;   /* number of arcs */
   uint_t  *outdegree;  /* for each node, number of nodes it has an arc to */
-  uint_t **arclist;    /* arc list: for each node i, array of
+  uint_t **arclist;    /* arc adjacency lists: for each node i, array of
                           outdegree[i] nodes it has an arc to */
   uint_t  *indegree;   /* for each node, number of nodes that have an arc to it*/
-  uint_t **revarclist; /* reverse arc list: for each node i, array of 
+  uint_t **revarclist; /* reverse arc adjacency list: for each node i, array of 
                           indegree[i] nodes that have an arc to it */
+  nodepair_t *allarcs; /* list of all arcs specified as i->j for each */
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */
   uint_t *mixTwoPathMatrix; /* n x n contiguous matrix counting two-paths */
   uint_t *inTwoPathMatrix;  /* n x n contiguous matrix counting in-two-paths */
@@ -67,8 +75,15 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
 
 double density(const digraph_t *g); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
+
+/* these two version do not update the allarcs flat arclist */
 void insertArc(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc(digraph_t *g, uint_t i, uint_t j); /* delete arc i->j from g */
+
+/* this two versions update the allarcs flat arclist also */
+void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+
 digraph_t *allocate_digraph(uint_t num_vertices);
 void free_digraph(digraph_t *g);
 void dump_digraph_arclist(const digraph_t *g);

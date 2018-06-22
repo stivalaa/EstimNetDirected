@@ -54,6 +54,11 @@
  * to the theta parameter array and change_stats_funcs change statistics
  * function pointer array. On exit they are set to the sum values of the
  * change statistics for add and delete moves respectively.
+ *
+ * Note that this sampler does not update the digraph allarcs flat arc list
+ * as it does not need to use it at all, so that it remains as it was 
+ * and therefore becomes inconsistent with the actual graph when it is modified
+ * in this function, so should therefore not be used afterwards.
  */
 double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     change_stats_func_t *change_stats_funcs[],

@@ -6,7 +6,8 @@
  *
  * Directed graph data structure. Stored as arc lists (both forward and
  * a "reversed" version, for fast iteration over both in- and out- neighbours)
- * and fast lookup matrices for two-paths.
+ * and fast lookup matrices for two-paths, and also flat arcs list for fast
+ * selection of an arc uniformly at random.
  *
  *
  ****************************************************************************/
@@ -391,7 +392,7 @@ bool isArc(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
- * Insert arc i -> j into digraph g 
+ * Insert arc i -> j into digraph g, WITHOUT updating allarcs flat arc list
  *
  * Parameters:
  *   g - digraph
@@ -418,7 +419,7 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
- * Remove arc i -> j from digraph g 
+ * Remove arc i -> j from digraph g, WITHOUT updating allarcs flat arc list
  *
  * Parameters:
  *   g - digraph
@@ -470,11 +471,58 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
   assert(g->revarclist[j][k] == i);
   g->revarclist[j][k] = g->revarclist[j][g->indegree[j]-1];
 #endif
+
   g->num_arcs--;
   g->outdegree[i]--;
   g->indegree[j]--;
   updateTwoPathsMatrices(g, i, j, FALSE);
 }
+
+
+/*
+ * Insert arc i -> j into digraph g, updating allarcs flat arc list
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to insert arc from
+ *   j - node to insert arc to
+ *
+ * Return value:
+ *   None
+ */
+void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j)
+{
+  insertArc(g, i, j);
+  g->allarcs = (nodepair_t *)safe_realloc(g->allarcs,
+                                          g->num_arcs * sizeof(nodepair_t));
+  g->allarcs[g->num_arcs-1].i = i;
+  g->allarcs[g->num_arcs-1].j = j;
+}
+
+/*
+ * Remove arc i -> j from digraph g, updating allarcs flat arc list
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to remove arc from
+ *   j - node to remove arc to
+ *   arcidx - index in allarcs flat arc list of the i->j entry for fast removal
+ *            as this is known (arc has been selected from this list)
+ *
+ * Return value:
+ *   None
+ */
+void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
+{
+  removeArc(g, i, j);
+  /* remove entry from the flat all arcs list */
+  assert(g->allarcs[arcidx].i == i && g->allarcs[arcidx].j == j);
+  /* replace deleted entry with last entry */
+  /* g->num_arcs already decremented by removeArc() */
+  g->allarcs[arcidx].i = g->allarcs[g->num_arcs].i;
+  g->allarcs[arcidx].j = g->allarcs[g->num_arcs].j;
+}
+
 
 /*
  * Allocate the  digraph structure for empty digraph with given
@@ -495,6 +543,7 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->arclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
   g->indegree = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
+  g->allarcs = NULL;
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */  
   g->mixTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
                                               sizeof(uint_t));
@@ -551,6 +600,7 @@ void free_digraph(digraph_t *g)
     free(g->arclist[i]);
     free(g->revarclist[i]);
   }
+  free(g->allarcs);
   free(g->arclist);
   free(g->revarclist);
   free(g->indegree);
@@ -659,7 +709,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     }
     i--; j--; /* convert to 0-based */
     if (!isArc(g, i, j)){
-      insertArc(g, i, j);
+      insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
     }
     saveptr = NULL; /* reset strtok() for next line */
     if (!fgets(buf, sizeof(buf)-1, pajek_file)) {

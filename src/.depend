@@ -9,10 +9,12 @@ changeStatisticsDirected.o: changeStatisticsDirected.c \
 basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h \
  digraph.h basicSampler.h
 equilibriumExpectation.o: equilibriumExpectation.c utils.h digraph.h \
- basicSampler.h changeStatisticsDirected.h equilibriumExpectation.h \
- configparser.h
+ basicSampler.h changeStatisticsDirected.h ifdSampler.h \
+ equilibriumExpectation.h configparser.h
 configparser.o: configparser.c configparser.h utils.h \
  changeStatisticsDirected.h digraph.h
+ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h digraph.h \
+ ifdSampler.h
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
  configparser.h changeStatisticsDirected.h digraph.h \
  equilibriumExpectation.h

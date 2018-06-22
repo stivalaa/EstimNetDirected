@@ -20,6 +20,14 @@
 #include "utils.h"
 #include "changeStatisticsDirected.h"
 
+/* These must be macros not const to use in initializer  */
+/* not case sensitive */
+#define STRUCT_PARAMS_STR  "structParams"
+#define ATTR_PARAMS_STR    "attrParams"
+#define DYADIC_PARAMS_STR  "dyadicParams"
+#define ARC_PARAM_STR      "Arc"
+
+
 typedef struct config_s {
   double ACA_S;           /* multiplier for step size in Algorithm S */
   double ACA_EE;          /* multiplier for step size in Algorithm EE */
@@ -28,7 +36,9 @@ typedef struct config_s {
   uint_t Ssteps;          /* steps of Algorithm S (adjusted by size) */
   uint_t EEsteps;         /* steps of Algorithm EE */
   uint_t EEinnerSteps;    /* inner iterations of Algorithm EE (adj. by size)*/
-  bool   outputAllSteps;  /* write theta and dzA every iteration not just outer*/
+  bool   outputAllSteps;   /* write theta and dzA every iteration not just outer*/
+  bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
+  double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
   char *arclist_filename; /* filename of Pajek file with digraph to estimate */
   char *binattr_filename; /* filename of binary attributes file or NULL */
   char *catattr_filename; /* filename of categorical attributes file or NULL */

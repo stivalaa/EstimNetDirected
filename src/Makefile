@@ -24,7 +24,8 @@ DEPENDFILE = .depend
 
 COMMON_C_OBJS =  utils.o digraph.o \
                  changeStatisticsDirected.o basicSampler.o \
-                 equilibriumExpectation.o configparser.o
+                 equilibriumExpectation.o configparser.o \
+                 ifdSampler.o
 
 MPI_C_OBJS    = EstimNetDirectedMPImain.o
 NONMPI_C_OBJS = EstimNetDirectedMain.o
@@ -53,7 +54,7 @@ depend: $(SRCS)
 
 clean:
 	rm -f $(OBJS)
-	rm -f EstimNetDirected
+	rm -f EstimNetDirected EstimNetDirected_mpi
 
 
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c

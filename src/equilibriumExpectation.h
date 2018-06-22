@@ -33,7 +33,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  double ACA,
                  double theta[],
                  double Dmean[],
-                 FILE *theta_outfile);
+                 FILE *theta_outfile,
+                 bool useIFDsampler, double ifd_K);
 
 void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   change_stats_func_t *change_stats_funcs[],
@@ -45,7 +46,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double ACA, double compC,
                   double D0[],
                   double theta[],
-                  FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps);
+                  FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
+                  bool useIFDsampler, double ifd_K);
 
 
 void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
@@ -56,7 +58,8 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
                  uint_t Msteps, double ACA_S, double ACA_EE, double compC,
                  double theta[], uint_t tasknum,
-                 FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps);
+                 FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
+                 bool useIFDsampler, double ifd_K);
 
 int do_estimation(config_t *config, uint_t tasknum);
 
