@@ -16,7 +16,7 @@ is included. This network was downloaded from Mark Newman's network data page.
 
 ## Reference
 
-Byshkin, M., Stivala, A., Mira, A., Robins, G., & Lomi, A. (2018). Fast Maximum Likelihood estimation via Equilibrium Expectation for Large Network Data. Accpeted for publication in *Scientific Reports*.
+Byshkin, M., Stivala, A., Mira, A., Robins, G., & Lomi, A. (2018). Fast Maximum Likelihood estimation via Equilibrium Expectation for Large Network Data. Accepted for publication in *Scientific Reports*.
 
 Byshkin, M., Stivala, A., Mira, A., Krause, R., Robins, G., & Lomi, A. (2016). Auxiliary parameter MCMC for exponential random graph models. *Journal of Statistical Physics*, 165(4), 740-754. https://doi.org/10.1007/s10955-016-1650-5
 
