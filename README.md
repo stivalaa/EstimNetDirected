@@ -14,7 +14,9 @@ Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 200
 
 is included. This network was downloaded from Mark Newman's network data page.
 
-## Reference
+If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below in any resulting publications.
+
+## References
 
 Byshkin, M., Stivala, A., Mira, A., Robins, G., & Lomi, A. (2018). Fast Maximum Likelihood estimation via Equilibrium Expectation for Large Network Data. Accepted for publication in *Scientific Reports*.
 
