@@ -308,7 +308,13 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       if (fabs(theta_mean) < 0.1)
           theta_mean = 0.1;
       if(Kafile) fprintf(Kafile, "%g ", theta_sd / fabs(theta_mean)); /* FIXME should be task local*/
-      D0[l] *= sqrt(compC / (theta_sd / fabs(theta_mean)));
+      /* theta_sd is a standard deviation so must be non-negative */
+      assert(theta_sd >= 0);
+      if (theta_sd > 1e-10) { /* TODO make this a parameter */
+        /* as per email from Max 21 July 2018, only adjust D0 this way
+         * if sd(theta) is large enough */
+        D0[l] *= sqrt(compC / (theta_sd / fabs(theta_mean)));
+      }
     }
       if(Kafile) { fprintf(Kafile, "\n"); fflush(Kafile);  } /* FIXME should be task local*/
       fflush(dzA_outfile);
