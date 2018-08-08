@@ -1,0 +1,4 @@
+*.pyc
+*~
+dzA_values_*.txt
+theta_values_*.txt
