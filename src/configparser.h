@@ -35,7 +35,7 @@ typedef struct config_s {
   uint_t samplerSteps;    /* sampler iterations per algorithm step */
   uint_t Ssteps;          /* steps of Algorithm S (adjusted by size) */
   uint_t EEsteps;         /* steps of Algorithm EE */
-  uint_t EEinnerSteps;    /* inner iterations of Algorithm EE (adj. by size)*/
+  uint_t EEinnerSteps;    /* inner iterations of Algorithm EE */
   bool   outputAllSteps;   /* write theta and dzA every iteration not just outer*/
   bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
   double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */

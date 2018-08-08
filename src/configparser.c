@@ -129,7 +129,7 @@ static const config_param_t CONFIG_PARAMS[] = {
    "steps of Algorithm EE"},
 
   {"EEinnerSteps",  PARAM_TYPE_UINT,     offsetof(config_t, EEinnerSteps),
-   "inner iterations of Algorithm EE (multiplied by size adjustment)"},
+   "inner iterations of Algorithm EE"},
 
   {"outputAllSteps", PARAM_TYPE_BOOL,    offsetof(config_t, outputAllSteps),
    "output theta and dzA values on every iteration of EE algorithm)"},

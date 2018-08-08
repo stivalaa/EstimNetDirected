@@ -24,8 +24,7 @@ EEsteps= 1500 # steps of Algorithm EE.
               # is adjusted (according to compC) to limit the variance
               # of the theta values.
               
-EEinnerSteps = 100 # inner iterations of Algorithm EE (multiplied by
-                   # density adjustment)
+EEinnerSteps = 100 # inner iterations of Algorithm EE 
 
 
 ################## Input filenames ###########################################

@@ -350,7 +350,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *   sampler_m      - sampler iterations (per algorithm step)
  *   M1_steps       - Steps of Algorithm 1 
  *   Mouter         - outer iteration of Algorihtm EE
- *   Msteps         - multiplier of number of inner steps of Algorithm EE
+ *   Msteps         - number of inner steps of Algorithm EE
  *   ACA_S          -  multiplier of da to get K1A step size multiplier 
  *   ACA_EE         - multiplier of D0 to get K_A step size multiplier
  *   compC      - multiplier of sd(theta)/mean(theta) to limit
@@ -404,7 +404,10 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);
 
   /* inner steps of Algorithm EE */
-  uint_t M = (uint_t)(Msteps *g->num_nodes / sampler_m);
+  /*uint_t M = (uint_t)(Msteps *g->num_nodes / sampler_m);*/
+  /* as per email from Max 20 July 2018, better to have this as constant
+   * rather than scaled by network size */
+  uint_t M = Msteps;
   
 
 
