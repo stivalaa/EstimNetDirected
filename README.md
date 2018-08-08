@@ -10,7 +10,7 @@ For more information, and the original implementation for undirected networks, s
 
 As well as some simulated networks, as an empirical example, the political bloggers network from the paper:
 
-Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 2004 US election: divided they blog. Pages 36–43 of: Proceedings of the 3rd international workshop on link discovery. ACM.
+Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 2004 US election: divided they blog. Pages 36-43 of: Proceedings of the 3rd international workshop on link discovery. ACM.
 
 is included. This network was downloaded from Mark Newman's network data page.
 

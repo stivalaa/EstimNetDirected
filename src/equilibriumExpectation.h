@@ -13,10 +13,10 @@
  *
  * Reference for the algorithm (originally for undirected networks) is
  *
- *   Byshkin M, Stivala A, Mira A, Robins G, Lomi A: Fast Maximum Likelihood
- *   estimation via equilibrium expectation for large network data. 
- *   2017 (submitted for publication)
- *
+ *   Byshkin M, Stivala A, Mira A, Robins G, Lomi A 2018  "Fast
+ *   maximum likelihood estimation via equilibrium expectation for
+ *   large network data". Scientific Reports 8:11509
+ *   doi:10.1038/s41598-018-29725-8
  *
  ****************************************************************************/
 
