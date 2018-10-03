@@ -8,7 +8,8 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R/3.2.1-vlsci_intel-2015.08.25
+module load openmpi
+module load R
 
 time srun ${ROOT}/src/EstimNetDirected_mpi config_polblogs_ifd.txt
 
