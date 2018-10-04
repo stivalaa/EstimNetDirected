@@ -85,7 +85,7 @@ dzAFilePrefix = dzA_ifd_polblogs
 #
 
 structParams =  {Reciprocity, AltInStars, AltOutStars, 
-                 AltTwoPathsTD, AltKTrianglesT}
+                 AltTwoPathsTD, AltKTrianglesT, AltKTrianglesC}
 
 #
 # Attribute parameters
