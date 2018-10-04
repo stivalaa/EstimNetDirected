@@ -770,18 +770,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
  */
 void dump_digraph_arclist(const digraph_t *g)
 {
-  uint_t i, j, count=0;
-
-  printf("*vertices %u\n", g->num_nodes);
-  printf("*arcs\n");
-  for (i = 0; i < g->num_nodes; i++)  {
-    for (j = 0; j < g->outdegree[i]; j++) {
-      count++;
-      printf("%u %u\n", i, g->arclist[i][j]);
-      assert(isArc(g, i, g->arclist[i][j]));
-    }
-  }
-  assert(count == g->num_arcs);
+  write_digraph_arclist_to_file(stdout, g);
 }
 
 /*
@@ -827,4 +816,35 @@ void print_data_summary(const digraph_t * g)
     }
     printf(" has %u NA values\n", num_na_values);
   }
+}
+
+
+/*
+ * Write arc list in Pajek format to file. The node numbers are
+ * 1..n in this format (not 0..n-1).
+ *
+ * Parameters:
+ *     fp - open (write) file pointer to write to
+ *     g - digraph to dump
+ *
+ * Return value:
+ *    None.
+ *
+ */
+void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
+{
+  uint_t i, j, count=0;
+
+  fprintf(fp, "*vertices %u\n", g->num_nodes);
+  for (i = 0; i < g->num_nodes; i++)
+    fprintf(fp, "%u\n", i);
+  fprintf(fp, "*arcs\n");
+  for (i = 0; i < g->num_nodes; i++)  {
+    for (j = 0; j < g->outdegree[i]; j++) {
+      count++;
+      fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
+      assert(isArc(g, i, g->arclist[i][j]));
+    }
+  }
+  assert(count == g->num_arcs);
 }

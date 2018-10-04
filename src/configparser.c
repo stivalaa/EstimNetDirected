@@ -140,6 +140,10 @@ static const config_param_t CONFIG_PARAMS[] = {
   {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(config_t, ifd_K),
    "multiplier for auxiliary parameter step size in IFD sampler"},
 
+  {"outputSimulatedNetwork", PARAM_TYPE_BOOL,
+   offsetof(config_t, outputSimulatedNetwork),
+   "use Improved Fixed Density sampler instead of basic sampler"},
+
   {"arclistFile",   PARAM_TYPE_STRING,   offsetof(config_t, arclist_filename),
   "Network in Pajek arc list format"},
 
@@ -157,6 +161,10 @@ static const config_param_t CONFIG_PARAMS[] = {
 
   {"dzAFilePrefix",  PARAM_TYPE_STRING,  offsetof(config_t, dzA_file_prefix),
    "dzA output file prefix"},
+  
+  {"simNetFilePrefix", PARAM_TYPE_STRING,
+   offsetof(config_t, sim_net_file_prefix),
+   "simulated network output file prefix"},
 
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
@@ -247,12 +255,14 @@ config_t CONFIG = {
   FALSE, /* outputAllSteps */
   FALSE, /* useIFDsampler */
   0.1,   /* ifd_K */
+  FALSE, /* outputSimulatedNetwork */
   NULL,  /* arclist_filename */
   NULL,  /* binattr_filename */
   NULL,  /* catattr_filename */
   NULL,  /* contattr_filename */
   NULL,  /* theta_file_prefix */
   NULL,  /* dzA_file_prefix */
+  NULL,  /* sim_net_file_prefix */
   0,     /* num_change_stats_funcs */
   NULL,  /* change_stats_funcs */
   NULL,  /* param_names */
@@ -292,12 +302,14 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* outputAllSteps */
   FALSE, /* useIFDsampler */
   FALSE, /* ifd_K */
+  FALSE, /* outputSimulatedNetwork */
   FALSE, /* arclist_filename */
   FALSE, /* binattr_filename */
   FALSE, /* catattr_filename */
   FALSE, /* contattr_filename */
   FALSE, /* theta_file_prefix */
   FALSE, /* dzA_file_prefix */
+  FALSE, /* sim_net_file_prefix */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE  /* (NOT USED) dyadicParams */
@@ -952,6 +964,7 @@ void free_config_struct(config_t *config)
   free(config->contattr_filename);
   free(config->theta_file_prefix);
   free(config->dzA_file_prefix);
+  free(config->sim_net_file_prefix);
   free(config->change_stats_funcs);
   free(config->param_names);
   for (i = 0; i < config->num_attr_change_stats_funcs; i++) 
@@ -1261,4 +1274,5 @@ void init_config_parser(void)
   assert(NUM_CONFIG_IS_SET == NUM_CONFIG_PARAMS);
   CONFIG.theta_file_prefix = safe_strdup("theta_values");
   CONFIG.dzA_file_prefix = safe_strdup("dzA_values");
+  CONFIG.sim_net_file_prefix = safe_strdup("sim");
 }

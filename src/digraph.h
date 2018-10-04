@@ -90,5 +90,7 @@ void dump_digraph_arclist(const digraph_t *g);
 void print_data_summary(const digraph_t *g);
 void updateTwoPathsMatrices(digraph_t *g, uint_t start, uint_t end, bool isAdd);
 
+void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
+
 #endif /* DIGRAPH_H */
 

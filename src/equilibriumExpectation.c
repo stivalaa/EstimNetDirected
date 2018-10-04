@@ -486,8 +486,10 @@ int do_estimation(config_t * config, uint_t tasknum)
   uint_t         i;
   FILE          *theta_outfile;
   FILE          *dzA_outfile;
+  FILE          *sim_outfile;
   char           theta_outfilename[PATH_MAX+1];
   char           dzA_outfilename[PATH_MAX+1];
+  char           sim_outfilename[PATH_MAX+1];
   char           suffix[16]; /* only has to be large enough for "_xx.txt" 
                                 where xx is tasknum */
   uint_t         n_struct, n_attr, n_dyadic, num_param;
@@ -613,6 +615,16 @@ int do_estimation(config_t * config, uint_t tasknum)
 
   fclose(theta_outfile);
   fclose(dzA_outfile);
+  if (config->outputSimulatedNetwork) {
+    strncpy(sim_outfilename, config->sim_net_file_prefix,
+            sizeof(sim_outfilename)-1);
+    sprintf(suffix, "_%d.net", tasknum);
+    strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
+            strlen(suffix));
+    sim_outfile = fopen(sim_outfilename, "w");
+    write_digraph_arclist_to_file(sim_outfile, g);
+    fclose(sim_outfile);
+  }
   if(Kafile)fclose(Kafile);/*FIXME should be task local */
   free_digraph(g);
   free(theta);

@@ -39,12 +39,14 @@ typedef struct config_s {
   bool   outputAllSteps;   /* write theta and dzA every iteration not just outer*/
   bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
   double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
+  bool  outputSimulatedNetwork; /* output simulated network at end */
   char *arclist_filename; /* filename of Pajek file with digraph to estimate */
   char *binattr_filename; /* filename of binary attributes file or NULL */
   char *catattr_filename; /* filename of categorical attributes file or NULL */
   char *contattr_filename;/* filename of continuous attributes file or NULL */
   char *theta_file_prefix;/* theta output filename prefix */
   char *dzA_file_prefix;  /* dzA output filename prefix */
+  char *sim_net_file_prefix; /* simulated network output filename prefix */
   uint_t num_change_stats_funcs;           /* length of change_stats_funcs */
   change_stats_func_t **change_stats_funcs; /* structural parameter stats */
   const char          **param_names;        /* names corresponding to above */
