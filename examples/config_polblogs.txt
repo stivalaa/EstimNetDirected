@@ -26,7 +26,7 @@ EEsteps= 1500 # steps of Algorithm EE.
               
 EEinnerSteps = 100 # inner iterations of Algorithm EE 
 
-outputSimulatedNetwork = True  # write the simulated network to file
+outputSimulatedNetwork = False   # write the simulated network to file
 
 ################## Input filenames ###########################################
 
@@ -85,7 +85,7 @@ simNetFilePrefix = sim_polblogs
 #
 
 structParams =  {Arc, Reciprocity, AltInStars, AltOutStars, 
-                 AltTwoPathsTD, AltKTrianglesT }
+                 AltTwoPathsTD, AltKTrianglesT, AltKTrianglesC }
 
 #
 # Attribute parameters
