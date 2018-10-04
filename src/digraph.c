@@ -837,7 +837,7 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
 
   fprintf(fp, "*vertices %u\n", g->num_nodes);
   for (i = 0; i < g->num_nodes; i++)
-    fprintf(fp, "%u\n", i);
+    fprintf(fp, "%u\n", i+1);
   fprintf(fp, "*arcs\n");
   for (i = 0; i < g->num_nodes; i++)  {
     for (j = 0; j < g->outdegree[i]; j++) {
