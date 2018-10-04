@@ -11,7 +11,7 @@ ROOT=..
 module load openmpi
 module load R
 
-time srun ${ROOT}/src/EstimNetDirected_mpi config_polblogs_ifd.txt
+time mpirun ${ROOT}/src/EstimNetDirected_mpi config_polblogs_ifd.txt
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_ifd_polblogs dzA_ifd_polblogs
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_ifd_polblogs dzA_ifd_polblogs
