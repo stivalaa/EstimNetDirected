@@ -392,6 +392,23 @@ bool isArc(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Test if an arc in either direction between i and j (i.e. either
+ *  i -> j or j -> i) exists
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to test arc from/to
+ *   j - node to test arc from/to
+ *
+ * Return value:
+ *   TRUE iff arc i->jor j->i exists
+ */
+bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j)
+{
+  return isArc(g, i, j) || isArc(g, j, i);
+}
+
+/*
  * Insert arc i -> j into digraph g, WITHOUT updating allarcs flat arc list
  *
  * Parameters:

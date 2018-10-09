@@ -78,6 +78,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
 
 double density(const digraph_t *g); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
+bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j or j->i is in g */
 
 /* these two version do not update the allarcs flat arclist */
 void insertArc(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
