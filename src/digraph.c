@@ -861,7 +861,7 @@ void print_zone_summary(const digraph_t *g)
   printf("Number of zones: %u (%u waves)\n", num_zones, num_zones-1);
   printf("Number of nodes in each zone:\n");
   for (i = 0; i < num_zones; i++) {
-    printf("zone %u: %u\n", i, zone_sizes[i]);
+    printf(" %u: %u\n", i, zone_sizes[i]);
   }
   
   free(zone_sizes);
@@ -931,6 +931,9 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
   char   **attr_names;
   int    **zones;
   uint_t   i;
+  uint_t  *zone_sizes; /* number of nodes in each zone */
+  uint_t   num_zones;
+
   
   if ((num_attr = load_integer_attributes(zone_filename, g->num_nodes,
                                           FALSE, &attr_names,
@@ -955,13 +958,32 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
       g->max_zone = g->zone[i];
     }
   }
-    
+
+  num_zones = g->max_zone + 1;
+
+  /* check that the zones are not invalid, no skipped zones */
+  zone_sizes = safe_calloc(num_zones, sizeof(uint_t));
+  for (i = 0; i < g->num_nodes; i++) {
+    assert(g->zone[i] < num_zones);
+    zone_sizes[g->zone[i]]++;
+  }
+  for (i = 0; i < num_zones; i++) {
+    if (zone_sizes[i] == 0) {
+      fprintf(stderr,
+              "ERROR: Max zone is %u but there are no nodes in zone %u\n",
+              g->max_zone, i);
+      return -1;
+    }
+  }
+
+  
   for (j = 0; j < num_attr; j++) {
     free(attr_names[j]);
     free(zones[j]);
   }
   free(attr_names);
   free(zones);
+  free(zone_sizes);
   return 0;
 }
 
