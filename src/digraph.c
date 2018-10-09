@@ -401,7 +401,7 @@ bool isArc(const digraph_t *g, uint_t i, uint_t j)
  *   j - node to test arc from/to
  *
  * Return value:
- *   TRUE iff arc i->jor j->i exists
+ *   TRUE iff arc i->j or j->i exists
  */
 bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j)
 {
