@@ -68,6 +68,9 @@ typedef struct digraph_s
 
   /* snowball sampling information, only used for conditional estimation */
   uint_t *zone;        /* for each node, snowball sampling zone (0 for seeds) */
+  uint_t max_zone;     /* highest zone number (zone number of outermost wave) */
+  uint_t *prev_wave_degree; /* for each node, number of edges 
+                               to/from a node in earlier wave (node zone -1 ) */
 } digraph_t;
 
 
@@ -92,6 +95,7 @@ digraph_t *allocate_digraph(uint_t num_vertices);
 void free_digraph(digraph_t *g);
 void dump_digraph_arclist(const digraph_t *g);
 void print_data_summary(const digraph_t *g);
+void print_zone_summary(const digraph_t *g);
 void updateTwoPathsMatrices(digraph_t *g, uint_t start, uint_t end, bool isAdd);
 
 void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);

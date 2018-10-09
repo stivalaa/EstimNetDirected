@@ -580,6 +580,8 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->contattr = NULL;
 
   g->zone  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
+  g->max_zone = 0;
+  g->prev_wave_degree  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   return g;
 }
 
@@ -627,6 +629,7 @@ void free_digraph(digraph_t *g)
   free(g->inTwoPathMatrix);
   free(g->outTwoPathMatrix);
   free(g->zone);
+  free(g->prev_wave_degree);
   free(g);
 }
 
@@ -837,6 +840,32 @@ void print_data_summary(const digraph_t * g)
   }
 }
 
+/*
+ * Write some statistics about the snowball sampling zones to stdout.
+ */
+void print_zone_summary(const digraph_t *g)
+{
+  uint_t   i;
+  uint_t  *zone_sizes; /* number of nodes in each zone */
+  uint_t   num_zones = g->max_zone + 1;
+
+  if (num_zones == 1) {
+    printf("No zone information (all nodes in zone 0)\n");
+    return;
+  }
+  zone_sizes = safe_calloc(num_zones, sizeof(uint_t));
+  for (i = 0; i < g->num_nodes; i++) {
+    assert(g->zone[i] < num_zones);
+    zone_sizes[g->zone[i]]++;
+  }
+  printf("Number of zones: %u (%u waves)\n", num_zones, num_zones-1);
+  printf("Number of nodes in each zone:\n");
+  for (i = 0; i < num_zones; i++) {
+    printf("zone %u: %u\n", i, zone_sizes[i]);
+  }
+  
+  free(zone_sizes);
+}
 
 /*
  * Write arc list in Pajek format to file. The node numbers are
@@ -879,6 +908,8 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
  * Return value:
  *    0 if OK else nonzero for error.
  * 
+ * The zone, max_zone and prev_wave_degree fields of g are set here.
+ *
  * The format of the file is the same as that for categorical
  * attributes (and the same function is used to parse it): a header
  * line which must have just the name "zone", and each subsequent line
@@ -896,10 +927,10 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
  */
 int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
 {
-  int    num_attr;
-  char **attr_names;
-  int  **zones;
-  int    i;
+  int      num_attr, j;
+  char   **attr_names;
+  int    **zones;
+  uint_t   i;
   
   if ((num_attr = load_integer_attributes(zone_filename, g->num_nodes,
                                           FALSE, &attr_names,
@@ -918,13 +949,16 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
             " but found %s\n", zone_filename, attr_names[0]);
     return -1;
   }
-  for (i = 0; i < num_attr; i++) {
+  for (i = 0; i < g->num_nodes; i++) {
     g->zone[i] = zones[0][i];
+    if (g->zone[i] > g->max_zone) {
+      g->max_zone = g->zone[i];
+    }
   }
     
-  for (i = 0; i < num_attr; i++) {
-    free(attr_names[i]);
-    free(zones[i]);
+  for (j = 0; j < num_attr; j++) {
+    free(attr_names[j]);
+    free(zones[j]);
   }
   free(attr_names);
   free(zones);

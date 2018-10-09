@@ -527,6 +527,7 @@ int do_estimation(config_t * config, uint_t tasknum)
   
   if (tasknum == 0) {
     print_data_summary(g);
+    print_zone_summary(g);
   }
 
   /* now that we have attributes loaded in g, build the attr_indices
