@@ -517,6 +517,14 @@ int do_estimation(config_t * config, uint_t tasknum)
   dump_digraph_arclist(g);
 #endif /*DEBUG_DIGRAPH*/
 
+  if (config->zone_filename) {
+    if (add_snowball_zones_to_digraph(g, config->zone_filename)) {
+      fprintf(stderr, "ERROR: reading snowball sampling zones from %s failed\n",
+              config->zone_filename);
+      return -1;
+    }
+  }
+  
   if (tasknum == 0) {
     print_data_summary(g);
   }

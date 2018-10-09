@@ -562,6 +562,7 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->contattr_names = NULL;
   g->contattr = NULL;
 
+  g->zone  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   return g;
 }
 
@@ -608,6 +609,7 @@ void free_digraph(digraph_t *g)
   free(g->mixTwoPathMatrix);
   free(g->inTwoPathMatrix);
   free(g->outTwoPathMatrix);
+  free(g->zone);
   free(g);
 }
 
@@ -848,3 +850,68 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
   }
   assert(count == g->num_arcs);
 }
+
+
+/*
+ * Read snowball sampling zone file and put zone information in digraph g
+ *
+ * Parameters:
+ *    g             - (in/out) digraph to put zone information in
+ *    zone_filename - filename of zone file to read.
+ *
+ * Return value:
+ *    0 if OK else nonzero for error.
+ * 
+ * The format of the file is the same as that for categorical
+ * attributes (and the same function is used to parse it): a header
+ * line which must have just the name "zone", and each subsequent line
+ * the the snowball sampling zone for each node.  The first line (after the
+ * header) has the value for node 0, then the next line node 1, and
+ * so on. The zones are numbered from 0 for the seed nodes.
+ * 
+ * E.g.:
+ *
+ * zone
+ * 0
+ * 1
+ * 1
+ * 2
+ */
+int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
+{
+  int    num_attr;
+  char **attr_names;
+  int  **zones;
+  int    i;
+  
+  if ((num_attr = load_integer_attributes(zone_filename, g->num_nodes,
+                                          FALSE, &attr_names,
+                                          &zones)) < 0){
+    fprintf(stderr, "ERROR: loading zones from file %s failed\n", 
+            zone_filename);
+    return -1;
+  }
+  if (num_attr != 1) {
+    fprintf(stderr, "ERROR: expecting only zone attribute in zone file %s "
+            "but found %d attributes\n", zone_filename, num_attr);
+    return -1;
+  }
+  if (strcasecmp(attr_names[0], "zone") != 0) {
+    fprintf(stderr, "ERROR: expecting only zone attribute in zone file %s "
+            " but found %s\n", zone_filename, attr_names[0]);
+    return -1;
+  }
+  for (i = 0; i < num_attr; i++) {
+    g->zone[i] = zones[0][i];
+  }
+    
+  for (i = 0; i < num_attr; i++) {
+    free(attr_names[i]);
+    free(zones[i]);
+  }
+  free(attr_names);
+  free(zones);
+  return 0;
+}
+
+

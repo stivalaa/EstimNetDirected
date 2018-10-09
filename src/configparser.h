@@ -6,7 +6,7 @@
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
- * Parse the configuration file to get algorithm paraemeters, input filenames,
+ * Parse the configuration file to get algorithm parameters, input filenames,
  * parameters to estimate, etc.
  *
  * The config file is a text file with comments marked by '#'
@@ -29,6 +29,9 @@
 
 
 typedef struct config_s {
+  /*
+   * Parameters parsed directly from config file
+   */
   double ACA_S;           /* multiplier for step size in Algorithm S */
   double ACA_EE;          /* multiplier for step size in Algorithm EE */
   double compC;           /* multiplier of sd/mean theta to limit variance */
@@ -47,6 +50,11 @@ typedef struct config_s {
   char *theta_file_prefix;/* theta output filename prefix */
   char *dzA_file_prefix;  /* dzA output filename prefix */
   char *sim_net_file_prefix; /* simulated network output filename prefix */
+  char  *zone_filename;    /* filename of snowball sampling zone file or NULL */
+
+  /*
+   * values built by confiparser.c functions from parsed config settings
+   */
   uint_t num_change_stats_funcs;           /* length of change_stats_funcs */
   change_stats_func_t **change_stats_funcs; /* structural parameter stats */
   const char          **param_names;        /* names corresponding to above */

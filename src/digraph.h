@@ -66,7 +66,10 @@ typedef struct digraph_s
   uint_t latitude_index;  /* index in digraph contattr of latitude */
   uint_t longitude_index; /* index in digraph contattr of longitude */
 
+  /* snowball sampling information, only used for conditional estimation */
+  uint_t *zone;        /* for each node, snowball sampling zone (0 for seeds) */
 } digraph_t;
+
 
 digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                                           const char *binattr_filename,
@@ -91,6 +94,8 @@ void print_data_summary(const digraph_t *g);
 void updateTwoPathsMatrices(digraph_t *g, uint_t start, uint_t end, bool isAdd);
 
 void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
+
+int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename);
 
 #endif /* DIGRAPH_H */
 
