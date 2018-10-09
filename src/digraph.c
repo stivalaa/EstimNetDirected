@@ -930,7 +930,7 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
   int      num_attr, j;
   char   **attr_names;
   int    **zones;
-  uint_t   i;
+  uint_t   i, u, v;
   uint_t  *zone_sizes; /* number of nodes in each zone */
   uint_t   num_zones;
 
@@ -976,6 +976,22 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
     }
   }
 
+  /*
+   * build prev_wave_degree[] which for each node gives the number of
+   *  edges to or from (i.e. ignoring direction of arc) that node
+   *  to/from nodes in the immediately preceding zone.
+   */
+  for (i = 0; i < g->num_arcs; i++) {
+    u = g->allarcs[i].i;
+    v = g->allarcs[i].j;
+    if (g->zone[u] != g->zone[v] &&
+        g->zone[u] != g->zone[v] + 1 && g->zone[v] != g->zone[u] + 1){
+      fprintf(stderr, "ERROR: invalid snowball zones for adjacent nodes %u "
+              "(zone %u) and %u (zone %u)\n", u, g->zone[u], v, g->zone[v]);
+      return -1;
+    }
+  }
+  
   
   for (j = 0; j < num_attr; j++) {
     free(attr_names[j]);
