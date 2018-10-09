@@ -35,6 +35,7 @@ outputSimulatedNetwork = True  # write the simulated network to file
 # top, then followed by one line for each vertex (just vertex number)
 # [note this part is optional for EstimeNetDirected] then *arcs
 # followed by arcs list one per line.
+# The nodes must be numbered 1..N.
 
 arclistFile = ../pythonDemo/sample_statistics_n1000_directed_binattr_sim620000000.txt
 

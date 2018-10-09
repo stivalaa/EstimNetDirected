@@ -641,7 +641,7 @@ void free_digraph(digraph_t *g)
  *
  * In the Pajek format *vertices at top, then followed by one line for each
  * vertex (just vertex number) then *arcs followed by arcs list one per
- * line .
+ * line. In this program the nodes must be numbered 1..N.
  *
  * The format of the attriubtes files is header line with whitespace-delimited
  * attribute names, followed by (whitespace delimited) attributes 

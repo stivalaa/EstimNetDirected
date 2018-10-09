@@ -9,7 +9,7 @@
 #
 #
 ##############################################################################
-
+### TODO update to use EstimNetDirected output format and Pajek input format
 """
  Do snowball sampling in a (large) network, retaining zone information
  for each sampled node.

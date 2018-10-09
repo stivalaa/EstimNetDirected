@@ -1,47 +1,42 @@
 #!/usr/bin/Rscript
-#
-# File:    snowballSampleFromEdgeList.R
-# Author:  Alex Stivala
-# Created: November 2013
-#
-# 
-# Do snowball sampling in a (large) network, retaining zone information
-# for each sampled node.
-#
-# Input file is csv with two columns giving edge list of graph: each
-# column is a node id 1..N e.g.:
-#
-# 1,2
-# 1,3
-# ...etc.
-#
-# The graph may be directed or undirected. If directed, 'dirty snowball'
-# sampling is used, i.e. we do snowball sampling on the unidrected
-# versino of the graph (i.e. ignore edge directions), and the sampled
-# graph is the directed subgraph of the original directed graph
-# induced by the nodes thus sampled.
-#
-# Output files (sample description file giving names of following files,
-# subgraphs as dense matrices, zone files giving zone for each node,
-# attirbute files giving attributes for each node) in a directory
-# in format used by parallel SPNet.
-#
-# Usage:
-# 
-# Rscript snowballSampleFromEdgelist.R [-d] adjlist.csv num_samples num_seeds num_waves outputdir
-#
-#    -d : graph is directed, otherwise undirected
-#    adjlist.csv is .csv file with edge list as above
-#    num_samples is number of snowball samples to create
-#    num_seeds it number of seeds in each sample
-#    num_Waves is numer of snowball sampling waves
-#    outputdir is output directory to create output files in
-#
+##
+## File:    snowballSampleFromEdgeList.R
+## Author:  Alex Stivala
+## Created: November 2013
+##
+## 
+## Do snowball sampling in a (large) network, retaining zone information
+## for each sampled node.
+##
+## Input file is Pajek format edge list.
+##
+## The graph may be directed or undirected. If directed, 'dirty snowball'
+## sampling is used, i.e. we do snowball sampling on the unidrected
+## versino of the graph (i.e. ignore edge directions), and the sampled
+## graph is the directed subgraph of the original directed graph
+## induced by the nodes thus sampled.
+##
+## Output files (sample description file giving names of following
+## files, subgraphs in Pajek format, zone files in Pajek .clu format
+## giving zone for each node, attirbute files giving attributes for
+## each node) in a directory in format used by EstimNetDirected
+##
+## Usage:
+## 
+## Rscript snowballSampleFromEdgelist.R [-d] adjlist.net num_samples num_seeds num_waves outputdir
+##
+##    -d : graph is directed, otherwise undirected
+##    adjlist.net is Pajek format edge list as above
+##    num_samples is number of snowball samples to create
+##    num_seeds it number of seeds in each sample
+##    num_Waves is numer of snowball sampling waves
+##    outputdir is output directory to create output files in
+##
 
 library(igraph)
 
-# read in R source file from directory where this script is located
-#http://stackoverflow.com/questions/1815606/rscript-determine-path-of-the-executing-script
+## read in R source file from directory where this script is located
+##http://stackoverflow.com/questions/1815606/rscript-determine-path-of-the-executing-script
 source_local <- function(fname){
   argv <- commandArgs(trailingOnly = FALSE)
   base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
@@ -51,9 +46,9 @@ source_local <- function(fname){
 source_local('snowballSample.R')
 
 
-# 
-# main
-#
+## 
+## main
+##
 
 
 args <- commandArgs(trailingOnly=TRUE)
@@ -73,10 +68,10 @@ if (length(args) == 6) {
         quit(save="no")
     }
 }
-input_csv_file <- args[basearg+1]
+input_pajek_file <- args[basearg+1]
 num_samples <- as.integer(args[basearg+2])
 num_seeds <- as.integer(args[basearg+3])
-num_waves <- as.integer(args[basearg+4])-1 # -1 for consistency with SPNet
+num_waves <- as.integer(args[basearg+4])-1 ## -1 for consistency with SPNet
 output_dir <- args[basearg+5]
 
 if (!file.exists(output_dir)) {
@@ -89,13 +84,13 @@ cat("number of seeds: ", num_seeds, "\n")
 cat("number of waves: ", num_waves,"\n")
 cat("output direcctory: ", output_dir, "\n")
 
-edgelist <- as.matrix(read.csv(input_csv_file, header=FALSE))
-cat("reading graph edge list from ", input_csv_file, "...\n")
-print(system.time(g <- graph.edgelist(edgelist, directed=directed)))
-print(system.time(g <- simplify(g, remove.multiple=T, remove.loops=T)))
-print(g) # print info about graph
 
-# get matrix where each row is random seed set for one sample
+cat("reading graph edge list from ", input_pajek_file, "...\n")
+print(system.time(g <- read_graph_file(input_pajek_file, directed=directed)))
+print(system.time(g <- simplify(g, remove.multiple=T, remove.loops=T)))
+print(g) ## print info about graph
+
+## get matrix where each row is random seed set for one sample
 seedsets <- matrix(sample.int(vcount(g), num_seeds * num_samples, replace=F),
                    nrow = num_samples);
 
@@ -111,7 +106,7 @@ for (i in 1:num_samples) {
   else {
       print(system.time(g_sample <- snowball_sample(g, num_waves, seedsets[i,])))
   }
-  print(g_sample) #print info about sample subgraph
+  print(g_sample) ##print info about sample subgraph
   subgraph_filename <- paste(output_dir, .Platform$file.sep, "subgraph", i-1,
                              ".txt", sep="")
   subzone_filename <- paste(output_dir, .Platform$file.sep, "subzone", i-1,
@@ -121,11 +116,11 @@ for (i in 1:num_samples) {
 
   subactor_filename <- paste(output_dir, .Platform$file.sep, "subactor", i-1,
                              ".txt", sep="")
-  # TODO get actor attributes (currently just writes file with no attrs)
-  write_subactors_file(subactor_filename, g_sample)
+  ## TODO get actor attributes and write in EstimNetDirected format
 
-  # format of sampledesc file is:
-  # N subzone_filename subgraph_filename subactor_filename
+
+  ## format of sampledesc file is:
+  ## N subzone_filename subgraph_filename subactor_filename
   cat(vcount(g_sample), subzone_filename, subgraph_filename, subactor_filename,
              sep=" ", file=sampledesc_f)
   cat('\n', file=sampledesc_f)

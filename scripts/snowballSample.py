@@ -8,7 +8,7 @@
 # Created: April 2018
 #
 ##############################################################################
-
+### TODO update to use EstimNetDirected output format and Pajek input format
 """
 Functions to do snowball sampling in a (large) network using 
 SNAP, annotating node with snowball sampling zone.
