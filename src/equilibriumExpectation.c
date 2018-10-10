@@ -523,6 +523,9 @@ int do_estimation(config_t * config, uint_t tasknum)
               config->zone_filename);
       return -1;
     }
+#ifdef DEBUG_SNOWBALL
+    dump_zone_info(g);
+#endif /* DEBUG_SNOWBALL */
   }
   
   if (tasknum == 0) {

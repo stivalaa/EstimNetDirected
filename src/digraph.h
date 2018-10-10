@@ -71,7 +71,7 @@ typedef struct digraph_s
   uint_t max_zone;     /* highest zone number (zone number of outermost wave) */
   uint_t num_inner_nodes;/*number of nodes in inner waves (all but last zone)*/
   uint_t *inner_nodes; /* id of each of the num_inner_nodes inner wave nodes */
-  uint_t *prev_wave_degree; /* for each inner wave node, number of edges 
+  uint_t *prev_wave_degree; /* for each  node, number of edges 
                                to/from a node in earlier wave (node zone -1 ) */
 } digraph_t;
 
@@ -103,6 +103,7 @@ void updateTwoPathsMatrices(digraph_t *g, uint_t start, uint_t end, bool isAdd);
 void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
 
 int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename);
+void dump_zone_info(const digraph_t *g);
 
 #endif /* DIGRAPH_H */
 

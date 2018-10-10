@@ -4,3 +4,5 @@ EstimNetDirected
 EstimNetDirected_mpi
 *.o
 *~
+TAGS
+local.mk

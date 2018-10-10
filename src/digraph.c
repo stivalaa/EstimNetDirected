@@ -862,6 +862,7 @@ void print_zone_summary(const digraph_t *g)
     zone_sizes[g->zone[i]]++;
   }
   printf("Number of zones: %u (%u waves)\n", num_zones, num_zones-1);
+  printf("Number of nodes in inner waves: %u\n", g->num_inner_nodes);  
   printf("Number of nodes in each zone:\n");
   for (i = 0; i < num_zones; i++) {
     printf(" %u: %u\n", i, zone_sizes[i]);
@@ -1038,3 +1039,40 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
 }
 
 
+/*
+ * Write snowball sampling zone information (used for conditional estimation)
+ * to stdout for debugging.
+ *
+ * Parmaters:
+ *   g - digraph object to dump zone info from
+ *
+ * Return value:
+ *  None
+ */
+void dump_zone_info(const digraph_t *g)
+{
+  uint_t   i;
+  uint_t   num_zones = g->max_zone + 1;
+
+  if (num_zones == 1) {
+    printf("No zone information (all nodes in zone 0)\n");
+    return;
+  }
+  printf("Number of zones: %u (%u waves)\n", num_zones, num_zones-1);
+  printf("Number of nodes in inner waves: %u\n", g->num_inner_nodes);
+  printf("Nodes in inner waves:");
+  for (i = 0; i < g->num_inner_nodes; i++) {
+    printf(" %u", g->inner_nodes[i]);
+  }
+  printf("\n");
+  printf("Wave of each node:");
+  for (i = 0; i < g->num_nodes; i++) {
+    printf(" %u", g->zone[i]);
+  }
+  printf("\n");
+  printf("Number of ties to/from previous wave for each node:");
+  for (i = 0; i < g->num_nodes; i++) {
+    printf(" %u", g->prev_wave_degree[i]);
+  }
+  printf("\n");
+}
