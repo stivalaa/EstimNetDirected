@@ -581,6 +581,8 @@ digraph_t *allocate_digraph(uint_t num_vertices)
 
   g->zone  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   g->max_zone = 0;
+  g->num_inner_nodes = 0;
+  g->inner_nodes = NULL;
   g->prev_wave_degree  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   return g;
 }
@@ -629,6 +631,7 @@ void free_digraph(digraph_t *g)
   free(g->inTwoPathMatrix);
   free(g->outTwoPathMatrix);
   free(g->zone);
+  free(g->inner_nodes);
   free(g->prev_wave_degree);
   free(g);
 }
@@ -853,7 +856,7 @@ void print_zone_summary(const digraph_t *g)
     printf("No zone information (all nodes in zone 0)\n");
     return;
   }
-  zone_sizes = safe_calloc(num_zones, sizeof(uint_t));
+  zone_sizes = (uint_t *)safe_calloc(num_zones, sizeof(uint_t));
   for (i = 0; i < g->num_nodes; i++) {
     assert(g->zone[i] < num_zones);
     zone_sizes[g->zone[i]]++;
@@ -908,7 +911,8 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
  * Return value:
  *    0 if OK else nonzero for error.
  * 
- * The zone, max_zone and prev_wave_degree fields of g are set here.
+ * The zone, max_zone, num_inner_nodes, inner_nodes, and
+ * prev_wave_degree fields of g are set here.
  *
  * The format of the file is the same as that for categorical
  * attributes (and the same function is used to parse it): a header
@@ -962,7 +966,7 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
   num_zones = g->max_zone + 1;
 
   /* check that the zones are not invalid, no skipped zones */
-  zone_sizes = safe_calloc(num_zones, sizeof(uint_t));
+  zone_sizes = (uint_t *)safe_calloc(num_zones, sizeof(uint_t));
   for (i = 0; i < g->num_nodes; i++) {
     assert(g->zone[i] < num_zones);
     zone_sizes[g->zone[i]]++;
@@ -976,6 +980,28 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
     }
   }
 
+  /*
+   * For conditional estimation, the zone of each node is fixed, as
+   * well as all the ties between nodes in the outermost wave (last
+   * zone) and ties from nodes in the last zone to nodes in the
+   * second-last zone. So in MCMC procedure we to need find nodes only
+   * in the inner waves (i.e. all those apart from the outermost). So
+   * to all this done to be done efficiently we build the inner_nodes
+   * array which is an array of size num_inner_nodes (the number of
+   * nodes in zones other than the last) of each node id in an inner
+   * zone.
+   */
+  for (i = 0; i < g->max_zone; i++) {
+    g->num_inner_nodes += zone_sizes[i];
+  }
+  g->inner_nodes = (uint_t *)safe_calloc(g->num_inner_nodes, sizeof(uint_t));
+  for (u = 0, i = 0; u < g->num_nodes; u++) {
+    if (g->zone[u] < g->max_zone) {
+      assert(i < g->num_inner_nodes);
+      g->inner_nodes[i++] = u;
+    }
+  }
+  
   /*
    * build prev_wave_degree[] which for each node gives the number of
    * edges to or from (i.e. ignoring direction of arc) that node

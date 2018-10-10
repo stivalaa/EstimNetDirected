@@ -69,7 +69,9 @@ typedef struct digraph_s
   /* snowball sampling information, only used for conditional estimation */
   uint_t *zone;        /* for each node, snowball sampling zone (0 for seeds) */
   uint_t max_zone;     /* highest zone number (zone number of outermost wave) */
-  uint_t *prev_wave_degree; /* for each node, number of edges 
+  uint_t num_inner_nodes;/*number of nodes in inner waves (all but last zone)*/
+  uint_t *inner_nodes; /* id of each of the num_inner_nodes inner wave nodes */
+  uint_t *prev_wave_degree; /* for each inner wave node, number of edges 
                                to/from a node in earlier wave (node zone -1 ) */
 } digraph_t;
 
