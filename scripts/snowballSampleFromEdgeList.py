@@ -10,8 +10,7 @@
 #
 ##############################################################################
 ### TODO update to use EstimNetDirected output format and Pajek input format
-"""
- Do snowball sampling in a (large) network, retaining zone information
+"""Do snowball sampling in a (large) network, retaining zone information
  for each sampled node.
 
  Input file is csv with two columns giving edge list of graph: each
@@ -21,11 +20,10 @@
  1,3
  ...etc.
 
- The graph may be directed or undirected. If directed, 'dirty snowball'
- sampling is used, i.e. we do snowball sampling on the unidrected
- versino of the graph (i.e. ignore edge directions), and the sampled
- graph is the directed subgraph of the original directed graph
- induced by the nodes thus sampled.
+ The graph may be directed or undirected. If directed we do snowball
+ sampling on the unidrected version of the graph (i.e. ignore edge
+ directions), and the sampled graph is the directed subgraph of the
+ original directed graph induced by the nodes thus sampled.
 
  Output files (sample description file giving names of following files,
  subgraphs as dense matrices, zone files giving zone for each node,

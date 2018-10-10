@@ -10,11 +10,10 @@
 ##
 ## Input file is Pajek format edge list.
 ##
-## The graph may be directed or undirected. If directed, 'dirty snowball'
-## sampling is used, i.e. we do snowball sampling on the unidrected
-## versino of the graph (i.e. ignore edge directions), and the sampled
-## graph is the directed subgraph of the original directed graph
-## induced by the nodes thus sampled.
+## The graph may be directed or undirected. If directed we do snowball
+## sampling on the unidrected version of the graph (i.e. ignore edge
+## directions), and the sampled graph is the directed subgraph of the
+## original directed graph induced by the nodes thus sampled.
 ##
 ## Output files (sample description file giving names of following
 ## files, subgraphs in Pajek format, zone files in Pajek .clu format

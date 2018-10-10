@@ -148,17 +148,16 @@ snowball_sample <- function(g, num_waves, seeds) {
 ##    a zone attribute for snowball sampling zone(0=seed, 1=first wave, etc.)
 ##
 ## This version does 'snowball sampling' from a directed graph by
-## pretending that all the edges are actually unidrected (i.e. we 'follow'
-## edges regardless of their direction - if there is a node a in our sample
-## and directed link b->a then b will be sampled as we regrad it in the
-## neighbourhood of a here (ignoring the edge direction). Hence this is
-## is not really 'snowball sampling' as the graph we are sampling on
-## is not the same as the actual graph - it is transformed by ignoring
-## the edge dirctions (or equivalently thinking of them all as going 'out'
-## from our seeds and samples). We might call it 'dirty snowball sampling',
-## perhaps.
-## All we have to do to implement this is use as.undirected(g) instead of just g
-## in the neighbors() function.
+## pretending that all the edges are actually unidrected (i.e. we
+## 'follow' edges regardless of their direction - if there is a node a
+## in our sample and directed link b->a then b will be sampled as we
+## regrad it in the neighbourhood of a here (ignoring the edge
+## direction). Hence this is is not really 'snowball sampling' as the
+## graph we are sampling on is not the same as the actual graph - it
+## is transformed by ignoring the edge dirctions (or equivalently
+## thinking of them all as going 'out' from our seeds and
+## samples). All we have to do to implement this is use
+## as.undirected(g) instead of just g in the neighbors() function.
 
 snowball_sample_from_digraph <- function(g, num_waves, seeds) {
   V(g)$zone <- NA
