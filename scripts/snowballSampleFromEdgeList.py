@@ -9,7 +9,6 @@
 #
 #
 ##############################################################################
-### TODO update to use EstimNetDirected output format and Pajek input format
 """Do snowball sampling in a (large) network, retaining zone information
  for each sampled node.
 
@@ -25,10 +24,10 @@
  directions), and the sampled graph is the directed subgraph of the
  original directed graph induced by the nodes thus sampled.
 
- Output files (sample description file giving names of following files,
- subgraphs as dense matrices, zone files giving zone for each node,
- attirbute files giving attributes for each node) in a directory
- in format used by parallel SPNet.
+ Output files (sample description file giving names of following
+ files, subgraphs in Pajek format, zone files in Pajek .clu format
+ giving zone for each node, attirbute files giving attributes for
+ each node) in a directory in format used by EstimNetDirected
 
  WARNING: the output files are overwritten if they exist.
 
@@ -60,7 +59,7 @@ import random
 
 import snap
 
-from snowballSample import snowball_sample,write_graph_file,write_zone_file,write_subactors_file
+from snowballSample import snowball_sample,write_graph_file,write_zone_file
 
 
 #-----------------------------------------------------------------------------
@@ -161,7 +160,6 @@ def main():
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
         # TODO get actor attributes (currently just writes file with no attrs)
-        write_subactors_file(subactor_filename, Gsample, nodelist)
         
         # format of sampledesc file is:
         # N subzone_filename subgraph_filename subactor_filename

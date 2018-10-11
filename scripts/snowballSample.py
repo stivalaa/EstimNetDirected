@@ -8,7 +8,6 @@
 # Created: April 2018
 #
 ##############################################################################
-### TODO update to use EstimNetDirected output format and Pajek input format
 """
 Functions to do snowball sampling in a (large) network using 
 SNAP, annotating node with snowball sampling zone.
@@ -63,7 +62,7 @@ def snowball_sample(G, num_waves, seeds):
     for seed in seeds:
         zonedict[seed] = 0  # seed nodes are zone 0
     newNodes = set(nodes)
-    for i in range(num_waves):
+    for i in range(num_waves-1):
         wave = i + 1
         #print 'wave',wave
         for node in set(newNodes):
@@ -88,9 +87,10 @@ def snowball_sample(G, num_waves, seeds):
     return sampleN
 
 
-def write_graph_file(filename, G, nodelist, write_header=True):
+def write_graph_matrix_file(filename, G, nodelist, write_header=True):
     """
-    write_graph_file() - write adjacency matrix in parallel SPNet format
+    write_graph_file() - write adjacency matrix in Pajek
+                         format as used by parallel SPNet
     
     Note the graph must have nodes numbered 0..N-1 (which can be done
     with snap.ConvertGraph())
@@ -118,6 +118,32 @@ def write_graph_file(filename, G, nodelist, write_header=True):
             f.write("\n")
 
 
+def write_graph_file(filename, G, nodelist, write_header=True):
+    """
+    write_graph_file() - write edge list in Pajek format
+    
+    Note the graph must have nodes numbered 0..N-1 (which can be done
+    with snap.ConvertGraph())
+
+    Parameters:
+      filename - filename to write to (warning: overwritten)
+      G - SNAP graph object
+      nodelist - list of nodeids, used to order the nodes in the output
+      write_header - if True write Pajek header lines
+
+    Return value:
+       None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(nodelist) == len(set(nodelist))) # nodeids must be unique
+    with open(filename, 'w') as f:
+        if write_header:
+            f.write("*vertices " + str(G.GetNodes()) + "\n")
+            f.write("*arcs\n")
+        for EI in G.Edges():
+            f.write("%d %d\n" % (EI.GetSrcNId()+1, EI.GetDstNId()+1))
+
+
 def write_zone_file(filename, G, nodelist, zonedict):
     """
     write_zone_file() - write zone file in parallel SPNet (Pajek .clu) format
@@ -141,47 +167,3 @@ def write_zone_file(filename, G, nodelist, zonedict):
             f.write(str(G.GetIntAttrDatN(i, "zone")) + '\n')
 
 
-def write_subactors_file(filename, G, nodelist):
-    """
-    write_subactors_file() - write subactors file in parallel SPNet format
-
-    Parameters:
-      filename - filename to write to (WARNING: overwritten)
-      G - SNAP graph/network object
-      nodelist - list of nodeids used to order the nodes in the output
-
-    Return value:
-      None
-
-    See documentation of this file in snowball.c readSubactorsFile()
-    (format written by showActorsFile())
-    """
-    assert(len(nodelist) == G.GetNodes())
-    # TODO get atttribute,s current just writes file with no attributes
-    num_bin_attr = 0
-    num_cont_attr = 0
-    num_cat_attr = 0
-    with open(filename, 'w') as f:
-        f.write("* Actors " + str(G.GetNodes()) + '\n')
-        f.write("* Number of Binary Attributes = " + str(num_bin_attr) + '\n')
-        f.write("* Number of Continuous Attributes = " + str(num_cont_attr) + '\n')
-        f.write("* Number of Categorical Attributes = " + str(num_cat_attr) + '\n')
-        f.write("Binary Attributes:\n")
-        f.write("id\n") #TODO write binary attribute names
-        nodeidx = 1
-        for i in nodelist:
-            f.write("%d \n" % nodeidx) # TODO write binary attributes
-            nodeidx += 1
-        f.write("Continuous Attributes:\n")
-        f.write("id\n") #TODO write continuous attribute names
-        nodeidx = 1
-        for i in nodelist:
-            f.write("%d \n" % nodeidx) # TODO write continuous attributes
-            nodeidx += 1
-        f.write("Categorical Attributes:\n")
-        f.write("id\n") #TODO write categorical attribute names
-        nodeidx = 1
-        for i in range(G.GetNodes()):
-            f.write("%d \n" % nodeidx) # TODO write categorical attributes 
-            nodeidx += 1
-       
