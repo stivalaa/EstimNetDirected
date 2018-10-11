@@ -37,7 +37,7 @@ outputSimulatedNetwork = True  # write the simulated network to file
 # [note this part is optional for EstimeNetDirected] then *arcs
 # followed by arcs list one per line.
 
-arclistFile = ../../pythonDemo/sample_statistics_n2000_directed_sim5000000.txt
+arclistFile = subgraph0.txt
 
 # Attribute files
 # binattr_file for binary attributes (0 or 1 only)
@@ -60,7 +60,7 @@ arclistFile = ../../pythonDemo/sample_statistics_n2000_directed_sim5000000.txt
 
 # snowball sampling zones in same format as categorical attributes, but
 # only the zone attribute is allowed. It starts from 0 for seed nodes.
-zoneFile = subzone0.clu
+zoneFile = subzone0.txt
 
 ################## Output filenames ##########################################
 
