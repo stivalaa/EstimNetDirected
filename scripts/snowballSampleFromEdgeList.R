@@ -70,7 +70,7 @@ if (length(args) == 6) {
 input_pajek_file <- args[basearg+1]
 num_samples <- as.integer(args[basearg+2])
 num_seeds <- as.integer(args[basearg+3])
-num_waves <- as.integer(args[basearg+4])-1 ## -1 for consistency with SPNet
+num_waves <- as.integer(args[basearg+4])
 output_dir <- args[basearg+5]
 
 if (!file.exists(output_dir)) {
