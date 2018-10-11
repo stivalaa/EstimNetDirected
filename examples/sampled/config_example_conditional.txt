@@ -60,7 +60,7 @@ arclistFile = ../../pythonDemo/sample_statistics_n2000_directed_sim5000000.txt
 
 # snowball sampling zones in same format as categorical attributes, but
 # only the zone attribute is allowed. It starts from 0 for seed nodes.
-zoneFile = zonefile_example.txt
+zoneFile = subzone0.clu
 
 ################## Output filenames ##########################################
 

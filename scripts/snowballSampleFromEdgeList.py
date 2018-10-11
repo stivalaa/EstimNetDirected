@@ -25,7 +25,7 @@
  original directed graph induced by the nodes thus sampled.
 
  Output files (sample description file giving names of following
- files, subgraphs in Pajek format, zone files in Pajek .clu format
+ files, subgraphs in Pajek format, zone files in simple format
  giving zone for each node, attirbute files giving attributes for
  each node) in a directory in format used by EstimNetDirected
 
@@ -156,7 +156,7 @@ def main():
         snap.PrintInfo(Gsample)
         subgraph_filename = outputdir + os.path.sep + "subgraph" + str(i) + os.path.extsep + "txt"
         write_graph_file(subgraph_filename, Gsample, nodelist)
-        subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "clu"
+        subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "txt"
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
         # TODO get actor attributes (currently just writes file with no attrs)

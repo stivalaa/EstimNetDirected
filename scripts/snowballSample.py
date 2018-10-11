@@ -146,8 +146,11 @@ def write_graph_file(filename, G, nodelist, write_header=True):
 
 def write_zone_file(filename, G, nodelist, zonedict):
     """
-    write_zone_file() - write zone file in parallel SPNet (Pajek .clu) format
+    write_zone_file() - write zone file in EstimNetDirected format
     
+    The format of the zone file is just the header line "zone"
+    and the the zone (staring at 0) of each node one per line.
+
     Parameters:
       filename -filename to write to (warning: overwritten)
       G - SNAP graph/network object. Must be node numbered 0..N-1
@@ -161,7 +164,8 @@ def write_zone_file(filename, G, nodelist, zonedict):
     assert(len(zonedict) == len(nodelist))
     assert(len(nodelist) == G.GetNodes())
     with open(filename, 'w') as f:
-        f.write("*vertices " + str(G.GetNodes()) + '\n')
+        #f.write("*vertices " + str(G.GetNodes()) + '\n')
+        f.write("zone\n")
         for i in nodelist:
             assert(G.GetIntAttrDatN(i, "zone") == zonedict[i])
             f.write(str(G.GetIntAttrDatN(i, "zone")) + '\n')

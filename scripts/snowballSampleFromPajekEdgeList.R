@@ -16,7 +16,7 @@
 ## original directed graph induced by the nodes thus sampled.
 ##
 ## Output files (sample description file giving names of following
-## files, subgraphs in Pajek format, zone files in Pajek .clu format
+## files, subgraphs in Pajek format, zone files in simple format
 ## giving zone for each node, attirbute files giving attributes for
 ## each node) in a directory in format used by EstimNetDirected
 ##
@@ -109,7 +109,7 @@ for (i in 1:num_samples) {
   subgraph_filename <- paste(output_dir, .Platform$file.sep, "subgraph", i-1,
                              ".txt", sep="")
   subzone_filename <- paste(output_dir, .Platform$file.sep, "subzone", i-1,
-                            ".clu", sep="")
+                            ".txt", sep="")
   write_graph_file(subgraph_filename, g_sample)
   write_zone_file(subzone_filename,  V(g_sample)$zone)
 

@@ -185,8 +185,11 @@ write_graph_file <- function(filename, g) {
 }
 
 ##
-## write_zone_file() - write zone file in parallel spnet (Pajek .clu) file format
+## write_zone_file() - write zone file in EstimNetDirected format
 ##
+##    The format of the zone file is just the header line "zone"
+##    and the the zone (staring at 0) of each node one per line.
+#3
 ## Parameters:
 ##    filename - filename to write to (warning: overwritten)
 ##    zones  - vector of snowball zones (waves) 0..n (0 for seed node)
@@ -197,7 +200,8 @@ write_graph_file <- function(filename, g) {
 ##
 write_zone_file <- function(filename, zones) {
   f <- file(filename, open="wt")
-  cat('*vertices ', length(zones), '\n', file=f)
+  ## cat('*vertices ', length(zones), '\n', file=f)
+  cat('zone\n', file=f)
   write.table(zones, file=f, row.names=F, col.names=F)
   close(f)
 }
