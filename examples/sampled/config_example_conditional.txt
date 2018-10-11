@@ -72,15 +72,15 @@ zoneFile = subzone0.txt
 
 # Theta (estimated parameter) values output file prefix
 
-thetaFilePrefix = theta_sim_n1000_sample
+thetaFilePrefix = theta_sim_n2000_sample
 
 # dzA (statistics deltas, which should osciallate about zero at equilibrium)
 # values output file prefix 
 
-dzAFilePrefix = dzA_sim_n1000_sample
+dzAFilePrefix = dzA_sim_n2000_sample
 
 # Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
-simNetFilePrefix = sim_sim_n1000_sample
+simNetFilePrefix = sim_sim_n2000_sample
 
 ################## Parameters to estimate ####################################
 
@@ -88,8 +88,7 @@ simNetFilePrefix = sim_sim_n1000_sample
 # Structural parameters
 #
 
-structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT, 
-                 AltTwoPathsTD }
+structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT}
 
 #
 # Attribute parameters
