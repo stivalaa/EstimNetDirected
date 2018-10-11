@@ -106,7 +106,7 @@ def main():
     edgelistFilename = args[0]
     num_samples = int(args[1])
     num_seeds = int(args[2])
-    num_waves = int(args[3]) - 1 # -1 for consistency with SPNet
+    num_waves = int(args[3])
     outputdir = args[4]
 
     print "directed:", directed
