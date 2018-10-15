@@ -91,7 +91,8 @@ giant.component <- function(graph) {
 ##
 ## Parameters:
 ##    g - graph to sample from( igraph)
-##    num_waves - number of snowball waves (e.g. 3 waves gizes zones 0,1,2)
+##    num_waves - number of snowball waves (e.g. 2 waves gizes zones 0,1,2;
+##                note that the seed set (zone 0) does not count as 'wave' here)
 ##    seeds - vector of seeds (node ids) to start snowball sample from
 ##
 ## Return value:
@@ -105,7 +106,7 @@ giant.component <- function(graph) {
 ## 
 ## or (to get the zone numbers (waves) instead of spedifying on input as above):
 ##
-## lapply(sample.int(vcount(g), size=num_seeds), function(r) {zones <- graph.bfs(h, root=r, order=F, rank=F, father=F,pred=F,succ=F,dist=T,unreachable=F)$dist; list(nodes=which(zones<num_waves), zones=zones[which(zones<num_waves)])} )
+## lapply(sample.int(vcount(g), size=num_seeds), function(r) {zones <- graph.bfs(h, root=r, order=F, rank=F, father=F,pred=F,succ=F,dist=T,unreachable=F)$dist; list(nodes=which(zones<=num_waves), zones=zones[which(zones<=num_waves)])} )
 ##
 ## but in the end it is actually easier to just explictly write the code
 ## explicitly as done here to get the zones for all nodes without running
@@ -118,7 +119,7 @@ snowball_sample <- function(g, num_waves, seeds) {
   V(g)[seeds]$zone <- 0
   nodes <- seeds
   newnodes <- nodes
-  for (i in 1:(num_waves-1)) {
+  for (i in 1:num_waves) {
     newnodes <- Reduce(union, lapply(newnodes, function(v) 
                          Filter(function(x) !(x %in% nodes), neighbors(g, v))))
     if (!is.null(newnodes)) {
@@ -134,7 +135,7 @@ snowball_sample <- function(g, num_waves, seeds) {
 ##
 ## Parameters:
 ##    g - graph to sample from( igraph)
-##    num_waves - number of snowball waves (e.g. 3 waves gizes zones 0,1,2)
+##    num_waves - number of snowball waves (e.g. 2 waves gizes zones 0,1,2)
 ##    seeds - vector of seeds (node ids) to start snowball sample from
 ##
 ## Return value:
@@ -158,7 +159,7 @@ snowball_sample_from_digraph <- function(g, num_waves, seeds) {
   V(g)[seeds]$zone <- 0
   nodes <- seeds
   newnodes <- nodes
-  for (i in 1:(num_waves-1)) {
+  for (i in 1:num_waves) {
     newnodes <- Reduce(union, lapply(newnodes, function(v) 
                          Filter(function(x) !(x %in% nodes),
                                 neighbors(as.undirected(g), v))))

@@ -62,7 +62,7 @@ def snowball_sample(G, num_waves, seeds):
     for seed in seeds:
         zonedict[seed] = 0  # seed nodes are zone 0
     newNodes = set(nodes)
-    for i in range(num_waves-1):
+    for i in range(num_waves):
         wave = i + 1
         #print 'wave',wave
         for node in set(newNodes):
