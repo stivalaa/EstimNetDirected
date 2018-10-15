@@ -433,6 +433,15 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
   updateTwoPathsMatrices(g, i, j, TRUE);
   DIGRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
   assert(isArc(g, i, j));
+
+  /* update zone information for snowball conditional estimation */
+  if (g->zone[i] > g->zone[j]) {
+    assert(g->zone[i] == g->zone[j] + 1);
+    g->prev_wave_degree[i]++;
+  } else if (g->zone[j] > g->zone[i]) {
+    assert(g->zone[j] == g->zone[i] + 1);
+    g->prev_wave_degree[j]++;
+  }
 }
 
 /*
@@ -493,6 +502,15 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
   g->outdegree[i]--;
   g->indegree[j]--;
   updateTwoPathsMatrices(g, i, j, FALSE);
+
+  /* update zone information for snowball conditional estimation */ 
+  if (g->zone[i] > g->zone[j]) {
+    assert(g->prev_wave_degree[i] > 1);
+    g->prev_wave_degree[i]--;
+  } else if (g->zone[j] > g->zone[i]) {
+    assert(g->prev_wave_degree[j] > 1);
+    g->prev_wave_degree[j]--;
+  }
 }
 
 

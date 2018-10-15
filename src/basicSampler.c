@@ -118,12 +118,38 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     addChangeStats[i] = delChangeStats[i] = 0;
 
   for (k = 0; k < sampler_m; k++) {
-    /* select two nodes i and j uniformly at random and toggle arc between them*/
-    i = int_urand(g->num_nodes);
-    do {
-      j = int_urand(g->num_nodes);
-    } while (i == j);
 
+    if (useConditionalEstimation) {
+      /* Select two nodes i, j in inner waves (i.e. fixing ties in
+         outermost wave and between outermost and second-outermost
+         waves) uniformly at random, and toggle arc between them,
+         however with the additional constraints for snowball sample
+         conditional estimation that a tie can only be between adjacent
+         waves and a tie cannot be deleted if it is last reamainign tie
+         connecting node to preceding wave. Note ignoring arc direction
+         here as assumed snowball sample ignored arc directions. */
+      do {
+        i = g->inner_nodes[int_urand(g->num_inner_nodes)];
+        do {
+          j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
+        } while (i == j);
+        assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+        /* any tie must be within same zone or between adjacent zones */
+        assert(!isArcIgnoreDirection(g, i, j) ||
+               labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+      } while (labs((long)g->zone[i] - (long)g->zone[j]) > 1 ||
+               (isArcIgnoreDirection(g, i, j) &&
+                ((g->zone[i] > g->zone[j] && g->prev_wave_degree[i] == 1) ||
+                 (g->zone[j] > g->zone[i] && g->prev_wave_degree[j] == 1))));
+    } else {
+      /* Basic sampler (no conditional estimation): select two
+         nodes i and j uniformly at random and toggle arc between
+         them. */
+      i = int_urand(g->num_nodes);
+      do {
+        j = int_urand(g->num_nodes);
+      } while (i == j);
+    }
 
     /* The change statistics are all computed on the basis of adding arc i->j
        so if if the arc exists, we temporarily remove it to compute the
