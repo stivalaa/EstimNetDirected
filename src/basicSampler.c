@@ -46,6 +46,8 @@
  *   sampler_m   - Number of proposals (sampling iterations)
  *   performMove - if true, moves are actually performed (digraph updated).
  *                 Otherwise digraph is not actually changed.
+ *   useConditionalEstimation - if True do conditional estimation of snowball
+ *                              network sample.
  *
  * Return value:
  *   Acceptance rate.
@@ -67,7 +69,8 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_t attr_indices[], double theta[],
                     double addChangeStats[], double delChangeStats[],
                     uint_t sampler_m,
-                    bool performMove)
+                    bool performMove,
+                    bool useConditionalEstimation)
 {
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;

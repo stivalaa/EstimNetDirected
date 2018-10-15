@@ -50,7 +50,8 @@ typedef struct config_s {
   char *theta_file_prefix;/* theta output filename prefix */
   char *dzA_file_prefix;  /* dzA output filename prefix */
   char *sim_net_file_prefix; /* simulated network output filename prefix */
-  char  *zone_filename;    /* filename of snowball sampling zone file or NULL */
+  char *zone_filename;    /* filename of snowball sampling zone file or NULL */
+  bool  useConditionalEstimation; /*conditional estimation of snowball sample */ 
 
   /*
    * values built by confiparser.c functions from parsed config settings

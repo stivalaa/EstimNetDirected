@@ -27,7 +27,13 @@ EEsteps= 500 # steps of Algorithm EE.
               
 EEinnerSteps = 100 # inner iterations of Algorithm EE
 
-outputSimulatedNetwork = True  # write the simulated network to file
+################## Algorithm choices #######################################
+
+useConditionalEstimation = True # conditional estimation of snowball sample
+
+#useIFDsampler = True            # use the IFD sampler
+
+outputSimulatedNetwork = True   # write the simulated network to file
 
 ################## Input filenames ###########################################
 
@@ -88,7 +94,7 @@ simNetFilePrefix = sim_sim_n2000_sample
 # Structural parameters
 #
 
-structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT}
+structParams =  {Arc,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT}
 
 #
 # Attribute parameters

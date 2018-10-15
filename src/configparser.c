@@ -169,6 +169,10 @@ static const config_param_t CONFIG_PARAMS[] = {
   {"zoneFile",      PARAM_TYPE_STRING,  offsetof(config_t, zone_filename),
    "snowball sample zone file"},
 
+  {"useConditionalEstimation", PARAM_TYPE_BOOL,
+   offsetof(config_t, useConditionalEstimation),
+   "do conditional estimation for snowball network sample"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -267,6 +271,7 @@ config_t CONFIG = {
   NULL,  /* dzA_file_prefix */
   NULL,  /* sim_net_file_prefix */
   NULL,  /* zone_filename */
+  FALSE, /* useConditionalEstimation */
   0,     /* num_change_stats_funcs */
   NULL,  /* change_stats_funcs */
   NULL,  /* param_names */
@@ -315,6 +320,7 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* dzA_file_prefix */
   FALSE, /* sim_net_file_prefix */
   FALSE, /* zone_filename */
+  FALSE, /* useConditionalEstimation */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE  /* (NOT USED) dyadicParams */

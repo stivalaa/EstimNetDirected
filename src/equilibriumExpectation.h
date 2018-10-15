@@ -34,7 +34,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  double theta[],
                  double Dmean[],
                  FILE *theta_outfile,
-                 bool useIFDsampler, double ifd_K);
+                 bool useIFDsampler, double ifd_K,
+                 bool useConditionalEstimation);
 
 void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   change_stats_func_t *change_stats_funcs[],
@@ -47,7 +48,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double D0[],
                   double theta[],
                   FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
-                  bool useIFDsampler, double ifd_K);
+                  bool useIFDsampler, double ifd_K,
+                  bool useConditionalEstimation);
 
 
 void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
@@ -59,7 +61,8 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  uint_t Msteps, double ACA_S, double ACA_EE, double compC,
                  double theta[], uint_t tasknum,
                  FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
-                 bool useIFDsampler, double ifd_K);
+                 bool useIFDsampler, double ifd_K,
+                 bool useConditionalEstimation);
 
 int do_estimation(config_t *config, uint_t tasknum);
 

@@ -73,6 +73,7 @@ FILE *Kafile;  /* FIXME should not be a file global and should be one per task f
  *   useIFDsampler - use IFD sampler instead of basic sampler
  *   ifd_K         - constant for multipliying IFD auxiliary parameter
  *                   (only used if useIFDsampler is True).
+ *   useConditionalEstimation - do conditional estimation of snowball sample
  *
  * Return value:
  *   None.
@@ -93,7 +94,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  double Dmean[],
                  FILE * theta_outfile,
                  bool useIFDsampler,
-                 double ifd_K)
+                 double ifd_K,
+                 bool useConditionalEstimation)
 {
   uint_t t, l;
   double acceptance_rate;
@@ -123,7 +125,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    attr_indices, theta,
                                    addChangeStats, delChangeStats, sampler_m,
                                    FALSE,
-                                   ifd_K, &dzArc, &ifd_aux_param);
+                                   ifd_K, &dzArc, &ifd_aux_param,
+                                   useConditionalEstimation);
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else {
@@ -132,7 +135,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_indices, theta,
                                      addChangeStats, delChangeStats, sampler_m,
-                                     FALSE);
+                                     FALSE, useConditionalEstimation);
     }
     for (l = 0; l < n; l++) {
       dzA[l] = delChangeStats[l] - addChangeStats[l];
@@ -204,6 +207,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *  useIFDsampler  - if True, use IFD sampler instead of basic sampler.
  *  ifd_K          - constant for multipliying IFD auxiliary parameter step
  *                   size (only used if useIFDsampler is True).
+ *  useConditionalEstimation - if True, do conditional estimation for snowball
+ *                             network samples.
  *
  * Return value:
  *   None.
@@ -222,7 +227,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double D0[],
                   double theta[],
                   FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
-                  bool useIFDsampler, double ifd_K)
+                  bool useIFDsampler, double ifd_K,
+                  bool useConditionalEstimation)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -263,7 +269,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      attr_indices, theta,
                                      addChangeStats, delChangeStats, sampler_m,
                                      TRUE, /*Algorithm EE actually does moves */
-                                     ifd_K, &dzArc, &ifd_aux_param);
+                                     ifd_K, &dzArc, &ifd_aux_param,
+                                     useConditionalEstimation);
         if (useIFDsampler && (outputAllSteps || tinner == 0)) {
           /* difference of Arc statistic for IFD sampler is just Ndel-Nadd */
           fprintf(dzA_outfile, "%g ", dzArc);
@@ -276,7 +283,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                       dyadic_change_stats_funcs,
                                       attr_indices, theta,
                                       addChangeStats, delChangeStats, sampler_m,
-                                      TRUE); /*Algorithm EE actually does moves */
+                                      TRUE,/*Algorithm EE actually does moves */
+                                       useConditionalEstimation);
       }
       for (l = 0; l < n; l++) {
         dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -372,6 +380,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                    sampler
  *   ifd_K          - consant for multiplying IFD auxiliary parameter
  *                    (only used if useIFDsampler is True).
+ *   useConditionalEstimation - if True, do conditional estimation of 
+ *                              snowball network samples.
  *   
  *
  * Return value:
@@ -389,7 +399,8 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  uint_t Msteps, double ACA_S, double ACA_EE, double compC,
                  double theta[], uint_t tasknum,
                  FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
-                 bool useIFDsampler, double ifd_K)
+                 bool useIFDsampler, double ifd_K,
+                 bool useConditionalEstimation)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -405,6 +416,10 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (useIFDsampler)
     printf("task %u: IFD sampler ifd_K = %g, arcCorrection = %g\n",
            tasknum, ifd_K, arcCorrection(g));
+
+  if (useConditionalEstimation)
+    printf("task %u: Doing conditional estimation of snowball sample\n",
+      tasknum);
 
    /* steps of algorithm S (M1_steps adjusted by number of nodes) */
   uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);
@@ -426,7 +441,7 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   algorithm_S(g, n, n_attr, n_dyadic, change_stats_funcs,
               attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices, 
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
-              ifd_K);
+              ifd_K, useConditionalEstimation);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -456,7 +471,7 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices,
                Mouter, M, sampler_m, ACA_EE, compC,
                Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
-               useIFDsampler, ifd_K);
+               useIFDsampler, ifd_K, useConditionalEstimation);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -591,6 +606,21 @@ int do_estimation(config_t * config, uint_t tasknum)
      }
    }
 
+   /* Ensure that if conditional estimation is to be used, the snowball
+      sampling zone structure was specified */
+   if (config->useConditionalEstimation) {
+     if (!config->zone_filename) {
+       fprintf(stderr,
+           "ERROR: conditional estimation requested but no zones specified\n");
+       return -1;
+     }
+     if (g->max_zone < 1) {
+       fprintf(stderr,
+               "ERROR: conditional estimation requested but only one zone\n");
+       return -1;
+     }
+   }
+
   if (!(dzA_outfile = fopen(dzA_outfilename, "w"))) {
     fprintf(stderr, "ERROR: task %d could not open file %s for writing "
             "(%s)\n", tasknum, dzA_outfilename, strerror(errno));
@@ -623,7 +653,8 @@ int do_estimation(config_t * config, uint_t tasknum)
               config->ACA_S, config->ACA_EE, config->compC,
               theta, tasknum, theta_outfile, dzA_outfile,
               config->outputAllSteps,
-              config->useIFDsampler, config->ifd_K);
+              config->useIFDsampler, config->ifd_K,
+              config->useConditionalEstimation);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);

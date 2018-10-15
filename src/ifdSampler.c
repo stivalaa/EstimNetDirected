@@ -77,6 +77,8 @@ double arcCorrection(const digraph_t *g) {
  *   dzArc       - (Out) Arc statistic differnce from observed: just Ndel-Nadd
  *   ifd_aux_param  - (In/Out) IFD auxiliary parameter. Pass zero initially, then
  *                    reuse each call to update.
+ *   useConditionalEstimation - if True do conditional estimation of snowball
+ *                              network sample.
  *
  * Return value:
  *   Acceptance rate.
@@ -94,7 +96,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double addChangeStats[], double delChangeStats[],
                   uint_t sampler_m,
                   bool performMove,
-                  double ifd_K, double *dzArc, double *ifd_aux_param)
+                  double ifd_K, double *dzArc, double *ifd_aux_param,
+                  bool useConditionalEstimation)
 {
   static bool   isDelete = FALSE; /* delete or add move. FIXME don't use static, make param */
 
@@ -109,6 +112,11 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t  i,j,k,l,param_i;
   uint_t  arcidx = 0;
 
+  if (useConditionalEstimation) {
+    fprintf(stderr, "ERROR: conditional estimation not implemented for IFD sampler yet\n");
+    exit(1); /* TODO conditional esitimation in IFD sampler */
+  }
+  
   for (i = 0; i < n; i++)
     addChangeStats[i] = delChangeStats[i] = 0;
 

@@ -21,7 +21,8 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_t attr_indices[], double theta[],
                     double addChangeStats[], double delChangeStats[], 
                     uint_t sampler_m,
-                    bool performMove);
+                    bool performMove,
+                    bool useConditionalEstimation);
 
 #endif /* BASICSAMPLER_H */
 
