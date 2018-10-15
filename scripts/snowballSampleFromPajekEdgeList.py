@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ##############################################################################
 #
-# snowballSampleFromEdgeList.py - snowball sample from edge list
+# snowballSampleFromPajekEdgeList.py - snowball sample from Pajek format edge list
 #
 # File:    snowballSampleFromEdgeList.py
 # Author:  Alex Stivala
@@ -12,12 +12,9 @@
 """Do snowball sampling in a (large) network, retaining zone information
  for each sampled node.
 
- Input file is csv with two columns giving edge list of graph: each
- column is a node id 1..N e.g.:
-
- 1,2
- 1,3
- ...etc.
+ Input file is a Pajek format network file with either 1 edge per
+ line or 1 node per line format (see
+ https://snap.stanford.edu/snappy/doc/reference/LoadPajek.html)
 
  The graph may be directed or undirected. If directed we do snowball
  sampling on the unidrected version of the graph (i.e. ignore edge
@@ -42,10 +39,10 @@
 
  Usage:
  
- python snowballSampleFromEdgelist.py [-d]  adjlist.csv num_samples num_seeds num_waves outputdir
+ python snowballSampleFromPajekEdgelist.py [-d]  edgelist.net num_samples num_seeds num_waves outputdir
 
     -d : graph is directed, otherwise undirected
-    adjlist.csv is .csv file with edge list as above
+    edgelist.net is Pajek form edge list as above
     num_samples is number of snowball samples to create
     num_seeds it number of seeds in each sample
     num_Waves is numer of snowball sampling waves
@@ -79,7 +76,7 @@ def usage(progname):
     """
     print usage msg and exit
     """
-    sys.stderr.write("usage: " + progname + " [-d] adjlist.csv num_samples num_seeds num_waves outputdir\n")
+    sys.stderr.write("usage: " + progname + " [-d] edgelist.net num_samples num_seeds num_waves outputdir\n")
     sys.stderr.write("  -d: directed graph\n")
     sys.exit(1)
 
@@ -117,8 +114,8 @@ def main():
     if not os.path.exists(outputdir):
         os.mkdir(outputdir)
 
-    G = snap.LoadEdgeList(snap.PNGraph if directed else snap.PUNGraph, 
-                          edgelistFilename, 0, 1, ',')
+    G = snap.LoadPajek(snap.PNGraph if directed else snap.PUNGraph, 
+                          edgelistFilename)
     snap.PrintInfo(G)
 
 
