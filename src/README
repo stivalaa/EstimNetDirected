@@ -1,17 +1,39 @@
 Directory for C implementation of EE algorithm for directed networks.
 
-Reference for original algorithm (for undirected networks) is
-
+Reference for original algorithm (for undirected networks) is:
 
 Byshkin M, Stivala A, Mira A, Robins G, Lomi A 2018 "Fast maximum
 likelihood estimation via equilibrium expectation for large network
 data". Scientific Reports 8:11509 doi:10.1038/s41598-018-29725-8
 
-Reference for the change statistics functions is
+
+Reference for improved fixed density (IFD) sampler is:
+
+Byshkin, M., Stivala, A., Mira, A., Krause, R., Robins, G., & Lomi,
+A. (2016). Auxiliary parameter MCMC for exponential random graph
+models. Journal of Statistical Physics, 165(4), 740-754.
+
+
+Reference for the change statistics functions is:
 
 Wang P, Robins G, Pattison P. PNet: A program for the simulation and
 estimation of exponential random graph models. University of
 Melbourne. 2006.
+
+
+References for conditional estimation of snowball sampled network are:
+
+Pattison, P. E., Robins, G. L., Snijders, T. A., & Wang,
+P. (2013). Conditional estimation of exponential random graph models
+from snowball sampling designs. Journal of Mathematical Psychology,
+57(6), 284-296.
+
+Stivala, A. D., Koskinen, J. H., Rolls, D. A., Wang, P., & Robins,
+G. L. (2016). Snowball sampling for estimating exponential random
+graph models for large networks. Social Networks, 47, 167-188.
+
+
+
 
 Uses the Random 123 pseudo-random number generator by D. E. Shaw
 Research. Downloaded from
