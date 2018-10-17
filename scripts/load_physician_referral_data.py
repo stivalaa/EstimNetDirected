@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# load_physician_referral_data.py -  load physician referran network in SNAP
+# load_physician_referral_data.py -  load physician referral network in SNAP
 #
 #
 # File:    load_physician_referral_data.py
@@ -10,8 +10,8 @@
 ##############################################################################
 
 """
-Function to load the physician referral data from zip file and convert
-and convert to SNAP format.
+Function to load the physician referral data from zip file and
+convert to SNAP format.
 
 Physician referral data from Centers for Medicare & Medicaid Services
 (CMS.gov): https://questions.cms.gov/faq.php?faqId=7977
@@ -22,7 +22,7 @@ https://www.cms.gov/Regulations-and-Guidance/Legislation/FOIA/Referral-Data-FAQs
 as used in the paper:
   
  An, C., O'Malley, A. J., Rockmore, D. N., & Stock, C. D. (2017).
-Analysis of the US patient referral network. Statistics in Medicine. 
+ Analysis of the US patient referral network. Statistics in Medicine. 
  DOI: 10.1002/sim.7565
   
 Documentation from 
@@ -42,6 +42,7 @@ E.g.
     G = load_physician_referral_data('/vlsci/VR0261/stivalaa/Physician_referral_data/physician-shared-patient-patterns-2014-days30.zip')
 
 NB this uses at least 2.5 GB tmp file space and memory
+
 """
 
 import os,sys
