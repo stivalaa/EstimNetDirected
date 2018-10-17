@@ -1,30 +1,34 @@
 #!/usr/bin/env python
 ##############################################################################
 #
-# snowballSampleFromPajekEdgeList.py - snowball sample from Pajek format edge list
+# snowballSampleFromPhysicianReferralData.py - snowball sample physician network
 #
-# File:    snowballSampleFromPajekEdgeList.py
+# File:    snowballSampleFromPhysicianReferralData.py
 # Author:  Alex Stivala
 # Created: May 2018
 #
 #
 ##############################################################################
-"""Do snowball sampling in a (large) network, retaining zone information
- for each sampled node.
 
- Input file is a Pajek format network file with either 1 edge per
- line or 1 node per line format (see
- https://snap.stanford.edu/snappy/doc/reference/LoadPajek.html)
+"""
+Do snowball sampling in a the physician referral network (directed)
 
- The graph may be directed or undirected. If directed we do snowball
- sampling on the unidrected version of the graph (i.e. ignore edge
- directions), and the sampled graph is the directed subgraph of the
- original directed graph induced by the nodes thus sampled.
+Output files (sample description file giving names of following files,
+subgraphs as dense matrices, zone files giving zone for each node,
+attirbute files giving attributes for each node) in a directory
+in format used by parallel SPNet.
 
- Output files (sample description file giving names of following
- files, subgraphs in Pajek format, zone files in simple format
- giving zone for each node, attirbute files giving attributes for
- each node) in a directory in format used by EstimNetDirected
+Usage:
+ 
+   snowballSampleFromPhysicianReferralData.py data_dir num_samples num_seeds num_waves outputdir
+
+   data_dir is directory containing the physician referral data from https://questions.cms.gov/faq.php?faqId=7977
+            (see load_physician_referral_data.R)
+   num_samples is number of snowball samples to create
+   num_seeds it number of seeds in each sample
+   num_Waves is numer of snowball sampling waves
+   outputdir is output directory to create output files in
+
 
  WARNING: the output files are overwritten if they exist.
 
@@ -37,16 +41,6 @@
 
  Used version 4.0.0.
 
- Usage:
- 
- python snowballSampleFromPajekEdgelist.py [-d]  edgelist.net num_samples num_seeds num_waves outputdir
-
-    -d : graph is directed, otherwise undirected
-    edgelist.net is Pajek form edge list as above
-    num_samples is number of snowball samples to create
-    num_seeds it number of seeds in each sample
-    num_Waves is numer of snowball sampling waves
-    outputdir is output directory to create output files in
 
 """
 
@@ -56,6 +50,7 @@ import random
 
 import snap
 
+from load_physician_referral_data import load_physician_referral_data
 from snowballSample import snowball_sample,write_graph_file,write_zone_file
 
 
@@ -76,8 +71,7 @@ def usage(progname):
     """
     print usage msg and exit
     """
-    sys.stderr.write("usage: " + progname + " [-d] edgelist.net num_samples num_seeds num_waves outputdir\n")
-    sys.stderr.write("  -d: directed graph\n")
+    sys.stderr.write("usage: " + progname + " data_dir num_samples num_seeds num_waves outputdir\n")
     sys.exit(1)
 
 
@@ -85,24 +79,21 @@ def main():
     """
     See usage message in module header block
     """
-    directed = False
+    directed = True
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "d")
+        opts,args = getopt.getopt(sys.argv[1:], "")
     except:
         usage(sys.argv[0])
     for opt,arg in opts:
-        if opt == '-d':
-            directed = True
-        else:
-            usage(sys.argv[0])
+        usage(sys.argv[0])
 
     if len(args) != 5:
         usage(sys.argv[0])
 
-    edgelistFilename = args[0]
+    data_dir = args[0]
     num_samples = int(args[1])
     num_seeds = int(args[2])
-    num_waves = int(args[3])
+    num_waves = int(args[3]) - 1 # -1 for consistency with SPNet
     outputdir = args[4]
 
     print "directed:", directed
@@ -114,8 +105,12 @@ def main():
     if not os.path.exists(outputdir):
         os.mkdir(outputdir)
 
-    G = snap.LoadPajek(snap.PNGraph if directed else snap.PUNGraph, 
-                          edgelistFilename)
+    sys.stdout.write('loading data from ' + data_dir + '...')
+    start = time.time()
+    datazipfile = data_dir + os.path.sep + 'physician-shared-patient-patterns-2014-days30.zip'
+    G = load_physician_referral_data(datazipfile)
+    print time.time() - start, 's'
+
     snap.PrintInfo(G)
 
 
@@ -142,7 +137,7 @@ def main():
         # so that can be written to zone file in correct order.
         # Note that then the index in nodelist of a nodeid can be used
         # as sequential node number of each node.
-        #Gsample = snap.ConvertGraph(snap.PNEANet, Gsample0, True)
+        ##Gsample = snap.ConvertGraph(snap.PNEANet, Gsample0, True)
         #print 'YYY',Gsample.GetIntAttrDatN(Gsample.GetRndNId(), "zone")#XXX
         Gsample = Gsample0
         nodelist = list()  # keep this iteration in list so we always use same order in future
@@ -155,10 +150,11 @@ def main():
         snap.PrintInfo(Gsample)
         subgraph_filename = outputdir + os.path.sep + "subgraph" + str(i) + os.path.extsep + "txt"
         write_graph_file(subgraph_filename, Gsample, nodelist)
-        subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "txt"
+        subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "clu"
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
-        # TODO get actor attributes (currently just writes file with no attrs)
+        # TODO get actor attributes 
+        #write_subactors_file(subactor_filename, Gsample, nodelist)
         
         # format of sampledesc file is:
         # N subzone_filename subgraph_filename subactor_filename
