@@ -87,43 +87,19 @@ def snowball_sample(G, num_waves, seeds):
     return sampleN
 
 
-def write_graph_matrix_file(filename, G, nodelist, write_header=True):
-    """
-    write_graph_file() - write adjacency matrix in Pajek
-                         format as used by parallel SPNet
-    
-    Note the graph must have nodes numbered 0..N-1 (which can be done
-    with snap.ConvertGraph())
-
-    Parameters:
-      filename - filename to write to (warning: overwritten)
-      G - SNAP graph object
-      nodelist - list of nodeids, used to order the nodes in the output
-      write_header - if True write Pajek header lines
-
-    Return value:
-       None
-    """
-    assert(len(nodelist) == G.GetNodes())
-    assert(len(nodelist) == len(set(nodelist))) # nodeids must be unique
-    with open(filename, 'w') as f:
-        if write_header:
-            f.write("*vertices " + str(G.GetNodes()) + "\n")
-            f.write("*matrix\n")
-        for i in nodelist:
-            for j in nodelist:
-                f.write("1" if G.IsEdge(i, j) else "0")
-                if j != nodelist[-1]:
-                    f.write(" ")
-            f.write("\n")
-
 
 def write_graph_file(filename, G, nodelist, write_header=True):
     """
     write_graph_file() - write edge list in Pajek format
     
-    Note the graph must have nodes numbered 0..N-1 (which can be done
-    with snap.ConvertGraph())
+    Note that because snap.ConvertGraph() fails to keep node
+    attributes so we cannot use it to renumber nodes, we also
+    use nodelist to get a sequential node number for each node:
+    the index in nodelist of each nodeid is its sequential number,
+    so we can these out as sequential node numbers 1..N
+
+    So in order to do this we have to write the output ourselves in
+    an iterator, cannot use the snap.SavePajek() function.
 
     Parameters:
       filename - filename to write to (warning: overwritten)
@@ -136,12 +112,14 @@ def write_graph_file(filename, G, nodelist, write_header=True):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(nodelist) == len(set(nodelist))) # nodeids must be unique
+    # build dict mapping nodeid to sequential node number 1..N
+    seqdict = {nodeid:(seq+1) for seq, nodeid in enumerate(nodelist)}
     with open(filename, 'w') as f:
         if write_header:
             f.write("*vertices " + str(G.GetNodes()) + "\n")
             f.write("*arcs\n")
         for EI in G.Edges():
-            f.write("%d %d\n" % (EI.GetSrcNId()+1, EI.GetDstNId()+1))
+            f.write("%d %d\n" % (seqdict[EI.GetSrcNId()], seqdict[EI.GetDstNId()]))
 
 
 def write_zone_file(filename, G, nodelist, zonedict):
