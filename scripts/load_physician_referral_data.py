@@ -13,8 +13,11 @@
 Function to load the physician referral data from zip file and convert
 and convert to SNAP format.
 
-Physician referral data from Centers for MEdicare & Medicaid Services
+Physician referral data from Centers for Medicare & Medicaid Services
 (CMS.gov): https://questions.cms.gov/faq.php?faqId=7977
+(that address was used on 13 Dec 2017 when I downloaded the data, now
+seems to be located at:
+https://www.cms.gov/Regulations-and-Guidance/Legislation/FOIA/Referral-Data-FAQs.html).
   
 as used in the paper:
   
