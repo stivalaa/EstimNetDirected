@@ -150,7 +150,7 @@ def main():
         snap.PrintInfo(Gsample)
         subgraph_filename = outputdir + os.path.sep + "subgraph" + str(i) + os.path.extsep + "txt"
         write_graph_file(subgraph_filename, Gsample, nodelist)
-        subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "clu"
+        subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "txt"
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
         # TODO get actor attributes 
