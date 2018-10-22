@@ -67,11 +67,11 @@ static void dumpTwoPathMatrices(const digraph_t *g) {
   printf("in2p sum = %u, max = %u\n", inSum, inMax);
   printf("out2p sum = %u, max = %u\n", outSum, outMax);
   printf("mix nnz = %u (%.4f%%)\n", mixNnz,
-         (double)mixNnz/(g->num_nodes*g->num_nodes));
+         100*(double)mixNnz/(g->num_nodes*g->num_nodes));
   printf("in nnz = %u (%.4f%%)\n", inNnz,
-         (double)inNnz/(g->num_nodes*g->num_nodes));
+         100*(double)inNnz/(g->num_nodes*g->num_nodes));
   printf("out nnz = %u (%.4f%%)\n", outNnz,
-         (double)outNnz/(g->num_nodes*g->num_nodes));
+         100*(double)outNnz/(g->num_nodes*g->num_nodes));
 }
 
 int main(int argc, char *argv[]) 

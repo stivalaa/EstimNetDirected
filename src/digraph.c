@@ -43,11 +43,12 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
 /*
  * Update entry for (i, j) in hashtable.
  *
- * Used for the two-path hash tables to count two-paths between nodes i 
- * and j. Much more efficient to use a hash table (or some other way of
- * storing a sparse matrix) as typically only on the order of about 0.1%
- * of entries are nonzero. A hashtable is good as we want quick lookup
- * but not necessarily iteration (for which CSR etc. might be better).
+ * Used for the two-path hash tables to count two-paths between nodes
+ * i and j. Much more efficient to use a hash table (or some other way
+ * of storing a sparse matrix) as typically only on the order of 1% to
+ * 10% of entries are nonzero. A hashtable is good as we want quick
+ * lookup but not necessarily iteration (for which CSR etc. might be
+ * better).
  *
  * Parameters:
  *     h - hash table
@@ -856,6 +857,11 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   MEMUSAGE_DEBUG_PRINT(("Allocated additional %f MB (twice) for %u arcs\n",
                         ((double)sizeof(uint_t) * total_degree) / (1024*1024),
                          g->num_arcs));
+
+  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB)\n",
+                        kh_size(g->mixTwoPathHashTab),
+                        (double)(kh_size(g->mixTwoPathHashTab)*2*
+                                 sizeof(uint64_t))/(1024*1024)));
 #endif /* DEBUG_MEMUSAGE */
   
   if (binattr_filename) {
