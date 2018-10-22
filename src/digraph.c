@@ -121,7 +121,6 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     if (v == i || v == j)
       continue;
     assert(isArc(g,v,i));
-    g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
     update_twopath_entry(g->mixTwoPathHashTab, v, j, incval);
 
   }
@@ -130,7 +129,6 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     if (v == i || v == j)
       continue;
     assert(isArc(g,j,v));
-    g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
     update_twopath_entry(g->mixTwoPathHashTab, i, v, incval);
   }
 }
@@ -655,8 +653,6 @@ digraph_t *allocate_digraph(uint_t num_vertices)
                         ((double)sizeof(uint_t) * num_vertices) / (1024*1024)));
 
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */  
-  g->mixTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
-                                              sizeof(uint_t));
   g->inTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
                                              sizeof(uint_t));
   g->outTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
@@ -726,7 +722,6 @@ void free_digraph(digraph_t *g)
   free(g->revarclist);
   free(g->indegree);
   free(g->outdegree);
-  free(g->mixTwoPathMatrix);
   free(g->inTwoPathMatrix);
   free(g->outTwoPathMatrix);
   kh_destroy(m64, g->mixTwoPathHashTab);

@@ -45,7 +45,6 @@ typedef struct digraph_s
                           indegree[i] nodes that have an arc to it */
   nodepair_t *allarcs; /* list of all arcs specified as i->j for each */
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */
-  uint_t *mixTwoPathMatrix; /* n x n contiguous matrix counting two-paths */
   uint_t *inTwoPathMatrix;  /* n x n contiguous matrix counting in-two-paths */
   uint_t *outTwoPathMatrix; /* n x n contiguous matrix counting out-two-paths */
 

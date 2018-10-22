@@ -36,26 +36,22 @@ static void dumpTwoPathMatrices(const digraph_t *g) {
   uint_t inNnz, outNnz, mixNnz;
   inSum = outSum = mixSum = 0;
   inMax = outMax = mixMax = 0;
-  inNnz = outNnz = mixNnz = 0;
+  inNnz = outNnz = 0;
+  mixNnz = kh_size(g->mixTwoPathHashTab);
   for (i = 0; i < g->num_nodes; i++) {
     for (j = 0; j < g->num_nodes; j++) {
 //      printf("%u ", g->twoPath[INDEX2D(i, j, g->num_nodes)]);
-      mixSum += g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      mixSum += get_twopath_entry(g->mixTwoPathHashTab, i, j);
       inSum += g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       outSum += g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
-      if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
-        mixNnz++;
-        assert(g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] ==
-               get_twopath_entry(g->mixTwoPathHashTab, i, j));
-      }
       if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
         inNnz++;
       }
       if (g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
         outNnz++;
       }
-      if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > mixMax) {
-        mixMax = g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      if (get_twopath_entry(g->mixTwoPathHashTab, i, j) > mixMax) {
+        mixMax = get_twopath_entry(g->mixTwoPathHashTab, i, j);
       }
       if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > inMax) {
         inMax = g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
