@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 #include "digraph.h"
 #include "changeStatisticsDirected.h"
 
@@ -44,6 +45,8 @@ static void dumpTwoPathMatrices(const digraph_t *g) {
       outSum += g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
         mixNnz++;
+        assert(g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] ==
+               get_twopath_entry(g->mixTwoPathHashTab, i, j));
       }
       if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
         inNnz++;
