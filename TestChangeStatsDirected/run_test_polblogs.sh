@@ -8,7 +8,7 @@ BASELINE=polblogs_test_results_baseline.txt
 OUTPUT=polblogs_test_results.out
 DIFFILE=polblogs_test_results.diff
 
-time ./testChangeStatsDirected ../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt  > ${OUTPUT}
+time ./testChangeStatsDirected ../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
 
 diff ${BASELINE} ${OUTPUT} > ${DIFFILE}
 

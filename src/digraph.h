@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include "utils.h"
+#include "khash.h"
 
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
 #define CAT_NA  -1  /* value for catagorical missing data (otherwise >= 0) */
@@ -28,6 +29,9 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
   uint_t  j;    /* to node */
 } nodepair_t;
 
+
+/* Instatiate structs and methods for khash hash table library */
+KHASH_MAP_INIT_INT64(m64, uint_t); /* 64 bit key and uint_t value */
 
 typedef struct digraph_s
 {
@@ -44,6 +48,9 @@ typedef struct digraph_s
   uint_t *mixTwoPathMatrix; /* n x n contiguous matrix counting two-paths */
   uint_t *inTwoPathMatrix;  /* n x n contiguous matrix counting in-two-paths */
   uint_t *outTwoPathMatrix; /* n x n contiguous matrix counting out-two-paths */
+
+  /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
+  khash_t(m64) *mixTwoPathHashTab; /* hash table counting two-paths */
 
   /* node attributes */
   uint_t   num_binattr;   /* number of binary attributes */

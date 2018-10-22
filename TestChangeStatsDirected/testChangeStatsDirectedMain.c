@@ -32,14 +32,25 @@
 /* get stats and dump mix-two-path matrix */
 static void dumpTwoPathMatrices(const digraph_t *g) {
   uint_t i, j, inSum,outSum,mixSum,inMax,outMax,mixMax;
+  uint_t inNnz, outNnz, mixNnz;
   inSum = outSum = mixSum = 0;
   inMax = outMax = mixMax = 0;
+  inNnz = outNnz = mixNnz = 0;
   for (i = 0; i < g->num_nodes; i++) {
     for (j = 0; j < g->num_nodes; j++) {
 //      printf("%u ", g->twoPath[INDEX2D(i, j, g->num_nodes)]);
       mixSum += g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       inSum += g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       outSum += g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
+        mixNnz++;
+      }
+      if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
+        inNnz++;
+      }
+      if (g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]) {
+        outNnz++;
+      }
       if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > mixMax) {
         mixMax = g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       }
@@ -54,7 +65,13 @@ static void dumpTwoPathMatrices(const digraph_t *g) {
   }
   printf("mix2p sum = %u, max = %u\n", mixSum, mixMax);
   printf("in2p sum = %u, max = %u\n", inSum, inMax);
-  printf("out2p sum = %u, max = %u\n", outSum, outMax); 
+  printf("out2p sum = %u, max = %u\n", outSum, outMax);
+  printf("mix nnz = %u (%.4f%%)\n", mixNnz,
+         (double)mixNnz/(g->num_nodes*g->num_nodes));
+  printf("in nnz = %u (%.4f%%)\n", inNnz,
+         (double)inNnz/(g->num_nodes*g->num_nodes));
+  printf("out nnz = %u (%.4f%%)\n", outNnz,
+         (double)outNnz/(g->num_nodes*g->num_nodes));
 }
 
 int main(int argc, char *argv[]) 

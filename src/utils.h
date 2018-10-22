@@ -83,8 +83,10 @@ extern "C" {
  *
  ****************************************************************************/
 
-typedef unsigned int uint_t;
-typedef int          bool;
+/* already in sys/types.h: typedef unsigned long long uint64_t; */
+typedef unsigned int       uint32_t;
+typedef unsigned int       uint_t;
+typedef int                bool;
   
 
 /*****************************************************************************

@@ -49,5 +49,18 @@ November). Parallel random numbers: as easy as 1, 2, 3. In High
 Performance Computing, Networking, Storage and Analysis (SC), 2011
 International Conference for (pp. 1-12). IEEE.
 
+
+
+Also uses the khash generic hash table from:
+
+https://github.com/attractivechaos/klib/blob/master/khash.h
+
+downloaded 22 Oct 2018. See also:
+
+http://attractivechaos.github.io/klib/#Khash%3A%20generic%20hash%20table
+https://attractivechaos.wordpress.com/2008/08/28/comparison-of-hash-table-libraries/
+https://attractivechaos.wordpress.com/2018/01/13/revisiting-hash-table-performance/
+
 ADS
-Mon, Oct 16, 2017  6:26:22 PM
+Mon, Oct 22, 2018  2:13:30 PM
+
