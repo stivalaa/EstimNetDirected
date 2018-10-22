@@ -54,6 +54,12 @@ extern "C" {
 #define ALGEE_DEBUG_PRINT(x) /* nothing */
 #endif
 
+#ifdef DEBUG_MEMUSAGE
+#define MEMUSAGE_DEBUG_PRINT(x) printf("DEBUG MEMUSAGE: "); printf x
+#else
+#define MEMUSAGE_DEBUG_PRINT(x) /* nothing */
+#endif 
+ 
 
 /*****************************************************************************
  *

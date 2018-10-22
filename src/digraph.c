@@ -579,6 +579,10 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->indegree = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
+
+  MEMUSAGE_DEBUG_PRINT(("Allocated two arrays %f MB each for adjacency lists\n",
+                        ((double)sizeof(uint_t) * num_vertices) / (1024*1024)));
+
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */  
   g->mixTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
                                               sizeof(uint_t));
@@ -586,6 +590,10 @@ digraph_t *allocate_digraph(uint_t num_vertices)
                                              sizeof(uint_t));
   g->outTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
                                               sizeof(uint_t));
+
+  MEMUSAGE_DEBUG_PRINT(("Allocated three arrays of %f MB each for two-paths\n",
+                        ((double)sizeof(uint_t) * num_vertices * num_vertices) /
+                        (1024*1024)));
 
   g->num_binattr = 0;
   g->binattr_names = NULL;
@@ -694,6 +702,9 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   const char *delims = " \t\r\n"; /* strtok_r() delimiters for header lines */
   int num_vertices = 0;
   int num_attr;
+#ifdef DEBUG_MEMUSAGE
+  uint_t k, total_degree = 0;
+#endif /* DEBUG_MEMUSAGE */
 
   char buf[BUFSIZE];
   /* the first lines should be e.g.
@@ -765,6 +776,15 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   }
   fclose(pajek_file);
 
+#ifdef DEBUG_MEMUSAGE
+  for (k = 0; k < g->num_nodes; k++) {
+    total_degree += g->outdegree[k];
+  }
+  MEMUSAGE_DEBUG_PRINT(("Allocated additional %f MB (twice) for %u arcs\n",
+                        ((double)sizeof(uint_t) * total_degree) / (1024*1024),
+                         g->num_arcs));
+#endif /* DEBUG_MEMUSAGE */
+  
   if (binattr_filename) {
     if ((num_attr = load_integer_attributes(binattr_filename, num_vertices,
                                             TRUE, &g->binattr_names,
