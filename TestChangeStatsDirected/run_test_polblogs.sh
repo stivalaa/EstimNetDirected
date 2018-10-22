@@ -2,7 +2,6 @@
 
 # Regression test for two-path matrix construction/update and change
 # statistics.
-# $Id: run_test_polblogs.sh 661 2018-04-30 22:52:19Z stivalaa $
 
 BASELINE=polblogs_test_results_baseline.txt
 OUTPUT=polblogs_test_results.out
