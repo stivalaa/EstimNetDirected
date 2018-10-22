@@ -82,7 +82,8 @@ typedef struct digraph_s
                                to/from a node in earlier wave (node zone -1 ) */
 } digraph_t;
 
-
+uint_t get_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j);
+  
 digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                                           const char *binattr_filename,
                                           const char *catattr_filename,
@@ -105,7 +106,6 @@ void free_digraph(digraph_t *g);
 void dump_digraph_arclist(const digraph_t *g);
 void print_data_summary(const digraph_t *g);
 void print_zone_summary(const digraph_t *g);
-void updateTwoPathsMatrices(digraph_t *g, uint_t start, uint_t end, bool isAdd);
 
 void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
 

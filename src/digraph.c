@@ -40,6 +40,45 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  *
  ****************************************************************************/
 
+/*
+ * Update entry for (i, j) in hashtable.
+ *
+ * Used for the two-path hash tables to count two-paths between nodes i 
+ * and j. Much more efficient to use a hash table (or some other way of
+ * storing a sparse matrix) as typically only on the order of about 0.1%
+ * of entries are nonzero. A hashtable is good as we want quick lookup
+ * but not necessarily iteration (for which CSR etc. might be better).
+ *
+ * Parameters:
+ *     h - hash table
+ *     i - node id of source
+ *     j - node id of destination
+ *     incval - value to add to existing value (or insert if not exists)
+ *
+ * Return value:
+ *     None.
+ */
+static void update_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j,
+                                 uint_t incval)
+{
+  int      absent, is_missing;
+  uint64_t kiter;
+  uint64_t key = ((uint64_t)i << 32) | (j & 0xffffffff);
+  kiter = kh_get(m64, h, key);
+  is_missing = (kiter == kh_end(h));
+  if (is_missing) {
+    kiter = kh_put(m64, h, key, &absent);
+    if (absent == -1) {
+      fprintf(stderr, "ERROR: hash table key instert failed\n");
+      exit(-1);
+    }
+    assert(absent > 0); /* key was not present, tested with kiter above */
+    kh_value(h, kiter) = incval;
+  } else {
+    kh_value(h, kiter) = kh_value(h, kiter) + incval;
+  }
+} 
+
 
 /*
  * Update the two-paths matrices used for fast computation of change
@@ -55,7 +94,7 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  * Return value:
  *   None.
  */
-void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
+static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
 {
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
@@ -82,6 +121,8 @@ void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
       continue;
     assert(isArc(g,v,i));
     g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
+    update_twopath_entry(g->mixTwoPathHashTab, v, j, incval);
+
   }
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
@@ -89,6 +130,7 @@ void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
       continue;
     assert(isArc(g,j,v));
     g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+    update_twopath_entry(g->mixTwoPathHashTab, i, v, incval);
   }
 }
 
@@ -352,6 +394,34 @@ static int load_float_attributes(const char *attr_filename,
  *
  ****************************************************************************/
 
+/*
+ * Get entry for (i, j) in hashtable.
+ *
+ *
+ * Parameters:
+ *     h - hash table
+ *     i - node id of source
+ *     j - node id of destination
+ *
+ * Return value:
+ *     value for key (i, j) in hashtable or 0 if none
+ */
+uint_t get_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j)
+{
+  int      is_missing;
+  uint64_t kiter;
+  uint64_t key = ((uint64_t)i << 32) | (j & 0xffffffff);
+  kiter = kh_get(m64, h, key);
+  is_missing = (kiter == kh_end(h));
+  if (is_missing) {
+    return 0;
+  }
+  else {
+    return kh_value(h, kiter);
+  }
+}
+
+
 
 /* 
  * Return density of graph
@@ -595,6 +665,8 @@ digraph_t *allocate_digraph(uint_t num_vertices)
                         ((double)sizeof(uint_t) * num_vertices * num_vertices) /
                         (1024*1024)));
 
+  g->mixTwoPathHashTab = kh_init(m64);
+  
   g->num_binattr = 0;
   g->binattr_names = NULL;
   g->binattr = NULL;
@@ -656,6 +728,7 @@ void free_digraph(digraph_t *g)
   free(g->mixTwoPathMatrix);
   free(g->inTwoPathMatrix);
   free(g->outTwoPathMatrix);
+  kh_destroy(m64, g->mixTwoPathHashTab);
   free(g->zone);
   free(g->inner_nodes);
   free(g->prev_wave_degree);
