@@ -101,17 +101,19 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
     if (v == i || v == j)
       continue;
     if (isArc(g, j, v))
-      delta += pow(1-1/lambda, g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)]);
+      delta += pow(1-1/lambda,
+                   get_twopath_entry(g->mixTwoPathHashTab, i, v));
   }
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
     if (isArc(g, v, j))
-      delta += pow(1-1/lambda, g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]);
+      delta += pow(1-1/lambda,
+                   get_twopath_entry(g->mixTwoPathHashTab, v, j));
   }
   delta += lambda * (1 - pow(1-1/lambda,
-                             g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)]));
+                             get_twopath_entry(g->mixTwoPathHashTab, i, j)));
   return delta;
 }
 
@@ -130,13 +132,13 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, j, v)) {
       delta +=
-        pow(1-1/lambda, g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)]) +
-        pow(1-1/lambda, g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]);
+        pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, i, v)) +
+        pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, v, j));
     }
   }
   delta +=
     lambda * (1 - pow(1-1/lambda, 
-                       g->mixTwoPathMatrix[INDEX2D(j, i, g->num_nodes)]));
+                      get_twopath_entry(g->mixTwoPathHashTab, j, i)));
   return delta;
 }
 
@@ -152,13 +154,13 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
-    delta += pow(1-1/lambda, g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)]);
+    delta += pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, i, v));
   }
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    delta += pow(1-1/lambda, g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]);
+    delta += pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, v, j));
   }
   return delta;
 }
