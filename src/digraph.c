@@ -70,7 +70,7 @@ static void update_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j,
   if (is_missing) {
     kiter = kh_put(m64, h, key, &absent);
     if (absent == -1) {
-      fprintf(stderr, "ERROR: hash table key instert failed\n");
+      fprintf(stderr, "ERROR: hash table key insert failed\n");
       exit(-1);
     }
     assert(absent > 0); /* key was not present, tested with kiter above */
@@ -858,10 +858,12 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                         ((double)sizeof(uint_t) * total_degree) / (1024*1024),
                          g->num_arcs));
 
-  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB)\n",
-                        kh_size(g->mixTwoPathHashTab),
-                        (double)(kh_size(g->mixTwoPathHashTab)*2*
-                                 sizeof(uint64_t))/(1024*1024)));
+    MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix\n",
+                          kh_size(g->mixTwoPathHashTab),
+                          (double)(kh_size(g->mixTwoPathHashTab)*2*
+                                   sizeof(uint64_t))/(1024*1024),
+                          100*(double)kh_size(g->mixTwoPathHashTab) /
+                          (g->num_nodes*g->num_nodes)));
 #endif /* DEBUG_MEMUSAGE */
   
   if (binattr_filename) {
