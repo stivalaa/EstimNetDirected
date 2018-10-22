@@ -83,7 +83,9 @@ extern "C" {
  *
  ****************************************************************************/
 
-/* already in sys/types.h: typedef unsigned long long uint64_t; */
+#ifdef UINT64_MAX
+typedef unsigned long long uint64_t;
+#endif
 typedef unsigned int       uint32_t;
 typedef unsigned int       uint_t;
 typedef int                bool;
