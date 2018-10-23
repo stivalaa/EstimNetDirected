@@ -14,8 +14,6 @@
  * separated, one pair per line) pairs of nodes to use from there,
  * otherwise randomly generated.
  *
- * $Id: testChangeStatsDirectedMain.c 648 2018-04-30 05:20:13Z stivalaa $
- *
  ****************************************************************************/
 
 #include <ctype.h>
