@@ -419,17 +419,10 @@ static int load_float_attributes(const char *attr_filename,
  */
 uint_t get_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j)
 {
-  int      is_missing;
   uint64_t kiter;
   uint64_t key = MAKE_KEY64(i,j);
   kiter = kh_get(m64, h, key);
-  is_missing = (kiter == kh_end(h));
-  if (is_missing) {
-    return 0;
-  }
-  else {
-    return kh_value(h, kiter);
-  }
+  return (kiter == kh_end(h)) ? 0 : kh_value(h, kiter);
 }
 
 
