@@ -33,6 +33,9 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
 /* Instatiate structs and methods for khash hash table library */
 KHASH_MAP_INIT_INT64(m64, uint_t); /* 64 bit key and uint_t value */
 
+/* combine 32 bit indices i and j into single 64 bit key for hash table */
+#define MAKE_KEY64(i, j) (((uint64_t)(i) << 32) | ((j) & 0xffffffff))
+
 typedef struct digraph_s
 {
   uint_t   num_nodes;  /* number of nodes */

@@ -76,7 +76,7 @@ static void update_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j,
 {
   int      absent, is_missing;
   uint64_t kiter;
-  uint64_t key = ((uint64_t)i << 32) | (j & 0xffffffff);
+  uint64_t key = MAKE_KEY64(i,j);
   kiter = kh_get(m64, h, key);
   is_missing = (kiter == kh_end(h));
   if (is_missing) {
@@ -421,7 +421,7 @@ uint_t get_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j)
 {
   int      is_missing;
   uint64_t kiter;
-  uint64_t key = ((uint64_t)i << 32) | (j & 0xffffffff);
+  uint64_t key = MAKE_KEY64(i,j);
   kiter = kh_get(m64, h, key);
   is_missing = (kiter == kh_end(h));
   if (is_missing) {
