@@ -177,7 +177,7 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[i][k];
     if (v == i || v == j) 
       continue;
-    delta += pow(1-1/lambda, g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)]);
+    delta += pow(1-1/lambda, get_twopath_entry(g->outTwoPathHashTab, j, v));
   }
   return delta;
 }

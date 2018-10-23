@@ -8,7 +8,7 @@
  *
  * Directed graph data structure. Stored as arc lists (both forward and
  * a "reversed" version, for fast iteration over both in- and out- neighbours)
- * and fast lookup matrices for two-paths, and flat arcs list for fast 
+ * and fast lookup hash tables for two-paths, and flat arcs list for fast 
  * finding of random arc.
  *
  * Nodes are numbered 0 .. n-1.
@@ -44,12 +44,11 @@ typedef struct digraph_s
   uint_t **revarclist; /* reverse arc adjacency list: for each node i, array of 
                           indegree[i] nodes that have an arc to it */
   nodepair_t *allarcs; /* list of all arcs specified as i->j for each */
-  /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */
-  uint_t *inTwoPathMatrix;  /* n x n contiguous matrix counting in-two-paths */
-  uint_t *outTwoPathMatrix; /* n x n contiguous matrix counting out-two-paths */
 
   /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
   khash_t(m64) *mixTwoPathHashTab; /* hash table counting two-paths */
+  khash_t(m64) *inTwoPathHashTab;  /* hash table counting in-two-paths */
+  khash_t(m64) *outTwoPathHashTab; /* hash table counting out-two-paths */
 
   /* node attributes */
   uint_t   num_binattr;   /* number of binary attributes */

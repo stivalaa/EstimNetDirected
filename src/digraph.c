@@ -4,13 +4,27 @@
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
- * Directed graph data structure. Stored as arc lists (both forward and
- * a "reversed" version, for fast iteration over both in- and out- neighbours)
- * and fast lookup matrices for two-paths, and also flat arcs list for fast
- * selection of an arc uniformly at random.
+ * Directed graph data structure. Stored as arc lists (both forward
+ * and a "reversed" version, for fast iteration over both in- and out-
+ * neighbours) and fast lookup hash tables for two-paths, and also
+ * flat arcs list for fast selection of an arc uniformly at random.
  *
  *
  ****************************************************************************/
+
+/*
+ * TODO: may be better to use e.g. CSR sparse matrix format for
+ * two-path fast lookup instead of hash table as we often iterate over
+ * neighbours of a node i.e. along a row in computing change
+ * statistics. (The same applies to the actual graph itself, currently
+ * stored in adjacency lists). However then it is
+ * difficult/inefficient to update when adding/deleting an arc which
+ * is at the core of the MCMC algorithm so no good for that. (Note
+ * also that if we stored the actual graph adjacency matrix in sparse
+ * matrix format (CSR for example) then the numbers of two-paths can
+ * be very efficiently computed my multiplying the matrix by itself
+ * with sparse BLAS routine DCSRMM.)
+ */
 
 #include <assert.h>
 #include <stdio.h>
@@ -46,9 +60,7 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  * Used for the two-path hash tables to count two-paths between nodes
  * i and j. Much more efficient to use a hash table (or some other way
  * of storing a sparse matrix) as typically only on the order of 1% to
- * 10% of entries are nonzero. A hashtable is good as we want quick
- * lookup but not necessarily iteration (for which CSR etc. might be
- * better).
+ * 10% of entries are nonzero.  
  *
  * Parameters:
  *     h - hash table
@@ -99,22 +111,22 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
 {
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
-  /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */
+
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)
       continue;
     assert(isArc(g,i,v));
-    g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
-    g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
+    update_twopath_entry(g->outTwoPathHashTab, v, j, incval);
+    update_twopath_entry(g->outTwoPathHashTab, j, v, incval);
   }
   for (k = 0; k < g->indegree[j]; k++) {
     v = g->revarclist[j][k];
     if (v == i || v == j)
       continue;
     assert(isArc(g,v,j));
-    g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
-    g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+    update_twopath_entry(g->inTwoPathHashTab, v, i, incval);
+    update_twopath_entry(g->inTwoPathHashTab, i, v, incval);
   }
   for (k = 0; k < g->indegree[i]; k++)  {
     v = g->revarclist[i][k];
@@ -652,17 +664,9 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   MEMUSAGE_DEBUG_PRINT(("Allocated two arrays %f MB each for adjacency lists\n",
                         ((double)sizeof(uint_t) * num_vertices) / (1024*1024)));
 
-  /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */  
-  g->inTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
-                                             sizeof(uint_t));
-  g->outTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
-                                              sizeof(uint_t));
-
-  MEMUSAGE_DEBUG_PRINT(("Allocated three arrays of %f MB each for two-paths\n",
-                        ((double)sizeof(uint_t) * num_vertices * num_vertices) /
-                        (1024*1024)));
-
   g->mixTwoPathHashTab = kh_init(m64);
+  g->inTwoPathHashTab = kh_init(m64);
+  g->outTwoPathHashTab = kh_init(m64);
   
   g->num_binattr = 0;
   g->binattr_names = NULL;
@@ -722,9 +726,9 @@ void free_digraph(digraph_t *g)
   free(g->revarclist);
   free(g->indegree);
   free(g->outdegree);
-  free(g->inTwoPathMatrix);
-  free(g->outTwoPathMatrix);
   kh_destroy(m64, g->mixTwoPathHashTab);
+  kh_destroy(m64, g->inTwoPathHashTab);
+  kh_destroy(m64, g->outTwoPathHashTab);
   free(g->zone);
   free(g->inner_nodes);
   free(g->prev_wave_degree);
@@ -853,12 +857,14 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                         ((double)sizeof(uint_t) * total_degree) / (1024*1024),
                          g->num_arcs));
 
-    MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix\n",
-                          kh_size(g->mixTwoPathHashTab),
-                          (double)(kh_size(g->mixTwoPathHashTab)*2*
-                                   sizeof(uint64_t))/(1024*1024),
-                          100*(double)kh_size(g->mixTwoPathHashTab) /
-                          (g->num_nodes*g->num_nodes)));
+  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
+                        kh_size(g->mixTwoPathHashTab),
+                        (double)(kh_size(g->mixTwoPathHashTab)*2*
+                                 sizeof(uint64_t))/(1024*1024),
+                        100*(double)kh_size(g->mixTwoPathHashTab) /
+                        (g->num_nodes*g->num_nodes),
+                        ((double)sizeof(uint_t)*num_vertices*num_vertices) /
+                        (1024*1024)));
 #endif /* DEBUG_MEMUSAGE */
   
   if (binattr_filename) {
