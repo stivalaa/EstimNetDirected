@@ -135,8 +135,8 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         } while (i == j);
         assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
         /* any tie must be within same zone or between adjacent zones */
-        assert(!isArcIgnoreDirection(g, i, j) ||
-               labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+        assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1 ||
+               !isArcIgnoreDirection(g, i, j));
       } while (labs((long)g->zone[i] - (long)g->zone[j]) > 1 ||
                (isArcIgnoreDirection(g, i, j) &&
                 ((g->zone[i] > g->zone[j] && g->prev_wave_degree[i] == 1) ||
@@ -158,7 +158,6 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     SAMPLER_DEBUG_PRINT(("%s %d -> %d\n",isDelete ? "del" : "add", i, j));
     if (isDelete) {
       removeArc(g, i, j);
-      assert(!isArc(g, i, j));
     }
 
     total = 0;
@@ -196,7 +195,6 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         /* not actually doing the moves, so reverse change for delete move
            to restore g to original state */
         if (isDelete) {
-          assert(!isArc(g, i, j));
           insertArc(g, i, j);
         }
       }
@@ -211,7 +209,6 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     } else {
       /* move not acceptd, so reverse change for delete */
       if (isDelete) {
-        assert(!isArc(g, i, j));
         insertArc(g, i, j);
       }
     }

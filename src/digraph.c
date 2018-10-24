@@ -64,7 +64,7 @@ void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->arclist[i][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,i,v));
+    /*removed as slows significantly: assert(isArc(g,i,v)); */
     g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
     g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
   }
@@ -72,7 +72,7 @@ void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->revarclist[j][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,v,j));
+    /*removed as slows significantly: assert(isArc(g,v,j)); */
     g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
     g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
   }
@@ -80,14 +80,14 @@ void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,v,i));
+    /*removed as slows significantly: assert(isArc(g,v,i));*/
     g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
   }
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,j,v));
+    /*removed as slows significantly: assert(isArc(g,j,v));*/
     g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
   }
 }
@@ -432,7 +432,7 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
   g->revarclist[j][g->indegree[j]++] = i;
   updateTwoPathsMatrices(g, i, j, TRUE);
   DIGRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
-  assert(isArc(g, i, j));
+  /*removed as slows significantly: assert(isArc(g, i, j));*/
 
   /* update zone information for snowball conditional estimation */
   if (g->zone[i] > g->zone[j]) {
@@ -459,7 +459,7 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
   DIGRAPH_DEBUG_PRINT(("removeArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
-  assert(isArc(g, i, j));
+  /*removed as slows significantly: assert(isArc(g, i, j));*/
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
   assert(g->num_arcs > 0);
@@ -913,7 +913,7 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
     for (j = 0; j < g->outdegree[i]; j++) {
       count++;
       fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
-      assert(isArc(g, i, g->arclist[i][j]));
+      /*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
     }
   }
   assert(count == g->num_arcs);
