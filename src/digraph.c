@@ -574,17 +574,17 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   digraph_t *g = (digraph_t *)safe_malloc(sizeof(digraph_t));  
   g->num_nodes = num_vertices;
   g->num_arcs = 0;
-  g->outdegree = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
-  g->arclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
-  g->indegree = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
-  g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
+  g->outdegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
+  g->arclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
+  g->indegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
+  g->revarclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
   /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */  
-  g->mixTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
+  g->mixTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
                                               sizeof(uint_t));
-  g->inTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
+  g->inTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
                                              sizeof(uint_t));
-  g->outTwoPathMatrix = (uint_t *)safe_calloc(num_vertices * num_vertices,
+  g->outTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
                                               sizeof(uint_t));
 
   g->num_binattr = 0;
@@ -597,11 +597,11 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->contattr_names = NULL;
   g->contattr = NULL;
 
-  g->zone  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
+  g->zone  = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
   g->max_zone = 0;
   g->num_inner_nodes = 0;
   g->inner_nodes = NULL;
-  g->prev_wave_degree  = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
+  g->prev_wave_degree  = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
   return g;
 }
 
