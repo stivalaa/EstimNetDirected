@@ -133,15 +133,14 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    /*removed as slows significantly: assert(isArc(g,v,i)); */
+    /*removed as slows significantly: assert(isArc(g,v,i));*/
     update_twopath_entry(g->mixTwoPathHashTab, v, j, incval);
-
   }
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
-    /*removed as slows significantly: assert(isArc(g,j,v)); */
+    /*removed as slows significantly: assert(isArc(g,j,v));*/
     update_twopath_entry(g->mixTwoPathHashTab, i, v, incval);
   }
 }
