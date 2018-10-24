@@ -77,6 +77,7 @@ static void update_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j,
   int      absent, is_missing;
   uint64_t kiter;
   uint64_t key = MAKE_KEY64(i,j);
+
   kiter = kh_get(m64, h, key);
   is_missing = (kiter == kh_end(h));
   if (is_missing) {
@@ -116,7 +117,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->arclist[i][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,i,v));
+    /*removed as slows significantly: assert(isArc(g,i,v)); */
     update_twopath_entry(g->outTwoPathHashTab, v, j, incval);
     update_twopath_entry(g->outTwoPathHashTab, j, v, incval);
   }
@@ -124,7 +125,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->revarclist[j][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,v,j));
+    /*removed as slows significantly: assert(isArc(g,v,j)); */
     update_twopath_entry(g->inTwoPathHashTab, v, i, incval);
     update_twopath_entry(g->inTwoPathHashTab, i, v, incval);
   }
@@ -132,7 +133,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,v,i));
+    /*removed as slows significantly: assert(isArc(g,v,i)); */
     update_twopath_entry(g->mixTwoPathHashTab, v, j, incval);
 
   }
@@ -140,7 +141,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
-    assert(isArc(g,j,v));
+    /*removed as slows significantly: assert(isArc(g,j,v)); */
     update_twopath_entry(g->mixTwoPathHashTab, i, v, incval);
   }
 }
@@ -506,7 +507,7 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
   g->revarclist[j][g->indegree[j]++] = i;
   updateTwoPathsMatrices(g, i, j, TRUE);
   DIGRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
-  assert(isArc(g, i, j));
+  /*removed as slows significantly: assert(isArc(g, i, j));*/
 
   /* update zone information for snowball conditional estimation */
   if (g->zone[i] > g->zone[j]) {
@@ -533,7 +534,7 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
   DIGRAPH_DEBUG_PRINT(("removeArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
-  assert(isArc(g, i, j));
+  /*removed as slows significantly: assert(isArc(g, i, j));*/
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
   assert(g->num_arcs > 0);
@@ -828,6 +829,10 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
       exit(1); 
     }
     i--; j--; /* convert to 0-based */
+    /* FIXME calling isArc all the time is inefficient: since we are using
+       hash table anyway would be better to check these in temporary hash
+       table structure (or build graph as hash table then convert to the
+       adjacency list structures). */
     if (!isArc(g, i, j)){
       insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
     }
@@ -891,7 +896,6 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     }
     g->num_contattr = (uint_t)num_attr;
   }  
-  
   
   return(g);
 }
@@ -1008,7 +1012,7 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
     for (j = 0; j < g->outdegree[i]; j++) {
       count++;
       fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
-      assert(isArc(g, i, g->arclist[i][j]));
+      /*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
     }
   }
   assert(count == g->num_arcs);

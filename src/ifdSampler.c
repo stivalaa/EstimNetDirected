@@ -126,7 +126,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       arcidx = int_urand(g->num_arcs);
       i = g->allarcs[arcidx].i;
       j = g->allarcs[arcidx].j;
-      assert(isArc(g, i, j));
+      /*removed as slows significantly: assert(isArc(g, i, j));*/
     } else {
       /* Add move. Find two nodes i, j without arc i->j uniformly at
          random. Because graph is sparse, it is not too inefficient
@@ -182,14 +182,12 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         /* actually do the move. If deleting, already done it. For add, add
            the arc now */
         if (!isDelete) {
-          assert(!isArc(g, i, j));
           insertArc_allarcs(g, i, j);
         }
       } else {
         /* not actually doing the moves, so reverse change for delete move
            to restore g to original state */
         if (isDelete) {
-          assert(!isArc(g, i, j));
           insertArc_allarcs(g, i, j);
         }
       }
@@ -205,7 +203,6 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     } else {
       /* move not acceptd, so reverse change for delete */
       if (isDelete) {
-        assert(!isArc(g, i, j));
         insertArc_allarcs(g, i, j);
       }
     }
