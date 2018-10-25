@@ -645,7 +645,13 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
  */
 digraph_t *allocate_digraph(uint_t num_vertices)
 {
-  digraph_t *g = (digraph_t *)safe_malloc(sizeof(digraph_t));  
+  digraph_t *g = (digraph_t *)safe_malloc(sizeof(digraph_t));
+  /* set initial hash table size to 1% of number of possible elements,
+     as we expect to use only around that many. It will grow as necessary
+     but hope to be more efficient by making it about big enough to start with */
+  uint_t     initial_hashtab_size = (uint_t)(0.01 *
+                                           (uint64_t)num_vertices*num_vertices); 
+  
   g->num_nodes = num_vertices;
   g->num_arcs = 0;
   g->outdegree = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
@@ -654,13 +660,17 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
 
-  MEMUSAGE_DEBUG_PRINT(("Allocated two arrays %f MB each for adjacency lists\n",
-                        ((double)sizeof(uint_t) * num_vertices) / (1024*1024)));
-
   g->mixTwoPathHashTab = kh_init(m64);
   g->inTwoPathHashTab = kh_init(m64);
   g->outTwoPathHashTab = kh_init(m64);
-  
+
+  kh_resize(m64, g->mixTwoPathHashTab, initial_hashtab_size);
+  kh_resize(m64, g->inTwoPathHashTab, initial_hashtab_size);
+  kh_resize(m64, g->outTwoPathHashTab, initial_hashtab_size);
+
+  MEMUSAGE_DEBUG_PRINT(("Allocated hash tables with %u buckets initially\n",
+                        initial_hashtab_size));
+
   g->num_binattr = 0;
   g->binattr_names = NULL;
   g->binattr = NULL;
