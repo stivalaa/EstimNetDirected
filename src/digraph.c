@@ -780,6 +780,8 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   int num_attr;
 #ifdef DEBUG_MEMUSAGE
   uint_t k, total_degree = 0;
+  struct timeval start_timeval, end_timeval, elapsed_timeval;
+  int            etime;
 #endif /* DEBUG_MEMUSAGE */
 
   char buf[BUFSIZE];
@@ -809,6 +811,9 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     fclose(pajek_file);
     exit(1);
   }
+#ifdef DEBUG_MEMUSAGE
+  gettimeofday(&start_timeval, NULL);
+#endif /* DEBUG_MEMUSAGE */
   while (!feof(pajek_file)) {
     i = j = 0;
     token = strtok_r(buf, delims, &saveptr);
@@ -848,7 +853,11 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     
 #ifdef DEBUG_MEMUSAGE
     if (g->num_arcs % 1000 == 0){
-      MEMUSAGE_DEBUG_PRINT(("%u arcs...\n", g->num_arcs));
+      gettimeofday(&end_timeval, NULL);
+      timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+      etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+      MEMUSAGE_DEBUG_PRINT(("%u arcs (%.2f s)...\n", g->num_arcs,
+                            (double)etime/1000));
     }
 #endif /* DEBUG_MEMUSAGE */
     
