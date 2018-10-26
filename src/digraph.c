@@ -856,7 +856,11 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
       gettimeofday(&end_timeval, NULL);
       timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
       etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-      MEMUSAGE_DEBUG_PRINT(("%u arcs (%.2f s)...\n", g->num_arcs,
+      MEMUSAGE_DEBUG_PRINT(("%u arcs, %u mixTwoPathHashtTab entries, %u inTwoPathHashTab entries, %u outTwoPathHashTab entries (%.2f s)...\n",
+                            g->num_arcs,
+                            kh_size(g->mixTwoPathHashTab),
+                            kh_size(g->inTwoPathHashTab),
+                            kh_size(g->outTwoPathHashTab),
                             (double)etime/1000));
     }
 #endif /* DEBUG_MEMUSAGE */
@@ -885,6 +889,22 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                         (double)(kh_size(g->mixTwoPathHashTab)*2*
                                  sizeof(uint64_t))/(1024*1024),
                         100*(double)kh_size(g->mixTwoPathHashTab) /
+                        (g->num_nodes*g->num_nodes),
+                        ((double)sizeof(uint_t)*num_vertices*num_vertices) /
+                        (1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
+                        kh_size(g->inTwoPathHashTab),
+                        (double)(kh_size(g->inTwoPathHashTab)*2*
+                                 sizeof(uint64_t))/(1024*1024),
+                        100*(double)kh_size(g->inTwoPathHashTab) /
+                        (g->num_nodes*g->num_nodes),
+                        ((double)sizeof(uint_t)*num_vertices*num_vertices) /
+                        (1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
+                        kh_size(g->outTwoPathHashTab),
+                        (double)(kh_size(g->outTwoPathHashTab)*2*
+                                 sizeof(uint64_t))/(1024*1024),
+                        100*(double)kh_size(g->outTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
