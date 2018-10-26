@@ -71,25 +71,20 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  * Return value:
  *     None.
  */
-static void update_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j,
+static void update_twopath_entry(twopath_record_t *h, uint_t i, uint_t j,
                                  uint_t incval)
 {
-  int      absent, is_missing;
-  uint64_t kiter;
-  uint64_t key = MAKE_KEY64(i,j);
-
-  kiter = kh_get(m64, h, key);
-  is_missing = (kiter == kh_end(h));
-  if (is_missing) {
-    kiter = kh_put(m64, h, key, &absent);
-    if (absent == -1) {
-      fprintf(stderr, "ERROR: hash table key insert failed\n");
-      exit(-1);
-    }
-    assert(absent > 0); /* key was not present, tested with kiter above */
-    kh_value(h, kiter) = incval;
+  twopath_record_t *rec =
+    (twopath_record_t *)safe_calloc(1, sizeof(twopath_record_t));
+  twopath_record_t *p = NULL;
+  
+  rec->key = MAKE_KEY64(i, j);
+  HASH_FIND(hh, h, &rec->key, sizeof(twopath_record_t), p);
+  if (p) {
+    p->value += incval;
   } else {
-    kh_value(h, kiter) = kh_value(h, kiter) + incval;
+    rec->value = incval;
+    HASH_ADD(hh, h, key, sizeof(twopath_record_t), rec);
   }
 } 
 
@@ -145,6 +140,24 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
   }
 }
 
+
+/*
+ * Delete all entries and entire hash table.
+ *
+ * Parameters:
+ *   h - hash table to destroy
+ *
+ * Return value:
+ *  None.
+ */
+static void deleteAllHashTable(twopath_record_t *h)
+{
+  twopath_record_t *curr, *tmp;
+  HASH_ITER(hh, h, curr, tmp) {
+    HASH_DEL(h, curr);
+    free(curr);
+  }
+}
 
 /*
  * Load integer (binary or categorical) attributes from file.
@@ -417,12 +430,12 @@ static int load_float_attributes(const char *attr_filename,
  * Return value:
  *     value for key (i, j) in hashtable or 0 if none
  */
-uint_t get_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j)
+uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
 {
-  uint64_t kiter;
-  uint64_t key = MAKE_KEY64(i,j);
-  kiter = kh_get(m64, h, key);
-  return (kiter == kh_end(h)) ? 0 : kh_value(h, kiter);
+  twopath_record_t rec, *p = NULL;
+  rec.key = MAKE_KEY64(i, j);
+  HASH_FIND(hh, h, &rec.key, sizeof(twopath_record_t), p);
+  return (p ? p->value : 0);
 }
 
 
@@ -646,11 +659,6 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
 digraph_t *allocate_digraph(uint_t num_vertices)
 {
   digraph_t *g = (digraph_t *)safe_malloc(sizeof(digraph_t));
-  /* set initial hash table size to 1% of number of possible elements,
-     as we expect to use only around that many. It will grow as necessary
-     but hope to be more efficient by making it about big enough to start with */
-  uint_t     initial_hashtab_size = (uint_t)(0.01 *
-                                           (uint64_t)num_vertices*num_vertices); 
   
   g->num_nodes = num_vertices;
   g->num_arcs = 0;
@@ -659,17 +667,6 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->indegree = (uint_t *)safe_calloc(num_vertices, sizeof(uint_t));
   g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
-
-  g->mixTwoPathHashTab = kh_init(m64);
-  g->inTwoPathHashTab = kh_init(m64);
-  g->outTwoPathHashTab = kh_init(m64);
-
-  kh_resize(m64, g->mixTwoPathHashTab, initial_hashtab_size);
-  kh_resize(m64, g->inTwoPathHashTab, initial_hashtab_size);
-  kh_resize(m64, g->outTwoPathHashTab, initial_hashtab_size);
-
-  MEMUSAGE_DEBUG_PRINT(("Allocated hash tables with %u buckets initially\n",
-                        initial_hashtab_size));
 
   g->num_binattr = 0;
   g->binattr_names = NULL;
@@ -729,9 +726,9 @@ void free_digraph(digraph_t *g)
   free(g->revarclist);
   free(g->indegree);
   free(g->outdegree);
-  kh_destroy(m64, g->mixTwoPathHashTab);
-  kh_destroy(m64, g->inTwoPathHashTab);
-  kh_destroy(m64, g->outTwoPathHashTab);
+  deleteAllHashTable(g->mixTwoPathHashTab);
+  deleteAllHashTable(g->inTwoPathHashTab);
+  deleteAllHashTable(g->outTwoPathHashTab);
   free(g->zone);
   free(g->inner_nodes);
   free(g->prev_wave_degree);
@@ -858,9 +855,9 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
       etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
       MEMUSAGE_DEBUG_PRINT(("%u arcs, %u mixTwoPathHashtTab entries, %u inTwoPathHashTab entries, %u outTwoPathHashTab entries (%.2f s)...\n",
                             g->num_arcs,
-                            kh_size(g->mixTwoPathHashTab),
-                            kh_size(g->inTwoPathHashTab),
-                            kh_size(g->outTwoPathHashTab),
+                            HASH_COUNT(g->mixTwoPathHashTab),
+                            HASH_COUNT(g->inTwoPathHashTab),
+                            HASH_COUNT(g->outTwoPathHashTab),
                             (double)etime/1000));
     }
 #endif /* DEBUG_MEMUSAGE */
@@ -885,26 +882,26 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                          g->num_arcs));
 
   MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
-                        kh_size(g->mixTwoPathHashTab),
-                        (double)(kh_size(g->mixTwoPathHashTab)*2*
+                        HASH_COUNT(g->mixTwoPathHashTab),
+                        (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
                                  sizeof(uint64_t))/(1024*1024),
-                        100*(double)kh_size(g->mixTwoPathHashTab) /
+                        100*(double)HASH_COUNT(g->mixTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
   MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
-                        kh_size(g->inTwoPathHashTab),
-                        (double)(kh_size(g->inTwoPathHashTab)*2*
+                        HASH_COUNT(g->inTwoPathHashTab),
+                        (double)(HASH_COUNT(g->inTwoPathHashTab)*2*
                                  sizeof(uint64_t))/(1024*1024),
-                        100*(double)kh_size(g->inTwoPathHashTab) /
+                        100*(double)HASH_COUNT(g->inTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
   MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
-                        kh_size(g->outTwoPathHashTab),
-                        (double)(kh_size(g->outTwoPathHashTab)*2*
+                        HASH_COUNT(g->outTwoPathHashTab),
+                        (double)(HASH_COUNT(g->outTwoPathHashTab)*2*
                                  sizeof(uint64_t))/(1024*1024),
-                        100*(double)kh_size(g->outTwoPathHashTab) /
+                        100*(double)HASH_COUNT(g->outTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));

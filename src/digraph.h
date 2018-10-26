@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include "utils.h"
-#include "khash.h"
+#include "uthash.h"
 
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
 #define CAT_NA  -1  /* value for catagorical missing data (otherwise >= 0) */
@@ -30,11 +30,17 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
 } nodepair_t;
 
 
-/* Instatiate structs and methods for khash hash table library */
-KHASH_MAP_INIT_INT64(m64, uint_t); /* 64 bit key and uint_t value */
 
 /* combine 32 bit indices i and j into single 64 bit key for hash table */
 #define MAKE_KEY64(i, j) (((uint64_t)(i) << 32) | ((j) & 0xffffffff))
+
+/* uthash hash table entry hsa 64 bit key (32 bit i and j indices converted
+   to 64 bit with MAKE_KEY64 macro) and 32 bit value (number of two-paths) */
+typedef struct {
+  uint64_t       key;   /* i, j indices packed into 64 bits withe MAKE_KEY64 */
+  uint32_t       value; /* count of two-paths between i and j in key */
+  UT_hash_handle hh;    /* uthash hash handle */
+} twopath_record_t;
 
 typedef struct digraph_s
 {
@@ -49,9 +55,9 @@ typedef struct digraph_s
   nodepair_t *allarcs; /* list of all arcs specified as i->j for each */
 
   /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
-  khash_t(m64) *mixTwoPathHashTab; /* hash table counting two-paths */
-  khash_t(m64) *inTwoPathHashTab;  /* hash table counting in-two-paths */
-  khash_t(m64) *outTwoPathHashTab; /* hash table counting out-two-paths */
+  twopath_record_t *mixTwoPathHashTab; /* hash table counting two-paths */
+  twopath_record_t *inTwoPathHashTab;  /* hash table counting in-two-paths */
+  twopath_record_t *outTwoPathHashTab; /* hash table counting out-two-paths */
 
   /* node attributes */
   uint_t   num_binattr;   /* number of binary attributes */
@@ -83,7 +89,7 @@ typedef struct digraph_s
                                to/from a node in earlier wave (node zone -1 ) */
 } digraph_t;
 
-uint_t get_twopath_entry(khash_t(m64) *h, uint_t i, uint_t j);
+uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
   
 digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                                           const char *binattr_filename,
