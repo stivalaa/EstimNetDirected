@@ -668,6 +668,10 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
 
+  g->mixTwoPathHashTab = NULL;
+  g->inTwoPathHashTab = NULL;
+  g->outTwoPathHashTab = NULL;
+
   g->num_binattr = 0;
   g->binattr_names = NULL;
   g->binattr = NULL;
