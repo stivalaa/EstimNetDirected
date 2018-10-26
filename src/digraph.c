@@ -845,6 +845,13 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     if (!isArc(g, i, j)){
       insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
     }
+    
+#ifdef DEBUG_MEMUSAGE
+    if (g->num_arcs % 1000 == 0){
+      MEMUSAGE_DEBUG_PRINT(("%u arcs...\n", g->num_arcs));
+    }
+#endif /* DEBUG_MEMUSAGE */
+    
     saveptr = NULL; /* reset strtok() for next line */
     if (!fgets(buf, sizeof(buf)-1, pajek_file)) {
       if (!feof(pajek_file)) {
