@@ -74,18 +74,22 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
 static void update_twopath_entry(twopath_record_t *h, uint_t i, uint_t j,
                                  uint_t incval)
 {
-  twopath_record_t *rec =
-    (twopath_record_t *)safe_calloc(1, sizeof(twopath_record_t));
+  twopath_record_t rec;
+  twopath_record_t *newrec;
   twopath_record_t *p = NULL;
   
-  rec->key.i = i;
-  rec->key.j = j;
-  HASH_FIND(hh, h, &rec->key, sizeof(nodepair_t), p);
+  memset(&rec, 0, sizeof(twopath_record_t));
+  rec.key.i = i;
+  rec.key.j = j;
+  HASH_FIND(hh, h, &rec.key, sizeof(nodepair_t), p);
   if (p) {
     p->value += incval;
   } else {
-    rec->value = incval;
-    HASH_ADD(hh, h, key, sizeof(nodepair_t), rec);
+    newrec = (twopath_record_t *)safe_calloc(1, sizeof(twopath_record_t));
+    newrec->key.i = i;
+    newrec->key.j = j;
+    newrec->value = incval;
+    HASH_ADD(hh, h, key, sizeof(nodepair_t), newrec);
   }
 } 
 
