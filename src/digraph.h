@@ -31,13 +31,10 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
 
 
 
-/* combine 32 bit indices i and j into single 64 bit key for hash table */
-#define MAKE_KEY64(i, j) (((uint64_t)(i) << 32) | ((j) & 0xffffffff))
 
-/* uthash hash table entry hsa 64 bit key (32 bit i and j indices converted
-   to 64 bit with MAKE_KEY64 macro) and 32 bit value (number of two-paths) */
+/* uthash hash table entry has (i,j) as key and number of tw-paths as value */
 typedef struct {
-  uint64_t       key;   /* i, j indices packed into 64 bits withe MAKE_KEY64 */
+  nodepair_t     key;   /* i, j indices */
   uint32_t       value; /* count of two-paths between i and j in key */
   UT_hash_handle hh;    /* uthash hash handle */
 } twopath_record_t;

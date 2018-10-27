@@ -78,13 +78,14 @@ static void update_twopath_entry(twopath_record_t *h, uint_t i, uint_t j,
     (twopath_record_t *)safe_calloc(1, sizeof(twopath_record_t));
   twopath_record_t *p = NULL;
   
-  rec->key = MAKE_KEY64(i, j);
-  HASH_FIND(hh, h, &rec->key, sizeof(rec->key), p);
+  rec->key.i = i;
+  rec->key.j = j;
+  HASH_FIND(hh, h, &rec->key, sizeof(nodepair_t), p);
   if (p) {
     p->value += incval;
   } else {
     rec->value = incval;
-    HASH_ADD(hh, h, key, sizeof(rec->key), rec);
+    HASH_ADD(hh, h, key, sizeof(nodepair_t), rec);
   }
 } 
 
@@ -433,8 +434,9 @@ static int load_float_attributes(const char *attr_filename,
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
 {
   twopath_record_t rec, *p = NULL;
-  rec.key = MAKE_KEY64(i, j);
-  HASH_FIND(hh, h, &rec.key, sizeof(rec.key), p);
+  rec.key.i = i;
+  rec.key.j = j;
+  HASH_FIND(hh, h, &rec.key, sizeof(nodepair_t), p);
   return (p ? p->value : 0);
 }
 
