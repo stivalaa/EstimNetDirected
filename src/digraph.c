@@ -63,7 +63,7 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  * 10% of entries are nonzero.  
  *
  * Parameters:
- *     h - hash table
+ *     h - pointer to hash table (pointer itself)
  *     i - node id of source
  *     j - node id of destination
  *     incval - value to add to existing value (or insert if not exists)
@@ -71,25 +71,25 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  * Return value:
  *     None.
  */
-static void update_twopath_entry(twopath_record_t *h, uint_t i, uint_t j,
+static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
                                  uint_t incval)
 {
   twopath_record_t rec;
   twopath_record_t *newrec;
-  twopath_record_t *p = NULL;
+  twopath_record_t *p;
   
   memset(&rec, 0, sizeof(twopath_record_t));
   rec.key.i = i;
   rec.key.j = j;
-  HASH_FIND(hh, h, &rec.key, sizeof(nodepair_t), p);
+  HASH_FIND(hh, *h, &rec.key, sizeof(nodepair_t), p);
   if (p) {
     p->value += incval;
   } else {
-    newrec = (twopath_record_t *)safe_calloc(1, sizeof(twopath_record_t));
+    newrec = (twopath_record_t *)safe_malloc(sizeof(*newrec));
     newrec->key.i = i;
     newrec->key.j = j;
     newrec->value = incval;
-    HASH_ADD(hh, h, key, sizeof(nodepair_t), newrec);
+    HASH_ADD(hh, *h, key, sizeof(nodepair_t), newrec);
   }
 } 
 
@@ -118,30 +118,30 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     if (v == i || v == j)
       continue;
     /*removed as slows significantly: assert(isArc(g,i,v)); */
-    update_twopath_entry(g->outTwoPathHashTab, v, j, incval);
-    update_twopath_entry(g->outTwoPathHashTab, j, v, incval);
+    update_twopath_entry(&g->outTwoPathHashTab, v, j, incval);
+    update_twopath_entry(&g->outTwoPathHashTab, j, v, incval);
   }
   for (k = 0; k < g->indegree[j]; k++) {
     v = g->revarclist[j][k];
     if (v == i || v == j)
       continue;
     /*removed as slows significantly: assert(isArc(g,v,j)); */
-    update_twopath_entry(g->inTwoPathHashTab, v, i, incval);
-    update_twopath_entry(g->inTwoPathHashTab, i, v, incval);
+    update_twopath_entry(&g->inTwoPathHashTab, v, i, incval);
+    update_twopath_entry(&g->inTwoPathHashTab, i, v, incval);
   }
   for (k = 0; k < g->indegree[i]; k++)  {
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
     /*removed as slows significantly: assert(isArc(g,v,i));*/
-    update_twopath_entry(g->mixTwoPathHashTab, v, j, incval);
+    update_twopath_entry(&g->mixTwoPathHashTab, v, j, incval);
   }
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
     /*removed as slows significantly: assert(isArc(g,j,v));*/
-    update_twopath_entry(g->mixTwoPathHashTab, i, v, incval);
+    update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
   }
 }
 
