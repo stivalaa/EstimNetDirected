@@ -36,7 +36,24 @@ CDEBUG = -g -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBU
 OPTFLAGS = -O3  #-pg
 CFLAGS     = $(OPTFLAGS) $(WARNFLAGS)
 
+# Use the Random123 library
 CPPFLAGS =  -DUSE_RANDOM123 -IRandom123-1.09/include
+
+# Using the uthash hash table 
+# See https://troydhanson.github.io/uthash/userguide.html
+# and https://github.com/troydhanson/uthash
+# Enable the Bloom filter (max size 32 bits = 512 MB)
+# for faster misses
+# as this was found to increase speed significantly.
+# Using default hash function (Jenkins) as get different
+# rankings for different networks using the hashscan
+# and keytests utilities so no basis to choose a generally
+# best hash fucntion it seems
+CPPFLAGS += -DHASH_BLOOM=32
+
+# extra output even on optimized build for now
+CPPFLAGS += -DDEBUG_MEMUSAGE -DDEBUG_SNOWBALL
+
 LDFLAGS =   #-pg
 
 
