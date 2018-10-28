@@ -36,7 +36,7 @@ NONMPI_C_SRCS = $(NONMPI_C_OBJS:.o=.c)
 
 COMMON_HASH_C_OBJS = $(COMMON_C_OBJS:.o=_hash.o)
 
-OBJS = $(COMMON_C_OBJS) $(MPI_C_OBJS) $(NONMPI_C_OBJS)
+OBJS = $(COMMON_C_OBJS) $(MPI_C_OBJS) $(NONMPI_C_OBJS) $(COMMON_HASH_C_OBJS)
 SRCS = $(COMMON_C_SRCS) $(MPI_C_SRCS) $(NONMPI_C_SRCS)
 
 all: EstimNetDirected EstimNetDirected_mpi EstimNetDirected_hashtables EstimNetDirected_mpi_hashtables
