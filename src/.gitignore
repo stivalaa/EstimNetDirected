@@ -2,6 +2,10 @@ EstimNetDirected.exe
 EstimNetDirected_mpi.exe
 EstimNetDirected
 EstimNetDirected_mpi
+EstimNetDirected_hashtables.exe
+EstimNetDirected_mpi_hashtables.exe
+EstimNetDirected_hashtables
+EstimNetDirected_mpi_hashtables
 *.o
 *~
 TAGS

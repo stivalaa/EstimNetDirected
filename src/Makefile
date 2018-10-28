@@ -34,16 +34,24 @@ COMMON_C_SRCS = $(COMMON_C_OBJS:.o=.c)
 MPI_C_SRCS    = $(MPI_C_OBJS:.o=.c)
 NONMPI_C_SRCS = $(NONMPI_C_OBJS:.o=.c)
 
+COMMON_HASH_C_OBJS = $(COMMON_C_OBJS:.o=_hash.o)
 
 OBJS = $(COMMON_C_OBJS) $(MPI_C_OBJS) $(NONMPI_C_OBJS)
 SRCS = $(COMMON_C_SRCS) $(MPI_C_SRCS) $(NONMPI_C_SRCS)
 
-all: EstimNetDirected EstimNetDirected_mpi
+all: EstimNetDirected EstimNetDirected_mpi EstimNetDirected_hashtables EstimNetDirected_mpi_hashtables
 
 EstimNetDirected: $(COMMON_C_OBJS) $(NONMPI_C_OBJS)
 	$(LD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
 
 EstimNetDirected_mpi: $(COMMON_C_OBJS) $(MPI_C_OBJS)
+	$(MPILD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
+
+# These versions use hash tables instead of arrays for two-paths lookup
+EstimNetDirected_hashtables: $(COMMON_HASH_C_OBJS) $(NONMPI_C_OBJS)
+	$(LD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
+
+EstimNetDirected_mpi_hashtables: $(COMMON_HASH_C_OBJS) $(MPI_C_OBJS)
 	$(MPILD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
 
 tags: $(SRCS)
@@ -55,6 +63,7 @@ depend: $(SRCS)
 clean:
 	rm -f $(OBJS)
 	rm -f EstimNetDirected EstimNetDirected_mpi
+	rm -f EstimNetDirected_hashtables EstimNetDirected_mpi_hashtables
 
 
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c
@@ -62,6 +71,9 @@ EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+%_hash.o: %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DTWOPATH_HASHTABLES -c -o $@ $<
 
 
 
