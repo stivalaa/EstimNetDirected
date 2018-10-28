@@ -51,15 +51,6 @@ International Conference for (pp. 1-12). IEEE.
 
 
 
-Also uses the khash generic hash table from:
-
-https://github.com/attractivechaos/klib/blob/master/khash.h
-
-downloaded 22 Oct 2018. See also:
-
-http://attractivechaos.github.io/klib/#Khash%3A%20generic%20hash%20table
-https://attractivechaos.wordpress.com/2008/08/28/comparison-of-hash-table-libraries/
-https://attractivechaos.wordpress.com/2018/01/13/revisiting-hash-table-performance/
 
 Also uses the uthash hash table from:
 
@@ -68,6 +59,10 @@ https://github.com/troydhanson/uthash
 downloaded 26 October 2018. See:
 
 http://troydhanson.github.io/uthash/
+
+
+Note this requires a 64-bit system for very large two-path arrays
+or hash tables arising from large networks.
 
 ADS
 Fri, Oct 26, 2018  3:00:30 PM
