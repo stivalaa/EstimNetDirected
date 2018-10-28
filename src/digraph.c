@@ -899,30 +899,33 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                         ((double)sizeof(uint_t) * total_degree) / (1024*1024),
                          g->num_arcs));
 
-  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
+  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->mixTwoPathHashTab),
                         (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
-                                 sizeof(uint64_t))/(1024*1024),
+                                 sizeof(twopath_record_t))/(1024*1024),
                         100*(double)HASH_COUNT(g->mixTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
-  MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
+  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->mixTwoPathHashTab)/(1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->inTwoPathHashTab),
-                        (double)(HASH_COUNT(g->inTwoPathHashTab)*2*
-                                 sizeof(uint64_t))/(1024*1024),
+                        (double)(HASH_COUNT(g->inTwoPathHashTab)*
+                                 (sizeof(twopath_record_t)))/(1024*1024),
                         100*(double)HASH_COUNT(g->inTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
-  MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (approx. %f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
+  MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->inTwoPathHashTab)/(1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->outTwoPathHashTab),
                         (double)(HASH_COUNT(g->outTwoPathHashTab)*2*
-                                 sizeof(uint64_t))/(1024*1024),
+                                 sizeof(twopath_record_t))/(1024*1024),
                         100*(double)HASH_COUNT(g->outTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->outTwoPathHashTab)/(1024*1024)));
 #endif /* DEBUG_MEMUSAGE */
   
   if (binattr_filename) {
