@@ -678,6 +678,7 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->inTwoPathHashTab = NULL;
   g->outTwoPathHashTab = NULL;
 
+  assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
 #ifdef DEBUG_MEMUSAGE
 #ifdef HASH_BLOOM
   /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
