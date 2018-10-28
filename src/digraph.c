@@ -752,6 +752,17 @@ digraph_t *allocate_digraph(uint_t num_vertices)
                                              sizeof(uint_t));
   g->outTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
                                               sizeof(uint_t));
+#ifdef DEBUG_MEMUSAGE
+  MEMUSAGE_DEBUG_PRINT(("mixTwoPathMatrix size %f MB\n", 
+                        (double)num_vertices*num_vertices*sizeof(uint_t)/
+                        (1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("inTwoPathMatrix size %f MB\n", 
+                        (double)num_vertices*num_vertices*sizeof(uint_t)/
+                        (1024*1024)));
+  MEMUSAGE_DEBUG_PRINT(("outTwoPathMatrix size %f MB\n", 
+                        (double)num_vertices*num_vertices*sizeof(uint_t)/
+                        (1024*1024)));
+#endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
   
   g->num_binattr = 0;

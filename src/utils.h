@@ -75,7 +75,7 @@ extern "C" {
 #define MAX(a, b) ( (a) > (b) ? (a) : (b) )
   
 /* Index into 2d n x n array stored row-major in contiguous memory  */
-#define INDEX2D(i,j,n) ( ((i)*(n) + (j)) )
+#define INDEX2D(i,j,n) ( ((size_t)(i)*(n) + (j)) )
 
   
 /*****************************************************************************
