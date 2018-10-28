@@ -26,6 +26,15 @@
 #include <assert.h>
 #include "changeStatisticsDirected.h"
 
+#ifdef TWOPATH_HASHTABLES
+#define GET_MIX2PATH_ENTRY(g, i, j) get_twopath_entry((g)->mixTwoPathHashTab, (i), (j))
+#define GET_IN2PATH_ENTRY(g, i, j) get_twopath_entry((g)->inTwoPathHashTab, (i), (j))
+#define GET_OUT2PATH_ENTRY(g, i, j) get_twopath_entry((g)->outTwoPathHashTab, (i), (j))
+#else
+#define GET_MIX2PATH_ENTRY(g, i, j) ((g)->mixTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#endif /* TWOPATH_HASHTABLES */
    
 /*****************************************************************************
  *
@@ -102,7 +111,7 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, j, v))
       delta += pow(1-1/lambda,
-                   get_twopath_entry(g->mixTwoPathHashTab, i, v));
+                   GET_MIX2PATH_ENTRY(g, i, v));
   }
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
@@ -110,10 +119,10 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, v, j))
       delta += pow(1-1/lambda,
-                   get_twopath_entry(g->mixTwoPathHashTab, v, j));
+                   GET_MIX2PATH_ENTRY(g, v, j));
   }
   delta += lambda * (1 - pow(1-1/lambda,
-                             get_twopath_entry(g->mixTwoPathHashTab, i, j)));
+                             GET_MIX2PATH_ENTRY(g, i, j)));
   return delta;
 }
 
@@ -132,13 +141,13 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, j, v)) {
       delta +=
-        pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, i, v)) +
-        pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, v, j));
+        pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, i, v)) +
+        pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
     }
   }
   delta +=
     lambda * (1 - pow(1-1/lambda, 
-                      get_twopath_entry(g->mixTwoPathHashTab, j, i)));
+                      GET_MIX2PATH_ENTRY(g, j, i)));
   return delta;
 }
 
@@ -154,13 +163,13 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
-    delta += pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, i, v));
+    delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, i, v));
   }
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    delta += pow(1-1/lambda, get_twopath_entry(g->mixTwoPathHashTab, v, j));
+    delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
   }
   return delta;
 }
@@ -177,7 +186,7 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[i][k];
     if (v == i || v == j) 
       continue;
-    delta += pow(1-1/lambda, get_twopath_entry(g->outTwoPathHashTab, j, v));
+    delta += pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
   }
   return delta;
 }

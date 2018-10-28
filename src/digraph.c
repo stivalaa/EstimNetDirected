@@ -35,6 +35,7 @@
 #include <math.h>
 #include "digraph.h"
 
+
    
 /*****************************************************************************
  *
@@ -54,6 +55,7 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  *
  ****************************************************************************/
 
+#ifdef TWOPATH_HASHTABLES
 /*
  * Update entry for (i, j) in hashtable.
  *
@@ -92,12 +94,14 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
     HASH_ADD(hh, *h, key, sizeof(nodepair_t), newrec);
   }
 } 
+#endif /* TWOPATH_HASHTABLES */
 
 
+#ifdef TWOPATH_HASHTABLES
 /*
- * Update the two-paths matrices used for fast computation of change
+ * Update the two-paths hash tables used for fast computation of change
  * statistics for either adding or removing arc i->j
- * The matrices in the digraph are updated in-place
+ * The hash tables in the digraph are updated in-place
  *
  * Parameters:
  *   g     - digraph
@@ -144,8 +148,60 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
   }
 }
+#else
+/*
+ * Update the two-paths matrices used for fast computation of change
+ * statistics for either adding or removing arc i->j
+ * The matcies in the digraph are updated in-place
+ *
+ * Parameters:
+ *   g     - digraph
+ *   i     - node arc is from
+ *   j     - node arc is to
+ *   isAdd - TRUE for inserting arc, FALSE for deleting arc
+ *
+ * Return value:
+ *   None.
+ */
+static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
+{
+  uint_t v,k;
+  int incval = isAdd ? 1 : -1;
 
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
+    if (v == i || v == j)
+      continue;
+    /*removed as slows significantly: assert(isArc(g,i,v)); */
+    g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
+    g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
+  }
+  for (k = 0; k < g->indegree[j]; k++) {
+    v = g->revarclist[j][k];
+    if (v == i || v == j)
+      continue;
+    /*removed as slows significantly: assert(isArc(g,v,j)); */
+    g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
+    g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+  }
+  for (k = 0; k < g->indegree[i]; k++)  {
+    v = g->revarclist[i][k];
+    if (v == i || v == j)
+      continue;
+    /*removed as slows significantly: assert(isArc(g,v,i));*/
+    g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
+  }
+  for (k = 0; k < g->outdegree[j]; k++) {
+    v = g->arclist[j][k];
+    if (v == i || v == j)
+      continue;
+    /*removed as slows significantly: assert(isArc(g,j,v));*/
+    g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+  }
+}
+#endif /*TWOPATH_HASHTABLES*/
 
+#ifdef TWOPATH_HASHTABLES
 /*
  * Delete all entries and entire hash table.
  *
@@ -163,6 +219,7 @@ static void deleteAllHashTable(twopath_record_t *h)
     free(curr);
   }
 }
+#endif /*TWOPATH_HASHTABLES*/
 
 /*
  * Load integer (binary or categorical) attributes from file.
@@ -423,6 +480,7 @@ static int load_float_attributes(const char *attr_filename,
  *
  ****************************************************************************/
 
+#ifdef TWOPATH_HASHTABLES
 /*
  * Get entry for (i, j) in hashtable.
  *
@@ -443,7 +501,7 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
   HASH_FIND(hh, h, &rec.key, sizeof(nodepair_t), p);
   return (p ? p->value : 0);
 }
-
+#endif /*TWOPATH_HASHTABLES*/
 
 
 /* 
@@ -674,6 +732,7 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->revarclist = (uint_t **)safe_calloc(num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
 
+#ifdef TWOPATH_HASHTABLES
   g->mixTwoPathHashTab = NULL;
   g->inTwoPathHashTab = NULL;
   g->outTwoPathHashTab = NULL;
@@ -686,7 +745,15 @@ digraph_t *allocate_digraph(uint_t num_vertices)
                         HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
-
+#else
+  g->mixTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+                                              sizeof(uint_t));
+  g->inTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+                                             sizeof(uint_t));
+  g->outTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+                                              sizeof(uint_t));
+#endif /* TWOPATH_HASHTABLES */
+  
   g->num_binattr = 0;
   g->binattr_names = NULL;
   g->binattr = NULL;
@@ -745,9 +812,15 @@ void free_digraph(digraph_t *g)
   free(g->revarclist);
   free(g->indegree);
   free(g->outdegree);
+#ifdef TWOPATH_HASHTABLES
   deleteAllHashTable(g->mixTwoPathHashTab);
   deleteAllHashTable(g->inTwoPathHashTab);
   deleteAllHashTable(g->outTwoPathHashTab);
+#else
+  free(g->mixTwoPathMatrix);
+  free(g->inTwoPathMatrix);
+  free(g->outTwoPathMatrix);
+#endif /* TWOPATH_HASHTABLES */
   free(g->zone);
   free(g->inner_nodes);
   free(g->prev_wave_degree);
@@ -796,9 +869,12 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   int num_attr;
 #ifdef DEBUG_MEMUSAGE
   uint_t k, total_degree = 0;
+#ifdef TWOPATH_HASHTABLES
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
+#endif /*DEBUG_HASHABLES */
 #endif /* DEBUG_MEMUSAGE */
+
 
   char buf[BUFSIZE];
   /* the first lines should be e.g.
@@ -827,9 +903,11 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     fclose(pajek_file);
     exit(1);
   }
+#ifdef DEBUG_HASHTABLES
 #ifdef DEBUG_MEMUSAGE
   gettimeofday(&start_timeval, NULL);
 #endif /* DEBUG_MEMUSAGE */
+#endif /*DEBUG_HASHTABLES*/
   while (!feof(pajek_file)) {
     i = j = 0;
     token = strtok_r(buf, delims, &saveptr);
@@ -866,7 +944,8 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     if (!isArc(g, i, j)){
       insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
     }
-    
+
+#ifdef TWOPATH_HASHTABLES
 #ifdef DEBUG_MEMUSAGE
     if (g->num_arcs % 1000 == 0){
       gettimeofday(&end_timeval, NULL);
@@ -880,6 +959,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                             (double)etime/1000));
     }
 #endif /* DEBUG_MEMUSAGE */
+#endif /* TWOPATH_HASHTABLES */
     
     saveptr = NULL; /* reset strtok() for next line */
     if (!fgets(buf, sizeof(buf)-1, pajek_file)) {
@@ -899,7 +979,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   MEMUSAGE_DEBUG_PRINT(("Allocated additional %f MB (twice) for %u arcs\n",
                         ((double)sizeof(uint_t) * total_degree) / (1024*1024),
                          g->num_arcs));
-
+#ifdef TWOPATH_HASHTABLES
   MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->mixTwoPathHashTab),
                         (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
@@ -927,6 +1007,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                         ((double)sizeof(uint_t)*num_vertices*num_vertices) /
                         (1024*1024)));
   MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->outTwoPathHashTab)/(1024*1024)));
+#endif /* TWOPATH_HASHTABLES */
 #endif /* DEBUG_MEMUSAGE */
   
   if (binattr_filename) {
