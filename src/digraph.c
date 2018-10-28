@@ -872,7 +872,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
 #ifdef TWOPATH_HASHTABLES
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
-#endif /*DEBUG_HASHABLES */
+#endif /*TWOPATH_HASHABLES */
 #endif /* DEBUG_MEMUSAGE */
 
 
@@ -903,11 +903,11 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     fclose(pajek_file);
     exit(1);
   }
-#ifdef DEBUG_HASHTABLES
+#ifdef TWOPATH_HASHTABLES
 #ifdef DEBUG_MEMUSAGE
   gettimeofday(&start_timeval, NULL);
 #endif /* DEBUG_MEMUSAGE */
-#endif /*DEBUG_HASHTABLES*/
+#endif /*TWOPATH_HASHTABLES*/
   while (!feof(pajek_file)) {
     i = j = 0;
     token = strtok_r(buf, delims, &saveptr);
