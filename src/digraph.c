@@ -678,6 +678,14 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->inTwoPathHashTab = NULL;
   g->outTwoPathHashTab = NULL;
 
+#ifdef DEBUG_MEMUSAGE
+#ifdef HASH_BLOOM
+  /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
+  MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
+                        HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+#endif /* HASH_BLOOM */
+#endif /* DEBUG_MEMUSAGE */
+
   g->num_binattr = 0;
   g->binattr_names = NULL;
   g->binattr = NULL;
