@@ -75,11 +75,20 @@ static void dumpTwoPathTables(const digraph_t *g) {
       mixSum += g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       inSum += g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       outSum += g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > 0) {
+        mixNnz++;
+      }
       if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > mixMax) {
         mixMax = g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       }
+      if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > 0) {
+        inNnz++;
+      }
       if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > inMax) {
         inMax = g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      }
+      if (g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > 0) {
+        outNnz++;
       }
       if (g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > outMax) {
         outMax = g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
