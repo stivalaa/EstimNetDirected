@@ -32,48 +32,38 @@
 static void dumpTwoPathTables(const digraph_t *g) {
   uint_t inSum,outSum,mixSum,inMax,outMax,mixMax;
   uint_t inNnz, outNnz, mixNnz;
-  uint64_t kiter;
+  twopath_record_t *r;
   uint_t val;
   
   inSum = outSum = mixSum = 0;
   inMax = outMax = mixMax = 0;
   inNnz = outNnz = 0;
-  mixNnz = kh_size(g->mixTwoPathHashTab);
-  inNnz = kh_size(g->inTwoPathHashTab);
-  outNnz = kh_size(g->outTwoPathHashTab);
-  for (kiter = kh_begin(g->mixTwoPathHashTab);
-       kiter != kh_end(g->mixTwoPathHashTab);
-       kiter++) {
-    if (kh_exist(g->mixTwoPathHashTab, kiter)) {
-      val = kh_value(g->mixTwoPathHashTab, kiter);
-      mixSum += val;
-      if (val > mixMax) {
-        mixMax = val;
-      }
+  mixNnz = HASH_COUNT(g->mixTwoPathHashTab);
+  inNnz = HASH_COUNT(g->inTwoPathHashTab);
+  outNnz = HASH_COUNT(g->outTwoPathHashTab);
+
+  for (r = g->mixTwoPathHashTab; r !=NULL; r = r->hh.next) {
+    val = r->value;
+    mixSum += val;
+    if (val > mixMax) {
+      mixMax = val;
     }
   }
-  for (kiter = kh_begin(g->inTwoPathHashTab);
-       kiter != kh_end(g->inTwoPathHashTab);
-       kiter++) {
-    if (kh_exist(g->inTwoPathHashTab, kiter)) {
-      val = kh_value(g->inTwoPathHashTab, kiter);
-      inSum += val;
-      if (val > inMax) {
-        inMax = val;
-      }
+  for (r = g->inTwoPathHashTab; r !=NULL; r = r->hh.next) {
+    val = r->value;
+    inSum += val;
+    if (val > inMax) {
+      inMax = val;
     }
   }
-  for (kiter = kh_begin(g->outTwoPathHashTab);
-       kiter != kh_end(g->outTwoPathHashTab);
-       kiter++) {
-    if (kh_exist(g->outTwoPathHashTab, kiter)) {
-      val = kh_value(g->outTwoPathHashTab, kiter);
-      outSum += val;
-      if (val > outMax) {
-        outMax = val;
-      }
+  for (r = g->outTwoPathHashTab; r !=NULL; r = r->hh.next) {
+    val = r->value;
+    outSum += val;
+    if (val > outMax) {
+      outMax = val;
     }
   }
+  
 
   printf("mix2p sum = %u, max = %u\n", mixSum, mixMax);
   printf("in2p sum = %u, max = %u\n", inSum, inMax);
