@@ -40,12 +40,15 @@ basefilename <- sub("(.+)[.].+", "\\1", basename(infile))
 outfilename <- basefilename
 
 edgelist <- read.table(gzfile(infile))
+
+uniqueIds <- unique(c(edgelist$V1, edgelist$V2))
+numIds <- length(uniqueIds)
+cat('number of unique ids is ', numIds, '\n')
+cat('min is ', min(uniqueIds), ' max is ', max(uniqueIds), '\n')
+
 # have to add 1 as igraph cannot handle 0 as vertex id apparently
 g <- graph.edgelist(as.matrix(edgelist)+1, directed=TRUE)
 
-# label nodes with 'name' which has special meaning in igraph allows lookup
-# just use node id (starting at 1) as name
-V(g)$name <- 1:vcount(g)
 
 summary(g)
 # remove multiple and self edges
