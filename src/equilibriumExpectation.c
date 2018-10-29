@@ -421,8 +421,11 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("task %u: Doing conditional estimation of snowball sample\n",
       tasknum);
 
-   /* steps of algorithm S (M1_steps adjusted by number of nodes) */
-  uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);
+  /* steps of algorithm S (M1_steps */
+  /*uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);*/
+  /* just as for Msteps below, no longer scale by network size
+   * as that results in excessive values for very large networks */
+  uint_t M1 = M1_steps;
 
   /* inner steps of Algorithm EE */
   /*uint_t M = (uint_t)(Msteps *g->num_nodes / sampler_m);*/
