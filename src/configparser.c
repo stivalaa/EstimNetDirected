@@ -123,7 +123,7 @@ static const config_param_t CONFIG_PARAMS[] = {
    "sampler iterations (per algorithm step)"},
 
   {"Ssteps",        PARAM_TYPE_UINT,     offsetof(config_t, Ssteps),
-   "steps of Algorithm S (multiplied by size adjustment)"},
+   "steps of Algorithm S"},
 
   {"EEsteps",       PARAM_TYPE_UINT,     offsetof(config_t, EEsteps),
    "steps of Algorithm EE"},

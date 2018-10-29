@@ -36,7 +36,7 @@ typedef struct config_s {
   double ACA_EE;          /* multiplier for step size in Algorithm EE */
   double compC;           /* multiplier of sd/mean theta to limit variance */
   uint_t samplerSteps;    /* sampler iterations per algorithm step */
-  uint_t Ssteps;          /* steps of Algorithm S (adjusted by size) */
+  uint_t Ssteps;          /* steps of Algorithm S */
   uint_t EEsteps;         /* steps of Algorithm EE */
   uint_t EEinnerSteps;    /* inner iterations of Algorithm EE */
   bool   outputAllSteps;   /* write theta and dzA every iteration not just outer*/
