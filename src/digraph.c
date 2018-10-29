@@ -69,12 +69,13 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  *     i - node id of source
  *     j - node id of destination
  *     incval - value to add to existing value (or insert if not exists)
+ *              NB this can be negative (it is either -1 or +1)
  *
  * Return value:
  *     None.
  */
 static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
-                                 uint_t incval)
+                                 int incval)
 {
   twopath_record_t rec;
   twopath_record_t *newrec;
@@ -86,6 +87,13 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
   HASH_FIND(hh, *h, &rec.key, sizeof(nodepair_t), p);
   if (p) {
     p->value += incval;
+#ifdef DEBUG_MEMUSAGE
+    if (p->value == 0) {
+//XXX      MEMUSAGE_DEBUG_PRINT(("update_twopath_entry %u, %u now zero\n", i, j));
+      /* TODO could delete from hash table now, but want to see how
+       * often this happens */
+    }
+#endif /*DEBUG_MEMUSAGE*/
   } else {
     newrec = (twopath_record_t *)safe_malloc(sizeof(*newrec));
     newrec->key.i = i;
