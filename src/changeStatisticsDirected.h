@@ -50,6 +50,7 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j);
 double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j);
 double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j);
 double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j);
+double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j);
 double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j);
 
 /************************* Actor attribute (binary) **************************/

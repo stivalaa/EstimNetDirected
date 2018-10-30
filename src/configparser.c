@@ -199,6 +199,7 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"AltKTrianglesC",    changeAltKTrianglesC},
   {"AltTwoPathsT",      changeAltTwoPathsT},
   {"AltTwoPathsD",      changeAltTwoPathsD},
+  {"AltTwoPathsU",      changeAltTwoPathsU},
   {"AltTwoPathsTD",     changeAltTwoPathsTD}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /

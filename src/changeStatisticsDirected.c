@@ -183,6 +183,23 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Change statistic for alternating two-paths A2P-U (shared activity) 
+ */
+double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k;
+  double delta = 0;
+  assert(lambda > 1);
+  for (k = 0; k < g->indegree[j]; k++) {
+    v = g->revarclist[j][k];
+    if (v == i || v == j) 
+      continue;
+    delta += pow(1-1/lambda, GET_IN2PATH_ENTRY(g, i, v));
+  }
+  return delta;
+}
+
+/*
  * Change statisic for alternating two-paths A2P-TD (shared popularity +
  * muliptle two-paths), adjusting for multiple counting
  */
