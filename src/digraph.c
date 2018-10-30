@@ -93,6 +93,13 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
     p->value += incval;
     if (p->value == 0) {
       assert(incval < 0); /* value added must have been -ve to get to zero */
+      /* delete entry with value 0 to save memory (get_twopath_entry() 
+         returns 0 for value if key not in hash table, so having key in table
+         with value 0 is the same as having it not present).
+         If we don't do this then the hash table will just keep growing
+         and could use far more memory than if we do this */
+      HASH_DELETE(hh, *h, p);
+      free(p);
     }
   } else {
     newrec = (twopath_record_t *)safe_malloc(sizeof(*newrec));
