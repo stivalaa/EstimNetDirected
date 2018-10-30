@@ -89,14 +89,12 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
   HASH_FIND(hh, *h, &rec.key, sizeof(nodepair_t), p);
   if (p) {
     p->value += incval;
-#ifdef DEBUG_MEMUSAGE
     if (p->value == 0) {
       assert(incval == -1); /* value added must have been -ve to get to zero */
 //XXX      MEMUSAGE_DEBUG_PRINT(("update_twopath_entry %u, %u now zero\n", i, j));
       /* TODO could delete from hash table now, but want to see how
        * often this happens */
     }
-#endif /*DEBUG_MEMUSAGE*/
   } else {
     newrec = (twopath_record_t *)safe_malloc(sizeof(*newrec));
     newrec->key.i = i;
