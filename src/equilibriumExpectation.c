@@ -257,10 +257,24 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (touter = 0; touter < Mouter; touter++) {
     for (tinner = 0; tinner < Minner; tinner++) {
-      if (outputAllSteps || tinner == 0) {      
+      if (outputAllSteps || tinner == 0) {
         fprintf(theta_outfile, "%u ", t);
         fprintf(dzA_outfile, "%u ", t);
         if(Kafile) fprintf(Kafile, "%u ", t); /* FIXME should be task local*/
+#ifdef TWOPATH_HASHTABLES
+        MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB)\n",
+                        HASH_COUNT(g->mixTwoPathHashTab),
+                        (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
+                                 sizeof(twopath_record_t))/(1024*1024)));
+        MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB)\n",
+                              HASH_COUNT(g->inTwoPathHashTab),
+                              (double)(HASH_COUNT(g->inTwoPathHashTab)*
+                                       (sizeof(twopath_record_t)))/(1024*1024)));
+        MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB)\n",
+                              HASH_COUNT(g->outTwoPathHashTab),
+                              (double)(HASH_COUNT(g->outTwoPathHashTab)*2*
+                                       sizeof(twopath_record_t))/(1024*1024)));
+#endif /* DEBUG_MEMUSAGE */
       }
       if (useIFDsampler) {
         acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, change_stats_funcs, 
@@ -421,8 +435,11 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("task %u: Doing conditional estimation of snowball sample\n",
       tasknum);
 
-   /* steps of algorithm S (M1_steps adjusted by number of nodes) */
-  uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);
+  /* steps of algorithm S (M1_steps */
+  /*uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);*/
+  /* just as for Msteps below, no longer scale by network size
+   * as that results in excessive values for very large networks */
+  uint_t M1 = M1_steps;
 
   /* inner steps of Algorithm EE */
   /*uint_t M = (uint_t)(Msteps *g->num_nodes / sampler_m);*/

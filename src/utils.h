@@ -12,6 +12,7 @@
  ****************************************************************************/
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <sys/time.h>
 
 #ifdef __cplusplus
@@ -54,6 +55,12 @@ extern "C" {
 #define ALGEE_DEBUG_PRINT(x) /* nothing */
 #endif
 
+#ifdef DEBUG_MEMUSAGE
+#define MEMUSAGE_DEBUG_PRINT(x) printf("DEBUG MEMUSAGE: "); printf x
+#else
+#define MEMUSAGE_DEBUG_PRINT(x) /* nothing */
+#endif 
+ 
 
 /*****************************************************************************
  *
@@ -77,8 +84,9 @@ extern "C" {
  *
  ****************************************************************************/
 
-typedef unsigned int uint_t;
-typedef int          bool;
+typedef unsigned int       uint32_t;
+typedef unsigned int       uint_t;
+typedef int                bool;
   
 
 /*****************************************************************************

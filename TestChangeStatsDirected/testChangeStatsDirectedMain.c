@@ -4,7 +4,7 @@
  * Author:  Alex Stivala
  * Created: October 2017
  *
- * Test directed change stats and two-path matrix update.
+ * Test directed change stats and two-path table update.
  *
  *
  * Usage:  testChangeStatsDirected  <in_edgelistfile> [nodenums]
@@ -14,8 +14,6 @@
  * separated, one pair per line) pairs of nodes to use from there,
  * otherwise randomly generated.
  *
- * $Id: testChangeStatsDirectedMain.c 648 2018-04-30 05:20:13Z stivalaa $
- *
  ****************************************************************************/
 
 #include <ctype.h>
@@ -24,37 +22,90 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 #include "digraph.h"
 #include "changeStatisticsDirected.h"
 
 #define DEFAULT_NUM_TESTS 1000
 
-/* get stats and dump mix-two-path matrix */
-static void dumpTwoPathMatrices(const digraph_t *g) {
-  uint_t i, j, inSum,outSum,mixSum,inMax,outMax,mixMax;
+/* get stats and dump mix-two-path hash table */
+static void dumpTwoPathTables(const digraph_t *g) {
+  uint_t inSum,outSum,mixSum,inMax,outMax,mixMax;
+  uint_t inNnz, outNnz, mixNnz;
+#ifdef TWOPATH_HASHTABLES
+  twopath_record_t *r;
+  uint_t val;
+#else
+  uint_t i, j;
+#endif /*TWOPATH_HASHTABLES*/
+  
   inSum = outSum = mixSum = 0;
   inMax = outMax = mixMax = 0;
-  for (i = 0; i < g->num_nodes; i++) {
+  inNnz = outNnz = mixNnz = 0;
+
+#ifdef TWOPATH_HASHTABLES
+  mixNnz = HASH_COUNT(g->mixTwoPathHashTab);
+  inNnz = HASH_COUNT(g->inTwoPathHashTab);
+  outNnz = HASH_COUNT(g->outTwoPathHashTab);
+
+  for (r = g->mixTwoPathHashTab; r !=NULL; r = r->hh.next) {
+    val = r->value;
+    mixSum += val;
+    if (val > mixMax) {
+      mixMax = val;
+    }
+  }
+  for (r = g->inTwoPathHashTab; r !=NULL; r = r->hh.next) {
+    val = r->value;
+    inSum += val;
+    if (val > inMax) {
+      inMax = val;
+    }
+  }
+  for (r = g->outTwoPathHashTab; r !=NULL; r = r->hh.next) {
+    val = r->value;
+    outSum += val;
+    if (val > outMax) {
+      outMax = val;
+    }
+  }
+#else
+ for (i = 0; i < g->num_nodes; i++) {
     for (j = 0; j < g->num_nodes; j++) {
-//      printf("%u ", g->twoPath[INDEX2D(i, j, g->num_nodes)]);
       mixSum += g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       inSum += g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       outSum += g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > 0) {
+        mixNnz++;
+      }
       if (g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > mixMax) {
         mixMax = g->mixTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       }
+      if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > 0) {
+        inNnz++;
+      }
       if (g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > inMax) {
         inMax = g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+      }
+      if (g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > 0) {
+        outNnz++;
       }
       if (g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)] > outMax) {
         outMax = g->outTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       }
     }
-//   printf("\n");
   }
+ #endif /*TWOPATH_HASHTABLES*/
+
   printf("mix2p sum = %u, max = %u\n", mixSum, mixMax);
   printf("in2p sum = %u, max = %u\n", inSum, inMax);
-  printf("out2p sum = %u, max = %u\n", outSum, outMax); 
+  printf("out2p sum = %u, max = %u\n", outSum, outMax);
+  printf("mix nnz = %u (%.4f%%)\n", mixNnz,
+         100*(double)mixNnz/(g->num_nodes*g->num_nodes));
+  printf("in nnz = %u (%.4f%%)\n", inNnz,
+         100*(double)inNnz/(g->num_nodes*g->num_nodes));
+  printf("out nnz = %u (%.4f%%)\n", outNnz,
+         100*(double)outNnz/(g->num_nodes*g->num_nodes));
 }
 
 int main(int argc, char *argv[]) 
@@ -97,7 +148,7 @@ int main(int argc, char *argv[])
   }
   
   gettimeofday(&start_timeval, NULL);
-  fprintf(stderr, "loading arc list from %s and building two-path matrices...",
+  fprintf(stderr, "loading arc list from %s and building two-path tables...",
          arclist_filename);
   g = load_digraph_from_arclist_file(file, NULL, NULL, NULL);
   gettimeofday(&end_timeval, NULL);
@@ -109,7 +160,7 @@ int main(int argc, char *argv[])
 #endif /*DEBUG_DIGRAPH*/
 
   
-  dumpTwoPathMatrices(g);
+  dumpTwoPathTables(g);
 
   /* just change stats (no changes to graph) */
   printf("testing change stats\n");
@@ -162,7 +213,7 @@ int main(int argc, char *argv[])
   }
 
 
-  /* add arcs and update graph and 2-path matrices */
+  /* add arcs and update graph and 2-path hash tables */
   printf("testing add arcs\n");
   num_tests = 0;
   while (TRUE) {
@@ -197,7 +248,7 @@ int main(int argc, char *argv[])
     insertArc(g, i, j);
     /* insertArc() called updateTwoPathsMatrices() itself */
     printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
-    dumpTwoPathMatrices(g);
+    dumpTwoPathTables(g);
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
@@ -214,7 +265,7 @@ int main(int argc, char *argv[])
   }
 
   
-  /* delete arcs and update graph and 2-path matrices */
+  /* delete arcs and update graph and 2-path hash tables */
   printf("testing delete arcs\n");
   while (TRUE) {
     if (readNodeNums) {
@@ -248,7 +299,7 @@ int main(int argc, char *argv[])
     removeArc(g, i, j);
     /* removeArc() calles updateTwoPathsMatrices() itself */
     printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
-    dumpTwoPathMatrices(g);
+    dumpTwoPathTables(g);
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;

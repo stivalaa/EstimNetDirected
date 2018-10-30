@@ -8,7 +8,7 @@
  *
  * Directed graph data structure. Stored as arc lists (both forward and
  * a "reversed" version, for fast iteration over both in- and out- neighbours)
- * and fast lookup matrices for two-paths, and flat arcs list for fast 
+ * and fast lookup hash tables for two-paths, and flat arcs list for fast 
  * finding of random arc.
  *
  * Nodes are numbered 0 .. n-1.
@@ -18,6 +18,10 @@
 
 #include <stdio.h>
 #include "utils.h"
+#ifdef TWOPATH_HASHTABLES
+#include "uthash.h"
+#endif /* TWOPATH_HASHTABLES */
+
 
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
 #define CAT_NA  -1  /* value for catagorical missing data (otherwise >= 0) */
@@ -28,6 +32,25 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
   uint_t  j;    /* to node */
 } nodepair_t;
 
+
+#ifdef TWOPATH_HASHTABLES
+/* uthash hash table entry has (i,j) as key and number of tw-paths as value */
+typedef struct {
+  nodepair_t     key;   /* i, j indices */
+  uint32_t       value; /* count of two-paths between i and j in key */
+  UT_hash_handle hh;    /* uthash hash handle */
+} twopath_record_t;
+#endif /* TWOPATH_HASHTABLES */
+
+#ifdef TWOPATH_HASHTABLES
+#define GET_MIX2PATH_ENTRY(g, i, j) get_twopath_entry((g)->mixTwoPathHashTab, (i), (j))
+#define GET_IN2PATH_ENTRY(g, i, j) get_twopath_entry((g)->inTwoPathHashTab, (i), (j))
+#define GET_OUT2PATH_ENTRY(g, i, j) get_twopath_entry((g)->outTwoPathHashTab, (i), (j))
+#else
+#define GET_MIX2PATH_ENTRY(g, i, j) ((g)->mixTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#endif /* TWOPATH_HASHTABLES */
 
 typedef struct digraph_s
 {
@@ -40,11 +63,18 @@ typedef struct digraph_s
   uint_t **revarclist; /* reverse arc adjacency list: for each node i, array of 
                           indegree[i] nodes that have an arc to it */
   nodepair_t *allarcs; /* list of all arcs specified as i->j for each */
-  /* TODO change dense matrices to sparse (hash table or CSR etc.) for scalabiity */
+
+#ifdef TWOPATH_HASHTABLES
+  /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
+  twopath_record_t *mixTwoPathHashTab; /* hash table counting two-paths */
+  twopath_record_t *inTwoPathHashTab;  /* hash table counting in-two-paths */
+  twopath_record_t *outTwoPathHashTab; /* hash table counting out-two-paths */
+#else
   uint_t *mixTwoPathMatrix; /* n x n contiguous matrix counting two-paths */
   uint_t *inTwoPathMatrix;  /* n x n contiguous matrix counting in-two-paths */
   uint_t *outTwoPathMatrix; /* n x n contiguous matrix counting out-two-paths */
-
+#endif /*TWOPATH_HASHTABLES*/
+  
   /* node attributes */
   uint_t   num_binattr;   /* number of binary attributes */
   char   **binattr_names; /* binary attribute names */
@@ -75,7 +105,10 @@ typedef struct digraph_s
                                to/from a node in earlier wave (node zone -1 ) */
 } digraph_t;
 
-
+#ifdef TWOPATH_HASHTABLES
+uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
+#endif /*TWOPATH_HASHTABLES */
+  
 digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                                           const char *binattr_filename,
                                           const char *catattr_filename,
@@ -98,7 +131,6 @@ void free_digraph(digraph_t *g);
 void dump_digraph_arclist(const digraph_t *g);
 void print_data_summary(const digraph_t *g);
 void print_zone_summary(const digraph_t *g);
-void updateTwoPathsMatrices(digraph_t *g, uint_t start, uint_t end, bool isAdd);
 
 void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
 

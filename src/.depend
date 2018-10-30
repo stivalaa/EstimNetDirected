@@ -3,20 +3,21 @@ utils.o: utils.c utils.h Random123-1.09/include/Random123/threefry.h \
  Random123-1.09/include/Random123/features/gccfeatures.h \
  Random123-1.09/include/Random123/array.h \
  Random123-1.09/include/Random123/features/sse.h
-digraph.o: digraph.c digraph.h utils.h
+digraph.o: digraph.c digraph.h utils.h uthash.h
 changeStatisticsDirected.o: changeStatisticsDirected.c \
- changeStatisticsDirected.h utils.h digraph.h
+ changeStatisticsDirected.h utils.h digraph.h uthash.h
 basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h \
- digraph.h basicSampler.h
+ digraph.h uthash.h basicSampler.h
 equilibriumExpectation.o: equilibriumExpectation.c utils.h digraph.h \
- basicSampler.h changeStatisticsDirected.h ifdSampler.h \
+ uthash.h basicSampler.h changeStatisticsDirected.h ifdSampler.h \
  equilibriumExpectation.h configparser.h
 configparser.o: configparser.c configparser.h utils.h \
- changeStatisticsDirected.h digraph.h
+ changeStatisticsDirected.h digraph.h uthash.h
 ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h digraph.h \
- ifdSampler.h
-EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
- configparser.h changeStatisticsDirected.h digraph.h \
+ uthash.h ifdSampler.h
+EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c \
+ utils.h \
+ configparser.h changeStatisticsDirected.h digraph.h uthash.h \
  equilibriumExpectation.h
 EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h configparser.h \
- changeStatisticsDirected.h digraph.h equilibriumExpectation.h
+ changeStatisticsDirected.h digraph.h uthash.h equilibriumExpectation.h

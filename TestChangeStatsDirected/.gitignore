@@ -1,5 +1,9 @@
+testChangeStatsDirected_hash
+testChangeStatsDirected_hash.exe
 testChangeStatsDirected
 testChangeStatsDirected.exe
+polblogs_test_results_hash.diff
+polblogs_test_results_hash.out
 polblogs_test_results.diff
 polblogs_test_results.out
 *.o

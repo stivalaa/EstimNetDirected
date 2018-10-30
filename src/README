@@ -49,5 +49,22 @@ November). Parallel random numbers: as easy as 1, 2, 3. In High
 Performance Computing, Networking, Storage and Analysis (SC), 2011
 International Conference for (pp. 1-12). IEEE.
 
+
+
+
+Also uses the uthash hash table from:
+
+https://github.com/troydhanson/uthash
+
+downloaded 26 October 2018. See:
+
+http://troydhanson.github.io/uthash/
+
+
+Note this requires a 64-bit system for very large two-path arrays
+or hash tables arising from large networks.
+
 ADS
-Mon, Oct 16, 2017  6:26:22 PM
+Fri, Oct 26, 2018  3:00:30 PM
+
+
