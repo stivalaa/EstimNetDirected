@@ -81,6 +81,8 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
   twopath_record_t *newrec;
   twopath_record_t *p;
 
+  /* there is no reason this function cannot have other values of incval
+     but in updateTwoPathsMatrices() only +1 or -1 is used */
   assert(incval == 1 || incval == -1);
   
   memset(&rec, 0, sizeof(twopath_record_t));
@@ -90,10 +92,13 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
   if (p) {
     p->value += incval;
     if (p->value == 0) {
-      assert(incval == -1); /* value added must have been -ve to get to zero */
-//XXX      MEMUSAGE_DEBUG_PRINT(("update_twopath_entry %u, %u now zero\n", i, j));
+      assert(incval < 0); /* value added must have been -ve to get to zero */
+      MEMUSAGE_DEBUG_PRINT(("update_twopath_entry %u, %u now zero\n", i, j));
       /* TODO could delete from hash table now, but want to see how
        * often this happens */
+    }
+    else {
+      MEMUSAGE_DEBUG_PRINT(("NONZERO %u update_twopath_entry %u, %u \n", p->value, i, j));
     }
   } else {
     newrec = (twopath_record_t *)safe_malloc(sizeof(*newrec));
