@@ -142,7 +142,7 @@ static const config_param_t CONFIG_PARAMS[] = {
 
   {"outputSimulatedNetwork", PARAM_TYPE_BOOL,
    offsetof(config_t, outputSimulatedNetwork),
-   "use Improved Fixed Density sampler instead of basic sampler"},
+   "output simulated network in Pajek format at end of MCMC simulation"},
 
   {"arclistFile",   PARAM_TYPE_STRING,   offsetof(config_t, arclist_filename),
   "Network in Pajek arc list format"},
