@@ -48,6 +48,8 @@ double changeAltInStars(const digraph_t *g, uint_t i, uint_t j);
 double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j);
 double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j);
 double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j);
+double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j);
+double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j);
 double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j);
 double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j);
 double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j);

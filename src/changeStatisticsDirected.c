@@ -143,6 +143,40 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Change statistic for alternating k-triangles AT-D (popularity closure)
+ */
+double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k;
+  double delta = 0;
+  assert(lambda > 1);
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, v)) {
+      delta +=
+        pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
+    }
+    if (isArc(g, v, j)) {
+      delta += 
+        pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, v, j));
+    }
+  }
+  delta +=
+    lambda * (1 - pow(1-1/lambda, 
+                      GET_OUT2PATH_ENTRY(g, i, j)));
+  return delta;
+}
+
+/*
+ * Change statistic for alternating k-triangles AT-U (activity closure)
+ */
+double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j)
+{
+}
+
+/*
  * Change statistics for alternating two-path A2P-T (multiple 2-paths)
  */
 double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
@@ -201,7 +235,7 @@ double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j)
 
 /*
  * Change statisic for alternating two-paths A2P-TD (shared popularity +
- * muliptle two-paths), adjusting for multiple counting
+ * multiple two-paths), adjusting for multiple counting
  */
 double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j)
 {

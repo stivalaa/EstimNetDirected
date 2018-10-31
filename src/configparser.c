@@ -197,6 +197,8 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"AltOutStars",       changeAltOutStars},
   {"AltKTrianglesT",    changeAltKTrianglesT},
   {"AltKTrianglesC",    changeAltKTrianglesC},
+  {"AltKTrianglesD",    changeAltKTrianglesD},
+  {"AltKTrianglesU",    changeAltKTrianglesU},  
   {"AltTwoPathsT",      changeAltTwoPathsT},
   {"AltTwoPathsD",      changeAltTwoPathsD},
   {"AltTwoPathsU",      changeAltTwoPathsU},
