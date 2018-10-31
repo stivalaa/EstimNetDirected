@@ -19,6 +19,28 @@
  *   estimation of exponential random graph models. University of
  *   Melbourne. 2006.
  *
+ * And for the definitions of the change statistics:
+ * 
+ *   Robins, G., Pattison, P., & Wang, P. (2009). Closure, connectivity and
+ *   degree distributions: Exponential random graph (p*) models for
+ *   directed social networks. Social Networks, 31(2), 105-117.
+ * 
+ *   Snijders, T. A., Pattison, P. E., Robins, G. L., & Handcock,
+ *   M. S. (2006). New specifications for exponential random graph
+ *   models. Sociological methodology, 36(1), 99-153.
+ * 
+ * And also generally:
+ * 
+ *   Lusher, D., Koskinen, J., & Robins, G. (Eds.). (2013). Exponential
+ *   random graph models for social networks: Theory, methods, and
+ *   applications. New York, NY: Cambridge University Press.
+ * 
+ * especially Ch. 6:
+ *
+ *   Koskinen, J., & Daraganova, G. (2013). Exponential random graph model
+ *   fundamentals. In "Exponential random graph models for social networks:
+ *   Theory, methods, and applications." (pp. 49-76). New York, NY:
+ *   Cambridge University Press.
  *
  ****************************************************************************/
 
