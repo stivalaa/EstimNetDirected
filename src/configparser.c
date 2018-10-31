@@ -193,6 +193,9 @@ static const struct_param_t STRUCT_PARAMS[] =
 {
   {ARC_PARAM_STR,       changeArc},
   {"Reciprocity",       changeReciprocity},
+  {"Sink",              changeSink},
+  {"Source",            changeSource},
+  {"Isolates",          changeIsolates},
   {"AltInStars",        changeAltInStars},
   {"AltOutStars",       changeAltOutStars},
   {"AltKTrianglesT",    changeAltKTrianglesT},

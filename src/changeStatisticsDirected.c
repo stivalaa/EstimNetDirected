@@ -89,6 +89,51 @@ double changeReciprocity(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Change statistic for Sink 
+ */
+double changeSink(const digraph_t *g, uint_t i, uint_t j)
+{
+  double delta = 0;
+  if (g->outdegree[i] == 0 && g->indegree[i] != 0) {
+    delta--;
+  }
+  if (g->outdegree[j] == 0 && g->indegree[j] == 0) {
+    delta++;
+  }
+  return delta;
+}
+
+/*
+ * Change statistic for Source
+ */
+double changeSource(const digraph_t *g, uint_t i, uint_t j)
+{
+  double delta = 0;
+  if (g->outdegree[i] == 0 && g->indegree[i] == 0) {
+    delta++;
+  }
+  if (g->indegree[j] == 0 && g->outdegree[j] != 0) {
+    delta--;
+  }
+  return delta;
+}
+
+/*
+ * Change statistic for Isolates
+ */
+double changeIsolates(const digraph_t *g, uint_t i, uint_t j)
+{
+  double delta = 0;
+  if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
+    delta--;
+  }
+  if (g->indegree[j] == 0 && g->outdegree[j] == 0) {
+    delta--;
+  }
+  return delta;
+}
+
+/*
  * Change statistic for alternating k-in-stars (popularity spread, AinS)
  */
 double changeAltInStars(const digraph_t *g, uint_t i, uint_t j)

@@ -66,6 +66,9 @@ typedef double (dyadic_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t
 
 double changeArc(const digraph_t *g, uint_t i, uint_t j);
 double changeReciprocity(const digraph_t *g, uint_t i, uint_t j);
+double changeSink(const digraph_t *g, uint_t i, uint_t j);
+double changeSource(const digraph_t *g, uint_t i, uint_t j);
+double changeIsolates(const digraph_t *g, uint_t i, uint_t j);
 double changeAltInStars(const digraph_t *g, uint_t i, uint_t j);
 double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j);
 double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j);
