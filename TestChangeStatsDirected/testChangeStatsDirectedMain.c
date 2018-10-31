@@ -192,12 +192,16 @@ int main(int argc, char *argv[])
     if (i == j) {
       continue;
     }
-    printf("i = %d, j = %d, changeOutKStars = %g, changeInKStars = %g, changeDiTKTriangles = %g changeA2pTD = %g changeDiCKTriangles = %g\n", i, j,
+    printf("i = %d, j = %d, changeOutKStars = %g, changeInKStars = %g, changeDiTKTriangles = %g changeA2pTD = %g changeDiCKTriangles = %g changeDiUKTriangles = %g changeDiDKTriangles = %g changeDiUAltTwoPaths = %g\n", i, j,
            changeAltOutStars(g, i, j),
            changeAltInStars(g, i, j),
            changeAltKTrianglesT(g, i, j),
            changeAltTwoPathsTD(g, i, j),
-           changeAltKTrianglesC(g, i, j));
+           changeAltKTrianglesC(g, i, j),
+           changeAltKTrianglesU(g, i, j),
+           changeAltKTrianglesD(g, i, j),
+           changeAltTwoPathsU(g, i, j)
+      );
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
