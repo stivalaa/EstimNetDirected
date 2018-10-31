@@ -85,7 +85,8 @@ simNetFilePrefix = sim_polblogs
 #
 
 structParams =  {Arc, Reciprocity, AltInStars, AltOutStars, 
-                 AltTwoPathsTD, AltKTrianglesT, AltKTrianglesC }
+                 AltTwoPathsTD, AltKTrianglesT, AltKTrianglesC,
+                 AltTwoPathsU, AltKTrianglesD, AltKTrianglesU }
 
 #
 # Attribute parameters
