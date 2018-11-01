@@ -75,23 +75,37 @@ outfilename <- paste(simnetfileprefix, "pdf", sep='.')
 
 g_obs <- read.graph(netfilename, format='pajek')
 
-cat('Reading ', length(graph_glob), ' graphs...\n')
-system.time(sim_graphs <- sapply(Sys.glob(graph_glob),
+sim_files <- Sys.glob(graph_glob)
+cat('Reading ', length(sim_files), ' graphs...\n')
+system.time(sim_graphs <- sapply(sim_files,
                                  FUN = function(f) read.graph(f, format='pajek'),
                                  simplify = FALSE))
 
-    
+num_nodes <- vcount(g_obs)
+## all simulated graphs must have the same number of nodes
+stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
+## and it must be the same a the number of nodes in the observed graph
+stopifnot(num_nodes == vcount(sim_graphs[[1]]))
+num_sim <- length(sim_graphs)
+
 ptheme <-  theme(legend.position = 'none',
                  axis.title.x = element_blank())
 
 plotlist <- list()
 
 indegree_obs <- table(degree(g_obs, mode='in'))
-cat('obs indegree distribution: ', indegree_obs, '\n')
-# TODO work out how to get box plots of simulated network degree distributions
+indegree_sim <- table((sapply(sim_graphs, function(g) degree(g, mode='in'))))
+indegree_obs <- indegree_obs / num_nodes
+indegree_sim <- indegree_sim / (num_nodes * num_sim)
+print('obs indegree distribution:')
+print(indegree_obs)
+print('sim indegree distribution:')
+print(indegree_sim)
 p <- ggplot()
-p <- p + geom_line(aes(x = as.numeric(names(indegree_obs)),
-                              y = as.numeric(indegree_obs), colour = obscolour))
+p <- p + geom_boxplot(aes(x = names(indegree_sim),
+                          y = as.numeric(indegree_sim)))
+p <- p + geom_line(aes(x = as.numeric(ordered(names(indegree_obs))),
+                       y = as.numeric(indegree_obs), colour = obscolour))
 p <- p + ptheme
 plotlist <- c(plotlist, list(p))
 
