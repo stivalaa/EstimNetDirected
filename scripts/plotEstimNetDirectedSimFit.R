@@ -84,6 +84,9 @@ components <- sapply(sim_graphs, function(g) length(decompose.graph(g)))
 ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global"))
     
 
+ptheme <-  theme(legend.position = 'none',
+                 axis.title.x = element_blank())
+
 plotlist <- list()
 
 cat('obs components: ', length(decompose.graph(g_obs)), '\n')
@@ -92,7 +95,7 @@ p <- ggplot() + geom_boxplot(aes(x = 'components', y = components))
 p <- p + geom_point(aes(x = as.numeric(ordered('components')),
                         y = length(decompose.graph(g_obs)),
                         colour = obscolour))
-p <- p + theme(legend.position = 'none')
+p <- p + ptheme
 plotlist <- c(plotlist, list(p))
 
 cc_obs <- transitivity(g_obs, type='global')
@@ -102,8 +105,7 @@ p <- ggplot() + geom_boxplot(aes(x = 'transitivity', y = ccs))
 p <- p + geom_point(aes(x = as.numeric(ordered('transitivity')),
                         y = cc_obs,
                         colour = obscolour))
-p <- p + ylab('global clustering coefficient')
-p <- p + theme(legend.position = 'none')
+p <- p + ylab('global clustering coefficient') + ptheme
 plotlist <- c(plotlist, list(p))
 
 
