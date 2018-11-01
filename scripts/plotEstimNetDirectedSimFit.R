@@ -80,14 +80,25 @@ system.time(sim_graphs <- sapply(Sys.glob(graph_glob),
                                  FUN = function(f) read.graph(f, format='pajek'),
                                  simplify = FALSE))
 
-components <- sapply(sim_graphs, function(g) length(decompose.graph(g)))
-ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global"))
     
-
 ptheme <-  theme(legend.position = 'none',
                  axis.title.x = element_blank())
 
 plotlist <- list()
+
+indegree_obs <- table(degree(g_obs, mode='in'))
+cat('obs indegree distribution: ', indegree_obs, '\n')
+# TODO work out how to get box plots of simulated network degree distributions
+p <- ggplot()
+p <- p + geom_line(aes(x = as.numeric(names(indegree_obs)),
+                              y = as.numeric(indegree_obs), colour = obscolour))
+p <- p + ptheme
+plotlist <- c(plotlist, list(p))
+
+
+system.time(components <- sapply(sim_graphs, function(g) length(decompose.graph(g))))
+system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
+
 
 cat('obs components: ', length(decompose.graph(g_obs)), '\n')
 cat('sim components: ', components, '\n')
