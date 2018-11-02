@@ -98,8 +98,8 @@ indegree_obs <- indegree_obs / num_nodes
 ##indegree_sim <- table((sapply(sim_graphs, function(g) degree(g, mode='in'))))
 ##indegree_sim <- indegree_sim / (num_nodes * num_sim)
 maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')))
-indeg_df <- data.frame(sim = rep(1:num_sim, each=maxindeg),
-                       indegree = rep(1:maxindeg, num_sim),
+indeg_df <- data.frame(sim = rep(1:num_sim, each=(maxindeg+1)),
+                       indegree = rep(0:maxindeg, num_sim),
                        count = rep(NA, num_sim))
 for (i in 1:num_sim) {
     ## using inefficient and inelegant double loops as could not get
@@ -109,9 +109,15 @@ for (i in 1:num_sim) {
     ## though printing nrow showed correct z < y rows. Just too much
     ## time wasted trying to work out errors in R, gave up and did it
     ## this way.
-    for (j in 1:maxindeg) {
+    indeg_table <- table(degree(sim_graphs[[i]], mode = 'in'))
+    print(indeg_table) #XXX
+    for (j in 0:maxindeg) {
         indeg_df[which(indeg_df[,"sim"] == i &
-                       indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <- i*1000 +j
+                       indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
+            indeg_table[as.character(j)]
+        ## note absolutely  necessary to us as.character() in the line above
+        ## otherwise it appears to work and has no errors/warnings but is wrong
+        ## https://www.r-bloggers.com/indexing-with-factors/
     }
 }
 print(indeg_df)#XXX
