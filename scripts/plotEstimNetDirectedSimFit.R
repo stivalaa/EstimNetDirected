@@ -115,17 +115,17 @@ for (i in 1:num_sim) {
         indeg_df[which(indeg_df[,"sim"] == i &
                        indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
             indeg_table[as.character(j)]
-        ## note absolutely  necessary to us as.character() in the line above
+        ## NB absolutely necessary to use as.character(j) in the line above
         ## otherwise it appears to work and has no errors/warnings but is wrong
         ## https://www.r-bloggers.com/indexing-with-factors/
     }
 }
+indeg_df$indegree <- as.factor(indeg_df$indegree)
+indeg_df$nodefraction <- indeg_df$count / num_nodes
 print(indeg_df)#XXX
-p <- ggplot()
-p <- p + geom_boxplot(aes(x = names(indegree_sim),
-                          y = as.numeric(indegree_sim)))
-p <- p + geom_line(aes(x = as.numeric(ordered(names(indegree_obs))),
-                       y = as.numeric(indegree_obs), colour = obscolour))
+p <- ggplot(indeg_df, aes(indegree, nodefraction)) + geom_boxplot()
+## p <- p + geom_line(aes(x = as.numeric(ordered(names(indegree_obs))),
+##                        y = as.numeric(indegree_obs), colour = obscolour))
 p <- p + ptheme
 p <- p + xlab('in-degree') + ylab('fraction of nodes')
 plotlist <- c(plotlist, list(p))
