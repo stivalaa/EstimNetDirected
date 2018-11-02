@@ -247,8 +247,16 @@ cat('obs triad census: ', obs_triadcensus, '\n')
 sim_triadcensus_df <- data.frame(sim = rep(1:num_sim, each = num_triad_types),
                                  triad = rep(triadnames, num_sim),
                                  count = NA)
+obs_triadcensus_df <- data.frame(triad = triadnames,
+                                 count = NA)
 ## as for degree distributions, using loops as trying to do it "properly"
 ## in R was just too difficult
+for (tname in triadnames) {
+    obs_triadcensus_df[which(obs_triadcensus_df[,"triad"] == tname,
+                             arr.ind=TRUE), "count"] <-
+        obs_triadcensus[tname]
+}
+obs_triadcensus_df$triadfraction <- obs_triadcensus_df$count / nTriads
 for (i in 1:num_sim) {
     system.time(sim_triadcensus <- triad_census(sim_graphs[[i]]))
     names(sim_triadcensus) <- triadnames
@@ -267,8 +275,13 @@ p <- p + ylab('fraction of traids') + ptheme +
     theme(axis.title.x = element_blank(),
           axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 ## who knows why the hjust and vjust are needed, or what they should
-## be, but they do seem to be, otherwise labels are not positioned right:
+## be, but they do seem to be, otherwise labels are not positioned right
+## (note depends on which versoin of R/ggplot2 being used, but this worked
+## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
 ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
+                                                  colour = obscolour,
+                                                  group = 1))
 plotlist <- c(plotlist, list(p))
 
 
