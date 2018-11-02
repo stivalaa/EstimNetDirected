@@ -268,6 +268,11 @@ for (i in 1:num_sim) {
             sim_triadcensus[tname]
     }
 }
+
+## make factor with triad names explicitly specified to keep them in order
+sim_triadcensus_df$triad <- factor(sim_triadcensus_df$triad, levels = triadnames)
+obs_triadcensus_df$triad <- factor(obs_triadcensus_df$triad, levels = triadnames)
+
 sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
 ## Remove 003 triad (empty graph) as it has has far larger fractoin than
 ## others so makes graph too hard to read (like in statnet GoF plots,
