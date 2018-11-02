@@ -94,19 +94,34 @@ ptheme <-  theme(legend.position = 'none',
 plotlist <- list()
 
 indegree_obs <- table(degree(g_obs, mode='in'))
-indegree_sim <- table((sapply(sim_graphs, function(g) degree(g, mode='in'))))
 indegree_obs <- indegree_obs / num_nodes
-indegree_sim <- indegree_sim / (num_nodes * num_sim)
-print('obs indegree distribution:')
-print(indegree_obs)
-print('sim indegree distribution:')
-print(indegree_sim)
+##indegree_sim <- table((sapply(sim_graphs, function(g) degree(g, mode='in'))))
+##indegree_sim <- indegree_sim / (num_nodes * num_sim)
+maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')))
+indeg_df <- data.frame(sim = rep(1:num_sim, each=maxindeg),
+                       indegree = rep(1:maxindeg, num_sim),
+                       count = rep(NA, num_sim))
+for (i in 1:num_sim) {
+    ## using inefficient and inelegant double loops as could not get
+    ## replacement of all indegree values (for sim == i) of data frame
+    ## to work, always get error "replacement has x rows, data has y"
+    ## where y is total rows in data frame, not the subset, even
+    ## though printing nrow showed correct z < y rows. Just too much
+    ## time wasted trying to work out errors in R, gave up and did it
+    ## this way.
+    for (j in 1:maxindeg) {
+        indeg_df[which(indeg_df[,"sim"] == i &
+                       indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <- i*1000 +j
+    }
+}
+print(indeg_df)#XXX
 p <- ggplot()
 p <- p + geom_boxplot(aes(x = names(indegree_sim),
                           y = as.numeric(indegree_sim)))
 p <- p + geom_line(aes(x = as.numeric(ordered(names(indegree_obs))),
                        y = as.numeric(indegree_obs), colour = obscolour))
 p <- p + ptheme
+p <- p + xlab('in-degree') + ylab('fraction of nodes')
 plotlist <- c(plotlist, list(p))
 
 
