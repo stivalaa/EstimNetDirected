@@ -231,6 +231,27 @@ plotlist <- c(plotlist, list(p))
 
 
 
+
+###
+### giant component size
+###
+
+system.time(giant_component_sizes <- sapply(sim_graphs,
+                                           function(g) vcount(giant.component(g))))
+
+obs_gcsize <- vcount(giant.component(g_obs))
+cat('obs giant component size: ', obs_gcsize, '\n')
+cat('sim giant component size: ', giant_component_sizes, '\n')
+p <- ggplot() + geom_boxplot(aes(x = 'giant component', y = giant_component_sizes))
+p <- p + geom_point(aes(x = as.numeric(ordered('giant component')),
+                        y = obs_gcsize,
+                        colour = obscolour))
+p <- p + ylab('number of nodes')
+p <- p + ptheme +   theme(axis.title.x = element_blank())
+plotlist <- c(plotlist, list(p))
+
+
+
 ###
 ### (weakly) Connected components size distribution
 ###
