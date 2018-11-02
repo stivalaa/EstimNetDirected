@@ -310,18 +310,27 @@ plotlist <- c(plotlist, list(p))
 
 
 ###
-### Transitivity (global clustering coefficient)
+### Transitivity (global clustering coefficient and avg. local clustering coef.)
 ###
 
+cctypes <- c('global', 'average local')
 system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
 system.time(cc_obs <- transitivity(g_obs, type='global'))
-cat('obs transitivity: ', cc_obs, '\n')
-cat('sim transitivity: ', ccs, '\n')
-p <- ggplot() + geom_boxplot(aes(x = 'transitivity', y = ccs))
-p <- p + geom_point(aes(x = as.numeric(ordered('transitivity')),
+cat('obs global cc: ', cc_obs, '\n')
+cat('sim global cc: ', ccs, '\n')
+system.time(ccs_localavg <- sapply(sim_graphs, function(g)
+    transitivity(g, type='localaverage')))
+system.time(cc_localavg_obs <- transitivity(g_obs, type='localaverage'))
+p <- ggplot() + geom_boxplot(aes(x = factor('global', levels=cctypes), y = ccs))
+p <- p + geom_point(aes(x = as.numeric(factor('global', levels=cctypes)),
                         y = cc_obs,
                         colour = obscolour))
-p <- p + ylab('global clustering coefficient') + ptheme +
+p <- p + geom_boxplot(aes(x = factor('average local', levels=cctypes),
+                          y = ccs_localavg))
+p <- p + geom_point(aes(x = as.numeric(factor('average local', levels=cctypes)),
+                        y = cc_localavg_obs,
+                        colour = obscolour))
+p <- p + ylab('clustering coefficient') + ptheme +
     theme(axis.title.x = element_blank())
 plotlist <- c(plotlist, list(p))
 
