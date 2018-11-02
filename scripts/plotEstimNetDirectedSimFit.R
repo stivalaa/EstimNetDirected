@@ -129,8 +129,6 @@ for (j in 0:maxindeg) {
 }
 obs_indeg_df$indegree <- as.factor(obs_indeg_df$indegree)
 obs_indeg_df$nodefraction <- obs_indeg_df$count / num_nodes
-print(indeg_df)#XXX
-print(obs_indeg_df)#XXX
 p <- ggplot(indeg_df, aes(indegree, nodefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_indeg_df, aes(indegree, nodefraction,
                                             colour = obscolour,
@@ -184,8 +182,6 @@ for (j in 0:maxoutdeg) {
 }
 obs_outdeg_df$outdegree <- as.factor(obs_outdeg_df$outdegree)
 obs_outdeg_df$nodefraction <- obs_outdeg_df$count / num_nodes
-print(outdeg_df)#XXX
-print(obs_outdeg_df)#XXX
 p <- ggplot(outdeg_df, aes(outdegree, nodefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_outdeg_df, aes(outdegree, nodefraction,
                                             colour = obscolour,
@@ -222,8 +218,7 @@ plotlist <- c(plotlist, list(p))
 ###
 
 system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
-
-cc_obs <- transitivity(g_obs, type='global')
+system.time(cc_obs <- transitivity(g_obs, type='global'))
 cat('obs transitivity: ', cc_obs, '\n')
 cat('sim transitivity: ', ccs, '\n')
 p <- ggplot() + geom_boxplot(aes(x = 'transitivity', y = ccs))
@@ -234,6 +229,49 @@ p <- p + ylab('global clustering coefficient') + ptheme +
     theme(axis.title.x = element_blank())
 plotlist <- c(plotlist, list(p))
 
+
+###
+### Triad census
+###
+
+nTriads <- choose(num_nodes, 3)
+system.time(obs_triadcensus <- triad.census(g_obs))
+num_triad_types <- length(obs_triadcensus)
+stopifnot(num_triad_types == 16)
+triadnames <- c('003', '012', '102', '021D', '021U', '021C', '111D',
+                '111U', '030T', '030C', '201', '120D', '120U', '120C',
+                '210', '300')
+stopifnot(length(triadnames) == num_triad_types)
+names(obs_triadcensus) <- triadnames
+cat('obs triad census: ', obs_triadcensus, '\n')
+sim_triadcensus_df <- data.frame(sim = rep(1:num_sim, each = num_triad_types),
+                                 triad = rep(triadnames, num_sim),
+                                 count = NA)
+## as for degree distributions, using loops as trying to do it "properly"
+## in R was just too difficult
+for (i in 1:num_sim) {
+    system.time(sim_triadcensus <- triad_census(sim_graphs[[i]]))
+    names(sim_triadcensus) <- triadnames
+    cat('sim triad census ', i, ': ', sim_triadcensus, '\n')
+    for (tname in triadnames) {
+        sim_triadcensus_df[which(sim_triadcensus_df[,"sim"] == i &
+                                 sim_triadcensus_df[,"triad"] == tname,
+                                 arr.ind=TRUE), "count"] <-
+            sim_triadcensus[tname]
+    }
+}
+sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
+p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
+p <- p + geom_boxplot()
+p <- p + ylab('fraction of traids') + ptheme +
+    theme(axis.title.x = element_blank())
+plotlist <- c(plotlist, list(p))
+
+
+
+###
+### Write the plot to PDF
+###
 
 pdf(outfilename, onefile=FALSE, paper="special", width=9, height=6)
 do.call(grid.arrange, plotlist)
