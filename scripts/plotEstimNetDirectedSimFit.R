@@ -264,7 +264,11 @@ sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
 p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
 p <- p + geom_boxplot()
 p <- p + ylab('fraction of traids') + ptheme +
-    theme(axis.title.x = element_blank())
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+## who knows why the hjust and vjust are needed, or what they should
+## be, but they do seem to be, otherwise labels are not positioned right:
+## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
 plotlist <- c(plotlist, list(p))
 
 
