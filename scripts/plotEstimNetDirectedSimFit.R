@@ -135,6 +135,7 @@ for (i in 1:num_sim) {
     }
 }
 indeg_df$indegree <- as.factor(indeg_df$indegree)
+indeg_df$count[which(is.na(indeg_df$count))] <- 0
 indeg_df$nodefraction <- indeg_df$count / num_nodes
 obs_indeg_df <- data.frame(indegree = rep(0:maxindeg),
                            count = NA)
@@ -144,6 +145,7 @@ for (j in 0:maxindeg) {
         indeg_table[as.character(j)]
 }
 obs_indeg_df$indegree <- as.factor(obs_indeg_df$indegree)
+obs_indeg_df$count[which(is.na(obs_indeg_df$count))] <- 0
 obs_indeg_df$nodefraction <- obs_indeg_df$count / num_nodes
 p <- ggplot(indeg_df, aes(indegree, nodefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_indeg_df, aes(indegree, nodefraction,
@@ -189,6 +191,7 @@ for (i in 1:num_sim) {
     }
 }
 outdeg_df$outdegree <- as.factor(outdeg_df$outdegree)
+outdeg_df$count[which(is.na(outdeg_df$count))] <- 0
 outdeg_df$nodefraction <- outdeg_df$count / num_nodes
 obs_outdeg_df <- data.frame(outdegree = rep(0:maxoutdeg),
                            count = NA)
@@ -198,6 +201,7 @@ for (j in 0:maxoutdeg) {
         outdeg_table[as.character(j)]
 }
 obs_outdeg_df$outdegree <- as.factor(obs_outdeg_df$outdegree)
+obs_outdeg_df$count[which(is.na(obs_outdeg_df$count))] <- 0
 obs_outdeg_df$nodefraction <- obs_outdeg_df$count / num_nodes
 p <- ggplot(outdeg_df, aes(outdegree, nodefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_outdeg_df, aes(outdegree, nodefraction,
@@ -279,6 +283,7 @@ for (i in 1:num_sim) {
     }
 }
 componentsize_df$componentsize <- as.factor(componentsize_df$componentsize)
+componentsize_df$count[which(is.na(componentsize_df$count))] <- 0
 componentsize_df$nodefraction <- componentsize_df$count / num_nodes
 obs_componentsize_df <- data.frame(componentsize = 1:maxcomponentsize,
                                    count = NA)
@@ -289,6 +294,7 @@ for (j in 0:maxcomponentsize) {
         componentsize_table[as.character(j)]
 }
 obs_componentsize_df$componentsize <- as.factor(obs_componentsize_df$componentsize)
+obs_componentsize_df$count[which(is.na(obs_componentsize_df$count))] <- 0
 obs_componentsize_df$nodefraction <- obs_componentsize_df$count / num_nodes
 p <- ggplot(componentsize_df, aes(componentsize, nodefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_componentsize_df, aes(componentsize, nodefraction,
@@ -296,7 +302,7 @@ p <- p + geom_line(data = obs_componentsize_df, aes(componentsize, nodefraction,
                                             group = 1))
 p <- p + ptheme
 p <- p + xlab('component size') + ylab('fraction of nodes')
-p <- p + scale_y_log10()
+##p <- p + scale_y_log10()
 plotlist <- c(plotlist, list(p))
 
 
