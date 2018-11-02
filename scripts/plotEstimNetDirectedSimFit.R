@@ -59,6 +59,20 @@ library(doBy)
 library(scales)
 
 
+## read in R source file from directory where this script is located
+##http://stackoverflow.com/questions/1815606/rscript-determine-path-of-the-executing-script
+source_local <- function(fname){
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep=.Platform$file.sep))
+}
+
+source_local('snowballSample.R')
+
+###
+### Main
+###
+
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) != 2) {
   cat("Usage: Rscript plotEstimNetDirectedSimFit.R netfilename simNetFilePrefix\n")
@@ -73,12 +87,13 @@ obscolour <- 'red' # colour to plot observed graph points/lines
 graph_glob <- paste(simnetfileprefix, "_[0-9]*[.]net", sep='')
 outfilename <- paste(simnetfileprefix, "pdf", sep='.')
 
-g_obs <- read.graph(netfilename, format='pajek')
+g_obs <- read_graph_file(netfilename, directed = TRUE)
 
 sim_files <- Sys.glob(graph_glob)
 cat('Reading ', length(sim_files), ' graphs...\n')
 system.time(sim_graphs <- sapply(sim_files,
-                                 FUN = function(f) read.graph(f, format='pajek'),
+                                 FUN = function(f) read_graph_file(f,
+                                                                   directed=TRUE),
                                  simplify = FALSE))
 
 num_nodes <- vcount(g_obs)
