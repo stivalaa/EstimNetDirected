@@ -88,11 +88,14 @@ stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
 stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 num_sim <- length(sim_graphs)
 
-ptheme <-  theme(legend.position = 'none',
-                 axis.title.x = element_blank())
+ptheme <-  theme(legend.position = 'none')
+
 
 plotlist <- list()
 
+###
+### In degree
+###
 maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')))
 indeg_df <- data.frame(sim = rep(1:num_sim, each=(maxindeg+1)),
                        indegree = rep(0:maxindeg, num_sim),
@@ -142,8 +145,66 @@ p <- p + xlab('in-degree') + ylab('fraction of nodes')
 plotlist <- c(plotlist, list(p))
 
 
+
+
+
+###
+### Out degree
+###
+maxoutdeg <- max(sapply(sim_graphs, function(g) degree(g, mode='out')))
+outdeg_df <- data.frame(sim = rep(1:num_sim, each=(maxoutdeg+1)),
+                       outdegree = rep(0:maxoutdeg, num_sim),
+                       count = NA)
+for (i in 1:num_sim) {
+    ## using inefficient and inelegant double loops as could not get
+    ## replacement of all outdegree values (for sim == i) of data frame
+    ## to work, always get error "replacement has x rows, data has y"
+    ## where y is total rows in data frame, not the subset, even
+    ## though printing nrow showed correct z < y rows. Just too much
+    ## time wasted trying to work out errors in R, gave up and did it
+    ## this way.
+    outdeg_table <- table(degree(sim_graphs[[i]], mode = 'out'))
+    for (j in 0:maxoutdeg) {
+        outdeg_df[which(outdeg_df[,"sim"] == i &
+                       outdeg_df[,"outdegree"] == j, arr.ind=TRUE), "count"] <-
+            outdeg_table[as.character(j)]
+        ## NB absolutely necessary to use as.character(j) in the line above
+        ## otherwise it appears to work and has no errors/warnings but is wrong
+        ## https://www.r-bloggers.com/indexing-with-factors/
+    }
+}
+outdeg_df$outdegree <- as.factor(outdeg_df$outdegree)
+outdeg_df$nodefraction <- outdeg_df$count / num_nodes
+obs_outdeg_df <- data.frame(outdegree = rep(0:maxoutdeg),
+                           count = NA)
+obs_outdeg_table <- table(degree(g_obs, mode='out'))
+for (j in 0:maxoutdeg) {
+    obs_outdeg_df[which(obs_outdeg_df[,"outdegree"] == j, arr.ind=TRUE), "count"] <-
+        outdeg_table[as.character(j)]
+}
+obs_outdeg_df$outdegree <- as.factor(obs_outdeg_df$outdegree)
+obs_outdeg_df$nodefraction <- obs_outdeg_df$count / num_nodes
+print(outdeg_df)#XXX
+print(obs_outdeg_df)#XXX
+p <- ggplot(outdeg_df, aes(outdegree, nodefraction)) + geom_boxplot()
+p <- p + geom_line(data = obs_outdeg_df, aes(outdegree, nodefraction,
+                                            colour = obscolour,
+                                            group = 1))
+## the "group=1" is ncessary in the above line otherwise get error
+## "geom_path: Each group consists of only one observation. Do you
+## need to adjust the group aesthetic?" and it does not work.
+## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
+
+p <- p + ptheme
+p <- p + xlab('out-degree') + ylab('fraction of nodes')
+plotlist <- c(plotlist, list(p))
+
+
+###
+### (weakly) Connected components
+###
+
 system.time(components <- sapply(sim_graphs, function(g) length(decompose.graph(g))))
-system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
 
 
 cat('obs components: ', length(decompose.graph(g_obs)), '\n')
@@ -152,8 +213,15 @@ p <- ggplot() + geom_boxplot(aes(x = 'components', y = components))
 p <- p + geom_point(aes(x = as.numeric(ordered('components')),
                         y = length(decompose.graph(g_obs)),
                         colour = obscolour))
-p <- p + ptheme
+p <- p + ptheme +   theme(axis.title.x = element_blank())
 plotlist <- c(plotlist, list(p))
+
+
+###
+### Transitivity (global clustering coefficient)
+###
+
+system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
 
 cc_obs <- transitivity(g_obs, type='global')
 cat('obs transitivity: ', cc_obs, '\n')
@@ -162,7 +230,8 @@ p <- ggplot() + geom_boxplot(aes(x = 'transitivity', y = ccs))
 p <- p + geom_point(aes(x = as.numeric(ordered('transitivity')),
                         y = cc_obs,
                         colour = obscolour))
-p <- p + ylab('global clustering coefficient') + ptheme
+p <- p + ylab('global clustering coefficient') + ptheme +
+    theme(axis.title.x = element_blank())
 plotlist <- c(plotlist, list(p))
 
 
