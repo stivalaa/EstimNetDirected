@@ -93,14 +93,10 @@ ptheme <-  theme(legend.position = 'none',
 
 plotlist <- list()
 
-indegree_obs <- table(degree(g_obs, mode='in'))
-indegree_obs <- indegree_obs / num_nodes
-##indegree_sim <- table((sapply(sim_graphs, function(g) degree(g, mode='in'))))
-##indegree_sim <- indegree_sim / (num_nodes * num_sim)
 maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')))
 indeg_df <- data.frame(sim = rep(1:num_sim, each=(maxindeg+1)),
                        indegree = rep(0:maxindeg, num_sim),
-                       count = rep(NA, num_sim))
+                       count = NA)
 for (i in 1:num_sim) {
     ## using inefficient and inelegant double loops as could not get
     ## replacement of all indegree values (for sim == i) of data frame
@@ -110,7 +106,6 @@ for (i in 1:num_sim) {
     ## time wasted trying to work out errors in R, gave up and did it
     ## this way.
     indeg_table <- table(degree(sim_graphs[[i]], mode = 'in'))
-    print(indeg_table) #XXX
     for (j in 0:maxindeg) {
         indeg_df[which(indeg_df[,"sim"] == i &
                        indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
@@ -122,10 +117,19 @@ for (i in 1:num_sim) {
 }
 indeg_df$indegree <- as.factor(indeg_df$indegree)
 indeg_df$nodefraction <- indeg_df$count / num_nodes
+obs_indeg_df <- data.frame(indegree = rep(0:maxindeg),
+                           count = NA)
+obs_indeg_table <- table(degree(g_obs, mode='in'))
+for (j in 0:maxindeg) {
+    obs_indeg_df[which(obs_indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
+        indeg_table[as.character(j)]
+}
+obs_indeg_df$indegree <- as.factor(obs_indeg_df$indegree)
+obs_indeg_df$nodefraction <- obs_indeg_df$count / num_nodes
 print(indeg_df)#XXX
+print(obs_indeg_df)#XXX
 p <- ggplot(indeg_df, aes(indegree, nodefraction)) + geom_boxplot()
-## p <- p + geom_line(aes(x = as.numeric(ordered(names(indegree_obs))),
-##                        y = as.numeric(indegree_obs), colour = obscolour))
+p <- p + geom_line(data = obs_indeg_df, aes(indegree, nodefraction))
 p <- p + ptheme
 p <- p + xlab('in-degree') + ylab('fraction of nodes')
 plotlist <- c(plotlist, list(p))
