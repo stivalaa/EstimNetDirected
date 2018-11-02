@@ -96,7 +96,8 @@ plotlist <- list()
 ###
 ### In degree
 ###
-maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')))
+maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')),
+                degree(g_obs, mode='in'))
 indeg_df <- data.frame(sim = rep(1:num_sim, each=(maxindeg+1)),
                        indegree = rep(0:maxindeg, num_sim),
                        count = NA)
@@ -149,7 +150,8 @@ plotlist <- c(plotlist, list(p))
 ###
 ### Out degree
 ###
-maxoutdeg <- max(sapply(sim_graphs, function(g) degree(g, mode='out')))
+maxoutdeg <- max(sapply(sim_graphs, function(g) degree(g, mode='out')),
+                 degree(g_obs, mode='out'))
 outdeg_df <- data.frame(sim = rep(1:num_sim, each=(maxoutdeg+1)),
                        outdegree = rep(0:maxoutdeg, num_sim),
                        count = NA)
