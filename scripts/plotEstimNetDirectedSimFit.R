@@ -259,51 +259,53 @@ plotlist <- c(plotlist, list(p))
 ###
 ### (weakly) Connected components size distribution
 ###
+## This is commented out as it always is too hard to read, a histogram
+## works better but hard to superimpose these with multiple simluated graphs
 
-sim_component_sizes <- unlist(sapply(sim_graphs,
-                              function(g) sapply(decompose.graph(g),
-                                                 function(h) vcount(h))))
-obs_component_sizes <- sapply(decompose.graph(g_obs), function(g) vcount(g))
-maxcomponentsize <- max(c(sim_component_sizes, obs_component_sizes))
-componentsize_df <- data.frame(sim = rep(1:num_sim, each=maxcomponentsize),
-                               componentsize = rep(1:maxcomponentsize, num_sim),
-                               count = NA)
-for (i in 1:num_sim) {
-    ## using ineffecient and inelegant double loops as per above for degree
-    ## distribution. (see also necessity for as.character(j) below)
-    sim_component_sizes <- sapply(decompose.graph(sim_graphs[[i]]),
-                                  function(g) vcount(g))
-    componentsize_table <- table(sim_component_sizes)
-    for (j in 0:maxcomponentsize) {
-        componentsize_df[which(componentsize_df[,"sim"] == i &
-                               componentsize_df[,"componentsize"] == j,
-                               arr.ind=TRUE),
-                         "count"] <-
-            componentsize_table[as.character(j)]
-    }
-}
-componentsize_df$componentsize <- as.factor(componentsize_df$componentsize)
-componentsize_df$count[which(is.na(componentsize_df$count))] <- 0
-componentsize_df$nodefraction <- componentsize_df$count / num_nodes
-obs_componentsize_df <- data.frame(componentsize = 1:maxcomponentsize,
-                                   count = NA)
-obs_componentsize_table <- table(obs_component_sizes)
-for (j in 0:maxcomponentsize) {
-    obs_componentsize_df[which(obs_componentsize_df[,"componentsize"] == j,
-                               arr.ind=TRUE), "count"] <-
-        componentsize_table[as.character(j)]
-}
-obs_componentsize_df$componentsize <- as.factor(obs_componentsize_df$componentsize)
-obs_componentsize_df$count[which(is.na(obs_componentsize_df$count))] <- 0
-obs_componentsize_df$nodefraction <- obs_componentsize_df$count / num_nodes
-p <- ggplot(componentsize_df, aes(componentsize, nodefraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_componentsize_df, aes(componentsize, nodefraction,
-                                            colour = obscolour,
-                                            group = 1))
-p <- p + ptheme
-p <- p + xlab('component size') + ylab('fraction of nodes')
-##p <- p + scale_y_log10()
-plotlist <- c(plotlist, list(p))
+## sim_component_sizes <- unlist(sapply(sim_graphs,
+##                               function(g) sapply(decompose.graph(g),
+##                                                  function(h) vcount(h))))
+## obs_component_sizes <- sapply(decompose.graph(g_obs), function(g) vcount(g))
+## maxcomponentsize <- max(c(sim_component_sizes, obs_component_sizes))
+## componentsize_df <- data.frame(sim = rep(1:num_sim, each=maxcomponentsize),
+##                                componentsize = rep(1:maxcomponentsize, num_sim),
+##                                count = NA)
+## for (i in 1:num_sim) {
+##     ## using ineffecient and inelegant double loops as per above for degree
+##     ## distribution. (see also necessity for as.character(j) below)
+##     sim_component_sizes <- sapply(decompose.graph(sim_graphs[[i]]),
+##                                   function(g) vcount(g))
+##     componentsize_table <- table(sim_component_sizes)
+##     for (j in 0:maxcomponentsize) {
+##         componentsize_df[which(componentsize_df[,"sim"] == i &
+##                                componentsize_df[,"componentsize"] == j,
+##                                arr.ind=TRUE),
+##                          "count"] <-
+##             componentsize_table[as.character(j)]
+##     }
+## }
+## componentsize_df$componentsize <- as.factor(componentsize_df$componentsize)
+## componentsize_df$count[which(is.na(componentsize_df$count))] <- 0
+## componentsize_df$nodefraction <- componentsize_df$count / num_nodes
+## obs_componentsize_df <- data.frame(componentsize = 1:maxcomponentsize,
+##                                    count = NA)
+## obs_componentsize_table <- table(obs_component_sizes)
+## for (j in 0:maxcomponentsize) {
+##     obs_componentsize_df[which(obs_componentsize_df[,"componentsize"] == j,
+##                                arr.ind=TRUE), "count"] <-
+##         componentsize_table[as.character(j)]
+## }
+## obs_componentsize_df$componentsize <- as.factor(obs_componentsize_df$componentsize)
+## obs_componentsize_df$count[which(is.na(obs_componentsize_df$count))] <- 0
+## obs_componentsize_df$nodefraction <- obs_componentsize_df$count / num_nodes
+## p <- ggplot(componentsize_df, aes(componentsize, nodefraction)) + geom_boxplot()
+## p <- p + geom_line(data = obs_componentsize_df, aes(componentsize, nodefraction,
+##                                             colour = obscolour,
+##                                             group = 1))
+## p <- p + ptheme
+## p <- p + xlab('component size') + ylab('fraction of nodes')
+## ##p <- p + scale_y_log10()
+## plotlist <- c(plotlist, list(p))
 
 
 
