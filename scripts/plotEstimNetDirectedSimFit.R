@@ -129,7 +129,14 @@ obs_indeg_df$nodefraction <- obs_indeg_df$count / num_nodes
 print(indeg_df)#XXX
 print(obs_indeg_df)#XXX
 p <- ggplot(indeg_df, aes(indegree, nodefraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_indeg_df, aes(indegree, nodefraction))
+p <- p + geom_line(data = obs_indeg_df, aes(indegree, nodefraction,
+                                            colour = obscolour,
+                                            group = 1))
+## the "group=1" is ncessary in the above line otherwise get error
+## "geom_path: Each group consists of only one observation. Do you
+## need to adjust the group aesthetic?" and it does not work.
+## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
+
 p <- p + ptheme
 p <- p + xlab('in-degree') + ylab('fraction of nodes')
 plotlist <- c(plotlist, list(p))
