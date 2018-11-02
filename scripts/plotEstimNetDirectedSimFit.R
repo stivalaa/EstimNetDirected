@@ -49,6 +49,10 @@
 ## so could use lots of memory).
 ##
 
+## TODO edge-wise and dyad-wise shared partner distribution like
+## statnet GoF or something similar. See:
+## https://github.com/igraph/igraph/issues/331
+
 library(igraph)
 
 library(grid)
