@@ -269,6 +269,11 @@ for (i in 1:num_sim) {
     }
 }
 sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
+## Remove 003 triad (empty graph) as it has has far larger fractoin than
+## others so makes graph too hard to read (like in statnet GoF plots,
+## everythign else is squashed too close to zero in comparison)
+sim_triadcensus_df <- sim_triadcensus_df[which(sim_triadcensus_df$triad != "003"),]
+obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "003"),]
 p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
 p <- p + geom_boxplot()
 p <- p + ylab('fraction of traids') + ptheme +
