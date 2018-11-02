@@ -260,6 +260,7 @@ p <- p + geom_line(data = obs_componentsize_df, aes(componentsize, nodefraction,
                                             group = 1))
 p <- p + ptheme
 p <- p + xlab('component size') + ylab('fraction of nodes')
+p <- p + scale_y_log10()
 plotlist <- c(plotlist, list(p))
 
 
