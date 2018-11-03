@@ -1008,7 +1008,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
 #ifdef TWOPATH_HASHTABLES
   MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->mixTwoPathHashTab),
-                        (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
+                        ((double)HASH_COUNT(g->mixTwoPathHashTab)*2*
                                  sizeof(twopath_record_t))/(1024*1024),
                         100*(double)HASH_COUNT(g->mixTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
@@ -1017,7 +1017,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->mixTwoPathHashTab)/(1024*1024)));
   MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->inTwoPathHashTab),
-                        (double)(HASH_COUNT(g->inTwoPathHashTab)*
+                        ((double)HASH_COUNT(g->inTwoPathHashTab)*
                                  (sizeof(twopath_record_t)))/(1024*1024),
                         100*(double)HASH_COUNT(g->inTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
@@ -1026,7 +1026,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->inTwoPathHashTab)/(1024*1024)));
   MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
                         HASH_COUNT(g->outTwoPathHashTab),
-                        (double)(HASH_COUNT(g->outTwoPathHashTab)*2*
+                        ((double)HASH_COUNT(g->outTwoPathHashTab)*2*
                                  sizeof(twopath_record_t))/(1024*1024),
                         100*(double)HASH_COUNT(g->outTwoPathHashTab) /
                         (g->num_nodes*g->num_nodes),
