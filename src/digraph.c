@@ -61,8 +61,11 @@ static const char *NA_STRING = "NA"; /* string in attributes files to indicate
  *
  * Used for the two-path hash tables to count two-paths between nodes
  * i and j. Much more efficient to use a hash table (or some other way
- * of storing a sparse matrix) as typically only on the order of 1% to
- * 10% of entries are nonzero.  
+ * of storing a sparse matrix) as typically at most only on the order of 1% to
+ * 10% of entries are nonzero, and for large networks (on the order
+ * of a million nodes) this can be orders of magnitude smaller still e.g.
+ * 0.01% to 0.1%. In such cases storing in dense matrix format
+ * is entirely infeasible.
  *
  * Parameters:
  *     h - pointer to hash table (pointer itself)
