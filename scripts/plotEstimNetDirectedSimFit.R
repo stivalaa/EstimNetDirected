@@ -94,40 +94,43 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
                            degree = rep(0:maxdeg, num_sim),
                            count = NA)
     end = Sys.time()
-    cat("In-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
+    cat(mode, "-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
     start = Sys.time()
     for (i in 1:num_sim) {
-        deg_table <- table(degree(sim_graphs[[i]], mode = mode))
         ## https://stackoverflow.com/questions/1617061/include-levels-of-zero-count-in-result-of-table
         deg_table <- table(factor(degree(sim_graphs[[i]], mode = mode),
                                   levels=0:maxdeg))
         deg_df[which(deg_df[,"sim"] == i), "count"] <- deg_table
     }
+    deg_df$degree <- as.factor(deg_df$degree)
+    deg_df$count[which(is.na(deg_df$count))] <- 0
+    deg_df$nodefraction <- deg_df$count / num_nodes
     end = Sys.time()
     cat(mode, "-degree sim data frame construction took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
     start = Sys.time()
-    deg_df$degree <- as.factor(deg_df$degree)
-    deg_df$count[which(is.na(deg_df$count))] <- 0
-    deg_df$nodefraction <- deg_df$count / num_nodes
     obs_deg_df <- data.frame(degree = rep(0:maxdeg),
                                count = NA)
-    obs_deg_table <- table(degree(g_obs, mode=mode))
-    for (j in 0:maxdeg) {
-        obs_deg_df[which(obs_deg_df[,"degree"] == j, arr.ind=TRUE), "count"] <-
-            deg_table[as.character(j)]
-    }
-    end = Sys.time()
-    cat(mode, "-degree obs data frame construction took",
-        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    obs_deg_table <- table(factor(degree(g_obs, mode=mode), levels=0:maxdeg))
+    obs_deg_df$count <- as.numeric(obs_deg_table)
+    ## without as.numeric() above get error "Error: geom_line requires
+    ## the following missing aesthetics: y" when the plot is finally
+    ## printed at the end. Who knows why... even though printing the
+    ## data frame and the computations below are apparently not
+    ## affected by this at all (does not happen with the boxplot for
+    ## simulated degree distribution)
     obs_deg_df$degree <- as.factor(obs_deg_df$degree)
     obs_deg_df$count[which(is.na(obs_deg_df$count))] <- 0
     obs_deg_df$nodefraction <- obs_deg_df$count / num_nodes
+    ##print(obs_deg_df)#XXX
+    end = Sys.time()
+    cat(mode, "-degree obs data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
     start = Sys.time()
-    p <- ggplot(deg_df, aes(degree, nodefraction)) + geom_boxplot()
-    p <- p + geom_line(data = obs_deg_df, aes(degree, nodefraction,
-                                                colour = obscolour,
-                                                group = 1))
+    p <- ggplot(deg_df, aes(x = degree, y = nodefraction)) + geom_boxplot()
+    p <- p + geom_line(data = obs_deg_df, aes(x = degree, y = nodefraction,
+                                              colour = obscolour,
+                                              group = 1))
     ## the "group=1" is ncessary in the above line otherwise get error
     ## "geom_path: Each group consists of only one observation. Do you
     ## need to adjust the group aesthetic?" and it does not work.
@@ -384,7 +387,7 @@ plotlist <- c(plotlist, list(p))
 ###
 ### Write the plot to PDF
 ###
-
+cat("writing plots to PDF file ", outfilename, "\n")
 pdf(outfilename, onefile=FALSE, paper="special", width=9, height=6)
-do.call(grid.arrange, plotlist)
+system.time(do.call(grid.arrange, plotlist))
 dev.off()
