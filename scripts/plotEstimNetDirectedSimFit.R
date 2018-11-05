@@ -115,11 +115,15 @@ plotlist <- list()
 ###
 ### In degree
 ###
+start = Sys.time()
 maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')),
                 degree(g_obs, mode='in'))
 indeg_df <- data.frame(sim = rep(1:num_sim, each=(maxindeg+1)),
                        indegree = rep(0:maxindeg, num_sim),
                        count = NA)
+end = Sys.time()
+cat("In-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
+start = Sys.time()
 for (i in 1:num_sim) {
     ## using inefficient and inelegant double loops as could not get
     ## replacement of all indegree values (for sim == i) of data frame
@@ -138,6 +142,10 @@ for (i in 1:num_sim) {
         ## https://www.r-bloggers.com/indexing-with-factors/
     }
 }
+end = Sys.time()
+cat("In-degree sim data frame construction took",
+    as.numeric(difftime(end, start, unit="secs")), "s\n")
+start = Sys.time()
 indeg_df$indegree <- as.factor(indeg_df$indegree)
 indeg_df$count[which(is.na(indeg_df$count))] <- 0
 indeg_df$nodefraction <- indeg_df$count / num_nodes
@@ -148,6 +156,9 @@ for (j in 0:maxindeg) {
     obs_indeg_df[which(obs_indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
         indeg_table[as.character(j)]
 }
+end = Sys.time()
+cat("In-degree obs data frame construction took",
+    as.numeric(difftime(end, start, unit="secs")), "s\n")
 obs_indeg_df$indegree <- as.factor(obs_indeg_df$indegree)
 obs_indeg_df$count[which(is.na(obs_indeg_df$count))] <- 0
 obs_indeg_df$nodefraction <- obs_indeg_df$count / num_nodes
