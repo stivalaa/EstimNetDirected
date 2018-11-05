@@ -88,7 +88,8 @@ source_local('snowballSample.R')
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     start = Sys.time()
     maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
-                    degree(g_obs, mode='in'))
+                  degree(g_obs, mode='in'))
+    cat("Max ", mode, " degree is ", maxdeg, "\n")
     deg_df <- data.frame(sim = rep(1:num_sim, each=(maxdeg+1)),
                            degree = rep(0:maxdeg, num_sim),
                            count = NA)
@@ -96,22 +97,11 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     cat("In-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
     start = Sys.time()
     for (i in 1:num_sim) {
-        ## using inefficient and inelegant double loops as could not get
-        ## replacement of all degree values (for sim == i) of data frame
-        ## to work, always get error "replacement has x rows, data has y"
-        ## where y is total rows in data frame, not the subset, even
-        ## though printing nrow showed correct z < y rows. Just too much
-        ## time wasted trying to work out errors in R, gave up and did it
-        ## this way.
         deg_table <- table(degree(sim_graphs[[i]], mode = mode))
-        for (j in 0:maxdeg) {
-            deg_df[which(deg_df[,"sim"] == i &
-                           deg_df[,"degree"] == j, arr.ind=TRUE), "count"] <-
-                deg_table[as.character(j)]
-            ## NB absolutely necessary to use as.character(j) in the line above
-            ## otherwise it appears to work and has no errors/warnings but is wrong
-            ## https://www.r-bloggers.com/indexing-with-factors/
-        }
+        ## https://stackoverflow.com/questions/1617061/include-levels-of-zero-count-in-result-of-table
+        deg_table <- table(factor(degree(sim_graphs[[i]], mode = mode),
+                                  levels=0:maxdeg))
+        deg_df[which(deg_df[,"sim"] == i), "count"] <- deg_table
     }
     end = Sys.time()
     cat(mode, "-degree sim data frame construction took",
