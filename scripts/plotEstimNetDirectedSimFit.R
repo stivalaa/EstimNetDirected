@@ -73,6 +73,84 @@ source_local <- function(fname){
 
 source_local('snowballSample.R')
 
+
+##
+## Return plot of degree distribution, for in or out degree
+##
+## Parameters:
+##    g_obs:       observed graph igraph object
+##    sim_graphs:  simulated graphs list of igraph objects
+##    mode:       'in' or 'out' for indegree or outdegree respectively
+##
+## Return value:
+##    ggplot2 object to add to plot list
+##
+deg_distr_plot <- function(g_obs, sim_graphs, mode) {
+    start = Sys.time()
+    maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
+                    degree(g_obs, mode='in'))
+    deg_df <- data.frame(sim = rep(1:num_sim, each=(maxdeg+1)),
+                           degree = rep(0:maxdeg, num_sim),
+                           count = NA)
+    end = Sys.time()
+    cat("In-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
+    start = Sys.time()
+    for (i in 1:num_sim) {
+        ## using inefficient and inelegant double loops as could not get
+        ## replacement of all degree values (for sim == i) of data frame
+        ## to work, always get error "replacement has x rows, data has y"
+        ## where y is total rows in data frame, not the subset, even
+        ## though printing nrow showed correct z < y rows. Just too much
+        ## time wasted trying to work out errors in R, gave up and did it
+        ## this way.
+        deg_table <- table(degree(sim_graphs[[i]], mode = mode))
+        for (j in 0:maxdeg) {
+            deg_df[which(deg_df[,"sim"] == i &
+                           deg_df[,"degree"] == j, arr.ind=TRUE), "count"] <-
+                deg_table[as.character(j)]
+            ## NB absolutely necessary to use as.character(j) in the line above
+            ## otherwise it appears to work and has no errors/warnings but is wrong
+            ## https://www.r-bloggers.com/indexing-with-factors/
+        }
+    }
+    end = Sys.time()
+    cat(mode, "-degree sim data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    start = Sys.time()
+    deg_df$degree <- as.factor(deg_df$degree)
+    deg_df$count[which(is.na(deg_df$count))] <- 0
+    deg_df$nodefraction <- deg_df$count / num_nodes
+    obs_deg_df <- data.frame(degree = rep(0:maxdeg),
+                               count = NA)
+    obs_deg_table <- table(degree(g_obs, mode=mode))
+    for (j in 0:maxdeg) {
+        obs_deg_df[which(obs_deg_df[,"degree"] == j, arr.ind=TRUE), "count"] <-
+            deg_table[as.character(j)]
+    }
+    end = Sys.time()
+    cat(mode, "-degree obs data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    obs_deg_df$degree <- as.factor(obs_deg_df$degree)
+    obs_deg_df$count[which(is.na(obs_deg_df$count))] <- 0
+    obs_deg_df$nodefraction <- obs_deg_df$count / num_nodes
+    start = Sys.time()
+    p <- ggplot(deg_df, aes(degree, nodefraction)) + geom_boxplot()
+    p <- p + geom_line(data = obs_deg_df, aes(degree, nodefraction,
+                                                colour = obscolour,
+                                                group = 1))
+    ## the "group=1" is ncessary in the above line otherwise get error
+    ## "geom_path: Each group consists of only one observation. Do you
+    ## need to adjust the group aesthetic?" and it does not work.
+    ## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
+    p <- p + ptheme
+    p <- p + xlab(paste(mode, '-degree', sep='')) + ylab('fraction of nodes')
+    end = Sys.time()
+    cat(mode, "-degree plotting took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    return(p)
+}
+
+
 ###
 ### Main
 ###
@@ -115,121 +193,17 @@ plotlist <- list()
 ###
 ### In degree
 ###
-start = Sys.time()
-maxindeg <- max(sapply(sim_graphs, function(g) degree(g, mode='in')),
-                degree(g_obs, mode='in'))
-indeg_df <- data.frame(sim = rep(1:num_sim, each=(maxindeg+1)),
-                       indegree = rep(0:maxindeg, num_sim),
-                       count = NA)
-end = Sys.time()
-cat("In-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
-start = Sys.time()
-for (i in 1:num_sim) {
-    ## using inefficient and inelegant double loops as could not get
-    ## replacement of all indegree values (for sim == i) of data frame
-    ## to work, always get error "replacement has x rows, data has y"
-    ## where y is total rows in data frame, not the subset, even
-    ## though printing nrow showed correct z < y rows. Just too much
-    ## time wasted trying to work out errors in R, gave up and did it
-    ## this way.
-    indeg_table <- table(degree(sim_graphs[[i]], mode = 'in'))
-    for (j in 0:maxindeg) {
-        indeg_df[which(indeg_df[,"sim"] == i &
-                       indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
-            indeg_table[as.character(j)]
-        ## NB absolutely necessary to use as.character(j) in the line above
-        ## otherwise it appears to work and has no errors/warnings but is wrong
-        ## https://www.r-bloggers.com/indexing-with-factors/
-    }
-}
-end = Sys.time()
-cat("In-degree sim data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-start = Sys.time()
-indeg_df$indegree <- as.factor(indeg_df$indegree)
-indeg_df$count[which(is.na(indeg_df$count))] <- 0
-indeg_df$nodefraction <- indeg_df$count / num_nodes
-obs_indeg_df <- data.frame(indegree = rep(0:maxindeg),
-                           count = NA)
-obs_indeg_table <- table(degree(g_obs, mode='in'))
-for (j in 0:maxindeg) {
-    obs_indeg_df[which(obs_indeg_df[,"indegree"] == j, arr.ind=TRUE), "count"] <-
-        indeg_table[as.character(j)]
-}
-end = Sys.time()
-cat("In-degree obs data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-obs_indeg_df$indegree <- as.factor(obs_indeg_df$indegree)
-obs_indeg_df$count[which(is.na(obs_indeg_df$count))] <- 0
-obs_indeg_df$nodefraction <- obs_indeg_df$count / num_nodes
-p <- ggplot(indeg_df, aes(indegree, nodefraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_indeg_df, aes(indegree, nodefraction,
-                                            colour = obscolour,
-                                            group = 1))
-## the "group=1" is ncessary in the above line otherwise get error
-## "geom_path: Each group consists of only one observation. Do you
-## need to adjust the group aesthetic?" and it does not work.
-## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
 
-p <- p + ptheme
-p <- p + xlab('in-degree') + ylab('fraction of nodes')
-plotlist <- c(plotlist, list(p))
-
-
-
+system.time(plotlist <- c(plotlist,
+                          list(deg_distr_plot(g_obs, sim_graphs, 'in'))))
 
 
 ###
 ### Out degree
 ###
-maxoutdeg <- max(sapply(sim_graphs, function(g) degree(g, mode='out')),
-                 degree(g_obs, mode='out'))
-outdeg_df <- data.frame(sim = rep(1:num_sim, each=(maxoutdeg+1)),
-                       outdegree = rep(0:maxoutdeg, num_sim),
-                       count = NA)
-for (i in 1:num_sim) {
-    ## using inefficient and inelegant double loops as could not get
-    ## replacement of all outdegree values (for sim == i) of data frame
-    ## to work, always get error "replacement has x rows, data has y"
-    ## where y is total rows in data frame, not the subset, even
-    ## though printing nrow showed correct z < y rows. Just too much
-    ## time wasted trying to work out errors in R, gave up and did it
-    ## this way.
-    outdeg_table <- table(degree(sim_graphs[[i]], mode = 'out'))
-    for (j in 0:maxoutdeg) {
-        outdeg_df[which(outdeg_df[,"sim"] == i &
-                       outdeg_df[,"outdegree"] == j, arr.ind=TRUE), "count"] <-
-            outdeg_table[as.character(j)]
-        ## NB absolutely necessary to use as.character(j) in the line above
-        ## otherwise it appears to work and has no errors/warnings but is wrong
-        ## https://www.r-bloggers.com/indexing-with-factors/
-    }
-}
-outdeg_df$outdegree <- as.factor(outdeg_df$outdegree)
-outdeg_df$count[which(is.na(outdeg_df$count))] <- 0
-outdeg_df$nodefraction <- outdeg_df$count / num_nodes
-obs_outdeg_df <- data.frame(outdegree = rep(0:maxoutdeg),
-                           count = NA)
-obs_outdeg_table <- table(degree(g_obs, mode='out'))
-for (j in 0:maxoutdeg) {
-    obs_outdeg_df[which(obs_outdeg_df[,"outdegree"] == j, arr.ind=TRUE), "count"] <-
-        outdeg_table[as.character(j)]
-}
-obs_outdeg_df$outdegree <- as.factor(obs_outdeg_df$outdegree)
-obs_outdeg_df$count[which(is.na(obs_outdeg_df$count))] <- 0
-obs_outdeg_df$nodefraction <- obs_outdeg_df$count / num_nodes
-p <- ggplot(outdeg_df, aes(outdegree, nodefraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_outdeg_df, aes(outdegree, nodefraction,
-                                            colour = obscolour,
-                                            group = 1))
-## the "group=1" is ncessary in the above line otherwise get error
-## "geom_path: Each group consists of only one observation. Do you
-## need to adjust the group aesthetic?" and it does not work.
-## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
 
-p <- p + ptheme
-p <- p + xlab('out-degree') + ylab('fraction of nodes')
-plotlist <- c(plotlist, list(p))
+system.time(plotlist <- c(plotlist,
+                          list(deg_distr_plot(g_obs, sim_graphs, 'out'))))
 
 
 ###
