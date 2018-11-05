@@ -85,6 +85,12 @@ source_local('snowballSample.R')
 ## Return value:
 ##    ggplot2 object to add to plot list
 ##
+## TODO work out how to make x axis labels better; if max degree is high
+## it is just a mess, need to work out how to label every 10th or 100th
+## tick mark or something.
+## TODO also sometimes it is better to plot this with y on log scale as
+## if there is something like a log-normal or power-law degree distribution
+## the graph is not very useful to read without log transformation.
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     start = Sys.time()
     maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
@@ -320,6 +326,11 @@ plotlist <- c(plotlist, list(p))
 ###
 ### Triad census
 ###
+
+## Note that on large networks, triad census counts can overflow and
+## give negative numbers
+## https://github.com/igraph/igraph/issues/625
+## https://github.com/igraph/igraph/issues/497
 
 nTriads <- choose(num_nodes, 3)
 system.time(obs_triadcensus <- triad.census(g_obs))
