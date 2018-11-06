@@ -35,7 +35,9 @@
 ##
 ## Output files in cwd (WARNING overwritten):
 ##     soc-pokec-relationships.txt
-##
+##     soc-pokec-binattr.txt
+##     soc-pokec-catattr.txt
+##     soc-pokec-contattr.txt
 ##
 
 library(igraph)
@@ -54,8 +56,8 @@ infile <- "soc-pokec-relationships.txt.gz"
 basefilename <- sub("(.+)[.].+", "\\1", basename(infile))
 outfilename <- basefilename
 
-
-edgelist <- read.table(gzfile(infile))
+cat("reading ", infile, "...\n")
+system.time(edgelist <- read.table(gzfile(infile)))
 
 uniqueIds <- unique(c(edgelist$V1, edgelist$V2))
 numIds <- length(uniqueIds)
@@ -90,8 +92,13 @@ write.graph(g, outfilename, format="pajek")
 ## read attributes
 ##
 
+pokec_profiles <- 'soc-pokec-profiles.txt.gz'
+cat("Reading ", pokec_profiles, "...\n")
+system.time( pokec <- read.delim(gzfile(pokec_profiles), header = FALSE,
+                                 stringsAsFactors = FALSE) )
+
 ## https://snap.stanford.edu/data/soc-pokec-readme.txt
-names(profile) <- c('user_id', 'public', 'completion_percentage',
+names(pokec) <- c('user_id', 'public', 'completion_percentage',
                     'gender', 'region', 'last_login', 'registration',
                     'AGE', 'body', 'I_am_working_in_field',
                     'spoken_languages', 'hobbies',
@@ -118,15 +125,73 @@ names(profile) <- c('user_id', 'public', 'completion_percentage',
                     'companies_brands', 'more')
 
 
+## Make sure it really does line up with the node ids 1..N
+stopifnot(nrow(pokec) == numIds)
+stopifnot(min(pokec$user_id) == 1)
+stopifnot(max(pokec$user_id) == numIds)
+
+## It does not in fact, so sort by user_id so that it does
+pokec <- pokec[order(pokec$user_id), ]
+stopifnot(pokec$user_id == 1:nrow(pokec))
+
+## TODO Note there are lots of free-form text fields that we could
+## possibly try to parse things from, but it would require a lot of
+## manual work to verify/curate to leaving this for later...
+## we will only use fields that seem to be well-defined for now.
 
 ##
 ## write binary attributes
 ##
 
+binattr <- pokec[, c("gender",  # bool, 1 - man
+                     "public"   # bool, 1 - all friendships are public
+                     )]
+summary(binattr$gender)
+summary(binattr$public)
+write.table(binattr, file = "soc-pokec-binattr.txt",
+            row.names = FALSE, col.names = TRUE)
+
 ##
 ## write categorical attributes
 ##
 
+catattr <- pokec[, c("gender", "region")]  # also make categorical gender
+
+## https://snap.stanford.edu/data/soc-pokec-readme.txt
+## region:
+##   string, mostly regions in Slovakia (example: "zilinsky kraj,
+##   kysucke nove mesto" means county Zilina, town Kysucke Nove Mesto,
+##   Slovakia), some foreign countries (example: "zahranicie, 
+##   zahranicie - nemecko" means foreign country Germany (nemecko)),
+##   some Czech regions (example: "ceska republika, cz - ostravsky 
+##   kraj" means Czech Republic, county Ostrava (ostravsky kraj))
+## TODO We will just make this a factor, it is a bit dubious, it really needs
+## to be manually verified so different ways of writing the same region
+## are handled, or only match on county not town, or foreign countries, etc.
+catattr$region <- factor(catattr$region)
+print(levels(catattr$region))
+summary(catattr$region)
+names(cattatr) <- c("gendercat", "region")
+write.table(catattr, file = "soc-pokec-catattr.txt",
+            row.names = FALSE, col.names = TRUE)
+
 ##
 ## write continuous attributes
 ##
+contattr <- pokec[, c("age",          # integer, 0 - age attribute not set
+                      "registration", # datetime, time at which the
+                                        # user registered at the site
+                      "completion_percentage" # integer, percentage
+                                              # proportion of filled
+                                              # values
+                      )]
+contattr$age <- ifelse(contattr$age == 0, NA, contattr$age)
+summary(contattr$age)
+
+## convert date of registration to days since January 1, 1970.
+## https://www.stat.berkeley.edu/~s133/dates.html
+contattr$registration <- as.numeric(as.Date(pokec$registration))
+summary(contattr$registration)
+
+write.table(contattr, file = "soc-pokec-contattr.txt",
+            row.names = FALSE, col.names = TRUE)
