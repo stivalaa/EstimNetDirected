@@ -149,7 +149,7 @@ binattr <- pokec[, c("gender",  # bool, 1 - man
 ## 163 rows have "null" for gender so this converts to NA (with warning)
 binattr$gender <- as.numeric(binattr$gender) 
 ## rename gender to male for binary attribute
-names(binattr)[which(names(binattr) == "gender"] <- "male"
+names(binattr)[which(names(binattr) == "gender")] <- "male"
 summary(binattr$male)
 summary(binattr$public)
 write.table(binattr, file = "soc-pokec-binattr.txt",
