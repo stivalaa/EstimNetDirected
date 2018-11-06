@@ -151,13 +151,16 @@ binattr$gender <- as.numeric(binattr$gender)
 summary(binattr$gender)
 summary(binattr$public)
 write.table(binattr, file = "soc-pokec-binattr.txt",
-            row.names = FALSE, col.names = TRUE)
+            row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 ##
 ## write categorical attributes
 ##
 
 catattr <- pokec[, c("gender", "region")]  # also make categorical gender
+
+## 163 rows have "null" for gender so this converts to NA (with warning)
+catattr$gender <- as.numeric(catattr$gender) 
 
 ## https://snap.stanford.edu/data/soc-pokec-readme.txt
 ## region:
@@ -176,9 +179,10 @@ catattr$region <- ifelse(catattr$region == "null", NA, catattr$region)
 catattr$region <- factor(catattr$region)
 print(levels(catattr$region))
 summary(catattr$region)
+catattr$region <- as.numeric(catattr$region)
 names(catattr) <- c("gendercat", "region")
 write.table(catattr, file = "soc-pokec-catattr.txt",
-            row.names = FALSE, col.names = TRUE)
+            row.names = FALSE, col.names = TRUE, quote=FALSE)
 
 ##
 ## write continuous attributes
@@ -191,13 +195,15 @@ contattr <- pokec[, c("AGE",          # integer, 0 - age attribute not set
                                               # values
                       )]
 names(contattr)[which(names(contattr) == "AGE")] <- "age"
+contattr$age <- as.numeric(contattr$age)
 contattr$age <- ifelse(contattr$age == 0, NA, contattr$age)
 summary(contattr$age)
 
 ## convert date of registration to days since January 1, 1970.
 ## https://www.stat.berkeley.edu/~s133/dates.html
-contattr$registration <- as.numeric(as.Date(pokec$registration))
+contattr$registration <- as.numeric(as.Date(contattr$registration))
 summary(contattr$registration)
 
 write.table(contattr, file = "soc-pokec-contattr.txt",
-            row.names = FALSE, col.names = TRUE)
+            row.names = FALSE, col.names = TRUE, quote = FALSE)
+
