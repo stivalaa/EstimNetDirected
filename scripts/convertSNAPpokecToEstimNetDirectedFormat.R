@@ -66,8 +66,8 @@ cat('min is ', min(uniqueIds), ' max is ', max(uniqueIds), '\n')
 
 uniqueIds <- unique(c(edgelist$V1, edgelist$V2))
 numIds <- length(uniqueIds)
-stopifnot(min(uniqueIds) == 0)
-stopifnot(max(uniqueIds) == numIds - 1)
+stopifnot(min(uniqueIds) == 1)
+stopifnot(max(uniqueIds) == numIds)
 
 ## The Pokec data has nodes numbered 1..N (N = 1632803)
 stopifnot(min(uniqueIds) == 1)
@@ -146,6 +146,8 @@ stopifnot(pokec$user_id == 1:nrow(pokec))
 binattr <- pokec[, c("gender",  # bool, 1 - man
                      "public"   # bool, 1 - all friendships are public
                      )]
+## 163 rows have "null" for gender so this converts to NA (with warning)
+binattr$gender <- as.numeric(binattr$gender) 
 summary(binattr$gender)
 summary(binattr$public)
 write.table(binattr, file = "soc-pokec-binattr.txt",
@@ -165,26 +167,30 @@ catattr <- pokec[, c("gender", "region")]  # also make categorical gender
 ##   zahranicie - nemecko" means foreign country Germany (nemecko)),
 ##   some Czech regions (example: "ceska republika, cz - ostravsky 
 ##   kraj" means Czech Republic, county Ostrava (ostravsky kraj))
-## TODO We will just make this a factor, it is a bit dubious, it really needs
-## to be manually verified so different ways of writing the same region
-## are handled, or only match on county not town, or foreign countries, etc.
+## We just make this a factor, looking at the output written by print
+## below, it looks reasonable, but is is only a categorical variable
+## allowing us to tell if two users are in the same region or not.
+## TODO we could recode this so that we can have different variables
+## for being in a different country, major city, etc.
+catattr$region <- ifelse(catattr$region == "null", NA, catattr$region)
 catattr$region <- factor(catattr$region)
 print(levels(catattr$region))
 summary(catattr$region)
-names(cattatr) <- c("gendercat", "region")
+names(catattr) <- c("gendercat", "region")
 write.table(catattr, file = "soc-pokec-catattr.txt",
             row.names = FALSE, col.names = TRUE)
 
 ##
 ## write continuous attributes
 ##
-contattr <- pokec[, c("age",          # integer, 0 - age attribute not set
+contattr <- pokec[, c("AGE",          # integer, 0 - age attribute not set
                       "registration", # datetime, time at which the
                                         # user registered at the site
                       "completion_percentage" # integer, percentage
                                               # proportion of filled
                                               # values
                       )]
+names(contattr)[which(names(contattr) == "AGE")] <- "age"
 contattr$age <- ifelse(contattr$age == 0, NA, contattr$age)
 summary(contattr$age)
 
