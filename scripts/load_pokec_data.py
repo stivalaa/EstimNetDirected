@@ -47,7 +47,7 @@ http://snap.stanford.edu/snappy/index.html
 Used version 4.1.0.
 
 E.g. 
-    G = load_snap_data('/home/stivala/SNAPestimations/pokec/')
+    G = load_pokec_data('/home/stivala/SNAPestimations/pokec/')
 
 NB this uses at least 2.5 GB memory and tmp directory space
 
@@ -106,7 +106,7 @@ def load_pokec_data(indirname):
     infilename = "soc-pokec-relationships.txt.gz"
     tmpdir = tempfile.mkdtemp()
     try:
-        fin = gzip.open(infilename, 'rb')
+        fin = gzip.open(os.path.join(indirname, infilename), 'rb')
         filename = os.path.join(tmpdir, "soc-pokec-relationships.txt")
         fout = open(filename, 'w')
         fout.write(fin.read())
