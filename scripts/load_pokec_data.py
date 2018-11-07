@@ -49,7 +49,7 @@ Used version 4.1.0.
 E.g. 
     G = load_pokec_data('/home/stivala/SNAPestimations/pokec/')
 
-NB this uses at least 2.5 GB memory and tmp directory space
+NB this uses at least 0.5 GB memory and tmp directory space
 
 """
 
@@ -110,7 +110,7 @@ def load_pokec_data(indirname):
         filename = os.path.join(tmpdir, "soc-pokec-relationships.txt")
         fout = open(filename, 'w')
         fout.write(fin.read())
-        G = snap.LoadEdgeList(snap.TNGraph, filename, 0, 1, '\t')
+        G = snap.LoadEdgeList(snap.PNGraph, filename, 0, 1, '\t')
     finally:
         cleanup_tmpdir(tmpdir)
 
