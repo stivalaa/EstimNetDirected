@@ -124,7 +124,7 @@ def main():
         for nodeid in seedsets[i]:
             seedsVec.Add(nodeid)
         Gsample = snowball_sample(G, num_waves, seedsVec)
-        nodelisxt = list()  # keep this iteration in list so we always use same order in future
+        nodelist = list()  # keep this iteration in list so we always use same order in future
         zonedict = dict() # map nodeid : zone
         for node in Gsample.Nodes():
             nodelist.append(node.GetId())
