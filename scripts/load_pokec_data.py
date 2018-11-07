@@ -110,6 +110,7 @@ def load_pokec_data(indirname):
         filename = os.path.join(tmpdir, "soc-pokec-relationships.txt")
         fout = open(filename, 'w')
         fout.write(fin.read())
+	fout.close()
         G = snap.LoadEdgeList(snap.PNGraph, filename, 0, 1, '\t')
     finally:
         cleanup_tmpdir(tmpdir)
