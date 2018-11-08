@@ -97,8 +97,12 @@ def load_pokec_data(indirname):
     Return value:
        tuple(G, profile) where
         G - SNAP TNGraph object built from the data
-        profile - dictionary mapping node ID to tuple
-                  of attributes
+        profile - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        profile_colnames - dict mapping attribute name to 
+                  index of the profile list so e.g. we can look
+                  up AGE of userid 123 with 
+                   profile[123][profile_colnames['AGE']]
 
     Note that in SNAP, node IDs are unique integers and do not have to
     be 0..N-1. However EstimNetDirected requires the node ids in the
@@ -119,8 +123,36 @@ def load_pokec_data(indirname):
     finally:
         cleanup_tmpdir(tmpdir)
 
+    # https://snap.stanford.edu/data/soc-pokec-readme.txt
+    # but 'user_id' column 0 used as dict key so not included here
+    colnames = [         'public', 'completion_percentage',
+                'gender', 'region', 'last_login', 'registration',
+                'AGE', 'body', 'I_am_working_in_field',
+                'spoken_languages', 'hobbies',
+                'I_most_enjoy_good_food', 'pets', 'body_type',
+                'my_eyesight', 'eye_color', 'hair_color',
+                'hair_type', 'completed_level_of_education',
+                'favourite_color', 'relation_to_smoking',
+                'relation_to_alcohol', 'sign_in_zodiac',
+                'on_pokec_i_am_looking_for', 'love_is_for_me',
+                'relation_to_casual_sex', 'my_partner_should_be',
+                'marital_status', 'children',
+                'relation_to_children', 'I_like_movies',
+                'I_like_watching_movie', 'I_like_music',
+                'I_mostly_like_listening_to_music',
+                'the_idea_of_good_evening',
+                'I_like_specialties_from_kitchen', 'fun',
+                'I_am_going_to_concerts', 'my_active_sports',
+                'my_passive_sports', 'profession', 'I_like_books',
+                'life_style', 'music', 'cars', 'politics',
+                'relationships', 'art_culture',
+                'hobbies_interests', 'science_technologies',
+                'computers_internet', 'education', 'sport',
+                'movies', 'travelling', 'health',
+                'companies_brands', 'more']
+    profile_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     profilepath = os.path.join(indirname, "soc-pokec-profiles.txt.gz")
-    profiledata = [ (x[0], x[3], x[4]) for x in csv.reader(gzip.open(profilepath, 'rb'), delimiter='\t') ]
-    profiledict = dict([(int(x[0]), x[1:]) for x in profiledata])
-
-    return (G, profiledict)
+    profiledata = [ (x[0], x[1:]) for x in csv.reader(gzip.open(profilepath, 'rb'), delimiter='\t') ]
+    profiledict = dict([(int(x[0]), x[1]) for x in profiledata])
+    assert(G.GetNodes() == len(profiledict))
+    return (G, profiledict, profile_colnames)
