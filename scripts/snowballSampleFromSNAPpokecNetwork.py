@@ -35,7 +35,7 @@ Usage:
 
  http://snap.stanford.edu/snappy/index.html
 
- Used version 4.0.0.
+ Used version 4.1.0.
 
 """
 
