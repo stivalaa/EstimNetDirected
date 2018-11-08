@@ -100,6 +100,29 @@ def write_subactors_file_binary(filename, G, nodelist, profile, colnames):
 
 
 
+def write_subgraph_nodeids(filename, nodelist):
+    """write_subgraph_nodeids() - write mapping from subgraph sequential ids
+                              to original graph node ids
+
+    Writes the original graph node identifiers in file one per line in
+    same order as zones and attributes so we can cross-reference the
+    subgrpah nodes back to the original grpah if necessary.  First
+    line is just header "nodeid" than next line is original node id of
+    node 1 in subgrpah, etc.
+
+    Paramters:
+        filename - filename to write to (warning: overwritten)
+        nodelist - list of nodeids used to order the nodes in the output
+
+    Return value:
+        None.
+    """
+    with open(filename, 'w') as f:
+        f.write('nodeid\n')
+        for i in nodelist:
+            f.write(str(i) + '\n')
+
+
 #-----------------------------------------------------------------------------
 #
 # main
@@ -190,8 +213,10 @@ def main():
         subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "txt"
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
-
         write_subactors_file_binary(subactor_filename, Gsample, nodelist, profile, colnames)
+
+        nodeid_filename = outputdir + os.path.sep + "subnodeid" + str(i) + os.path.extsep + "txt"
+        write_subgraph_nodeids(nodeid_filename, nodelist)
         
         # format of sampledesc file is:
         # N subzone_filename subgraph_filename subactor_filename
