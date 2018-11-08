@@ -37,6 +37,8 @@ Usage:
 
  Used version 4.1.0.
 
+ Note this requires a lot of memory, at least 10 GB.
+
 """
 
 import sys,os,time
@@ -54,6 +56,48 @@ from snowballSample import snowball_sample,write_graph_file,write_zone_file
 # Functions
 #
 #-----------------------------------------------------------------------------
+
+def write_subactors_file_binary(filename, G, nodelist, profile, colnames):
+    """
+    write_subactors_file_binary() - write binary node attribute file 
+    
+    The EstimNetDirected format of the binary actor attribute file is 
+    the header line with attribute names and then
+    the attribute vlue for each on one line per node.  See
+    load_integer_attributes() in digraph.c
+
+    Parameters:
+        filename -filename to write to (warning: overwritten)
+        G - SNAP graph/network object.
+        nodelist - list of nodeids used to order the nodes in the output
+        profile - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        colnames - dict mapping attribute name to 
+                  index of the profile list so e.g. we can look
+                  up AGE of userid 123 with 
+                   profile[123][colnames['AGE']]
+          
+    Return value:
+      None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(profile) >= G.GetNodes())
+    binattrs = ['gender', 'public']
+    # rename gender to male for binary attribute
+    binattr_names = ['male' if x == 'gender' else x for x in binattrs] 
+    with open(filename, 'w') as f:
+        f.write(' '.join(binattr_names) + '\n')
+        for i in nodelist:
+            for attr in binattrs:
+                val = profile[i][colnames[attr]]
+                val = val if val in ['0','1'] else 'NA'
+                f.write(val)
+                if attr == binattrs[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
+
+
 
 
 #-----------------------------------------------------------------------------
@@ -102,10 +146,19 @@ def main():
 
     sys.stdout.write('loading data from ' + data_dir + '...')
     start = time.time()
-    G = load_pokec_data(data_dir)
+    (G, profile, colnames) = load_pokec_data(data_dir)
     print time.time() - start, 's'
 
     snap.PrintInfo(G)
+
+
+    # We do not add attributes to nodes as SNAP node attribute as
+    # these seem to get lost by varoius operations including subgraph
+    # that we need to use, so instead maintain them just in the
+    # dictionary mapping the original node ids to the attributes -
+    # fortunately the original node ids are maintained by
+    # GetSubGraph() so we can used these to index the profile
+    # dictoinary in the subgraphs
 
 
     # get num_samples * num_seeds distinct random seed nodes (sample without replacement)
@@ -137,8 +190,8 @@ def main():
         subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "txt"
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
-        # TODO get actor attributes 
-        #write_subactors_file(subactor_filename, Gsample, nodelist)
+
+        write_subactors_file_binary(subactor_filename, Gsample, nodelist, profile, colnames)
         
         # format of sampledesc file is:
         # N subzone_filename subgraph_filename subactor_filename
