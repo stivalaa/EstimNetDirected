@@ -57,6 +57,7 @@ import os,sys
 import glob
 import tempfile
 import gzip
+import csv
 
 import snap
 
@@ -94,7 +95,10 @@ def load_pokec_data(indirname):
        indirname - path name of directory to load from
 
     Return value:
-       SNAP TNGraph object built from the data
+       tuple(G, profile) where
+        G - SNAP TNGraph object built from the data
+        profile - dictionary mapping node ID to tuple
+                  of attributes
 
     Note that in SNAP, node IDs are unique integers and do not have to
     be 0..N-1. However EstimNetDirected requires the node ids in the
@@ -115,4 +119,8 @@ def load_pokec_data(indirname):
     finally:
         cleanup_tmpdir(tmpdir)
 
-    return G
+    profilepath = os.path.join(indirname, "soc-pokec-profiles.txt.gz")
+    profiledata = [ (x[0], x[3], x[4]) for x in csv.reader(gzip.open(profilepath, 'rb'), delimiter='\t') ]
+    profiledict = dict([(int(x[0]), x[1:]) for x in profiledata])
+
+    return (G, profiledict)
