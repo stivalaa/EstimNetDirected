@@ -131,8 +131,8 @@ def write_zone_file(filename, G, nodelist, zonedict):
 
     Parameters:
       filename -filename to write to (warning: overwritten)
-      G - SNAP graph/network object. Must be node numbered 0..N-1
-          and have "zone" attribute on nodes 
+      G - SNAP graph/network object. Must
+           have "zone" attribute on nodes 
       nodelist - list of nodeids used to order the nodes in the output
       zonedict - dictionary mapping nodeid to zone
           
