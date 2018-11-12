@@ -44,6 +44,7 @@ Usage:
 import sys,os,time
 import getopt
 import random
+import datetime
 
 import snap
 
@@ -56,6 +57,25 @@ from snowballSample import snowball_sample,write_graph_file,write_zone_file
 # Functions
 #
 #-----------------------------------------------------------------------------
+
+def pdate_to_days_since_1970(pdate):
+    """
+    pdate_to_days_since_1970() - convert date to days since 9170
+
+     convert date of registration in the SNAP Pokec data set format e.g.
+     "2007-12-13 00:00:00.0" to days since January 1, 1970
+     to be compatible with R script
+
+    Parameters:
+       pdate - date in SNAP Pokec data set format
+
+    Return value:
+       days since 1970
+    """
+    thedate = datetime.datetime.strptime(pdate.split(' ')[0], "%Y-%m-%d")
+    return (thedate - datetime.datetime(1970,1,1,0,0)).days
+
+
 
 def convert_to_int_cat(attrs):
     """
@@ -153,6 +173,57 @@ def write_subactors_file_categorical(filename, G, nodelist, profile, colnames):
                 val = val if isinstance(val, int) else (int(val) if val.isdigit() else 'NA')
                 f.write(str(val))
                 if attr == catattrs[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
+
+
+def write_subactors_file_continuous(filename, G, nodelist, profile, colnames):
+    """
+    write_subactors_file_continuous() - write continuous node attribute file 
+    
+    The EstimNetDirected format of the continuous actor attribute file is 
+    the header line with attribute names and then
+    bthe attribute value (integer) for each on one line per node.  See
+    load_integer_attributes() in digraph.c
+
+    Parameters:
+        filename -filename to write to (warning: overwritten)
+        G - SNAP graph/network object.
+        nodelist - list of nodeids used to order the nodes in the output
+        profile - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        colnames - dict mapping attribute name to 
+                  index of the profile list so e.g. we can look
+                  up AGE of userid 123 with 
+                   profile[123][colnames['AGE']]
+          
+    Return value:
+      None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(profile) >= G.GetNodes())
+    contattrs = ['AGE', 'registration', 'completion_percentage']
+    contattr_names = [s.lower() for s in contattrs]
+    with open(filename, 'w') as f:
+        f.write(' '.join(contattr_names) + '\n')
+        for i in nodelist:
+            for attr in contattrs:
+                val = profile[i][colnames[attr]]
+                if attr == 'AGE':
+                    # integer, 0 - age attribute not set
+                    val = 'NA' if (val == 'null' or float(val) == 0) else float(val)
+                elif attr == 'registration':
+                    # datetime, time at which the
+                    # user registered at the site
+                    ## e.g. "2007-12-13 00:00:00.0"
+                    ## convert date of registration to days since January 1, 1970
+                    ## to be compatible with R script
+                    val = 'NA' if val == 'null' else str(pdate_to_days_since_1970(val))
+                else:
+                    val = 'NA' if val == 'null' else float(val)
+                f.write(str(val))
+                if attr == contattrs[-1]:
                     f.write('\n')
                 else:
                     f.write(' ' )
@@ -299,21 +370,21 @@ def main():
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
         subactor_binary_filename = outputdir + os.path.sep + "subactorbin" + str(i) + os.path.extsep + "txt"
         subactor_categorical_filename = outputdir + os.path.sep + "subactorcat" + str(i) + os.path.extsep + "txt"
-
-
+        subactor_continuous_filename = outputdir + os.path.sep + "subactorcont" + str(i) + os.path.extsep + "txt"
 
         write_subactors_file_binary(subactor_binary_filename, Gsample, nodelist, profile, colnames)
         write_subactors_file_categorical(subactor_categorical_filename, Gsample, nodelist, profile, colnames)
+        write_subactors_file_continuous(subactor_continuous_filename, Gsample, nodelist, profile, colnames)
 
         nodeid_filename = outputdir + os.path.sep + "subnodeid" + str(i) + os.path.extsep + "txt"
         write_subgraph_nodeids(nodeid_filename, nodelist)
         
         # format of sampledesc file is:
-        # N subzone_filename subgraph_filename subactor_filename
+        # N subzone_filename subgraph_filename binary_Filename cat_filename cont_filename
         sampledesc_filename = outputdir + os.path.sep + "sampledesc" + os.path.extsep + "txt"
-        sampledesc_f.write("%d %s %s %s %s\n" % (Gsample.GetNodes(), subzone_filename,
-                                              subgraph_filename, subactor_binary_filename,
-                                              subactor_categorical_filename))
+        sampledesc_f.write("%d %s %s %s %s %s\n" % (Gsample.GetNodes(), subzone_filename,
+                                                       subgraph_filename, subactor_binary_filename,
+                                                       subactor_categorical_filename, subactor_continuous_filename))
 
     sampledesc_f.close()
 
