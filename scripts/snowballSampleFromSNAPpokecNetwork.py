@@ -265,6 +265,8 @@ def main():
     for i in xrange(len(id_regions)):
         profile[id_regions[i][0]][colnames['region']] = id_regions_int[i]
 
+    for attr in ['region']:
+        sys.stdout.write('There are %d NA for %s\n' % ([p[colnames[attr]] for p in profile.itervalues()].count('NA'), attr))
 
 
     # get num_samples * num_seeds distinct random seed nodes (sample without replacement)
