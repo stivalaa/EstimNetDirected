@@ -57,13 +57,33 @@ from snowballSample import snowball_sample,write_graph_file,write_zone_file
 #
 #-----------------------------------------------------------------------------
 
+def convert_to_int_cat(attrs):
+    """
+    convert_to_int_cat() - convert string categorical attrs to integer
+
+    Like factor() in R, convert categories represented as strings into
+    integers.
+
+    Parameters:
+       attrs - list of string attributes
+    
+    Return value:
+       list of integer attributes corresponding to the strings
+    
+    """
+    # build dict mapping string to integer for unique strings in attrs list
+    fdict = dict([(y,x) for (x,y) in enumerate(set(attrs))])
+    print(fdict) # output for possible future reversal (TODO write to file)
+    return ['NA' if x == '(none)' else fdict[x] for x in attrs]
+
+
 def write_subactors_file_binary(filename, G, nodelist, profile, colnames):
     """
     write_subactors_file_binary() - write binary node attribute file 
     
     The EstimNetDirected format of the binary actor attribute file is 
     the header line with attribute names and then
-    the attribute vlue for each on one line per node.  See
+    the attribute value for each on one line per node.  See
     load_integer_attributes() in digraph.c
 
     Parameters:
@@ -98,6 +118,45 @@ def write_subactors_file_binary(filename, G, nodelist, profile, colnames):
                     f.write(' ' )
 
 
+def write_subactors_file_categorical(filename, G, nodelist, profile, colnames):
+    """
+    write_subactors_file_categorical() - write categorical node attribute file 
+    
+    The EstimNetDirected format of the categorical actor attribute file is 
+    the header line with attribute names and then
+    the attribute value (integer) for each on one line per node.  See
+    load_integer_attributes() in digraph.c
+
+    Parameters:
+        filename -filename to write to (warning: overwritten)
+        G - SNAP graph/network object.
+        nodelist - list of nodeids used to order the nodes in the output
+        profile - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        colnames - dict mapping attribute name to 
+                  index of the profile list so e.g. we can look
+                  up AGE of userid 123 with 
+                   profile[123][colnames['AGE']]
+          
+    Return value:
+      None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(profile) >= G.GetNodes())
+    binattrs = ['gender', 'region']
+    with open(filename, 'w') as f:
+        f.write(' '.join(binattr_names) + '\n')
+        for i in nodelist:
+            for attr in binattrs:
+                val = profile[i][colnames[attr]]
+                val = int(val) if val.isdigit() else 'NA'
+                f.write(val)
+                if attr == binattrs[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
+
+
 
 
 def write_subgraph_nodeids(filename, nodelist):
@@ -106,9 +165,9 @@ def write_subgraph_nodeids(filename, nodelist):
 
     Writes the original graph node identifiers in file one per line in
     same order as zones and attributes so we can cross-reference the
-    subgrpah nodes back to the original grpah if necessary.  First
+    subgraph nodes back to the original grpah if necessary.  First
     line is just header "nodeid" than next line is original node id of
-    node 1 in subgrpah, etc.
+    node 1 in subgraph, etc.
 
     Paramters:
         filename - filename to write to (warning: overwritten)
@@ -212,8 +271,26 @@ def main():
         write_graph_file(subgraph_filename, Gsample, nodelist)
         subzone_filename = outputdir + os.path.sep + "subzone" + str(i) + os.path.extsep + "txt"
         write_zone_file(subzone_filename, Gsample, nodelist, zonedict)
-        subactor_filename = outputdir + os.path.sep + "subactor" + str(i) + os.path.extsep + "txt"
-        write_subactors_file_binary(subactor_filename, Gsample, nodelist, profile, colnames)
+        subactor_binary_filename = outputdir + os.path.sep + "subactorbin" + str(i) + os.path.extsep + "txt"
+        subactor_categorical_filename = outputdir + os.path.sep + "subactorcat" + str(i) + os.path.extsep + "txt"
+
+        ## https://snap.stanford.edu/data/soc-pokec-readme.txt
+        ## region:
+        ##   string, mostly regions in Slovakia (example: "zilinsky kraj,
+        ##   kysucke nove mesto" means county Zilina, town Kysucke Nove Mesto,
+        ##   Slovakia), some foreign countries (example: "zahranicie, 
+        ##   zahranicie - nemecko" means foreign country Germany (nemecko)),
+        ##   some Czech regions (example: "ceska republika, cz - ostravsky 
+        ##   kraj" means Czech Republic, county Ostrava (ostravsky kraj))
+        ## We just make this a factor, looking at the output written by print
+        ## below, it looks reasonable, but is is only a categorical variable
+        ## allowing us to tell if two users are in the same region or not.
+        ## TODO we could recode this so that we can have different variables
+        ## for being in a different country, major city, etc.
+        profile[:][colnames['region']] = convert_to_int_cat(profile[:][colnames['region']]) # like factor in R
+
+        write_subactors_file_binary(subactor_binary_filename, Gsample, nodelist, profile, colnames)
+        write_subactors_file_categorical(subactor_categorical_filename, Gsample, nodelist, profile, colnames)
 
         nodeid_filename = outputdir + os.path.sep + "subnodeid" + str(i) + os.path.extsep + "txt"
         write_subgraph_nodeids(nodeid_filename, nodelist)
