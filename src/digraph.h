@@ -62,7 +62,7 @@ typedef struct digraph_s
   uint_t  *indegree;   /* for each node, number of nodes that have an arc to it*/
   uint_t **revarclist; /* reverse arc adjacency list: for each node i, array of 
                           indegree[i] nodes that have an arc to it */
-  nodepair_t *allarcs; /* list of all arcs specified as i->j for each */
+  nodepair_t *allarcs; /* list of all arcs specified as i->j for each. */
 
 #ifdef TWOPATH_HASHTABLES
   /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
@@ -103,6 +103,10 @@ typedef struct digraph_s
   uint_t *inner_nodes; /* id of each of the num_inner_nodes inner wave nodes */
   uint_t *prev_wave_degree; /* for each  node, number of edges 
                                to/from a node in earlier wave (node zone -1 ) */
+  uint_t num_inner_arcs;  /* number of arcs in inner waves, length of
+                             allinnerarcs list */
+  nodepair_t *allinnerarcs; /* list of all inner wave arcs specified
+                             * as i->j for each. */
 } digraph_t;
 
 #ifdef TWOPATH_HASHTABLES
@@ -125,6 +129,10 @@ void removeArc(digraph_t *g, uint_t i, uint_t j); /* delete arc i->j from g */
 /* this two versions update the allarcs flat arclist also */
 void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+
+/* this two versions update the allinnerarcs flat arclist also */
+void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 digraph_t *allocate_digraph(uint_t num_vertices);
 void free_digraph(digraph_t *g);

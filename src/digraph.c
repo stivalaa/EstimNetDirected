@@ -729,6 +729,64 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
 
 
 /*
+ * Insert arc i -> j into digraph g, updating allinnerarcs flat arc list
+ *
+ * Used for conditional estimation when we must add an arc that is
+ * between nodes in inner zones and in same zone or adjacent zones only.
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to insert arc from
+ *   j - node to insert arc to
+ *
+ * Return value:
+ *   None
+ */
+void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j)
+{
+  assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+  assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+  insertArc(g, i, j);
+  g->num_inner_arcs++;
+  g->allinnerarcs = (nodepair_t *)safe_realloc(g->allinnerarcs,
+                                               g->num_inner_arcs *
+                                               sizeof(nodepair_t));
+  g->allinnerarcs[g->num_inner_arcs-1].i = i;
+  g->allinnerarcs[g->num_inner_arcs-1].j = j;
+}
+
+/*
+ * Remove arc i -> j from digraph g, updating allinnerarcs flat arc list
+ *
+ * Used for conditional estimation when we must delete an arc that is
+ * between nodes in inner zones and in same zone or adjacent zones only.
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to remove arc from
+ *   j - node to remove arc to
+ *   arcidx - index in allinnerarcs flat arc list of the i->j entry for fast 
+ *            removal as this is known (arc has been selected from this list)
+ *
+ * Return value:
+ *   None
+ */
+void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
+{
+  assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+  assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+  removeArc(g, i, j);
+  /* remove entry from the flat all arcs list */
+  assert(g->allinnerarcs[arcidx].i == i && g->allinnerarcs[arcidx].j == j);
+  /* replace deleted entry with last entry */
+  g->num_inner_arcs--;
+  g->allinnerarcs[arcidx].i = g->allinnerarcs[g->num_arcs].i;
+  g->allinnerarcs[arcidx].j = g->allinnerarcs[g->num_arcs].j;
+}
+
+
+
+/*
  * Allocate the  digraph structure for empty digraph with given
  * number of nodes.
  *
@@ -798,6 +856,8 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->num_inner_nodes = 0;
   g->inner_nodes = NULL;
   g->prev_wave_degree  = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
+  g->num_inner_arcs = 0;
+  g->allinnerarcs = NULL;
   return g;
 }
 
@@ -853,6 +913,7 @@ void free_digraph(digraph_t *g)
   free(g->zone);
   free(g->inner_nodes);
   free(g->prev_wave_degree);
+  free(g->allinnerarcs);
   free(g);
 }
 
@@ -1153,12 +1214,12 @@ void print_zone_summary(const digraph_t *g)
     zone_sizes[g->zone[i]]++;
   }
   printf("Number of zones: %u (%u waves)\n", num_zones, num_zones-1);
-  printf("Number of nodes in inner waves: %u\n", g->num_inner_nodes);  
+  printf("Number of nodes in inner waves: %u\n", g->num_inner_nodes);
+  printf("Number of arcs in inner waves: %u\n", g->num_inner_arcs);
   printf("Number of nodes in each zone:\n");
   for (i = 0; i < num_zones; i++) {
     printf(" %u: %u\n", i, zone_sizes[i]);
   }
-  
   free(zone_sizes);
 }
 
@@ -1203,8 +1264,8 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
  * Return value:
  *    0 if OK else nonzero for error.
  * 
- * The zone, max_zone, num_inner_nodes, inner_nodes, and
- * prev_wave_degree fields of g are set here.
+ * The zone, max_zone, num_inner_nodes, inner_nodes, prev_wave_degree,
+ * num_inner_arcs and allinnerarcs fields of g are set here.
  *
  * The format of the file is the same as that for categorical
  * attributes (and the same function is used to parse it): a header
@@ -1299,6 +1360,8 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
    * edges to or from (i.e. ignoring direction of arc) that node
    * to/from nodes in the immediately preceding zone. (This value will always
    * be zero for all seed nodes i.e. nodes in zone 0).
+   * Also build allinnerarcs flat arcs list of arcs between nodes in inner waves
+   * used for conditional estimation fast lookup of such an arc to delete
    */
   for (i = 0; i < g->num_arcs; i++) {
     u = g->allarcs[i].i;
@@ -1316,8 +1379,15 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
       assert(g->zone[v] == g->zone[u] + 1);
       g->prev_wave_degree[v]++;
     }
+    if (g->zone[u] < g->max_zone && g->zone[v] < g->max_zone) {
+      g->num_inner_arcs++;
+      g->allinnerarcs = (nodepair_t *)safe_realloc(g->allinnerarcs,
+                                                   g->num_inner_arcs *
+                                                   sizeof(nodepair_t));
+      g->allinnerarcs[g->num_inner_arcs-1].i = u;
+      g->allinnerarcs[g->num_inner_arcs-1].j = v;
+    }
   }
-  
   
   for (j = 0; j < num_attr; j++) {
     free(attr_names[j]);

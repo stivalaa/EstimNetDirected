@@ -112,31 +112,68 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t  i,j,k,l,param_i;
   uint_t  arcidx = 0;
 
-  if (useConditionalEstimation) {
-    fprintf(stderr, "ERROR: conditional estimation not implemented for IFD sampler yet\n");
-    exit(1); /* TODO conditional esitimation in IFD sampler */
-  }
   
   for (i = 0; i < n; i++)
     addChangeStats[i] = delChangeStats[i] = 0;
 
   for (k = 0; k < sampler_m; k++) {
-    if (isDelete) {
-      /* Delete move. Find an exising arc uniformly at random to delete. */
-      arcidx = int_urand(g->num_arcs);
-      i = g->allarcs[arcidx].i;
-      j = g->allarcs[arcidx].j;
-      /*removed as slows significantly: assert(isArc(g, i, j));*/
-    } else {
-      /* Add move. Find two nodes i, j without arc i->j uniformly at
-         random. Because graph is sparse, it is not too inefficient
-         to just pick random nodes until such a pair is found */
-      do {
-        i = int_urand(g->num_nodes);
+
+    if (useConditionalEstimation) {
+      if (isDelete) {
+        /* Delete move for conditional estimation. Find an existing
+           arc between nodes in inner waves (i.e. fixing ties in
+           outermost wave and between outermost and second-outermost
+           waves) uniformly at random to delete.  Extra constraint for
+           conditional estimation that a tie cannot be deleted if it
+           is last remaining tie connecting node to preceding wave.
+           Note ignoring arc direction here as assumed snowball sample
+           ignored arc directions.
+         */
         do {
-          j = int_urand(g->num_nodes);
-        } while (i == j);
-      } while (isArc(g, i, j));
+          arcidx = int_urand(g->num_inner_arcs);
+          i = g->allinnerarcs[arcidx].i;
+          j = g->allinnerarcs[arcidx].j;
+          assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+          /* any tie must be within same zone or between adjacent zones */
+          assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+        } while ((g->zone[i] > g->zone[j] && g->prev_wave_degree[i] == 1) ||
+                 (g->zone[j] > g->zone[i] && g->prev_wave_degree[j] == 1));
+      } else {
+        /* Add move for conditional estimation. Find two nodes i, j in
+           inner waves without arc i->j uniformly at random. Because
+           graph is sparse, it is not too inefficient to just pick
+           random nodes until such a pair is found. For conditional
+           estimation we also have the extra constraint that the nodes
+           must be in the same wave or adjacent waves for the tie to
+           be added. */
+        do {
+          i = g->inner_nodes[int_urand(g->num_inner_nodes)];          
+          do {
+            j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
+          } while (i == j);
+          assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+        } while (isArc(g, i, j) ||
+                 (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
+      }
+    } else {
+      /* not using conditional estimation */
+      if (isDelete) {
+        /* Delete move. Find an existing arc uniformly at random to delete. */
+        arcidx = int_urand(g->num_arcs);
+        i = g->allarcs[arcidx].i;
+        j = g->allarcs[arcidx].j;
+        /*removed as slows significantly: assert(isArc(g, i, j));*/
+      } else {
+        /* Add move. Find two nodes i, j without arc i->j uniformly at
+           random. Because graph is sparse, it is not too inefficient
+           to just pick random nodes until such a pair is found */
+        do {
+          i = int_urand(g->num_nodes);
+          do {
+            j = int_urand(g->num_nodes);
+          } while (i == j);
+        } while (isArc(g, i, j));
+      }
     }
     
     /* The change statistics are all computed on the basis of adding arc i->j
@@ -144,7 +181,11 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        change statistics, and negate them */
     SAMPLER_DEBUG_PRINT(("%s %d -> %d\n",isDelete ? "del" : "add", i, j));
     if (isDelete) {
-      removeArc_allarcs(g, i, j, arcidx);
+      if (useConditionalEstimation){
+        removeArc_allinnerarcs(g, i, j, arcidx);
+      } else {
+        removeArc_allarcs(g, i, j, arcidx);        
+      }
       Ndel++;
     } else {
       Nadd++;
@@ -182,13 +223,21 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         /* actually do the move. If deleting, already done it. For add, add
            the arc now */
         if (!isDelete) {
-          insertArc_allarcs(g, i, j);
+          if (useConditionalEstimation) {
+            insertArc_allinnerarcs(g, i, j);
+          } else {
+            insertArc_allarcs(g, i, j);
+          }
         }
       } else {
         /* not actually doing the moves, so reverse change for delete move
            to restore g to original state */
         if (isDelete) {
-          insertArc_allarcs(g, i, j);
+          if (useConditionalEstimation) {
+            insertArc_allinnerarcs(g, i, j);
+          } else {
+            insertArc_allarcs(g, i, j);
+          }
         }
       }
       /* accumulate the change statistics for add and del moves separately */
@@ -203,7 +252,11 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     } else {
       /* move not acceptd, so reverse change for delete */
       if (isDelete) {
-        insertArc_allarcs(g, i, j);
+        if (useConditionalEstimation) {
+          insertArc_allinnerarcs(g, i, j);
+        } else {
+          insertArc_allarcs(g, i, j);          
+        }
       }
     }
   }
