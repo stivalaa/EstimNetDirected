@@ -133,6 +133,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
           arcidx = int_urand(g->num_inner_arcs);
           i = g->allinnerarcs[arcidx].i;
           j = g->allinnerarcs[arcidx].j;
+          SAMPLER_DEBUG_PRINT(("conditional del arcidx %u (%u -> %u) zones %u %u\n", arcidx, i, j, g->zone[i], g->zone[j]));
           assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
           /* any tie must be within same zone or between adjacent zones */
           assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
