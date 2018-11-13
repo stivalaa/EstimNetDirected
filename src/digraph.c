@@ -1381,6 +1381,7 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
     }
     if (g->zone[u] < g->max_zone && g->zone[v] < g->max_zone) {
       g->num_inner_arcs++;
+      DIGRAPH_DEBUG_PRINT(("inner arc %u: %u -> %u (zones %u %u)\n", g->num_inner_arcs-1, u, v, g->zone[i], g->zone[v]));
       g->allinnerarcs = (nodepair_t *)safe_realloc(g->allinnerarcs,
                                                    g->num_inner_arcs *
                                                    sizeof(nodepair_t));
