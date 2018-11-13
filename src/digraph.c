@@ -780,8 +780,8 @@ void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
   assert(g->allinnerarcs[arcidx].i == i && g->allinnerarcs[arcidx].j == j);
   /* replace deleted entry with last entry */
   g->num_inner_arcs--;
-  g->allinnerarcs[arcidx].i = g->allinnerarcs[g->num_arcs].i;
-  g->allinnerarcs[arcidx].j = g->allinnerarcs[g->num_arcs].j;
+  g->allinnerarcs[arcidx].i = g->allinnerarcs[g->num_inner_arcs].i;
+  g->allinnerarcs[arcidx].j = g->allinnerarcs[g->num_inner_arcs].j;
 }
 
 
