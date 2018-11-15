@@ -49,7 +49,7 @@ library(igraph)
 
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) > 1) {
-  cat("Usage: convertSNAPpokecToEstimNetDirectedFormat.R\n")
+  cat("Usage: convertSNAPpokecToEstimNetDirectedFormat.R [maxdegree]\n")
   quit(save="no")
 }
 maxdegree_specified <- FALSE
@@ -156,13 +156,13 @@ binattr <- pokec[, c("gender",  # bool, 1 - man
                      )]
 ## 163 rows have "null" for gender so this converts to NA (with warning)
 binattr$gender <- as.numeric(binattr$gender) 
-V(g)$gender <- binattr$gender
+V(g)$gender <- binattr$gender 
 V(g)$public <- binattr$public
 
 ##
 ## get categorical attributes
 ##
-
+catattr <- pokec[, c("gender", "region")]  # also make categorical gender
 ## https://snap.stanford.edu/data/soc-pokec-readme.txt
 ## region:
 ##   string, mostly regions in Slovakia (example: "zilinsky kraj,
@@ -201,7 +201,7 @@ contattr$registration <- as.numeric(as.Date(contattr$registration))
 
 V(g)$age <- contattr$age
 V(g)$registration <- contattr$registration
-V(g)completion_percentage <- contattr$completion_percentage
+V(g)$completion_percentage <- contattr$completion_percentage
 
 ###
 ### remove hub nodes if specified and write graph
@@ -234,7 +234,7 @@ write.table(binattr, file = "soc-pokec-binattr.txt",
 ## write categorical attributes
 ##
 catattr <- data.frame(gender = V(g)$gender,
-                      regoin = V(g)$region)
+                      region = V(g)$region)
 summary(catattr$region)
 catattr$region <- as.numeric(catattr$region)
 write.table(catattr, file = "soc-pokec-catattr.txt",
