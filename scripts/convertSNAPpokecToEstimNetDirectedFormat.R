@@ -244,7 +244,8 @@ write.table(catattr, file = "soc-pokec-catattr.txt",
 ## write continuous attributes
 ##
 contattr <- data.frame(age = V(g)$age,
-                       registration = V(g)$registration)
+                       registration = V(g)$registration,
+                       completion_percentage = V(g)$completion_percentage)
 summary(contattr$age)
 summary(contattr$registration)
 write.table(contattr, file = "soc-pokec-contattr.txt",
