@@ -27,7 +27,12 @@
 ##
 ## Usage:
 ## 
-## Rscript convertSNAPpokecToEstimNetDirectedFormat.R
+## Rscript convertSNAPpokecToEstimNetDirectedFormat.R [maxdegree]
+##
+## If maxdegree is specified then nodes with in or out degree larger
+## than maxdegree are removed i.e. the output is the network and
+## attributes for the subgraph induced by nodes with in-degree and
+## out-degree <= maxdegree.
 ##
 ## Input files (in cwd):
 ##    soc-pokec-profiles.txt.gz
@@ -43,9 +48,14 @@
 library(igraph)
 
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) != 0) {
+if (length(args) > 1) {
   cat("Usage: convertSNAPpokecToEstimNetDirectedFormat.R\n")
   quit(save="no")
+}
+maxdegree_specified <- FALSE
+if (length(args) == 1) {
+    maxdegree_specified <- TRUE
+    maxdegree <- as.integer(args[1])
 }
 
 
@@ -84,8 +94,6 @@ summary(g)
 ## https://snap.stanford.edu/data/soc-pokec-readme.txt
 stopifnot(vcount(g) == 1632803)
 stopifnot(ecount(g) == 30622564)
-
-write.graph(g, outfilename, format="pajek")
 
 
 ##
@@ -134,35 +142,26 @@ stopifnot(max(pokec$user_id) == numIds)
 pokec <- pokec[order(pokec$user_id), ]
 stopifnot(pokec$user_id == 1:nrow(pokec))
 
+
 ## TODO Note there are lots of free-form text fields that we could
 ## possibly try to parse things from, but it would require a lot of
 ## manual work to verify/curate to leaving this for later...
 ## we will only use fields that seem to be well-defined for now.
 
 ##
-## write binary attributes
+## get binary attributes
 ##
-
 binattr <- pokec[, c("gender",  # bool, 1 - man
                      "public"   # bool, 1 - all friendships are public
                      )]
 ## 163 rows have "null" for gender so this converts to NA (with warning)
 binattr$gender <- as.numeric(binattr$gender) 
-## rename gender to male for binary attribute
-names(binattr)[which(names(binattr) == "gender")] <- "male"
-summary(binattr$male)
-summary(binattr$public)
-write.table(binattr, file = "soc-pokec-binattr.txt",
-            row.names = FALSE, col.names = TRUE, quote = FALSE)
+V(g)$gender <- binattr$gender
+V(g)$public <- binattr$public
 
 ##
-## write categorical attributes
+## get categorical attributes
 ##
-
-catattr <- pokec[, c("gender", "region")]  # also make categorical gender
-
-## 163 rows have "null" for gender so this converts to NA (with warning)
-catattr$gender <- as.numeric(catattr$gender) 
 
 ## https://snap.stanford.edu/data/soc-pokec-readme.txt
 ## region:
@@ -180,13 +179,11 @@ catattr$gender <- as.numeric(catattr$gender)
 catattr$region <- ifelse(catattr$region == "null", NA, catattr$region)
 catattr$region <- factor(catattr$region)
 print(levels(catattr$region))
-summary(catattr$region)
-catattr$region <- as.numeric(catattr$region)
-write.table(catattr, file = "soc-pokec-catattr.txt",
-            row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+V(g)$region <- catattr$region
 
 ##
-## write continuous attributes
+## get continuous attributes
 ##
 contattr <- pokec[, c("AGE",          # integer, 0 - age attribute not set
                       "registration", # datetime, time at which the
@@ -198,13 +195,58 @@ contattr <- pokec[, c("AGE",          # integer, 0 - age attribute not set
 names(contattr)[which(names(contattr) == "AGE")] <- "age"
 contattr$age <- as.numeric(contattr$age)
 contattr$age <- ifelse(contattr$age == 0, NA, contattr$age)
-summary(contattr$age)
-
 ## convert date of registration to days since January 1, 1970.
 ## https://www.stat.berkeley.edu/~s133/dates.html
 contattr$registration <- as.numeric(as.Date(contattr$registration))
-summary(contattr$registration)
 
+V(g)$age <- contattr$age
+V(g)$registration <- contattr$registration
+V(g)completion_percentage <- contattr$completion_percentage
+
+###
+### remove hub nodes if specified and write graph
+###
+
+if (maxdegree_specified) {
+    cat('Will use subgraph induced by nodes with degree <= ', maxdegree, '\n')
+        
+    g <- induced.subgraph(g, V(g)[which(degree(g, mode='in') < maxdegree &
+                                        degree(g, mode='out') < maxdegree)])
+    summary(g)
+}
+
+write.graph(g, outfilename, format="pajek")
+
+
+##
+## write binary attributes
+##
+
+## rename gender to male for binary attribute
+binattr <- data.frame(male = V(g)$gender,
+                      public = V(g)$public)
+summary(binattr$male)
+summary(binattr$public)
+write.table(binattr, file = "soc-pokec-binattr.txt",
+            row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+##
+## write categorical attributes
+##
+catattr <- data.frame(gender = V(g)$gender,
+                      regoin = V(g)$region)
+summary(catattr$region)
+catattr$region <- as.numeric(catattr$region)
+write.table(catattr, file = "soc-pokec-catattr.txt",
+            row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+##
+## write continuous attributes
+##
+contattr <- data.frame(age = V(g)$age,
+                       registration = V(g)$registration)
+summary(contattr$age)
+summary(contattr$registration)
 write.table(contattr, file = "soc-pokec-contattr.txt",
             row.names = FALSE, col.names = TRUE, quote = FALSE)
 
