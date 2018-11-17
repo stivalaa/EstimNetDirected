@@ -88,9 +88,7 @@ source_local('snowballSample.R')
 ## TODO work out how to make x axis labels better; if max degree is high
 ## it is just a mess, need to work out how to label every 10th or 100th
 ## tick mark or something.
-## TODO also sometimes it is better to plot this with y on log scale as
-## if there is something like a log-normal or power-law degree distribution
-## the graph is not very useful to read without log transformation.
+##
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     start = Sys.time()
     maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
@@ -149,6 +147,37 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     return(p)
 }
 
+##
+## Return histogram of degree distribution, for in or out degree
+##
+## Parameters:
+##    g_obs:       observed graph igraph object
+##    sim_graphs:  simulated graphs list of igraph objects
+##    mode:       'in' or 'out' for indegree or outdegree respectively
+##
+## Return value:
+##    ggplot2 object to add to plot list
+##
+deg_hist_plot <- function(g_obs, sim_graphs, mode) {
+  start <- Sys.time()
+  dobs <- data.frame(logdegree = log(degree(g_obs, mode=mode)), group = 'obs')
+  dsim <- data.frame(logdegree = log(degree(sim_graphs[[1]], mode=mode)), group = 'sim') #FIXME work out how to put all the simulated graphs in one histogram
+  dat <- rbind(dsim, dobs)
+  end <- Sys.time()
+  cat(mode, "-degree histogram data frame construction took",
+      as.numeric(difftime(end, start, unit="secs")), "s\n")
+  start <- Sys.time()
+  ## https://stackoverflow.com/questions/29287614/r-normalize-then-plot-two-histograms-together-in-r
+  p <- ggplot(dat, aes(logdegree, fill = group, colour = group)) +
+    geom_histogram(alpha = 0.6, position = 'identity', lwd = 0.2)
+  p <- p + xlab(paste("log ", mode, '-degree', sep=''))
+  p <- p + theme(legend.title=element_blank())
+  end <- Sys.time()
+  cat(mode, "-degree histogram plotting took",
+      as.numeric(difftime(end, start, unit="secs")), "s\n")
+  return(p)
+}
+
 
 ###
 ### Main
@@ -196,6 +225,9 @@ plotlist <- list()
 system.time(plotlist <- c(plotlist,
                           list(deg_distr_plot(g_obs, sim_graphs, 'in'))))
 
+system.time(plotlist <- c(plotlist,
+                          list(deg_hist_plot(g_obs, sim_graphs, 'in'))))
+
 
 ###
 ### Out degree
@@ -203,6 +235,9 @@ system.time(plotlist <- c(plotlist,
 
 system.time(plotlist <- c(plotlist,
                           list(deg_distr_plot(g_obs, sim_graphs, 'out'))))
+
+system.time(plotlist <- c(plotlist,
+                          list(deg_hist_plot(g_obs, sim_graphs, 'out'))))
 
 
 ###
