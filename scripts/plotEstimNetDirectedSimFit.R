@@ -172,7 +172,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode) {
     geom_histogram(alpha = 0.6, position = 'identity', lwd = 0.2)
   p <- p + xlab(paste("log ", mode, '-degree', sep=''))
   p <- p + theme(legend.title=element_blank(),
-                 legend.position = c(0.8, 0.8))
+                 legend.position = c(0.9, 0.8))
   end <- Sys.time()
   cat(mode, "-degree histogram plotting took",
       as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -241,21 +241,21 @@ system.time(plotlist <- c(plotlist,
                           list(deg_hist_plot(g_obs, sim_graphs, 'out'))))
 
 
-###
-### (weakly) Connected components
-###
+## ###
+## ### (weakly) Connected components
+## ### This is commented out as it isn't very useful
 
-system.time(components <- sapply(sim_graphs, function(g) length(decompose.graph(g))))
+## system.time(components <- sapply(sim_graphs, function(g) length(decompose.graph(g))))
 
 
-cat('obs components: ', length(decompose.graph(g_obs)), '\n')
-cat('sim components: ', components, '\n')
-p <- ggplot() + geom_boxplot(aes(x = 'components', y = components))
-p <- p + geom_point(aes(x = as.numeric(ordered('components')),
-                        y = length(decompose.graph(g_obs)),
-                        colour = obscolour))
-p <- p + ptheme +   theme(axis.title.x = element_blank())
-plotlist <- c(plotlist, list(p))
+## cat('obs components: ', length(decompose.graph(g_obs)), '\n')
+## cat('sim components: ', components, '\n')
+## p <- ggplot() + geom_boxplot(aes(x = 'components', y = components))
+## p <- p + geom_point(aes(x = as.numeric(ordered('components')),
+##                         y = length(decompose.graph(g_obs)),
+##                         colour = obscolour))
+## p <- p + ptheme +   theme(axis.title.x = element_blank())
+## plotlist <- c(plotlist, list(p))
 
 
 
