@@ -240,6 +240,7 @@ p <- p + geom_point(aes(x = as.numeric(ordered('giant component')),
                         colour = obscolour))
 p <- p + ylab('fraction of nodes')
 p <- p + ptheme +   theme(axis.title.x = element_blank())
+p <- p + ylim(0, 1)
 plotlist <- c(plotlist, list(p))
 
 
