@@ -162,7 +162,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode) {
   start <- Sys.time()
   dobs <- data.frame(logdegree = log(degree(g_obs, mode=mode)), group = 'obs')
   dsim <- data.frame(logdegree = log(degree(sim_graphs[[1]], mode=mode)), group = 'sim') #FIXME work out how to put all the simulated graphs in one histogram
-  dat <- rbind(dsim, dobs)
+  dat <- rbind(dobs, dsim)
   end <- Sys.time()
   cat(mode, "-degree histogram data frame construction took",
       as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -171,7 +171,8 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode) {
   p <- ggplot(dat, aes(logdegree, fill = group, colour = group)) +
     geom_histogram(alpha = 0.6, position = 'identity', lwd = 0.2)
   p <- p + xlab(paste("log ", mode, '-degree', sep=''))
-  p <- p + theme(legend.title=element_blank())
+  p <- p + theme(legend.title=element_blank(),
+                 legend.position = c(0.8, 0.8))
   end <- Sys.time()
   cat(mode, "-degree histogram plotting took",
       as.numeric(difftime(end, start, unit="secs")), "s\n")
