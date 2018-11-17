@@ -230,15 +230,15 @@ plotlist <- c(plotlist, list(p))
 
 system.time(giant_component_sizes <- sapply(sim_graphs,
                                            function(g) vcount(giant.component(g))))
-
+giant_component_sizes <- giant_component_sizes / num_nodes
 obs_gcsize <- vcount(giant.component(g_obs))
 cat('obs giant component size: ', obs_gcsize, '\n')
 cat('sim giant component size: ', giant_component_sizes, '\n')
 p <- ggplot() + geom_boxplot(aes(x = 'giant component', y = giant_component_sizes))
 p <- p + geom_point(aes(x = as.numeric(ordered('giant component')),
-                        y = obs_gcsize,
+                        y = obs_gcsize / num_nodes,
                         colour = obscolour))
-p <- p + ylab('number of nodes')
+p <- p + ylab('fraction of nodes')
 p <- p + ptheme +   theme(axis.title.x = element_blank())
 plotlist <- c(plotlist, list(p))
 
@@ -319,7 +319,8 @@ p <- p + geom_point(aes(x = as.numeric(factor('average local', levels=cctypes)),
                         y = cc_localavg_obs,
                         colour = obscolour))
 p <- p + ylab('clustering coefficient') + ptheme +
-    theme(axis.title.x = element_blank())
+  theme(axis.title.x = element_blank())
+p <- p + ylim(0, 1)
 plotlist <- c(plotlist, list(p))
 
 
