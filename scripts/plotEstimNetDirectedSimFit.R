@@ -161,7 +161,9 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
 deg_hist_plot <- function(g_obs, sim_graphs, mode) {
   start <- Sys.time()
   dobs <- data.frame(logdegree = log(degree(g_obs, mode=mode)), group = 'obs')
-  dsim <- data.frame(logdegree = log(degree(sim_graphs[[1]], mode=mode)), group = 'sim') #FIXME work out how to put all the simulated graphs in one histogram
+  ## get degrees of all simulated graphs in one histogram
+  simdegrees <- as.vector(sapply(sim_graphs, function(g) degree(g, mode=mode)))
+  dsim <- data.frame(logdegree = log(simdegrees), group = 'sim') 
   dat <- rbind(dobs, dsim)
   end <- Sys.time()
   cat(mode, "-degree histogram data frame construction took",
