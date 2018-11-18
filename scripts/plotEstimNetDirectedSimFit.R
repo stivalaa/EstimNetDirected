@@ -171,7 +171,8 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode) {
   start <- Sys.time()
   ## https://stackoverflow.com/questions/29287614/r-normalize-then-plot-two-histograms-together-in-r
   p <- ggplot(dat, aes(logdegree, fill = group, colour = group)) +
-    geom_histogram(alpha = 0.4, position = 'identity', lwd = 0.2)
+    geom_histogram(aes(y = ..density..),
+                   alpha = 0.4, position = 'identity', lwd = 0.2)
   p <- p + xlab(paste("log ", mode, '-degree', sep=''))
   p <- p + theme(legend.title=element_blank(),
                  legend.position = c(0.9, 0.8))
