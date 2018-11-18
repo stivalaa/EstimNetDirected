@@ -417,9 +417,9 @@ sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
 ## obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "003"),]
 p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
 p <- p + geom_boxplot()
-p <- p + ylab('fraction of traids') + ptheme +
-    theme(axis.title.x = element_blank(),
-          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+p <- p + ylab('fraction of triads') + ptheme +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  xlab('Triad census')
 ## who knows why the hjust and vjust are needed, or what they should
 ## be, but they do seem to be, otherwise labels are not positioned right
 ## (note depends on which versoin of R/ggplot2 being used, but this worked
