@@ -385,64 +385,6 @@ p <- p + ylim(0, 1)
 plotlist <- c(plotlist, list(p))
 
 
-##
-## geodesics (shortest paths)
-##
-if (num_nodes > MAX_SIZE_GEODESIC) {
-    cat("WARNING: graph with ", num_nodes,
-        " too large to do geodesic fit, skipping\n")
-} else {
-    num_dyads <- choose(num_nodes, 2) # num_nodes*(num_nodes-1)/2
-    system.time(obs_geodesics <- distance_table(g_obs)$res)
-    system.time(sim_geodesics <- sapply(sim_graphs,
-                                        function(g) distance_table(g)$res,
-                                        simplify = FALSE))
-    maxgeodesic <- max(length(obs_geodesics),
-                       sapply(sim_geodesics, function(v) length(v)))
-    cat("Max geodesic distance is ", maxgeodesic, "\n")
-    geodesic_df <- data.frame(sim = rep(1:num_sim, each = maxgeodesic),
-                              geodesic = rep(1:maxgeodesic, num_sim),
-                              count = NA)
-    start = Sys.time()
-    for (i in 1:num_sim) {
-      ## pad the sim vector to max length if it is not the longest already
-      sg <- sim_geodesics[[i]]
-      print(sg)#XXX
-      print(length(sg))#XXX
-      if (length(sg) < maxgeodesic) {
-        oldlen <- length(sg)
-        cat('oldlen = ', oldlen, '\n')#XXX
-        sg <- rep(sg, length.out = maxgeodesic)
-        sg[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
-      }
-      geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sg
-    }
-    geodesic_df$geodesic <- as.factor(geodesic_df$geodesic)
-    geodesic_df$nodefraction <- geodesic_df$count / num_dyads
-    end = Sys.time()
-    cat("Geodesic sim data frame construction took",
-        as.numeric(difftime(end, start, unit="secs")), "s\n")
-    start = Sys.time()
-    ## pad the observed vector to max length if it is not the longest already
-    if (length(obs_geodesics) < maxgeodesic) {
-        oldlen <- length(obs_geodesics)
-        obs_geodesics <- rep(obs_geodesics, length.out = maxgeodesic)
-        obs_geodesics[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
-    }
-    obs_geodesic_df <- data.frame(geodesic = 1:maxgeodesic,
-                                  count = as.numeric(obs_geodesics))
-    obs_geodesic_df$nodefraction <- obs_geodesic_df$count / num_dyads
-    end = Sys.time()
-    cat("Geodesic obs data frame construction took",
-        as.numeric(difftime(end, start, unit="secs")), "s\n")
-    p <- ggplot(geodesic_df, aes(x = geodesic, y = nodefraction)) + geom_boxplot()
-    p <- p + geom_line(data = obs_geodesic_df, aes(x = geodesic, y = nodefraction,
-                                                   colour = obscolour, group = 1))
-    p <- p + ptheme +
-        xlab("geodesic distance") + ylab("fraction of dyads")
-    plotlist <- c(plotlist, list(p))
-}
-
 ###
 ### Triad census
 ###
@@ -512,6 +454,66 @@ p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
                                                   group = 1))
 p <- p + scale_y_log10()
 plotlist <- c(plotlist, list(p))
+
+
+
+##
+## geodesics (shortest paths)
+##
+if (num_nodes > MAX_SIZE_GEODESIC) {
+    cat("WARNING: graph with ", num_nodes,
+        " too large to do geodesic fit, skipping\n")
+} else {
+    num_dyads <- choose(num_nodes, 2) # num_nodes*(num_nodes-1)/2
+    system.time(obs_geodesics <- distance_table(g_obs)$res)
+    system.time(sim_geodesics <- sapply(sim_graphs,
+                                        function(g) distance_table(g)$res,
+                                        simplify = FALSE))
+    maxgeodesic <- max(length(obs_geodesics),
+                       sapply(sim_geodesics, function(v) length(v)))
+    cat("Max geodesic distance is ", maxgeodesic, "\n")
+    geodesic_df <- data.frame(sim = rep(1:num_sim, each = maxgeodesic),
+                              geodesic = rep(1:maxgeodesic, num_sim),
+                              count = NA)
+    start = Sys.time()
+    for (i in 1:num_sim) {
+      ## pad the sim vector to max length if it is not the longest already
+      sg <- sim_geodesics[[i]]
+      print(sg)#XXX
+      print(length(sg))#XXX
+      if (length(sg) < maxgeodesic) {
+        oldlen <- length(sg)
+        cat('oldlen = ', oldlen, '\n')#XXX
+        sg <- rep(sg, length.out = maxgeodesic)
+        sg[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
+      }
+      geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sg
+    }
+    geodesic_df$geodesic <- as.factor(geodesic_df$geodesic)
+    geodesic_df$nodefraction <- geodesic_df$count / num_dyads
+    end = Sys.time()
+    cat("Geodesic sim data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    start = Sys.time()
+    ## pad the observed vector to max length if it is not the longest already
+    if (length(obs_geodesics) < maxgeodesic) {
+        oldlen <- length(obs_geodesics)
+        obs_geodesics <- rep(obs_geodesics, length.out = maxgeodesic)
+        obs_geodesics[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
+    }
+    obs_geodesic_df <- data.frame(geodesic = 1:maxgeodesic,
+                                  count = as.numeric(obs_geodesics))
+    obs_geodesic_df$nodefraction <- obs_geodesic_df$count / num_dyads
+    end = Sys.time()
+    cat("Geodesic obs data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    p <- ggplot(geodesic_df, aes(x = geodesic, y = nodefraction)) + geom_boxplot()
+    p <- p + geom_line(data = obs_geodesic_df, aes(x = geodesic, y = nodefraction,
+                                                   colour = obscolour, group = 1))
+    p <- p + ptheme +
+        xlab("geodesic distance") + ylab("fraction of dyads")
+    plotlist <- c(plotlist, list(p))
+}
 
 
 
