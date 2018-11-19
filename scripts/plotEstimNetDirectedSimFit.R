@@ -400,9 +400,12 @@ if (num_nodes > MAX_SIZE_GEODESIC) {
     start = Sys.time()
     for (i in 1:num_sim) {
       ## pad the sim vector to max length if it is not the longest already
-      sg <- sim_geodesics[i]
+      sg <- sim_geodesics[[i]]
+      print(sg)#XXX
+      print(length(sg))#XXX
       if (length(sg) < maxgeodesic) {
         oldlen <- length(sg)
+        cat('oldlen = ', oldlen, '\n')#XXX
         sg <- rep(sg, length.out = maxgeodesic)
         sg[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
       }
