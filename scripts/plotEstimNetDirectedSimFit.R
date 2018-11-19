@@ -545,8 +545,11 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
     cat("Max obs esp is ", maxesp_obs, " and max sim esp is ", maxesp_sim, "\n")
     maxesp <- max(maxesp_sim, maxesp_obs)
     esp_df <- esp_df[which(esp_df$esp <= maxesp),]
+    print("just before obs_esp_df subset") ## XXX trying to find line with error in R (why can't it just print line numbers like every other language?)
     obs_esp_df <- obs_esp_df[which(obs_esp_df$esp <= maxesp),]
-    obs_esp_df$esp <- as.factor(esp_df$esp)
+    print("after obs_esp_df subset") ## XXX trying to find line with error in R (why can't it just print line numbers like every other language?)    
+    obs_esp_df$esp <- as.factor(obs_esp_df$esp)
+    print("just before factor(esp_df$esp)") ## XXX trying to find line with error in R (why can't it just print line numbers like every other language?)
     esp_df$esp <- as.factor(esp_df$esp)
     p <- ggplot(esp_df, aes(x = esp, y = edgefraction)) + geom_boxplot()
     p <- p + geom_line(data = obs_esp_df, aes(x = esp, y = edgefraction,
@@ -594,7 +597,7 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
     maxdsp <- max(maxdsp_sim, maxdsp_obs)
     dsp_df <- dsp_df[which(dsp_df$dsp <= maxdsp),]
     obs_dsp_df <- obs_dsp_df[which(obs_dsp_df$dsp <= maxdsp),]
-    obs_dsp_df$dsp <- as.factor(dsp_df$dsp)
+    obs_dsp_df$dsp <- as.factor(obs_dsp_df$dsp)
     dsp_df$dsp <- as.factor(dsp_df$dsp)
     p <- ggplot(dsp_df, aes(x = dsp, y = dyadfraction)) + geom_boxplot()
     p <- p + geom_line(data = obs_dsp_df, aes(x = dsp, y = dyadfraction,
