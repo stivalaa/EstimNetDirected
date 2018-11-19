@@ -399,7 +399,14 @@ if (num_nodes > MAX_SIZE_GEODESIC) {
                               count = NA)
     start = Sys.time()
     for (i in 1:num_sim) {
-        geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sim_geodesics[i]
+      ## pad the sim vector to max length if it is not the longest already
+      sg <- sim_geodesics[i]
+      if (length(sg) < maxgeodesic) {
+        oldlen <- length(sg)
+        sg <- rep(sg, length.out = maxgeodesic)
+        sg[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
+      }
+      geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sg
     }
     geodesic_df$geodesic <- as.factor(geodesic_df$geodesic)
     geodesic_df$nodefraction <- geodesic_df$count / num_dyads
