@@ -59,8 +59,14 @@
 ## http://mbojan.github.io/intergraph/
 ## to convert to Network object and statnet,
 ## also too slow to be used for larger networks
-library(statnet)    ## must load stanet before igraph in this script
-library(intergraph)
+## Also note only loading statnet and intergraph if required (network is
+## small enough that they are practical) is if they are loaded here
+## it seems another R problem means we run out of memory even on a 64 GB
+## limit even though not actually used and without them it worked in less
+## than 8 GB. (Really should just do everything in Python again, wasting
+## far too much time & effort with R being too slow and too many problems,
+## ending up having to rewrite in Python anyway like for snowball sampling...)
+##
 
 library(igraph)
 
@@ -517,6 +523,9 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
     cat("WARNING: graph with ", num_nodes,
         "nodes too large to do edgewise shared partners, skipping\n")
 } else {
+    library(statnet)   
+    library(intergraph)
+    
     system.time(net_obs <- asNetwork(g_obs))
     system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
 
