@@ -533,6 +533,50 @@ plotlist <- c(plotlist, list(p))
 
 
 ###
+### dyadwise shared partners
+###
+
+system.time(net_obs <- asNetwork(g_obs))
+system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
+
+cutoff <- 50 # gw.cutoff default used in statnet is 30
+dsp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
+                     dsp = rep(0:cutoff, num_sim),
+                     count = NA)
+system.time(obs_dsp <- summary(net_obs ~ dsp(0:cutoff)))
+start <- Sys.time()
+for (i in 1:num_sim) {
+    dsp_df[which(dsp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ dsp(0:cutoff))
+    dsp_df$dyadfraction <- dsp_df$count / network.dyadcount(sim_networks[[i]])
+}
+end <- Sys.time()
+cat("dsp sim data frame construction took",
+    as.numeric(difftime(end, start, unit="secs")), "s\n")
+obs_dsp_df <- data.frame(dsp = rep(0:cutoff),
+                         count = summary(net_obs ~ dsp(0:cutoff)))
+obs_dsp_df$dyadfraction <- obs_dsp_df$count / network.dyadcount(net_obs)
+end <- Sys.time()
+cat("dsp obs data frame construction took",
+    as.numeric(difftime(end, start, unit="secs")), "s\n")
+## remove zero counts from the end (use only up to max nonzero count)
+maxdsp_sim <- max(dsp_df[which(dsp_df$count > 0),]$dsp)
+maxdsp_obs <- max(obs_dsp_df[which(obs_dsp_df$count > 0),]$dsp)
+cat("Max obs dsp is ", maxdsp_obs, " and max sim dsp is ", maxdsp_sim, "\n")
+maxdsp <- max(maxdsp_sim, maxdsp_obs)
+dsp_df <- dsp_df[which(dsp_df$dsp <= maxdsp),]
+obs_dsp_df <- obs_dsp_df[which(obs_dsp_df$dsp <= maxdsp),]
+obs_dsp_df$dsp <- as.factor(dsp_df$dsp)
+dsp_df$dsp <- as.factor(dsp_df$dsp)
+p <- ggplot(dsp_df, aes(x = dsp, y = dyadfraction)) + geom_boxplot()
+p <- p + geom_line(data = obs_dsp_df, aes(x = dsp, y = dyadfraction,
+                                          colour = obscolour, group = 1))
+p <- p + ptheme + xlab("dyadwise shared partners") +
+    ylab("fraction of dyads")
+plotlist <- c(plotlist, list(p))
+
+
+
+###
 ### Write the plot to PDF
 ###
 cat("writing plots to PDF file ", outfilename, "\n")
