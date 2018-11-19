@@ -49,9 +49,18 @@
 ## so could use lots of memory).
 ##
 
-## TODO edge-wise and dyad-wise shared partner distribution like
-## statnet GoF or something similar. See:
+## Note edge-wise and dyad-wise shared partner distribution like
+## statnet GoF or something similar cannot be done with R/igraph
+## (although similarity.dice in Python/igraph could be useful as it
+## has the pairs not just vids parameters, R/igraph does not). See:
 ## https://github.com/igraph/igraph/issues/331
+## So therefore using statnet library to calculate this, so have
+## to load intergraph
+## http://mbojan.github.io/intergraph/
+## to convert to Network object and statnet,
+## also too slow to be used for larger networks (above about ____ XXX ?)
+library(statnet)    ## must load stanet before igraph in this script
+library(intergraph)
 
 library(igraph)
 
@@ -476,6 +485,43 @@ p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
                                                   colour = obscolour,
                                                   group = 1))
 p <- p + scale_y_log10()
+plotlist <- c(plotlist, list(p))
+
+
+###
+### edgewise shared partners
+###
+
+system.time(net_obs <- asNetwork(g_obs))
+system.time(sim_networks <- sapply(sim_graphs, function(g) asNetwork(g)))
+
+cutoff <- 30 # gw.cutoff default used in statnet
+esp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
+                     esp = rep(0:cutoff, num_sim),
+                     count = NA)
+system.time(obs_esp <- summary(net_obs ~ esp(0:cutoff)))
+start <- Sys.time()
+for (i in 1:num_sim) {
+    esp_df[which(esp_df[, "sim"] == i), "count"] <-  summary(sim_networks[i] ~ esp(0:cutoff))
+    esp_df$edgefraction <- esp_df$count / network.edgecount(sim_networks[i])
+}
+esp_df$esp <- as.factor(esp_df$esp)
+
+end <- Sys.time()
+cat("esp sim data frame construction took",
+    as.numeric(difftime(end, start, unit="secs")), "s\n")
+obs_esp_df <- data.frame(esp = rep(0:cutoff),
+                         count = summary(net_obs ~ esp(0:cutoff)))
+obs_esp_df$esp <- as.factor(esp_df$esp)
+obs_esp_df$edgefraction <- obs_esp_df$count / network.edgecount(net_obs)
+end <- Sys.time()
+cat("esp obs data frame construction took",
+    as.numeric(difftime(end, start, unit="secs")), "s\n")
+p <- ggplot(esp_df, aes(x = esp, y = edgefraction)) + geom_boxplot()
+p <- p + geom_line(data = obs_esp_df, aes(x = esp, y = edgefraction,
+                                          colour = obscolour, group = 1))
+p <- p + ptheme + xlab("edgewise shared partners") +
+    ylab("fraction of edges")
 plotlist <- c(plotlist, list(p))
 
 
