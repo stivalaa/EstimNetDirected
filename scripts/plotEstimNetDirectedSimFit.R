@@ -58,7 +58,7 @@
 ## to load intergraph
 ## http://mbojan.github.io/intergraph/
 ## to convert to Network object and statnet,
-## also too slow to be used for larger networks (above about ____ XXX ?)
+## also too slow to be used for larger networks
 library(statnet)    ## must load stanet before igraph in this script
 library(intergraph)
 
@@ -70,6 +70,12 @@ library(ggplot2)
 library(reshape)
 library(doBy)
 library(scales)
+
+## some statistics are too slow to practically compute on large networks,
+## these are just guesses (and certainly for geodesic a 1.6 million node
+## network could not be computed in 4 hours for example).
+MAX_SIZE_GEODESIC <- 100000 ## do not do shortest paths if more nodes than this
+MAX_SIZE_ESP_DSP <- 2000000 ## do not do shared partners if more nodes than this
 
 
 ## read in R source file from directory where this script is located
@@ -376,46 +382,50 @@ plotlist <- c(plotlist, list(p))
 ##
 ## geodesics (shortest paths)
 ##
-num_dyads <- choose(num_nodes, 2) # num_nodes*(num_nodes-1)/2
-system.time(obs_geodesics <- distance_table(g_obs)$res)
-system.time(sim_geodesics <- sapply(sim_graphs,
-                                    function(g) distance_table(g)$res,
-                                    simplify = FALSE))
-maxgeodesic <- max(length(obs_geodesics),
-                   sapply(sim_geodesics, function(v) length(v)))
-cat("Max geodesic distance is ", maxgeodesic, "\n")
-geodesic_df <- data.frame(sim = rep(1:num_sim, each = maxgeodesic),
-                          geodesic = rep(1:maxgeodesic, num_sim),
-                          count = NA)
-start = Sys.time()
-for (i in 1:num_sim) {
-    geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sim_geodesics[i]
+if (num_nodes > MAX_SIZE_GEODESIC) {
+    cat("WARNING: graph with ", num_nodes,
+        " too large to do geodesic fit, skipping\n")
+} else {
+    num_dyads <- choose(num_nodes, 2) # num_nodes*(num_nodes-1)/2
+    system.time(obs_geodesics <- distance_table(g_obs)$res)
+    system.time(sim_geodesics <- sapply(sim_graphs,
+                                        function(g) distance_table(g)$res,
+                                        simplify = FALSE))
+    maxgeodesic <- max(length(obs_geodesics),
+                       sapply(sim_geodesics, function(v) length(v)))
+    cat("Max geodesic distance is ", maxgeodesic, "\n")
+    geodesic_df <- data.frame(sim = rep(1:num_sim, each = maxgeodesic),
+                              geodesic = rep(1:maxgeodesic, num_sim),
+                              count = NA)
+    start = Sys.time()
+    for (i in 1:num_sim) {
+        geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sim_geodesics[i]
+    }
+    geodesic_df$geodesic <- as.factor(geodesic_df$geodesic)
+    geodesic_df$nodefraction <- geodesic_df$count / num_dyads
+    end = Sys.time()
+    cat("Geodesic sim data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    start = Sys.time()
+    ## pad the observed vector to max length if it is not the longest already
+    if (length(obs_geodesics) < maxgeodesic) {
+        oldlen <- length(obs_geodesics)
+        obs_geodesics <- rep(obs_geodesics, length.out = maxgeodesic)
+        obs_geodesics[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
+    }
+    obs_geodesic_df <- data.frame(geodesic = 1:maxgeodesic,
+                                  count = as.numeric(obs_geodesics))
+    obs_geodesic_df$nodefraction <- obs_geodesic_df$count / num_dyads
+    end = Sys.time()
+    cat("Geodesic obs data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    p <- ggplot(geodesic_df, aes(x = geodesic, y = nodefraction)) + geom_boxplot()
+    p <- p + geom_line(data = obs_geodesic_df, aes(x = geodesic, y = nodefraction,
+                                                   colour = obscolour, group = 1))
+    p <- p + ptheme +
+        xlab("geodesic distance") + ylab("fraction of dyads")
+    plotlist <- c(plotlist, list(p))
 }
-geodesic_df$geodesic <- as.factor(geodesic_df$geodesic)
-geodesic_df$nodefraction <- geodesic_df$count / num_dyads
-end = Sys.time()
-cat("Geodesic sim data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-start = Sys.time()
-## pad the observed vector to max length if it is not the longest already
-if (length(obs_geodesics) < maxgeodesic) {
-    oldlen <- length(obs_geodesics)
-    obs_geodesics <- rep(obs_geodesics, length.out = maxgeodesic)
-    obs_geodesics[(oldlen+1):maxgeodesic] <- 0 # pad with zeroes
-}
-obs_geodesic_df <- data.frame(geodesic = 1:maxgeodesic,
-                              count = as.numeric(obs_geodesics))
-obs_geodesic_df$nodefraction <- obs_geodesic_df$count / num_dyads
-end = Sys.time()
-cat("Geodesic obs data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-p <- ggplot(geodesic_df, aes(x = geodesic, y = nodefraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_geodesic_df, aes(x = geodesic, y = nodefraction,
-                                               colour = obscolour, group = 1))
-p <- p + ptheme +
-    xlab("geodesic distance") + ylab("fraction of dyads")
-plotlist <- c(plotlist, list(p))
-
 
 ###
 ### Triad census
@@ -488,92 +498,101 @@ p <- p + scale_y_log10()
 plotlist <- c(plotlist, list(p))
 
 
+
 ###
 ### edgewise shared partners
 ###
 
-system.time(net_obs <- asNetwork(g_obs))
-system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
+if (num_nodes > MAX_SIZE_ESP_DSP) {
+    cat("WARNING: graph with ", num_nodes,
+        "nodes too large to do edgewise shared partners, skipping\n")
+} else {
+    system.time(net_obs <- asNetwork(g_obs))
+    system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
 
-cutoff <- 50 # gw.cutoff default used in statnet is 30
-esp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
-                     esp = rep(0:cutoff, num_sim),
-                     count = NA)
-system.time(obs_esp <- summary(net_obs ~ esp(0:cutoff)))
-start <- Sys.time()
-for (i in 1:num_sim) {
-    esp_df[which(esp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ esp(0:cutoff))
-    esp_df$edgefraction <- esp_df$count / network.edgecount(sim_networks[[i]])
+    cutoff <- 50 # gw.cutoff default used in statnet is 30
+    esp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
+                         esp = rep(0:cutoff, num_sim),
+                         count = NA)
+    system.time(obs_esp <- summary(net_obs ~ esp(0:cutoff)))
+    start <- Sys.time()
+    for (i in 1:num_sim) {
+        esp_df[which(esp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ esp(0:cutoff))
+        esp_df$edgefraction <- esp_df$count / network.edgecount(sim_networks[[i]])
+    }
+    end <- Sys.time()
+    cat("esp sim data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    obs_esp_df <- data.frame(esp = rep(0:cutoff),
+                             count = summary(net_obs ~ esp(0:cutoff)))
+    obs_esp_df$edgefraction <- obs_esp_df$count / network.edgecount(net_obs)
+    end <- Sys.time()
+    cat("esp obs data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    ## remove zero counts from the end (use only up to max nonzero count)
+    maxesp_sim <- max(esp_df[which(esp_df$count > 0),]$esp)
+    maxesp_obs <- max(obs_esp_df[which(obs_esp_df$count > 0),]$esp)
+    cat("Max obs esp is ", maxesp_obs, " and max sim esp is ", maxesp_sim, "\n")
+    maxesp <- max(maxesp_sim, maxesp_obs)
+    esp_df <- esp_df[which(esp_df$esp <= maxesp),]
+    obs_esp_df <- obs_esp_df[which(obs_esp_df$esp <= maxesp),]
+    obs_esp_df$esp <- as.factor(esp_df$esp)
+    esp_df$esp <- as.factor(esp_df$esp)
+    p <- ggplot(esp_df, aes(x = esp, y = edgefraction)) + geom_boxplot()
+    p <- p + geom_line(data = obs_esp_df, aes(x = esp, y = edgefraction,
+                                              colour = obscolour, group = 1))
+    p <- p + ptheme + xlab("edgewise shared partners") +
+        ylab("fraction of edges")
+    plotlist <- c(plotlist, list(p))
 }
-end <- Sys.time()
-cat("esp sim data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-obs_esp_df <- data.frame(esp = rep(0:cutoff),
-                         count = summary(net_obs ~ esp(0:cutoff)))
-obs_esp_df$edgefraction <- obs_esp_df$count / network.edgecount(net_obs)
-end <- Sys.time()
-cat("esp obs data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-## remove zero counts from the end (use only up to max nonzero count)
-maxesp_sim <- max(esp_df[which(esp_df$count > 0),]$esp)
-maxesp_obs <- max(obs_esp_df[which(obs_esp_df$count > 0),]$esp)
-cat("Max obs esp is ", maxesp_obs, " and max sim esp is ", maxesp_sim, "\n")
-maxesp <- max(maxesp_sim, maxesp_obs)
-esp_df <- esp_df[which(esp_df$esp <= maxesp),]
-obs_esp_df <- obs_esp_df[which(obs_esp_df$esp <= maxesp),]
-obs_esp_df$esp <- as.factor(esp_df$esp)
-esp_df$esp <- as.factor(esp_df$esp)
-p <- ggplot(esp_df, aes(x = esp, y = edgefraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_esp_df, aes(x = esp, y = edgefraction,
-                                          colour = obscolour, group = 1))
-p <- p + ptheme + xlab("edgewise shared partners") +
-    ylab("fraction of edges")
-plotlist <- c(plotlist, list(p))
-
 
 
 ###
 ### dyadwise shared partners
 ###
 
-system.time(net_obs <- asNetwork(g_obs))
-system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
+if (num_nodes > MAX_SIZE_ESP_DSP) {
+    cat("WARNING: graph with ", num_nodes,
+        "nodes too large to do dyadwise shared partners, skipping\n")
+} else {
+    system.time(net_obs <- asNetwork(g_obs))
+    system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
 
-cutoff <- 50 # gw.cutoff default used in statnet is 30
-dsp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
-                     dsp = rep(0:cutoff, num_sim),
-                     count = NA)
-system.time(obs_dsp <- summary(net_obs ~ dsp(0:cutoff)))
-start <- Sys.time()
-for (i in 1:num_sim) {
-    dsp_df[which(dsp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ dsp(0:cutoff))
-    dsp_df$dyadfraction <- dsp_df$count / network.dyadcount(sim_networks[[i]])
+    cutoff <- 50 # gw.cutoff default used in statnet is 30
+    dsp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
+                         dsp = rep(0:cutoff, num_sim),
+                         count = NA)
+    system.time(obs_dsp <- summary(net_obs ~ dsp(0:cutoff)))
+    start <- Sys.time()
+    for (i in 1:num_sim) {
+        dsp_df[which(dsp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ dsp(0:cutoff))
+        dsp_df$dyadfraction <- dsp_df$count / network.dyadcount(sim_networks[[i]])
+    }
+    end <- Sys.time()
+    cat("dsp sim data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    obs_dsp_df <- data.frame(dsp = rep(0:cutoff),
+                             count = summary(net_obs ~ dsp(0:cutoff)))
+    obs_dsp_df$dyadfraction <- obs_dsp_df$count / network.dyadcount(net_obs)
+    end <- Sys.time()
+    cat("dsp obs data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    ## remove zero counts from the end (use only up to max nonzero count)
+    maxdsp_sim <- max(dsp_df[which(dsp_df$count > 0),]$dsp)
+    maxdsp_obs <- max(obs_dsp_df[which(obs_dsp_df$count > 0),]$dsp)
+    cat("Max obs dsp is ", maxdsp_obs, " and max sim dsp is ", maxdsp_sim, "\n")
+    maxdsp <- max(maxdsp_sim, maxdsp_obs)
+    dsp_df <- dsp_df[which(dsp_df$dsp <= maxdsp),]
+    obs_dsp_df <- obs_dsp_df[which(obs_dsp_df$dsp <= maxdsp),]
+    obs_dsp_df$dsp <- as.factor(dsp_df$dsp)
+    dsp_df$dsp <- as.factor(dsp_df$dsp)
+    p <- ggplot(dsp_df, aes(x = dsp, y = dyadfraction)) + geom_boxplot()
+    p <- p + geom_line(data = obs_dsp_df, aes(x = dsp, y = dyadfraction,
+                                              colour = obscolour, group = 1))
+    p <- p + ptheme + xlab("dyadwise shared partners") +
+        ylab("fraction of dyads")
+    plotlist <- c(plotlist, list(p))
 }
-end <- Sys.time()
-cat("dsp sim data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-obs_dsp_df <- data.frame(dsp = rep(0:cutoff),
-                         count = summary(net_obs ~ dsp(0:cutoff)))
-obs_dsp_df$dyadfraction <- obs_dsp_df$count / network.dyadcount(net_obs)
-end <- Sys.time()
-cat("dsp obs data frame construction took",
-    as.numeric(difftime(end, start, unit="secs")), "s\n")
-## remove zero counts from the end (use only up to max nonzero count)
-maxdsp_sim <- max(dsp_df[which(dsp_df$count > 0),]$dsp)
-maxdsp_obs <- max(obs_dsp_df[which(obs_dsp_df$count > 0),]$dsp)
-cat("Max obs dsp is ", maxdsp_obs, " and max sim dsp is ", maxdsp_sim, "\n")
-maxdsp <- max(maxdsp_sim, maxdsp_obs)
-dsp_df <- dsp_df[which(dsp_df$dsp <= maxdsp),]
-obs_dsp_df <- obs_dsp_df[which(obs_dsp_df$dsp <= maxdsp),]
-obs_dsp_df$dsp <- as.factor(dsp_df$dsp)
-dsp_df$dsp <- as.factor(dsp_df$dsp)
-p <- ggplot(dsp_df, aes(x = dsp, y = dyadfraction)) + geom_boxplot()
-p <- p + geom_line(data = obs_dsp_df, aes(x = dsp, y = dyadfraction,
-                                          colour = obscolour, group = 1))
-p <- p + ptheme + xlab("dyadwise shared partners") +
-    ylab("fraction of dyads")
-plotlist <- c(plotlist, list(p))
-
 
 
 ###
