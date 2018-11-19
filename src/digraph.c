@@ -231,11 +231,18 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
  */
 static void deleteAllHashTable(twopath_record_t *h)
 {
+#ifdef DO_DELETE_HASH_ENTRIES
   twopath_record_t *curr, *tmp;
   HASH_ITER(hh, h, curr, tmp) {
     HASH_DEL(h, curr);
     free(curr);
   }
+#else
+  (void)h; /* suppress unused parameter warning */
+  /* actually deleting all the entries can take a lot of time
+     and there is really no point since this is only called on exit anyway
+     so do nothing here */
+#endif /*DO_DELETE_HASH_ENTRIES*/
 }
 #endif /*TWOPATH_HASHTABLES*/
 
