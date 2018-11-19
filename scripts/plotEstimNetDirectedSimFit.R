@@ -372,9 +372,8 @@ system.time(obs_geodesics <- distance_table(g_obs)$res)
 system.time(sim_geodesics <- sapply(sim_graphs,
                                     function(g) distance_table(g)$res,
                                     simplify = FALSE))
-maxgeodesic <- max(sapply(sim_geodesics, function(v) length(v)))
-print(sim_geodesics)#XXX
-print(sapply(sim_geodesics, function(v) length(v)))#XXX
+maxgeodesic <- max(length(obs_geodesics),
+                   sapply(sim_geodesics, function(v) length(v)))
 cat("Max geodesic distance is ", maxgeodesic, "\n")
 geodesic_df <- data.frame(sim = rep(1:num_sim, each = maxgeodesic),
                           geodesic = rep(1:maxgeodesic, num_sim),
@@ -405,7 +404,7 @@ p <- ggplot(geodesic_df, aes(x = geodesic, y = nodefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_geodesic_df, aes(x = geodesic, y = nodefraction,
                                                colour = obscolour, group = 1))
 p <- p + ptheme +
-    xlab("minimum geodesic distance") + ylab("fraction of dyads")
+    xlab("geodesic distance") + ylab("fraction of dyads")
 plotlist <- c(plotlist, list(p))
 
 
