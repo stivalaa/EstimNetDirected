@@ -495,7 +495,7 @@ plotlist <- c(plotlist, list(p))
 system.time(net_obs <- asNetwork(g_obs))
 system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
 
-cutoff <- 30 # gw.cutoff default used in statnet
+cutoff <- 50 # gw.cutoff default used in statnet is 30
 esp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
                      esp = rep(0:cutoff, num_sim),
                      count = NA)
@@ -503,21 +503,26 @@ system.time(obs_esp <- summary(net_obs ~ esp(0:cutoff)))
 start <- Sys.time()
 for (i in 1:num_sim) {
     esp_df[which(esp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ esp(0:cutoff))
-    print(esp_df[which(esp_df[, "sim"] == i), "count"])#XXX
     esp_df$edgefraction <- esp_df$count / network.edgecount(sim_networks[[i]])
 }
-esp_df$esp <- as.factor(esp_df$esp)
-
 end <- Sys.time()
 cat("esp sim data frame construction took",
     as.numeric(difftime(end, start, unit="secs")), "s\n")
 obs_esp_df <- data.frame(esp = rep(0:cutoff),
                          count = summary(net_obs ~ esp(0:cutoff)))
-obs_esp_df$esp <- as.factor(esp_df$esp)
 obs_esp_df$edgefraction <- obs_esp_df$count / network.edgecount(net_obs)
 end <- Sys.time()
 cat("esp obs data frame construction took",
     as.numeric(difftime(end, start, unit="secs")), "s\n")
+## remove zero counts from the end (use only up to max nonzero count)
+maxesp_sim <- max(esp_df[which(esp_df$count > 0),]$esp)
+maxesp_obs <- max(obs_esp_df[which(obs_esp_df$count > 0),]$esp)
+cat("Max obs esp is ", maxesp_obs, " and max sim esp is ", maxesp_sim, "\n")
+maxesp <- max(maxesp_sim, maxesp_obs)
+esp_df <- esp_df[which(esp_df$esp <= maxesp),]
+obs_esp_df <- obs_esp_df[which(obs_esp_df$esp <= maxesp),]
+obs_esp_df$esp <- as.factor(esp_df$esp)
+esp_df$esp <- as.factor(esp_df$esp)
 p <- ggplot(esp_df, aes(x = esp, y = edgefraction)) + geom_boxplot()
 p <- p + geom_line(data = obs_esp_df, aes(x = esp, y = edgefraction,
                                           colour = obscolour, group = 1))
