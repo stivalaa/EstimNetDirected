@@ -233,8 +233,11 @@ write.table(binattr, file = "soc-pokec-binattr.txt",
 ##
 ## write categorical attributes
 ##
+
+## also do categorical version of binary public
 catattr <- data.frame(gender = V(g)$gender,
-                      region = V(g)$region)
+                      region = V(g)$region,
+                      publiccat = V(g)$public)
 summary(catattr$region)
 catattr$region <- as.numeric(catattr$region)
 write.table(catattr, file = "soc-pokec-catattr.txt",
