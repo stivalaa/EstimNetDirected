@@ -81,7 +81,7 @@ def load_nber_patent_data(indirname):
        indirname - path name of directory to load from
 
     Return value:
-       tuple(G, patent) where
+       tuple(G, patentdict, patent_colnames) where
         G - SNAP TNGraph object built from the data
         patentdict - dictionary mapping patent ID (int) to list
                   of attributes (all strings)
