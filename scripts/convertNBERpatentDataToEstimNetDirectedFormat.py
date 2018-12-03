@@ -321,7 +321,7 @@ def main():
     attributes_categorical_filename = outputdir + os.path.sep + "patent_catattr"  + os.path.extsep + "txt"
     attributes_continuous_filename = outputdir + os.path.sep + "patent_contattr" + os.path.extsep + "txt"
 
-    write_attributes_file_binary(attributes_binary_filename, G, nodelist, patdata, colnames)
+    # write_attributes_file_binary(attributes_binary_filename, G, nodelist, patdata, colnames)
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
 
