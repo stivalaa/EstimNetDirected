@@ -33,7 +33,7 @@ http://snap.stanford.edu/snappy/index.html
 Used version 4.1.0.
 
 E.g. 
-    G = load_nber_patent_data('/home/stivala/patentCitations/')
+    (G, patdata, colnames) = load_nber_patent_data('/home/stivala/patentCitations/')
 
 NB this uses at least 5 GB memory and tmp directory space
 
