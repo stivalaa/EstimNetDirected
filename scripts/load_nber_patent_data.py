@@ -35,7 +35,7 @@ Used version 4.1.0.
 E.g. 
     G = load_nber_patent_data('/home/stivala/patentCitations/')
 
-NB this uses at least 16 GB memory and tmp directory space
+NB this uses at least 5 GB memory and tmp directory space
 
 """
 
@@ -120,5 +120,4 @@ def load_nber_patent_data(indirname):
     # have already read header line so rest of iterable csv read is the data
     patentdata = [ (x[0], x[1:]) for x in  csviter]
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata])
-    assert(G.GetNodes() == len(patentdict))
     return (G, patentdict, patent_colnames)
