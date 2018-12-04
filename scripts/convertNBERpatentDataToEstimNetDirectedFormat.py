@@ -338,9 +338,9 @@ def main():
         citepatent_count += 1
         patid = node.GetId()
         nodelist.append(patid)
-        print citepatent_count, patentdata_count, patid  #XXX
+#        print citepatent_count, patentdata_count, patid  #XXX
         if not patdata.has_key(patid):
-            print 'NA for ', patid #XXX
+#            print 'NA for ', patid #XXX
             patdata[patid] = len(colnames)*["NA"]
         else:
             patentdata_count += 1
