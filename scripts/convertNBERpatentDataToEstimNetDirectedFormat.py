@@ -61,7 +61,7 @@ NB this uses at least 5 GB memory and tmp directory space
 import sys,os,time
 import getopt
 import random
-import datetime
+import math
 
 import snap
 
@@ -93,7 +93,7 @@ def convert_to_int_cat(attrs):
     # build dict mapping string to integer for unique strings in attrs list
     fdict = dict([(y,x) for (x,y) in enumerate(set(attrs))])
     print(fdict) # output for possible future reversal (TODO write to file)
-    return ['NA' if x == 'null' else fdict[x] for x in attrs]
+    return ['NA' if x == '' else fdict[x] for x in attrs]
 
 
 # def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
@@ -210,7 +210,13 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
         for i in nodelist:
             for attr in contattrs:
                 val = patdata[i][colnames[attr]]
-                val = float(val)
+                if val != "NA":
+                    if val == '':
+                        val = "NA"
+                    else:
+                        val = float(val)
+                        if math.isnan(val):
+                            val = "NA"
                 f.write(str(val))
                 if attr == contattrs[-1]:
                     f.write('\n')
@@ -311,9 +317,34 @@ def main():
         sys.stdout.write('There are %d NA for %s\n' % ([p[colnames[attr]] for p in patdata.itervalues()].count('NA'), attr))
 
 
+    # There are 3774768 unique patent identifiers in the citation data but
+    # only 2923922 unique patent identifiers in the patent data (patdata).
+    # The size of the set intersection of these patent ids is 2755865
+    # i.e. there is patent data for 73% of the patents in the citation network.
+    # Presumably this is because the patdata (pat63_99.txt) contains all
+    # utilit patents in the period 1963 to 1999 but the citation data
+    # cit75_99.txt contains all US patent citations for utility patents
+    # granted in the period 1975 to 1999, so there are patent ids in here
+    # from earlier periods that are cited by patents in that period,
+    # for which therefore we don't have the patent data (prior to 1963).
+    # So we have to set the data for all patents in network that we have it
+    # for, and the rest (27%) to NA.
+
+
+    citepatent_count = 0
+    patentdata_count = 0
     nodelist = list()  # keep this iteration in list so we always use same order in future
     for node in G.Nodes():
-        nodelist.append(node.GetId())
+        citepatent_count += 1
+        patid = node.GetId()
+        nodelist.append(patid)
+        print citepatent_count, patentdata_count, patid  #XXX
+        if not patdata.has_key(patid):
+            print 'NA for ', patid #XXX
+            patdata[patid] = len(colnames)*["NA"]
+        else:
+            patentdata_count += 1
+    sys.stdout.write("There are %d unique cited/citing patents of which %d (%f%%) have patent data\n" % (citepatent_count, patentdata_count, 100*float(patentdata_count)/citepatent_count))
 
     graph_filename = outputdir + os.path.sep + "patent_citations" + os.path.extsep + "txt"
     write_graph_file(graph_filename, G, nodelist)
@@ -321,7 +352,7 @@ def main():
     attributes_categorical_filename = outputdir + os.path.sep + "patent_catattr"  + os.path.extsep + "txt"
     attributes_continuous_filename = outputdir + os.path.sep + "patent_contattr" + os.path.extsep + "txt"
 
-    # write_attributes_file_binary(attributes_binary_filename, G, nodelist, patdata, colnames)
+    # write_attributes_file_binary(attributes_binary_filename, G, nodelist, citpatdata, colnames)
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
 
