@@ -13,6 +13,8 @@
 #    dzAprefix is prefix of filenames for dzA values 
 #
 
+options(width=9999)  # do not line wrap
+
 library(doBy)
 library(reshape2)
 
@@ -96,11 +98,14 @@ dzA <- melt(dzA, id=idvars)
 
 # convert data frame to matrix cols params rows time/run
 amatrix <- acast(dzA,  run + t ~ variable  , value.var='value')
-
+#print (amatrix)#XXX
 # compute covariance matrix 
 acov <- cov(amatrix)
+#print(acov) #XXX
 acov_inv = solve(acov) # solve(A) is matrix inverse of A
+#print(acov_inv)#XXX
 est_stderrs <- sqrt(diag(acov_inv)) 
+#print(est_stderrs)#XXX
 
 
 for (paramname in paramnames) {
