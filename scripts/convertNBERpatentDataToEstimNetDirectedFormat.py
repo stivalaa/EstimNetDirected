@@ -29,6 +29,7 @@ Usage:
      patent_binattr.txt
      patent_catattr.txt
      patent_contattr.txt
+     nodeid.txt
 
  WARNING: the output files are overwritten if they exist.
 
@@ -356,7 +357,7 @@ def main():
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
 
-    nodeid_filename = outputdir + os.path.sep + "subnodeid" + str(i) + os.path.extsep + "txt"
+    nodeid_filename = outputdir + os.path.sep + "nodeid" + os.path.extsep + "txt"
     write_subgraph_nodeids(nodeid_filename, nodelist)
 
         
