@@ -290,6 +290,11 @@ def main():
 
     snap.PrintInfo(G)
 
+    # Remove loops (self-edges).
+    # There is actually for some reason one loop (patent id 5489070).
+    # G is a PNGraph so multiple edges not allowed in this type anyway.
+    snap.DelSelfEdges(G)
+    snap.PrintInfo(G)
 
     # We do not add attributes to nodes as SNAP node attribute as
     # these seem to get lost by varoius operations including subgraph
