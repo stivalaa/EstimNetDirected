@@ -226,7 +226,8 @@ static const attr_param_t ATTR_PARAMS[] =
   {"ContinuousSender",       ATTR_TYPE_CONTINUOUS, changeContinuousSender},
   {"ContinuousReceiver",     ATTR_TYPE_CONTINUOUS, changeContinuousReceiver},
   {"Diff",                   ATTR_TYPE_CONTINUOUS, changeDiff},
-  {"DiffReciprocity",        ATTR_TYPE_CONTINUOUS, changeDiffReciprocity}
+  {"DiffReciprocity",        ATTR_TYPE_CONTINUOUS, changeDiffReciprocity},
+  {"DiffSign",               ATTR_TYPE_CONTINUOUS, changeDiffSign}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
