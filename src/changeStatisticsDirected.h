@@ -99,6 +99,7 @@ double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
 /********************* Dyadic covariate (continuous) *************************/
 

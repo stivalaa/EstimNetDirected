@@ -60,6 +60,20 @@
  */
 const double lambda = 2.0; /* TODO make it a configuration setting */
 
+/*****************************************************************************
+ *
+ * local functions
+ *
+ ****************************************************************************/
+
+/*
+ * signum function, returns -1 for negative x, +1 for positive x, else 0
+ */
+static double signum(double x)
+{
+  /* https://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c */
+  return (0 < x) - (x < 0);
+}
 
 /*****************************************************************************
  *
@@ -449,6 +463,20 @@ double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
     return 0;
   else  
     return fabs(g->contattr[a][i] - g->contattr[a][j]) * isArc(g, j, i);
+}
+
+
+/*
+ * Change statistic for continuous diff sign (sign of difference of attribute)
+ * for attr_i - attr_j (so +1 when sending node has higher attribute value and -1
+ * when receiving node has higher attribute value).
+ */
+double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+{
+  if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
+    return 0;
+  else
+    return signum(g->contattr[a][i] - g->contattr[a][j]);
 }
 
 
