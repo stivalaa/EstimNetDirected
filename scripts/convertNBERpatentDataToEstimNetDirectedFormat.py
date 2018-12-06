@@ -97,45 +97,43 @@ def convert_to_int_cat(attrs):
     return ['NA' if x == '' else fdict[x] for x in attrs]
 
 
-# def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
-#     """
-#     write_attributes_file_binary() - write binary node attribute file 
+def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
+    """
+    write_attributes_file_binary() - write binary node attribute file 
     
-#     The EstimNetDirected format of the binary actor attribute file is 
-#     the header line with attribute names and then
-#     the attribute value for each on one line per node.  See
-#     load_integer_attributes() in digraph.c
+    The EstimNetDirected format of the binary actor attribute file is 
+    the header line with attribute names and then
+    the attribute value for each on one line per node.  See
+    load_integer_attributes() in digraph.c
 
-#     Parameters:
-#         filename -filename to write to (warning: overwritten)
-#         G - SNAP graph/network object.
-#         nodelist - list of nodeids used to order the nodes in the output
-#         patdata - dictionary mapping node ID (int) to list
-#                   of attributes (all strings)
-#         colnames - dict mapping attribute name to 
-#                   index of the patdata list so e.g. we can look
-#                   up APPYEAR of patent id 123 with 
-#                    patdata[123][colnames['APPYEAR']]
+    Parameters:
+        filename -filename to write to (warning: overwritten)
+        G - SNAP graph/network object.
+        nodelist - list of nodeids used to order the nodes in the output
+        patdata - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        colnames - dict mapping attribute name to 
+                  index of the patdata list so e.g. we can look
+                  up APPYEAR of patent id 123 with 
+                   patdata[123][colnames['APPYEAR']]
           
-#     Return value:
-#       None
-#     """
-#     assert(len(nodelist) == G.GetNodes())
-#     assert(len(patdata) >= G.GetNodes())
-#     binattrs = ['gender', 'public']
-#     # rename gender to male for binary attribute
-#     binattr_names = ['male' if x == 'gender' else x for x in binattrs] 
-#     with open(filename, 'w') as f:
-#         f.write(' '.join(binattr_names) + '\n')
-#         for i in nodelist:
-#             for attr in binattrs:
-#                 val = patdata[i][colnames[attr]]
-#                 val = val if val in ['0','1'] else 'NA'
-#                 f.write(val)
-#                 if attr == binattrs[-1]:
-#                     f.write('\n')
-#                 else:
-#                     f.write(' ' )
+    Return value:
+      None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(patdata) >= G.GetNodes())
+    binattrs = ['HASDATA']
+    with open(filename, 'w') as f:
+        f.write(' '.join(binattrs) + '\n')
+        for i in nodelist:
+            for attr in binattrs:
+                val = patdata[i][colnames[attr]]
+                val = str(val) if val in [0,1] else 'NA'
+                f.write(val)
+                if attr == binattrs[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
 
 
 def write_attributes_file_categorical(filename, G, nodelist, patdata, colnames):
@@ -348,6 +346,7 @@ def main():
         if not patdata.has_key(patid):
 #            print 'NA for ', patid #XXX
             patdata[patid] = len(colnames)*["NA"]
+            patdata[patid][colnames['HASDATA']] = 0 # no data on this patent
         else:
             patentdata_count += 1
     sys.stdout.write("There are %d unique cited/citing patents of which %d (%f%%) have patent data\n" % (citepatent_count, patentdata_count, 100*float(patentdata_count)/citepatent_count))
@@ -358,7 +357,7 @@ def main():
     attributes_categorical_filename = outputdir + os.path.sep + "patent_catattr"  + os.path.extsep + "txt"
     attributes_continuous_filename = outputdir + os.path.sep + "patent_contattr" + os.path.extsep + "txt"
 
-    # write_attributes_file_binary(attributes_binary_filename, G, nodelist, citpatdata, colnames)
+    write_attributes_file_binary(attributes_binary_filename, G, nodelist, patdata, colnames)
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
 

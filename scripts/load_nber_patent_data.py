@@ -116,8 +116,14 @@ def load_nber_patent_data(indirname):
     #  get header line ['PATENT', 'GYEAR', 'GDATE', 'APPYEAR', 'COUNTRY', 'POSTATE', 'ASSIGNEE', 'ASSCODE', 'CLAIMS', 'NCLASS', 'CAT', 'SUBCAT', 'CMADE', 'CRECEIVE', 'RATIOCIT', 'GENERAL', 'ORIGINAL', 'FWDAPLAG', 'BCKGTLAG', 'SELFCTUB', 'SELFCTLB', 'SECDUPBD', 'SECDLWBD']
     # but PATENT column 0 used as dict key so skip it
     colnames = csviter.next()[1:] # skip PATENT column 0
+    # add column for binary attribute 1 when there is data about the patent 
+    # (because it is in the 1963 - 1999 period in pat63_99.txt) else 0 
+    # This field will for patents without data will be set to 0
+    # in convertNBERpatentDataToEstimNetDirectedFormat.py
+    # main when matching up the patent attributes to citations.
+    colnames.append('HASDATA')
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
-    patentdata = [ (x[0], x[1:]) for x in  csviter]
+    patentdata = [ (x[0], x[1:] + [1] ) for x in  csviter] #append 1 for HASDATA
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata])
     return (G, patentdict, patent_colnames)
