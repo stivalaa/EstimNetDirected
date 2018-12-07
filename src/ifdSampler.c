@@ -115,6 +115,7 @@ double arcCorrection(const digraph_t *g) {
  *                    reuse each call to update.
  *   useConditionalEstimation - if True do conditional estimation of snowball
  *                              network sample.
+ *   forbidReciprocity - if True do not allow reciprocated arcs.
  *
  * Return value:
  *   Acceptance rate.
@@ -133,7 +134,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t sampler_m,
                   bool performMove,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
-                  bool useConditionalEstimation)
+                  bool useConditionalEstimation,
+                  bool forbidReciprocity)
 {
   static bool   isDelete = FALSE; /* delete or add move. FIXME don't use static, make param */
 
@@ -156,6 +158,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (k = 0; k < sampler_m; k++) {
 
     if (useConditionalEstimation) {
+      assert(!forbidReciprocity); /* TODO not implemented for snowball */
       if (isDelete) {
         /* Delete move for conditional estimation. Find an existing
            arc between nodes in inner waves (i.e. fixing ties in
@@ -201,16 +204,19 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         i = g->allarcs[arcidx].i;
         j = g->allarcs[arcidx].j;
         /*removed as slows significantly: assert(isArc(g, i, j));*/
+        /* no need to condsider forbidReciprocity on delete move */
       } else {
         /* Add move. Find two nodes i, j without arc i->j uniformly at
            random. Because graph is sparse, it is not too inefficient
            to just pick random nodes until such a pair is found */
         do {
-          i = int_urand(g->num_nodes);
           do {
-            j = int_urand(g->num_nodes);
-          } while (i == j);
-        } while (isArc(g, i, j));
+            i = int_urand(g->num_nodes);
+            do {
+              j = int_urand(g->num_nodes);
+            } while (i == j);
+          } while (isArc(g, i, j));
+        } while (!forbidReciprocity || !isArc(g, j, i));
       }
     }
     

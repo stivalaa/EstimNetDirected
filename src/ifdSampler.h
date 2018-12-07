@@ -65,7 +65,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool performMove,
                   double ifd_K, 
                   double *dzArc, double *ifd_aux_param,
-                  bool useConditionalEstimation);
+                  bool useConditionalEstimation,
+                  bool forbidReciprocity);
 
 #endif /* IFDSAMPLER_H */
 

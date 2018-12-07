@@ -74,6 +74,7 @@ FILE *Kafile;  /* FIXME should not be a file global and should be one per task f
  *   ifd_K         - constant for multipliying IFD auxiliary parameter
  *                   (only used if useIFDsampler is True).
  *   useConditionalEstimation - do conditional estimation of snowball sample
+ *   forbidReciprocity - if True do not allow reciprocated arcs.
  *
  * Return value:
  *   None.
@@ -95,7 +96,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  FILE * theta_outfile,
                  bool useIFDsampler,
                  double ifd_K,
-                 bool useConditionalEstimation)
+                 bool useConditionalEstimation,
+                 bool forbidReciprocity)
 {
   uint_t t, l;
   double acceptance_rate;
@@ -126,7 +128,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    addChangeStats, delChangeStats, sampler_m,
                                    FALSE,
                                    ifd_K, &dzArc, &ifd_aux_param,
-                                   useConditionalEstimation);
+                                   useConditionalEstimation,
+                                   forbidReciprocity);
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else {
@@ -135,7 +138,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_indices, theta,
                                      addChangeStats, delChangeStats, sampler_m,
-                                     FALSE, useConditionalEstimation);
+                                     FALSE, useConditionalEstimation,
+                                     forbidReciprocity);
     }
     for (l = 0; l < n; l++) {
       dzA[l] = delChangeStats[l] - addChangeStats[l];
@@ -209,6 +213,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                   size (only used if useIFDsampler is True).
  *  useConditionalEstimation - if True, do conditional estimation for snowball
  *                             network samples.
+ *   forbidReciprocity - if True do not allow reciprocated arcs.
  *
  * Return value:
  *   None.
@@ -228,7 +233,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double theta[],
                   FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
                   bool useIFDsampler, double ifd_K,
-                  bool useConditionalEstimation)
+                  bool useConditionalEstimation,
+                  bool forbidReciprocity)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -284,7 +290,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      addChangeStats, delChangeStats, sampler_m,
                                      TRUE, /*Algorithm EE actually does moves */
                                      ifd_K, &dzArc, &ifd_aux_param,
-                                     useConditionalEstimation);
+                                     useConditionalEstimation,
+                                     forbidReciprocity);
         if (useIFDsampler && (outputAllSteps || tinner == 0)) {
           /* difference of Arc statistic for IFD sampler is just Ndel-Nadd */
           fprintf(dzA_outfile, "%g ", dzArc);
@@ -292,13 +299,15 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
           fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
         }
       } else {
-        acceptance_rate = basicSampler(g, n, n_attr, n_dyadic, change_stats_funcs, 
-                                      attr_change_stats_funcs,
-                                      dyadic_change_stats_funcs,
-                                      attr_indices, theta,
-                                      addChangeStats, delChangeStats, sampler_m,
-                                      TRUE,/*Algorithm EE actually does moves */
-                                       useConditionalEstimation);
+        acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
+                                       change_stats_funcs, 
+                                       attr_change_stats_funcs,
+                                       dyadic_change_stats_funcs,
+                                       attr_indices, theta,
+                                       addChangeStats, delChangeStats, sampler_m,
+                                       TRUE,/*Algorithm EE actually does moves */
+                                       useConditionalEstimation,
+                                       forbidReciprocity);
       }
       for (l = 0; l < n; l++) {
         dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -396,6 +405,10 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                    (only used if useIFDsampler is True).
  *   useConditionalEstimation - if True, do conditional estimation of 
  *                              snowball network samples.
+ *   forbidReciprocity - if True, constrain ERGM sampling so that reciprocated
+ *                       arcs are not allowed to be created (so estimation
+ *                       is conditional on no reciprocated arcs, should have
+ *                       none in input observed graph).
  *   
  *
  * Return value:
@@ -414,7 +427,8 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  double theta[], uint_t tasknum,
                  FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
                  bool useIFDsampler, double ifd_K,
-                 bool useConditionalEstimation)
+                 bool useConditionalEstimation,
+                 bool forbidReciprocity)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -433,6 +447,10 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   if (useConditionalEstimation)
     printf("task %u: Doing conditional estimation of snowball sample\n",
+      tasknum);
+
+  if (forbidReciprocity)
+    printf("task %u: estimation is conditional on no reciprocated arcs\n",
       tasknum);
 
   /* steps of algorithm S (M1_steps */
@@ -458,7 +476,7 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   algorithm_S(g, n, n_attr, n_dyadic, change_stats_funcs,
               attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices, 
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
-              ifd_K, useConditionalEstimation);
+              ifd_K, useConditionalEstimation, forbidReciprocity);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -488,7 +506,8 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices,
                Mouter, M, sampler_m, ACA_EE, compC,
                Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
-               useIFDsampler, ifd_K, useConditionalEstimation);
+               useIFDsampler, ifd_K, useConditionalEstimation,
+               forbidReciprocity);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -671,7 +690,8 @@ int do_estimation(config_t * config, uint_t tasknum)
               theta, tasknum, theta_outfile, dzA_outfile,
               config->outputAllSteps,
               config->useIFDsampler, config->ifd_K,
-              config->useConditionalEstimation);
+              config->useConditionalEstimation,
+              config->forbidReciprocity);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);
