@@ -155,7 +155,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         } while (i == j);
         isDelete = isArc(g, i ,j);
       }
-      while (!forbidReciprocity || isDelete || !isArc(g, j, i));
+      while (forbidReciprocity && !isDelete || isArc(g, j, i));
     }
     
     /* The change statistics are all computed on the basis of adding arc i->j

@@ -216,7 +216,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
               j = int_urand(g->num_nodes);
             } while (i == j);
           } while (isArc(g, i, j));
-        } while (!forbidReciprocity || !isArc(g, j, i));
+        } while (forbidReciprocity && isArc(g, j, i));
       }
     }
     
