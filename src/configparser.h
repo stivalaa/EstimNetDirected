@@ -52,7 +52,7 @@ typedef struct config_s {
   char *sim_net_file_prefix; /* simulated network output filename prefix */
   char *zone_filename;    /* filename of snowball sampling zone file or NULL */
   bool  useConditionalEstimation; /*conditional estimation of snowball sample */ 
-
+  bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
   /*
    * values built by confiparser.c functions from parsed config settings
    */

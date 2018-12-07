@@ -173,6 +173,15 @@ static const config_param_t CONFIG_PARAMS[] = {
    offsetof(config_t, useConditionalEstimation),
    "do conditional estimation for snowball network sample"},
 
+  {"forbidReciprocity",PARAM_TYPE_BOOL, offsetof(config_t, forbidReciprocity),
+   "constrain ERGM sampler to not allow reciprocated arcs"},
+  /* This is useful for graphs that have no reciprocated arcs in the observed
+     graph so cannot use Reciprocity parameter, and want to enforce 
+     constraint that there can be no reciprocated arcs e.g. for a citatoin
+     network. 
+     TODO should have some more general way of specifying constraints
+     like ergm-constraints in statnet instead of this ad-hoc way */
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -279,6 +288,7 @@ config_t CONFIG = {
   NULL,  /* sim_net_file_prefix */
   NULL,  /* zone_filename */
   FALSE, /* useConditionalEstimation */
+  FALSE, /* forbidReciprocity */
   0,     /* num_change_stats_funcs */
   NULL,  /* change_stats_funcs */
   NULL,  /* param_names */
@@ -328,6 +338,7 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* sim_net_file_prefix */
   FALSE, /* zone_filename */
   FALSE, /* useConditionalEstimation */
+  FALSE, /* forbidReciprocity */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE  /* (NOT USED) dyadicParams */
