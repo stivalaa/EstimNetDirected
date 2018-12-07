@@ -112,7 +112,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
   uint_t i,j,k,l,param_i;
-  bool   isDelete;
+  bool   isDelete = FALSE; /* only init to fix warning */
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */
 
@@ -155,7 +155,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         } while (i == j);
         isDelete = isArc(g, i ,j);
       }
-      while (forbidReciprocity && !isDelete || isArc(g, j, i));
+      while (forbidReciprocity && !isDelete && isArc(g, j, i));
     }
     
     /* The change statistics are all computed on the basis of adding arc i->j
