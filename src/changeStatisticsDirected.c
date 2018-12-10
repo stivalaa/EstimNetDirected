@@ -148,12 +148,30 @@ double changeIsolates(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
- * Change statistic for two-path (triad ceneus 021C)
+ * Change statistic for two-path (triad census 021C)
  * also known as TwoMixStar
  */
 double changeTwoPath(const digraph_t *g, uint_t i, uint_t j)
 {
   return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
+}
+
+/*
+ * Change statistic for in-2-star (triad census 021U)
+ */
+double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j)
+{
+  (void)i; /* unused parameter */
+  return g->indegree[j];
+}
+
+/*
+ * Change statistic for out-2-star (triad census 021D)
+ */
+double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j)
+{
+  (void)j; /* unused parameter */
+  return g->outdegree[i];
 }
 
 /*

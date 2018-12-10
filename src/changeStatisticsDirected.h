@@ -68,6 +68,8 @@ double changeArc(const digraph_t *g, uint_t i, uint_t j);
 double changeReciprocity(const digraph_t *g, uint_t i, uint_t j);
 double changeSink(const digraph_t *g, uint_t i, uint_t j);
 double changeSource(const digraph_t *g, uint_t i, uint_t j);
+double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j);
+double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j);
 double changeIsolates(const digraph_t *g, uint_t i, uint_t j);
 double changeTwoPath(const digraph_t *g, uint_t i, uint_t j);
 double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j);
