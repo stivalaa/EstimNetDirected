@@ -161,7 +161,7 @@ double changeTwoPath(const digraph_t *g, uint_t i, uint_t j)
  */
 double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
 {
-  uint_t v,k;
+  uint_t v,k,l,w;
   uint_t  delta = 0;
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
@@ -172,11 +172,11 @@ double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
     if (isArc(g, v, j))
       delta++;
   }
-  for (j = 0; k < g->indegree[j]; k++) {
-    v = g->revarclist[j][k];
-    if (v == i || v == j)
+  for (l = 0; l < g->indegree[i]; l++) {
+    w = g->revarclist[i][l];
+    if (w == i || w == j)
       continue;
-    if (isArc(g, v, i))
+    if (isArc(g, w, j))
       delta++;
   }
   return (double)delta;
@@ -196,13 +196,6 @@ double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
     if (isArc(g, j, v))
       delta++;
   }
-  /* for (k = 0; k < g->outdegree[j]; k++) { */
-  /*   v = g->arclist[j][k]; */
-  /*   if (v == i || v == j) */
-  /*     continue; */
-  /*   if (isArc(g, v, i)) */
-  /*     delta++; */
-  /* } */
   return (double)delta;
 }
 
