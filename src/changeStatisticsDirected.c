@@ -157,7 +157,7 @@ double changeTwoPath(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
- * Change statistic for transitive triad (triad census 030T)
+ * Change statistic for transitive triangle (triad census 030T)
  */
 double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
 {
@@ -183,7 +183,7 @@ double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
- * Change statistic for cyclic triad (triad census 030C)
+ * Change statistic for cyclic triangle (triad census 030C)
  */
 double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
 {
