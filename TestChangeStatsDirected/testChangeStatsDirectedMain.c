@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
     if (i == j) {
       continue;
     }
-    printf("i = %d, j = %d, changeOutKStars = %g, changeInKStars = %g, changeDiTKTriangles = %g, changeA2pTD = %g, changeDiCKTriangles = %g, changeDiUKTriangles = %g, changeDiDKTriangles = %g, changeDiUAltTwoPaths = %g, changeSource = %g, changeSink = %g, changeDiIso = %g\n", i, j,
+    printf("i = %d, j = %d, changeOutKStars = %g, changeInKStars = %g, changeDiTKTriangles = %g, changeA2pTD = %g, changeDiCKTriangles = %g, changeDiUKTriangles = %g, changeDiDKTriangles = %g, changeDiUAltTwoPaths = %g, changeSource = %g, changeSink = %g, changeDiIso = %g changeTwoMixStar = %g, change030c = %g, change030t = %g\n", i, j,
            changeAltOutStars(g, i, j),
            changeAltInStars(g, i, j),
            changeAltKTrianglesT(g, i, j),
@@ -203,7 +203,10 @@ int main(int argc, char *argv[])
            changeAltTwoPathsU(g, i, j),
            changeSource(g, i, j),
            changeSink(g, i, j),
-           changeIsolates(g, i, j)
+           changeIsolates(g, i, j),
+	   changeTwoPath(g, i, j),
+	   changeCyclicTriad(g, i, j),
+	   changeTransitiveTriad(g, i, j)
       );
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {

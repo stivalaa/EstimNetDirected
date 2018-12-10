@@ -148,6 +148,65 @@ double changeIsolates(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Change statistic for two-path (triad ceneus 021C)
+ * also known as TwoMixStar
+ */
+double changeTwoPath(const digraph_t *g, uint_t i, uint_t j)
+{
+  return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
+}
+
+/*
+ * Change statistic for transitive triad (triad census 030T)
+ */
+double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k;
+  uint_t  delta = 0;
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, v))
+      delta++;
+    if (isArc(g, v, j))
+      delta++;
+  }
+  for (j = 0; k < g->indegree[j]; k++) {
+    v = g->revarclist[j][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, v, i))
+      delta++;
+  }
+  return (double)delta;
+}
+
+/*
+ * Change statistic for cyclic triad (triad census 030C)
+ */
+double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k;
+  uint_t  delta = 0;
+  for (k = 0; k < g->indegree[i]; k++) {
+    v = g->revarclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, k))
+      delta++;
+  }
+  for (k = 0; k < g->outdegree[j]; k++) {
+    v = g->arclist[j][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, k, i))
+      delta++;
+  }
+  return (double)delta;
+}
+
+/*
  * Change statistic for alternating k-in-stars (popularity spread, AinS)
  */
 double changeAltInStars(const digraph_t *g, uint_t i, uint_t j)
