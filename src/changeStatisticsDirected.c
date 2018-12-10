@@ -193,16 +193,16 @@ double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    if (isArc(g, j, k))
+    if (isArc(g, j, v))
       delta++;
   }
-  for (k = 0; k < g->outdegree[j]; k++) {
-    v = g->arclist[j][k];
-    if (v == i || v == j)
-      continue;
-    if (isArc(g, k, i))
-      delta++;
-  }
+  /* for (k = 0; k < g->outdegree[j]; k++) { */
+  /*   v = g->arclist[j][k]; */
+  /*   if (v == i || v == j) */
+  /*     continue; */
+  /*   if (isArc(g, v, i)) */
+  /*     delta++; */
+  /* } */
   return (double)delta;
 }
 
