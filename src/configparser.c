@@ -206,6 +206,8 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"Source",            changeSource},
   {"Isolates",          changeIsolates},
   {"TwoPaths",          changeTwoPath},
+  {"InTwoStars",        changeInTwoStars},
+  {"OutTwoStars",       changeOutTwoStars},
   {"TransitiveTriangles",changeTransitiveTriad},
   {"CyclicTriangles",   changeCyclicTriad},
   {"AltInStars",        changeAltInStars},
