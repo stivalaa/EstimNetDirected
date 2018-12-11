@@ -452,8 +452,9 @@ p <- p + ylab('fraction of triads') + ptheme +
 p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
                                                   colour = obscolour,
                                                   group = 1))
-p <- p + scale_y_log10()
-plotlist <- c(plotlist, list(p))
+plotlist <- c(plotlist, list(p))  # no logarithm
+p <- p + scale_y_log10() + ylab("frac. triads (log)")
+plotlist <- c(plotlist, list(p))  # log scale on y axis
 
 
 
