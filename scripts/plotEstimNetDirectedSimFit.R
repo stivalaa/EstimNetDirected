@@ -393,7 +393,13 @@ plotlist <- c(plotlist, list(p))
 ## give negative numbers
 ## https://github.com/igraph/igraph/issues/625
 ## https://github.com/igraph/igraph/issues/497
-
+## 003 and 012 can overflow on too large networks
+## so will drop them if any are negative or arbitrarily network is
+## 'too large'
+dropFirstTwo <- FALSE 
+## if (num_nodes > 1000000) {
+##     dropFirstTwo <- TRUE
+## }
 nTriads <- choose(num_nodes, 3)
 system.time(obs_triadcensus <- triad.census(g_obs))
 num_triad_types <- length(obs_triadcensus)
@@ -404,6 +410,9 @@ triadnames <- c('003', '012', '102', '021D', '021U', '021C', '111D',
 stopifnot(length(triadnames) == num_triad_types)
 names(obs_triadcensus) <- triadnames
 cat('obs triad census: ', obs_triadcensus, '\n')
+if (obs_triadcensus[1] < 0 || obs_triadcensus[2] < 0) {
+    dropFirstTwo <- TRUE
+}
 sim_triadcensus_df <- data.frame(sim = rep(1:num_sim, each = num_triad_types),
                                  triad = rep(triadnames, num_sim),
                                  count = NA)
@@ -421,6 +430,9 @@ for (i in 1:num_sim) {
     system.time(sim_triadcensus <- triad_census(sim_graphs[[i]]))
     names(sim_triadcensus) <- triadnames
     cat('sim triad census ', i, ': ', sim_triadcensus, '\n')
+    if (sim_triadcensus[1] < 0 || sim_triadcensus[2] < 0) {
+        dropFirstTwo <- TRUE
+    }
     for (tname in triadnames) {
         sim_triadcensus_df[which(sim_triadcensus_df[,"sim"] == i &
                                  sim_triadcensus_df[,"triad"] == tname,
@@ -434,11 +446,15 @@ sim_triadcensus_df$triad <- factor(sim_triadcensus_df$triad, levels = triadnames
 obs_triadcensus_df$triad <- factor(obs_triadcensus_df$triad, levels = triadnames)
 
 sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
-## Remove 003 triad (empty graph) as it has has far larger fractoin than
-## others so makes graph too hard to read (like in statnet GoF plots,
-## everythign else is squashed too close to zero in comparison)
-## sim_triadcensus_df <- sim_triadcensus_df[which(sim_triadcensus_df$triad != "003"),]
-## obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "003"),]
+## Remove first two triads if necessary
+## (003 triad (empty graph) and 012 (single edge))
+if (dropFirstTwo) {
+    cat ("WARNING: dropping triad census 003 and 012 as overflow detected\n")
+    sim_triadcensus_df <- sim_triadcensus_df[which(sim_triadcensus_df$triad != "003"),]
+    obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "003"),]
+    sim_triadcensus_df <- sim_triadcensus_df[which(sim_triadcensus_df$triad != "012"),]
+    obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "012"),]
+}
 p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
 p <- p + geom_boxplot()
 p <- p + ylab('fraction of triads') + ptheme +
