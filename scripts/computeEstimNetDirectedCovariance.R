@@ -135,7 +135,7 @@ for (paramname in paramnames) {
     est_stderr <- thetasum$value.sd + mle_stderr
 
     signif <- ''
-    if (!is.na(t_ratio) && abs(t_ratio) <= 0.3 && abs(thetasum$value.mean) > zSigma*mle_stderr) {
+    if (!is.na(t_ratio) && abs(t_ratio) <= 0.3 && abs(thetasum$value.mean) > zSigma*est_stderr) {
       signif <- '*'
     }
 
