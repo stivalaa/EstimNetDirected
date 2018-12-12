@@ -53,28 +53,18 @@ done
 echo '\\'
 echo '\hline'  
 
-# old version has 4 columns (and maybe *) e..g:
-#    Interaction_teaching_hospital 0.04523867 0.02446406 0.04870618
-#    (Effect                        estimated  stderr     t-ratio)
-# new output has 5 columns (and maybe *) plus TotalRuns and ConvergedRuns e.g.:
-#    Interaction_teaching_hospital -0.1521281 0.8974808 0.02289961 0.08469016 *
-#    (Effect                        estimated  sd(theta)  stderr    t-ratio)
-#    TotalRuns 20
-#    ConvergedRuns 20
+# new version has 6 columns:
+# Effect   estimate   sd(theta)   est.MLE.std.err.   est.std.err  t.ratio
+# (and maybe *) plus
+# TotalRuns and ConvergedRuns e.g.:
+#Diff_completion_percentage -0.003543378 0.004887503 8.481051e-05 0.004972314 0.01630916
+#TotalRuns 2
+#ConvergedRuns 2
+# (see computeEstimNetDirectedCovariance.R)
 model=1
 for estimationresults in $*
 do
-  newversion=0
-  fgrep TotalRuns ${estimationresults} >/dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    newversion=1
-  fi
-  if [ $newversion -eq 1 ]; then
-    cat ${estimationresults}  | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns | awk '{print $1,$2,$4,$5}'  |  tr ' ' '\t' | sed "s/^/${model}\t/" >> ${estimnet_tmpfile}
-  else
-    cat ${estimationresults}  | tr -d '*' | fgrep -vw AcceptanceRate | tr ' ' '\t' | sed "s/^/${model}\t/" >> ${estimnet_tmpfile}
-  fi
-  model=`expr $model + 1`
+    cat ${estimationresults}  | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns | awk '{print $1,$2,$5,$6}'  |  tr ' ' '\t' | sed "s/^/${model}\t/" >> ${estimnet_tmpfile}
 done
 
 
