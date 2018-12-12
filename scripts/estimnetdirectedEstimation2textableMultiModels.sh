@@ -112,9 +112,9 @@ do
       signif=`echo "${abs_tratio} <= ${tratioThreshold} && ${abs_estimate} > ${zSigma} * ${estimnet_stderr}" | bc -l`
       echo ZZZ ${signif} >&2 
       if [ ${signif} -eq 0 ]; then
-        printf " & \$\\light{\\underset{(%.3f, %.3f)}{%.3f}}\$" ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
+        printf ' & $\\light{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
       else
-        printf " & \$\\underset{(%.3f, %.3f)}{%.3f}\$" ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
+        printf ' & $\\underset{(%.3f, %.3f)}{%.3f}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
       fi
     fi
     model=`expr $model + 1`
