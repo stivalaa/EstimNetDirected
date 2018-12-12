@@ -65,6 +65,7 @@ model=1
 for estimationresults in $*
 do
     cat ${estimationresults}  | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns | awk '{print $1,$2,$5,$6}'  |  tr ' ' '\t' | sed "s/^/${model}\t/" >> ${estimnet_tmpfile}
+    model=`expr $model + 1`
 done
 
 
