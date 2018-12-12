@@ -104,8 +104,8 @@ acov <- cov(amatrix)
 #print(acov) #XXX
 acov_inv = solve(acov) # solve(A) is matrix inverse of A
 #print(acov_inv)#XXX
-est_stderrs <- sqrt(diag(acov_inv)) 
-#print(est_stderrs)#XXX
+mle_stderrs <- sqrt(diag(acov_inv)) 
+#print(mle_stderrs)#XXX
 
 
 for (paramname in paramnames) {
@@ -120,14 +120,26 @@ for (paramname in paramnames) {
       t_ratio <- NA
     }
 
-    est_stderr <- est_stderrs[paramname]
+    mle_stderr <- mle_stderrs[paramname]
+
+    ## TODO we have sd of estimated theta to get error in the MCMC estimate
+    ## of theta, and also MLE std. error estimated from the covariance matrix;
+    ## (see Snijders (2002) "Markov chain Monte Carlo estimation of
+    ## exponential random graph models" J. Social Structure 3(2):1-40).
+    ## Using just the latter does seem to underestimate std. error so we
+    ## are going to just add the two together, but is this justifiable
+    ## in theory, and is there are better or more 'correct' way?
+    ## See e.g. p. 572 of Hunter & Handcock (2006)
+    ## "Inference in Curved Exponential Family Models for Networks"
+    ## J. Comp. Graph. Stat. 15:3, 565-583
+    est_stderr <- thetasum$value.sd + mle_stderr
 
     signif <- ''
     if (!is.na(t_ratio) && abs(t_ratio) <= 0.3 && abs(thetasum$value.mean) > zSigma*est_stderr) {
       signif <- '*'
     }
 
-    cat(paramname, thetasum$value.mean, thetasum$value.sd, est_stderr, t_ratio, signif, '\n')
+    cat(paramname, thetasum$value.mean, thetasum$value.sd, mle_stderr, est_stderr, t_ratio, signif, '\n')
 }
 
 cat("TotalRuns", totalruns, "\n")
