@@ -135,6 +135,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
 
+  return; /* FIXME XXX TODO do nothing for now for testing only using dyadic indepence so don't need this. Should change code to check which paramters are used and only build these when necessary */
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)

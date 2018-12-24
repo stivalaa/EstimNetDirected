@@ -68,7 +68,6 @@ FILE *Kafile;  /* FIXME should not be a file global and should be one per task f
  *                  change stats funcs. Allocated by caller.
  *   Dmean - (Out) array of n derivative estimate values corresponding to theta.
  *                 Allocated by caller
- *   tasknum - task number (MPI rank)
  *   theta_outfile - open (write) file to write theta values to
  *   useIFDsampler - use IFD sampler instead of basic sampler
  *   ifd_K         - constant for multipliying IFD auxiliary parameter
@@ -118,6 +117,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (l = 0; l < n; l++)
     theta[l] = 0;
+
   for (t = 0; t < M1; t++) {
     fprintf(theta_outfile, "%d ", t-M1);
     if (useIFDsampler) {
@@ -203,7 +203,6 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *   theta  - (In/Out) array of n parameter values corresponding to
  *                  change stats funcs. Input starting values (from 
  *                  alorithm_S(), output EE values.
- *  tasknum - task number (MPI rank)
  *  theta_outfile - open (write) file to write theta values to.
  *  dzA_outfile   - open (write) file to write dzA values to.
  *  outputAllSteps - if True, output theta and dzA values every iteration,
@@ -470,6 +469,8 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   printf("task %u: M1 = %u, Mouter = %u, M = %u\n", tasknum, M1, Mouter, M);
 
 
+#define UNDEF_SKIP_ALG_S 1
+#ifdef UNDEF_SKIP_ALG_S /* XXX FIXME TODO allow skipping Algorithm S as an option */
   printf("task %u: running Algorithm S...\n", tasknum);
   gettimeofday(&start_timeval, NULL);
 
@@ -490,10 +491,28 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("%g ", Dmean[i]);
   printf("\n");
   fflush(theta_outfile);
-
-  /* set derivative estimate to 1e-10 constant for start of algorithm_EE 
+#else
+  /* set derivative estimate to 1e-10 constant for start of algorithm_EE
      regardless of output of algorithm_S */
-//XXX  for (i = 0; i < n; i++) Dmean[i]=1e-10; 
+  for (i = 0; i < n; i++) Dmean[i]=1e-10;
+#endif /*UNDEF_SKIP_ALG_S*/
+
+ /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+  if (useIFDsampler) {
+ //XXX   theta[0] =   20.0; /* FIXME XXX just for testing on pokec_nohubs network: Reciprocity initial value from MPLE is 12.344047 (arc is -12.152336 */
+//XXX    printf("XXX setting theta[0] = %g for Reciprocity intial value test only\n", theta[0]);
+/*XXX    Dmean[0] = 1e-5;
+    printf("XXX setting Dmean[0] = %g for Reciprocity intial value test only\n", Dmean[0]); XXX*/
+  } else {
+    theta[0] =  -10.0; /* FIXME XXX just for testing on pokec_nohubs network: Reciprocity initial value from MPLE is 12.344047 (arc is -12.152336 */
+    theta[1] =  20.0; /* FIXME XXX just for testing on pokec_nohubs network: Reciprocity initial value from MPLE is 12.344047 (arc is -12.152336 */
+    printf("XXX setting theta[0] = %g for Arc intial value test only\n", theta[0]);
+    printf("XXX setting theta[1] = %g for Reciprocity intial value test only\n", theta[1]);
+    Dmean[1] = 0.1;
+    printf("XXX setting Dmean[1] = %g for Reciprocity intial value test only\n", Dmean[1]);
+  }
+ /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
   printf("\ntask %u: initial value of D0 for algorithm_EE = ", tasknum);
   for (i = 0; i < n; i++) 
     printf("%g ", Dmean[i]);
