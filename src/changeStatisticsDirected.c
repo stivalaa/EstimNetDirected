@@ -60,6 +60,20 @@
  */
 const double lambda = 2.0; /* TODO make it a configuration setting */
 
+/*****************************************************************************
+ *
+ * local functions
+ *
+ ****************************************************************************/
+
+/*
+ * signum function, returns -1 for negative x, +1 for positive x, else 0
+ */
+static double signum(double x)
+{
+  /* https://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c */
+  return (0 < x) - (x < 0);
+}
 
 /*****************************************************************************
  *
@@ -131,6 +145,76 @@ double changeIsolates(const digraph_t *g, uint_t i, uint_t j)
     delta--;
   }
   return delta;
+}
+
+/*
+ * Change statistic for two-path (triad census 021C)
+ * also known as TwoMixStar
+ */
+double changeTwoPath(const digraph_t *g, uint_t i, uint_t j)
+{
+  return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
+}
+
+/*
+ * Change statistic for in-2-star (triad census 021U)
+ */
+double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j)
+{
+  (void)i; /* unused parameter */
+  return g->indegree[j];
+}
+
+/*
+ * Change statistic for out-2-star (triad census 021D)
+ */
+double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j)
+{
+  (void)j; /* unused parameter */
+  return g->outdegree[i];
+}
+
+/*
+ * Change statistic for transitive triangle (triad census 030T)
+ */
+double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k,l,w;
+  uint_t  delta = 0;
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, v))
+      delta++;
+    if (isArc(g, v, j))
+      delta++;
+  }
+  for (l = 0; l < g->indegree[i]; l++) {
+    w = g->revarclist[i][l];
+    if (w == i || w == j)
+      continue;
+    if (isArc(g, w, j))
+      delta++;
+  }
+  return (double)delta;
+}
+
+/*
+ * Change statistic for cyclic triangle (triad census 030C)
+ */
+double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k;
+  uint_t  delta = 0;
+  for (k = 0; k < g->indegree[i]; k++) {
+    v = g->revarclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, v))
+      delta++;
+  }
+  return (double)delta;
 }
 
 /*
@@ -449,6 +533,20 @@ double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
     return 0;
   else  
     return fabs(g->contattr[a][i] - g->contattr[a][j]) * isArc(g, j, i);
+}
+
+
+/*
+ * Change statistic for continuous diff sign (sign of difference of attribute)
+ * for attr_i - attr_j (so +1 when sending node has higher attribute value and -1
+ * when receiving node has higher attribute value).
+ */
+double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+{
+  if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
+    return 0;
+  else
+    return signum(g->contattr[a][i] - g->contattr[a][j]);
 }
 
 

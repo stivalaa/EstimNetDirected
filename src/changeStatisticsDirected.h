@@ -68,7 +68,12 @@ double changeArc(const digraph_t *g, uint_t i, uint_t j);
 double changeReciprocity(const digraph_t *g, uint_t i, uint_t j);
 double changeSink(const digraph_t *g, uint_t i, uint_t j);
 double changeSource(const digraph_t *g, uint_t i, uint_t j);
+double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j);
+double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j);
 double changeIsolates(const digraph_t *g, uint_t i, uint_t j);
+double changeTwoPath(const digraph_t *g, uint_t i, uint_t j);
+double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j);
+double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j);
 double changeAltInStars(const digraph_t *g, uint_t i, uint_t j);
 double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j);
 double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j);
@@ -99,6 +104,7 @@ double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
 /********************* Dyadic covariate (continuous) *************************/
 

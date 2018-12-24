@@ -83,6 +83,7 @@
  *                 Otherwise digraph is not actually changed.
  *   useConditionalEstimation - if True do conditional estimation of snowball
  *                              network sample.
+ *   forbidReciprocity - if True do not allow reciprocated arcs.
  *
  * Return value:
  *   Acceptance rate.
@@ -105,12 +106,13 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     double addChangeStats[], double delChangeStats[],
                     uint_t sampler_m,
                     bool performMove,
-                    bool useConditionalEstimation)
+                    bool useConditionalEstimation,
+                    bool forbidReciprocity)
 {
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
   uint_t i,j,k,l,param_i;
-  bool   isDelete;
+  bool   isDelete = FALSE; /* only init to fix warning */
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */
 
@@ -128,6 +130,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
          waves and a tie cannot be deleted if it is last reamainign tie
          connecting node to preceding wave. Note ignoring arc direction
          here as assumed snowball sample ignored arc directions. */
+      assert(!forbidReciprocity); /* TODO not implemented for snowball */
       do {
         i = g->inner_nodes[int_urand(g->num_inner_nodes)];
         do {
@@ -145,16 +148,19 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* Basic sampler (no conditional estimation): select two
          nodes i and j uniformly at random and toggle arc between
          them. */
-      i = int_urand(g->num_nodes);
       do {
-        j = int_urand(g->num_nodes);
-      } while (i == j);
+        i = int_urand(g->num_nodes);
+        do {
+          j = int_urand(g->num_nodes);
+        } while (i == j);
+        isDelete = isArc(g, i ,j);
+      }
+      while (forbidReciprocity && !isDelete && isArc(g, j, i));
     }
-
+    
     /* The change statistics are all computed on the basis of adding arc i->j
        so if if the arc exists, we temporarily remove it to compute the
        change statistics, and negate them */
-    isDelete = isArc(g, i ,j);
     SAMPLER_DEBUG_PRINT(("%s %d -> %d\n",isDelete ? "del" : "add", i, j));
     if (isDelete) {
       removeArc(g, i, j);

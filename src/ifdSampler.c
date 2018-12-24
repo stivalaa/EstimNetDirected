@@ -10,6 +10,42 @@
  * A. (2016). Auxiliary parameter MCMC for exponential random graph
  * models. Journal of Statistical Physics, 165(4), 740-754.
  *
+ * It also optionally does conditional estimation for snowball sampled
+ * network. In this case in the MCMC algorithm the ties between nodes
+ * in the outermost wave are fixed, as are ties between nodes in the
+ * outermost wave and the preceding (second-last) wave. In addition, a
+ * tie cannot be added if it would "skip over" a wave (i.e. the
+ * absolute difference in wave number between the nodes to add a tie must
+ * be at most 1), and a tie cannot be deleted if it is the last remaining
+ * tie connected a node to the preceding wave.
+ *
+ * Note in the case of directed networks the snowball sampling procedure
+ * has been assumed to ignore the direction of arcs, so when we consider
+ * the above rules here we ignore the direction of the arcs also.
+ *
+ * References for conditional estimation of snowball sampled network are:
+ * 
+ * Pattison, P. E., Robins, G. L., Snijders, T. A., & Wang,
+ * P. (2013). Conditional estimation of exponential random graph
+ * models from snowball sampling designs. Journal of Mathematical
+ * Psychology, 57(6), 284-296.
+ * 
+ * Stivala, A. D., Koskinen, J. H., Rolls, D. A., Wang, P., & Robins,
+ * G. L. (2016). Snowball sampling for estimating exponential random
+ * graph models for large networks. Social Networks, 47, 167-188.
+ *
+ * And for the directed networks case specifically:
+ *
+ * Stivala, A., Rolls, D., & Robins, G. (2015). The ins and outs of
+ * snowball sampling: ERGM estimation for very large directed
+ * networks, presented at INSNA Sunbelt XXXV Conference, Brighton UK,
+ * June 23-28, 2015. [Slides available from
+ * https://sites.google.com/site/alexdstivala/home/conferences]
+ *
+ * Stivala, A., Rolls, D., & Robins, G. (2018). Estimating exponential
+ * random graph models for large directed networks with snowball
+ * sampling. Unpublished manuscript.
+ *
  ****************************************************************************/
 
 #include <assert.h>
@@ -79,6 +115,7 @@ double arcCorrection(const digraph_t *g) {
  *                    reuse each call to update.
  *   useConditionalEstimation - if True do conditional estimation of snowball
  *                              network sample.
+ *   forbidReciprocity - if True do not allow reciprocated arcs.
  *
  * Return value:
  *   Acceptance rate.
@@ -97,7 +134,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t sampler_m,
                   bool performMove,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
-                  bool useConditionalEstimation)
+                  bool useConditionalEstimation,
+                  bool forbidReciprocity)
 {
   static bool   isDelete = FALSE; /* delete or add move. FIXME don't use static, make param */
 
@@ -120,6 +158,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (k = 0; k < sampler_m; k++) {
 
     if (useConditionalEstimation) {
+      assert(!forbidReciprocity); /* TODO not implemented for snowball */
       if (isDelete) {
         /* Delete move for conditional estimation. Find an existing
            arc between nodes in inner waves (i.e. fixing ties in
@@ -165,16 +204,19 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         i = g->allarcs[arcidx].i;
         j = g->allarcs[arcidx].j;
         /*removed as slows significantly: assert(isArc(g, i, j));*/
+        /* no need to condsider forbidReciprocity on delete move */
       } else {
         /* Add move. Find two nodes i, j without arc i->j uniformly at
            random. Because graph is sparse, it is not too inefficient
            to just pick random nodes until such a pair is found */
         do {
-          i = int_urand(g->num_nodes);
           do {
-            j = int_urand(g->num_nodes);
-          } while (i == j);
-        } while (isArc(g, i, j));
+            i = int_urand(g->num_nodes);
+            do {
+              j = int_urand(g->num_nodes);
+            } while (i == j);
+          } while (isArc(g, i, j));
+        } while (forbidReciprocity && isArc(g, j, i));
       }
     }
     
