@@ -282,6 +282,29 @@ system.time(plotlist <- c(plotlist,
 ## plotlist <- c(plotlist, list(p))
 
 
+###
+### Reciprocity
+###
+## Uses the default reciprocity in igraph which is probability
+## that opposite counterpart of directed edge is also in the graph.
+## Note can also use triad census 102 which is just graph with a mutual
+## arc between two vertices (more related to the alternative reciprocity
+## definition which we are not using), but not quite the same and also
+## for very large graphs the triad 102 census count overflows and has to
+## be omitted, while this does not.
+system.time( obs_reciprocity <- reciprocity(g_obs) )
+system.time( sim_reciprocity <- sapply(sim_graphs, function(g) reciprocity(g)) )
+cat('obs reciprocity: ', obs_reciprocity, '\n')
+cat('sim reciprocity: ', sim_reciprocity, '\n')
+p <- ggplot() + geom_boxplot(aes(x = 'reciprocity', y = sim_reciprocity))
+p <- p + geom_point(aes(x = as.numeric(ordered('reciprocity')),
+                        y = obs_reciprocity,
+                        colour = obscolour))
+p <- p + ylab('fraction of arcs') + ptheme +
+  theme(axis.title.x = element_blank())
+p <- p + ylim(0, 1)
+plotlist <- c(plotlist, list(p))
+
 
 
 ###
