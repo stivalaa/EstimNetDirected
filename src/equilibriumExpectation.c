@@ -68,7 +68,6 @@ FILE *Kafile;  /* FIXME should not be a file global and should be one per task f
  *                  change stats funcs. Allocated by caller.
  *   Dmean - (Out) array of n derivative estimate values corresponding to theta.
  *                 Allocated by caller
- *   tasknum - task number (MPI rank)
  *   theta_outfile - open (write) file to write theta values to
  *   useIFDsampler - use IFD sampler instead of basic sampler
  *   ifd_K         - constant for multipliying IFD auxiliary parameter
@@ -203,7 +202,6 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *   theta  - (In/Out) array of n parameter values corresponding to
  *                  change stats funcs. Input starting values (from 
  *                  alorithm_S(), output EE values.
- *  tasknum - task number (MPI rank)
  *  theta_outfile - open (write) file to write theta values to.
  *  dzA_outfile   - open (write) file to write dzA values to.
  *  outputAllSteps - if True, output theta and dzA values every iteration,
@@ -491,9 +489,6 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   printf("\n");
   fflush(theta_outfile);
 
-  /* set derivative estimate to 1e-10 constant for start of algorithm_EE 
-     regardless of output of algorithm_S */
-//XXX  for (i = 0; i < n; i++) Dmean[i]=1e-10; 
   printf("\ntask %u: initial value of D0 for algorithm_EE = ", tasknum);
   for (i = 0; i < n; i++) 
     printf("%g ", Dmean[i]);
