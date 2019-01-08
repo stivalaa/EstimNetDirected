@@ -175,32 +175,43 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
 ##    g_obs:       observed graph igraph object
 ##    sim_graphs:  simulated graphs list of igraph objects
 ##    mode:       'in' or 'out' for indegree or outdegree respectively
+##    use_log:    TRUE to do log degree
 ##
 ## Return value:
 ##    ggplot2 object to add to plot list
 ##
-deg_hist_plot <- function(g_obs, sim_graphs, mode) {
-  start <- Sys.time()
-  dobs <- data.frame(logdegree = log(degree(g_obs, mode=mode)), group = 'obs')
-  ## get degrees of all simulated graphs in one histogram
-  simdegrees <- as.vector(sapply(sim_graphs, function(g) degree(g, mode=mode)))
-  dsim <- data.frame(logdegree = log(simdegrees), group = 'sim') 
-  dat <- rbind(dobs, dsim)
-  end <- Sys.time()
-  cat(mode, "-degree histogram data frame construction took",
-      as.numeric(difftime(end, start, unit="secs")), "s\n")
-  start <- Sys.time()
-  ## https://stackoverflow.com/questions/29287614/r-normalize-then-plot-two-histograms-together-in-r
-  p <- ggplot(dat, aes(logdegree, fill = group, colour = group)) +
-    geom_histogram(aes(y = ..density..),
-                   alpha = 0.4, position = 'identity', lwd = 0.2)
-  p <- p + xlab(paste("log ", mode, '-degree', sep=''))
-  p <- p + theme(legend.title=element_blank(),
-                 legend.position = c(0.9, 0.8))
-  end <- Sys.time()
-  cat(mode, "-degree histogram plotting took",
-      as.numeric(difftime(end, start, unit="secs")), "s\n")
-  return(p)
+deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
+    start <- Sys.time()
+    if (use_log) {
+        dobs <- data.frame(degree = log(degree(g_obs, mode=mode)),
+                           group = 'obs')
+    } else {
+        dobs <- data.frame(degree = degree(g_obs, mode=mode),
+                           group = 'obs')
+    }
+    ## get degrees of all simulated graphs in one histogram
+    simdegrees <- as.vector(sapply(sim_graphs, function(g) degree(g, mode=mode)))
+    if (use_log) {
+        dsim <- data.frame(degree = log(simdegrees), group = 'sim')
+    } else {
+        dsim <- data.frame(degree = simdegrees, group = 'sim')
+    }
+    dat <- rbind(dobs, dsim)
+    end <- Sys.time()
+    cat(mode, "-degree histogram data frame construction took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    start <- Sys.time()
+    ## https://stackoverflow.com/questions/29287614/r-normalize-then-plot-two-histograms-together-in-r
+    p <- ggplot(dat, aes(degree, fill = group, colour = group)) +
+        geom_histogram(aes(y = ..density..),
+                       alpha = 0.4, position = 'identity', lwd = 0.2)
+    p <- p + xlab(paste(ifelse(use_log, "log ", ""), mode, '-degree', sep=''))
+    p <- p + theme(legend.title=element_blank(),
+                   legend.position = c(0.9, 0.8))
+    end <- Sys.time()
+    cat(mode, "-degree histogram plotting took",
+        as.numeric(difftime(end, start, unit="secs")), "s\n")
+    return(p)
 }
 
 
@@ -251,7 +262,10 @@ system.time(plotlist <- c(plotlist,
                           list(deg_distr_plot(g_obs, sim_graphs, 'in'))))
 
 system.time(plotlist <- c(plotlist,
-                          list(deg_hist_plot(g_obs, sim_graphs, 'in'))))
+                          list(deg_hist_plot(g_obs, sim_graphs, 'in', FALSE))))
+
+system.time(plotlist <- c(plotlist,
+                          list(deg_hist_plot(g_obs, sim_graphs, 'in', TRUE))))
 
 
 ###
@@ -262,7 +276,10 @@ system.time(plotlist <- c(plotlist,
                           list(deg_distr_plot(g_obs, sim_graphs, 'out'))))
 
 system.time(plotlist <- c(plotlist,
-                          list(deg_hist_plot(g_obs, sim_graphs, 'out'))))
+                          list(deg_hist_plot(g_obs, sim_graphs, 'out', FALSE))))
+
+system.time(plotlist <- c(plotlist,
+                          list(deg_hist_plot(g_obs, sim_graphs, 'out', TRUE))))
 
 
 ## ###
