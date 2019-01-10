@@ -410,6 +410,8 @@ cat('sim global cc: ', ccs, '\n')
 system.time(ccs_localavg <- sapply(sim_graphs, function(g)
     transitivity(g, type='localaverage')))
 system.time(cc_localavg_obs <- transitivity(g_obs, type='localaverage'))
+cat('obs avg local cc: ', cc_localavg_obs, '\n')
+cat('sim avg local cc: ', ccs_localavg, '\n')
 p <- ggplot() + geom_boxplot(aes(x = factor('global', levels=cctypes), y = ccs))
 p <- p + geom_point(aes(x = as.numeric(factor('global', levels=cctypes)),
                         y = cc_obs,
