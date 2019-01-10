@@ -110,6 +110,7 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
     theta <- rbind(theta, thetarun)
   }
 }
+
 cat("Using", keptcount, "of", totalruns, "runs\n", file=stderr())
 stopifnot(totalruns - keptcount == length(removed_runs))
 
