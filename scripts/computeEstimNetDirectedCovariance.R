@@ -56,6 +56,11 @@
 ## Hunter & Handcock (2006) "Inference in Curved Exponential Family
 ## Models for Networks" J. Comp. Graph. Stat. 15:3, 565-583
 ##
+## Jones, G. L., Haran, M., Caffo, B. S., & Neath,
+## R. (2006). Fixed-width output analysis for Markov chain Monte
+## Carlo. Journal of the American Statistical Association, 101(476),
+## 1537-1547.
+##
 ## Snijders (2002) "Markov chain Monte Carlo estimation of exponential
 ## random graph models" J. Social Structure 3(2):1-40).
 ##
@@ -172,18 +177,19 @@ for (run in unique(theta$run)) {
     mle_cov = solve(acov) # solve(A) is matrix inverse of A
 
     ## covariance matrix for MCMC error
+    ## mcerror <- mcse.initseq(x = this_theta)
     ## (Not using the conservative initial sequence method (Dai & Jones, 2017)
     ## as we often don't seem to have enough samples for this, unlike the
     ## other methods.)
-    ## mcerror <- mcse.initseq(x = this_theta)
-    ## Instead use the "batch means" method.
+    ## Instead use the (default) "batch means"
+    ## method (Jones 2006; Vats et al., 2017; Vats et al., 2018)
     mcerror <- mcse.multi(x = this_theta, method="bm") 
     est_theta <- mcerror$est    # point estimate (mean)
     Nmcmc <- nrow(this_theta) # number of MCMC samples
     ## mcse.multi returns asymptotic covariance matrix so need to divide
     ## by Nmcmc and take sqrt to get MCMC standard error estimate
-    ## (see mcmcse vignette pp.8,9): "Note: cov returns an estimate
-    ## of \Sigma and not \Sigma/n."
+    ## (see mcmcse vignette pp.4,8,9): "Note: cov returns an estimate
+    ## of \Sigma and not \Sigma/n." (p. 8)
     mcmc_cov <- mcerror$cov / Nmcmc  # covariance matrix
 
     total_cov <- mcmc_cov + mle_cov
