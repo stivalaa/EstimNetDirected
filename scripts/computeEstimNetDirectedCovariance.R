@@ -152,8 +152,12 @@ stopifnot(max(dzA$run) == num_runs-1)
 ## matrix of theta point estimates, each row is a run (each col a parameter)
 theta_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
 colnames(theta_estimates) <- paramnames
-se_estimates <- list()      # corresponding estimated standard errors
-t_ratios <- list()          # and estimated t-ratios
+## also do this for standard error and t-ratio estimates
+se_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
+colnames(se_estimates) <- paramnames
+t_ratios <- matrix(nrow = num_runs, ncol = length(paramnames))
+colnames(t_ratios) <- paramnames
+
 for (run in unique(theta$run)) {
     this_theta <- theta[which(theta$run == run), paramnames]
     this_dzA <- dzA[which(dzA$run == run), paramnames]
@@ -176,8 +180,8 @@ for (run in unique(theta$run)) {
 
     # runs are numbered from 0 so need to add 1 for R matrix indexing
     theta_estimates[run+1, ] <- est_theta
-    se_estimates <- c(se_estimates, list(est_stderr))
-    t_ratios <- c(t_ratios, list(est_t_ratio))
+    se_estimates[run+1, ] <- est_stderr
+    t_ratios[run+1, ] <- est_t_ratio
 
     
     ## for (paramname in paramnames) {
