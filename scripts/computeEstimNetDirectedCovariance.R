@@ -171,7 +171,12 @@ for (run in unique(theta$run)) {
     ## use "batch means" method ("bm")
     mcerror_bm <- mcse.multi(x = this_theta, method="bm")
     est_theta <- mcerror_bm$est    # point estimate (mean)
-    mcmc_cov <- mcerror_bm$cov  # covariance matrix
+    Nmcmc <- nrow(this_theta) # number of MCMC samples
+    ## mcse.multi returns asymptotic covariance matrix so need to divide
+    ## by Nmcmc and take sqrt to get MCMC standard error estimate
+    ## (see mcmcse vignette pp.8,9): "Note: cov returns an estimate
+    ## of \Sigma and not \Sigma/n."
+    mcmc_cov <- mcerror_bm$cov / Nmcmc  # covariance matrix
 
     total_cov <- mcmc_cov + mle_cov
     est_stderr <- sqrt(diag(total_cov))
