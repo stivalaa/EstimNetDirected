@@ -37,6 +37,10 @@
 ##
 ## References:
 ##
+## Dai, N., & Jones, G. L. (2017). Multivariate initial sequence
+## estimators in Markov chain Monte Carlo. Journal of Multivariate
+## Analysis, 159, 184-199.
+##
 ## James M. Flegal, John Hughes, Dootika Vats, and Ning
 ## Dai. (2017). mcmcse: Monte Carlo Standard Errors for MCMC. R package
 ## version 1.3-2. Riverside, CA, Denver, CO, Coventry, UK, and
@@ -168,15 +172,19 @@ for (run in unique(theta$run)) {
     mle_cov = solve(acov) # solve(A) is matrix inverse of A
 
     ## covariance matrix for MCMC error
-    ## use "batch means" method ("bm")
-    mcerror_bm <- mcse.multi(x = this_theta, method="bm")
-    est_theta <- mcerror_bm$est    # point estimate (mean)
+    ## (Not using the conservative initial sequence method (Dai & Jones, 2017)
+    ## as we often don't seem to have enough samples for this, unlike the
+    ## other methods.)
+    ## mcerror <- mcse.initseq(x = this_theta)
+    ## Instead use the "batch means" method.
+    mcerror <- mcse.multi(x = this_theta, method="bm") 
+    est_theta <- mcerror$est    # point estimate (mean)
     Nmcmc <- nrow(this_theta) # number of MCMC samples
     ## mcse.multi returns asymptotic covariance matrix so need to divide
     ## by Nmcmc and take sqrt to get MCMC standard error estimate
     ## (see mcmcse vignette pp.8,9): "Note: cov returns an estimate
     ## of \Sigma and not \Sigma/n."
-    mcmc_cov <- mcerror_bm$cov / Nmcmc  # covariance matrix
+    mcmc_cov <- mcerror$cov / Nmcmc  # covariance matrix
 
     total_cov <- mcmc_cov + mle_cov
     est_stderr <- sqrt(diag(total_cov))
