@@ -64,7 +64,7 @@
 ## Carlo. Bernoulli, 24(3), 1860-1909.
 ##
 
-##XXX options(width=9999)  # do not line wrap
+options(width=9999)  # do not line wrap
 
 library(mcmcse)
 
@@ -133,8 +133,25 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
 
 dzA <- dzA[which(dzA$t > firstiter),]
 
+if (keptcount < totalruns) {
+    ## use R factors to renumber to 1..N and then subtract 1
+    ## (since we add one later for the original case of starting at 0)
+    fac <- factor(unique(theta$run))
+    theta$run <- as.integer(factor(theta$run, levels = levels(fac))) - 1
+    dzA$run <- as.integer(factor(dzA$run, levels = levels(fac))) - 1
+}
 
-theta_estimates <- list()   # list of theta point estimates, one for each run
+num_runs <- length(unique(theta$run))
+stopifnot(length(unique(dzA$run)) == num_runs)
+## runs are numbered 0..N-1
+stopifnot(min(theta$run) == 0)
+stopifnot(max(theta$run) == num_runs-1)
+stopifnot(min(dzA$run) == 0)
+stopifnot(max(dzA$run) == num_runs-1)
+
+## matrix of theta point estimates, each row is a run (each col a parameter)
+theta_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
+colnames(theta_estimates) <- paramnames
 se_estimates <- list()      # corresponding estimated standard errors
 t_ratios <- list()          # and estimated t-ratios
 for (run in unique(theta$run)) {
@@ -156,8 +173,9 @@ for (run in unique(theta$run)) {
 
     # estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
     est_t_ratio <- sapply(this_dzA, FUN = function(v) mean(v)/sd(v))
-    
-    theta_estimates <- c(theta_estimates, list(est_theta))
+
+    # runs are numbered from 0 so need to add 1 for R matrix indexing
+    theta_estimates[run+1, ] <- est_theta
     se_estimates <- c(se_estimates, list(est_stderr))
     t_ratios <- c(t_ratios, list(est_t_ratio))
 
