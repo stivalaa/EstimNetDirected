@@ -1,49 +1,95 @@
 #!/usr/bin/Rscript
-#
-# File:    computeEstimNetDirectedCovariance.R
-# Author:  Alex Stivala
-# Created: February 2017
-#
-#
-#
-# Compute covairance matrix EstimNetDirected output files
-#
-# Usage: Rscript computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix
-#    thetaPrefix is prefix of filenames for theta values 
-#    dzAprefix is prefix of filenames for dzA values 
-#
+##
+## File:    computeEstimNetDirectedCovariance.R
+## Author:  Alex Stivala
+## Created: January 2019
+##
+## Read theta parameter MCMC estimates and simulated statistcs from
+## EstimNetDirected output and use them to estimate parameter values
+## and standard errors.
+##
+## For each independent (parallel) run, the parameter value and MCMC
+## covariance are estimated (using the mcmcse package). However as
+## well as error due to MCMC, we also have the covariance due to use
+## of MLE; this is estimated from the Fisher information matrix as per
+## Snijders (2002) [see also Hunter & Handcock (2006)]; the inverse of
+## this covariance matrix is then the covariance due to ERGM MLE of
+## the parameter esetimate.  These two sources of uncertainty are
+## combined by adding the covariance matrices to get the total
+## uncertainty in our theta estimates.  From this we then get a
+## standard error estimate for that run.
+##
+## (Note we do not combine all the runs together first, as the MCMC error
+## estimation is using the fact that the run is a chain to adjust error
+## according to sample size, autocorrelation, etc.).
+##
+## To combine the point estimates and estimated standard errors from
+## each run, we use a simple fixed effects meta-analysis, specifically
+## inverse-variance weighting (See Ch. 4 of Hartung et al., 2008), to
+## combine the estimates so that the overall estimate has the minimum
+## variance.
+##
+##
+## Usage: Rscript computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix
+##    thetaPrefix is prefix of filenames for theta values 
+##    dzAprefix is prefix of filenames for dzA values 
+##
+##
+## References:
+##
+## James M. Flegal, John Hughes, Dootika Vats, and Ning
+## Dai. (2017). mcmcse: Monte Carlo Standard Errors for MCMC. R package
+## version 1.3-2. Riverside, CA, Denver, CO, Coventry, UK, and
+## Minneapolis, MN.
+##
+## Flegal, J. M., & Jones, G. L. (2010). Batch means and spectral
+## variance estimators in Markov chain Monte Carlo. The Annals of
+## Statistics, 38(2), 1034-1070.
+##
+## Hartung, J., Knapp, G., & Sinha, B. K. (2008). Statistical
+## meta-analysis with applications. John Wiley & Sons. Hoboken, NJ.
+##
+## Hunter & Handcock (2006) "Inference in Curved Exponential Family
+## Models for Networks" J. Comp. Graph. Stat. 15:3, 565-583
+##
+## Snijders (2002) "Markov chain Monte Carlo estimation of exponential
+## random graph models" J. Social Structure 3(2):1-40).
+##
+## Vats, D., Flegal, J. M., & Jones, G. L. (2017). Multivariate output
+## analysis for Markov chain Monte Carlo. arXiv preprint
+## arXiv:1512.07713.
+##
+## Vats, D., Flegal, J. M., & Jones, G. L. (2018). Strong consistency
+## of multivariate spectral variance estimators in Markov chain Monte
+## Carlo. Bernoulli, 24(3), 1860-1909.
+##
 
-options(width=9999)  # do not line wrap
+##XXX options(width=9999)  # do not line wrap
 
-library(doBy)
-library(reshape2)
+library(mcmcse)
 
-#zSigma <- 1.96 # number of standard deviations for 95% confidence interval     
+##zSigma <- 1.96 # number of standard deviations for 95% confidence interval     
 zSigma <- 2.00 # number of standard deviations for nominal 95% confidence interval     
 
-# First iteration number to use, to skip over initial burn-in
+## First iteration number to use, to skip over initial burn-in
 firstiter = 20000 # skip first 20000 iterations. FIXME some way to determine properly
 
-# subsample along chains, i.e. take only every x'th 
-# iteration for some x, to avoid autocorrelated samples
-#period = 50 # take every 50th sample
 
-# Tables have parameter or statistics for each iteration of each run
-idvars <- c('run', 't')
-
+## Tables have parameter or statistics for each iteration of each run,
+## and also acceptance rate, we will have to remove these for the calculations
+nonParamVars <- c('run', 't', 'AcceptanceRate')
 
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) != 2) {
-  cat("Usage: Rscript plotEstimNetDirectedResults.R thetaPrefix dzAprefix\n")
+  cat("Usage: Rscript computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix\n")
   quit(save="no")
 }
 theta_prefix <- args[1]
 dzA_prefix <- args[2]
 
-idvars <- c('run', 't')
 
 
-# get parameter estimates from theta files
+## get parameter estimates from theta files
 theta <- NULL
 keptcount <- 0
 totalruns <- 0
@@ -57,8 +103,8 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   if (any(is.nan(as.matrix(thetarun)))) {
     cat("Removed run", run, "due to NaN\n", file=stderr())
     removed_runs <- c(removed_runs, run)
-#  } else if (any(abs(as.matrix(thetarun)) > 1e10)) {
-#   cat("Removed run", run, "due to huge values\n", file=stderr())
+##  } else if (any(abs(as.matrix(thetarun)) > 1e10)) {
+##   cat("Removed run", run, "due to huge values\n", file=stderr())
   } else {
     keptcount <- keptcount + 1
     theta <- rbind(theta, thetarun)
@@ -66,15 +112,12 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
 }
 cat("Using", keptcount, "of", totalruns, "runs\n", file=stderr())
 stopifnot(totalruns - keptcount == length(removed_runs))
-theta$run <- as.factor(theta$run)
 
+paramnames <- names(theta)[which(!(names(theta) %in% nonParamVars))]
 
 theta <- theta[which(theta$t > firstiter),]
-#theta <- theta[seq(1, nrow(theta), by=period),]
 
-theta <- melt(theta, id=idvars)
-
-# get statistics from dzA files
+## get statistics from dzA files
 dzA <- NULL
 for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
   run <- as.integer(sub(paste(dzA_prefix, "_([0-9]+)[.]txt", sep=''), "\\1",
@@ -87,60 +130,58 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
     cat("removed run", run, "from dzA\n", file=stderr())
   }
 }
-dzA$run <- as.factor(dzA$run)
 
 dzA <- dzA[which(dzA$t > firstiter),]
-#dzA <- dzA[seq(1, nrow(dzA), by=period),]
-
-paramnames <- names(dzA)[which(!(names(dzA) %in% idvars))]
-
-dzA <- melt(dzA, id=idvars)
-
-# convert data frame to matrix cols params rows time/run
-amatrix <- acast(dzA,  run + t ~ variable  , value.var='value')
-#print (amatrix)#XXX
-# compute covariance matrix 
-acov <- cov(amatrix)
-#print(acov) #XXX
-acov_inv = solve(acov) # solve(A) is matrix inverse of A
-#print(acov_inv)#XXX
-mle_stderrs <- sqrt(diag(acov_inv)) 
-#print(mle_stderrs)#XXX
 
 
-for (paramname in paramnames) {
-    thetav <- theta[which(theta$variable == paramname),]
-    thetasum <- summaryBy(value ~ paramname, data=thetav, FUN=c(mean, sd))
+theta_estimates <- list()   # list of theta point estimates, one for each run
+se_estimates <- list()      # corresponding estimated standard errors
+t_ratios <- list()          # and estimated t-ratios
+for (run in unique(theta$run)) {
+    this_theta <- theta[which(theta$run == run), paramnames]
+    this_dzA <- dzA[which(dzA$run == run), paramnames]
 
-    if (paramname != "AcceptanceRate") {
-      dzAv <- dzA[which(dzA$variable == paramname),]
-      dzAsum <- summaryBy(value ~ paramname, data=dzAv, FUN=c(mean, sd))
-      t_ratio <- dzAsum$value.mean / dzAsum$value.sd
-    } else {
-      t_ratio <- NA
-    }
+    ## covariance matrix for ERGM MLE error
+    acov <- cov(as.matrix(this_dzA))
+    mle_cov = solve(acov) # solve(A) is matrix inverse of A
 
-    mle_stderr <- mle_stderrs[paramname]
+    ## covariance matrix for MCMC error
+    ## use "batch means" method ("bm")
+    mcerror_bm <- mcse.multi(x = this_theta, method="bm")
+    est_theta <- mcerror_bm$est    # point estimate (mean)
+    mcmc_cov <- mcerror_bm$cov  # covariance matrix
 
-    ## TODO we have sd of estimated theta to get error in the MCMC estimate
-    ## of theta, and also MLE std. error estimated from the covariance matrix;
-    ## (see Snijders (2002) "Markov chain Monte Carlo estimation of
-    ## exponential random graph models" J. Social Structure 3(2):1-40).
-    ## Using just the latter does seem to underestimate std. error so we
-    ## are going to just add the two together, but is this justifiable
-    ## in theory, and is there are better or more 'correct' way?
-    ## See e.g. p. 572 of Hunter & Handcock (2006)
-    ## "Inference in Curved Exponential Family Models for Networks"
-    ## J. Comp. Graph. Stat. 15:3, 565-583
-    est_stderr <- thetasum$value.sd + mle_stderr
+    total_cov <- mcmc_cov + mle_cov
+    est_stderr <- sqrt(diag(total_cov))
 
-    signif <- ''
-    if (!is.na(t_ratio) && abs(t_ratio) <= 0.3 && abs(thetasum$value.mean) > zSigma*est_stderr) {
-      signif <- '*'
-    }
+    # estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
+    est_t_ratio <- sapply(this_dzA, FUN = function(v) mean(v)/sd(v))
+    
+    theta_estimates <- c(theta_estimates, list(est_theta))
+    se_estimates <- c(se_estimates, list(est_stderr))
+    t_ratios <- c(t_ratios, list(est_t_ratio))
 
-    cat(paramname, thetasum$value.mean, thetasum$value.sd, mle_stderr, est_stderr, t_ratio, signif, '\n')
+    
+    ## for (paramname in paramnames) {
+    ##     signif <- ''
+    ##     if (!is.na(t_ratio) && abs(t_ratio) <= 0.3 && abs(thetasum$value.mean) > zSigma*est_stderr) {
+    ##         signif <- '*'
+    ##     }
+    ##     cat(paramname, thetasum$value.mean, thetasum$value.sd, mle_stderr, est_stderr, t_ratio, signif, '\n')
+    ## }
 }
+
+
+print(theta_estimates)
+print(se_estimates)
+print(t_ratios)
+
+
+
+
+## TODO meta-analysis
+
+
 
 cat("TotalRuns", totalruns, "\n")
 cat("ConvergedRuns", keptcount, "\n")
