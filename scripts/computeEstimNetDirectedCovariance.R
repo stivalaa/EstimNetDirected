@@ -80,6 +80,8 @@ library(mcmcse)
 ##zSigma <- 1.96 # number of standard deviations for 95% confidence interval     
 zSigma <- 2.00 # number of standard deviations for nominal 95% confidence interval     
 
+t_ratio_threshold <- 0.3 # abs t-ratio must be <= this value for convergence
+
 ## First iteration number to use, to skip over initial burn-in
 firstiter = 10000 # skip first 10000 iterations. FIXME some way to determine properly
 
@@ -203,20 +205,20 @@ for (run in unique(theta$run)) {
     se_estimates[run+1, ] <- est_stderr
     t_ratios[run+1, ] <- est_t_ratio
 
-    
-    ## for (paramname in paramnames) {
-    ##     signif <- ''
-    ##     if (!is.na(t_ratio) && abs(t_ratio) <= 0.3 && abs(thetasum$value.mean) > zSigma*est_stderr) {
-    ##         signif <- '*'
-    ##     }
-    ##     cat(paramname, thetasum$value.mean, thetasum$value.sd, mle_stderr, est_stderr, t_ratio, signif, '\n')
-    ## }
+
+    cat('\nRun ', run, '\n')
+    for (paramname in paramnames) {
+        signif <- ''
+        if (!is.na(est_t_ratio[paramname]) &&
+            abs(est_t_ratio[paramname]) <= t_ratio_threshold &&
+            abs(est_theta[paramname]) > zSigma*est_stderr[paramname]) {
+            signif <- '*'
+        }
+        cat(paramname, est_theta[paramname], est_stderr[paramname],
+            est_t_ratio[paramname], signif, '\n')
+    }
 }
 
-
-print(theta_estimates)
-print(se_estimates)
-print(t_ratios)
 
 
 
