@@ -81,7 +81,7 @@ library(mcmcse)
 zSigma <- 2.00 # number of standard deviations for nominal 95% confidence interval     
 
 ## First iteration number to use, to skip over initial burn-in
-firstiter = 20000 # skip first 20000 iterations. FIXME some way to determine properly
+firstiter = 10000 # skip first 10000 iterations. FIXME some way to determine properly
 
 
 ## Tables have parameter or statistics for each iteration of each run,
