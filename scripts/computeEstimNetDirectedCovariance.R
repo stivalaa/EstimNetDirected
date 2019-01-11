@@ -197,6 +197,8 @@ for (run in unique(theta$run)) {
     total_cov <- mcmc_cov + mle_cov
     est_stderr <- sqrt(diag(total_cov))
 
+    theta_sd <- sapply(this_theta, sd)
+        
     # estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
     est_t_ratio <- sapply(this_dzA, FUN = function(v) mean(v)/sd(v))
 
@@ -214,8 +216,8 @@ for (run in unique(theta$run)) {
             abs(est_theta[paramname]) > zSigma*est_stderr[paramname]) {
             signif <- '*'
         }
-        cat(paramname, est_theta[paramname], est_stderr[paramname],
-            est_t_ratio[paramname], signif, '\n')
+        cat(paramname, est_theta[paramname], theta_sd[paramname],
+            est_stderr[paramname], est_t_ratio[paramname], signif, '\n')
     }
 }
 
