@@ -248,13 +248,24 @@ for (run in unique(theta$run)) {
 
 
 ## meta-analysis (pooling runs by inverse-variance weighted mean)
-
+cat('\nPooled\n')
 for (paramname in paramnames) {
     pooled_est <- inverse_variance_wm(theta_estimates[, paramname],
                                       se_estimates[, paramname])
-    print(paramname)#XXX
-    print(pooled_est)#XXX
-                                      
+
+    ## estimated t-ratio mean(dzA)/sd(dzA) for each parameter,
+    ## combining all runs
+    est_t_ratio <-  mean(dzA[,paramname])/sd(dzA[,paramname])
+
+    ## output pooled estimate for this parameter
+    signif <- ''
+    if (!is.na(est_t_ratio) &&
+        abs(est_t_ratio) <= t_ratio_threshold &&
+        abs(pooled_est$estimate) > zSigma*pooled_est$se) {
+        signif <- '*'
+    }
+    cat(paramname, pooled_est$estimate, sd(theta[,paramname]), 
+        pooled_est$se, est_t_ratio, signif, '\n')
 }
 
 
