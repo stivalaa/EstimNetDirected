@@ -199,15 +199,15 @@ for (run in unique(theta$run)) {
 
     theta_sd <- sapply(this_theta, sd)
         
-    # estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
+    ## estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
     est_t_ratio <- sapply(this_dzA, FUN = function(v) mean(v)/sd(v))
 
-    # runs are numbered from 0 so need to add 1 for R matrix indexing
+    ## runs are numbered from 0 so need to add 1 for R matrix indexing
     theta_estimates[run+1, ] <- est_theta
     se_estimates[run+1, ] <- est_stderr
     t_ratios[run+1, ] <- est_t_ratio
 
-
+    ## output estimates for this run
     cat('\nRun ', run, '\n')
     for (paramname in paramnames) {
         signif <- ''
