@@ -85,6 +85,31 @@ t_ratio_threshold <- 0.3 # abs t-ratio must be <= this value for convergence
 ## First iteration number to use, to skip over initial burn-in
 firstiter = 10000 # skip first 10000 iterations. FIXME some way to determine properly
 
+##
+## inverse-variance weighting to combine estimates and standard error estimates
+## of the runs (See Ch. 4 of Hartung et al., 2008),
+##
+## Parameters:
+##    estimates - vector of point estimates
+##    stderrs   - vector of standard error estimates
+##
+## Return value:
+##    Named list with components
+##       estimate - inverse-variance weighted mean
+##       se       - correpsonding estimated standard error
+##
+inverse_variance_wm <- function(estimates, stderrs) {
+    theta_hat  <- sum(estimates / stderrs^2) / sum(1 / stderrs^2)
+    sigma2_hat <- 1 / sum(1 / stderrs^2)
+    return(list(estimate = theta_hat,
+                se = sqrt(sigma2_hat)))
+}
+
+
+################################################################################
+### Main
+################################################################################
+
 
 ## Tables have parameter or statistics for each iteration of each run,
 ## and also acceptance rate, we will have to remove these for the calculations
@@ -222,10 +247,15 @@ for (run in unique(theta$run)) {
 }
 
 
+## meta-analysis (pooling runs by inverse-variance weighted mean)
 
-
-
-## TODO meta-analysis
+for (paramname in paramnames) {
+    pooled_est <- inverse_variance_wm(theta_estimates[, paramname],
+                                      se_estimates[, paramname])
+    print(paramname)#XXX
+    print(pooled_est)#XXX
+                                      
+}
 
 
 
