@@ -199,10 +199,6 @@ for (run in unique(theta$run)) {
     this_theta <- theta[which(theta$run == run), paramnames]
     this_dzA <- dzA[which(dzA$run == run), paramnames]
 
-    ## covariance matrix for ERGM MLE error
-    acov <- cov(as.matrix(this_dzA))
-    mle_cov = solve(acov) # solve(A) is matrix inverse of A
-
     ## covariance matrix for MCMC error
     ## mcerror <- mcse.initseq(x = this_theta)
     ## (Not using the conservative initial sequence method (Dai & Jones, 2017)
@@ -219,8 +215,17 @@ for (run in unique(theta$run)) {
     ## of \Sigma and not \Sigma/n." (p. 8)
     mcmc_cov <- mcerror$cov / Nmcmc  # covariance matrix
 
+    ## covariance matrix for ERGM MLE error
+    mcerror_dz <- mcse.multi(x = this_dzA, method="bm")
+    stopifnot(mcerror_dz$nsim == Nmcmc)
+    acov <- mcerror_dz$cov / Nmcmc
+    mle_cov = solve(acov) # solve(A) is matrix inverse of A
+    
     total_cov <- mcmc_cov + mle_cov
     est_stderr <- sqrt(diag(total_cov))
+    names(est_stderr) <- paramnames
+    print(est_stderr)#XXX
+    
 
     theta_sd <- sapply(this_theta, sd)
         
@@ -235,16 +240,16 @@ for (run in unique(theta$run)) {
     ## output estimates for this run
     cat('\nRun ', run, '\n')
     for (paramname in paramnames) {
-        signif <- ''
+      signif <- ''
         if (!is.na(est_t_ratio[paramname]) &&
             abs(est_t_ratio[paramname]) <= t_ratio_threshold &&
             abs(est_theta[paramname]) > zSigma*est_stderr[paramname]) {
-            signif <- '*'
+          signif <- '*'
         }
         cat(paramname, est_theta[paramname], theta_sd[paramname],
             est_stderr[paramname], est_t_ratio[paramname], signif, '\n')
     }
-}
+  }
 
 
 ## meta-analysis (pooling runs by inverse-variance weighted mean)
