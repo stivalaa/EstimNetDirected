@@ -224,8 +224,6 @@ for (run in unique(theta$run)) {
     total_cov <- mcmc_cov + mle_cov
     est_stderr <- sqrt(diag(total_cov))
     names(est_stderr) <- paramnames
-    print(est_stderr)#XXX
-    
 
     theta_sd <- sapply(this_theta, sd)
         
