@@ -257,7 +257,8 @@ for (run in unique(theta$run)) {
 
 ## get z-score for alpha (e.g. approx. 1.96 for alpha=0.05)
 ## Correct for multiple testing by Bonferroni correction
-alphaPooled <- alpha / keptcount
+##not used: alphaPooled <- alpha / keptcount
+alphaPooled <- alpha # do not correct, just use original alpha
 zSigma <- qnorm(alphaPooled/2, lower.tail=FALSE)
 
 cat('\nPooled\n')
