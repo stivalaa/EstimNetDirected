@@ -77,8 +77,7 @@ options(width=9999)  # do not line wrap
 
 library(mcmcse)
 
-##zSigma <- 1.96 # number of standard deviations for 95% confidence interval     
-zSigma <- 2.00 # number of standard deviations for nominal 95% confidence interval     
+alpha = 0.05  # for 95% confidence interval
 
 t_ratio_threshold <- 0.3 # abs t-ratio must be <= this value for convergence
 
@@ -235,6 +234,9 @@ for (run in unique(theta$run)) {
     se_estimates[run+1, ] <- est_stderr
     t_ratios[run+1, ] <- est_t_ratio
 
+    ## get z-score for alpha (e.g. approx. 1.96 for alpha=0.05)
+    zSigma <- qnorm(alpha/2, lower.tail=FALSE)
+    
     ## output estimates for this run
     cat('\nRun ', run, '\n')
     for (paramname in paramnames) {
@@ -249,8 +251,15 @@ for (run in unique(theta$run)) {
     }
   }
 
-
+##
 ## meta-analysis (pooling runs by inverse-variance weighted mean)
+##
+
+## get z-score for alpha (e.g. approx. 1.96 for alpha=0.05)
+## Correct for multiple testing by Bonferroni correction
+alphaPooled <- alpha / keptcount
+zSigma <- qnorm(alphaPooled/2, lower.tail=FALSE)
+
 cat('\nPooled\n')
 for (paramname in paramnames) {
     pooled_est <- inverse_variance_wm(theta_estimates[, paramname],
@@ -275,4 +284,5 @@ for (paramname in paramnames) {
 
 cat("TotalRuns", totalruns, "\n")
 cat("ConvergedRuns", keptcount, "\n")
+cat("alphaPooled", alphaPooled, "\n")
 
