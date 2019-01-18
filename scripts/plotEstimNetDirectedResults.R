@@ -87,12 +87,13 @@ for (paramname in paramnames) {
     p <- p + geom_hline(yintercept=thetasum$value.mean)
     p <- p + geom_hline(yintercept=thetasum$value.mean + zSigma*thetasum$value.sd, linetype='longdash')
     p <- p + geom_hline(yintercept=thetasum$value.mean - zSigma*thetasum$value.sd, linetype='longdash')
-    p <- p + xlab('t')
+    ## uses too much space: p <- p + xlab('t')
     p <- p + ylab(paramname)
 #    p <- p + guides(colour = guide_legend(override.aes = list(alpha=1)))
     p <- p + theme(legend.position = "none") # legend with run just makes a mess
     p <- p + theme(axis.title = element_text(size = 8),
                    axis.text = element_text(size = 8),
+                   axis.title.x = element_blank(),
                    axis.text.x  = element_text(angle = 45))
     p <- p + scale_x_continuous(labels = my_scientific_10)
     plotlist <- c(plotlist, list(p))
@@ -129,12 +130,13 @@ for (paramname in paramnames) {
     p <- p + geom_hline(yintercept=dzAsum$value.mean)
     p <- p + geom_hline(yintercept=dzAsum$value.mean + zSigma*dzAsum$value.sd, linetype='longdash')
     p <- p + geom_hline(yintercept=dzAsum$value.mean - zSigma*dzAsum$value.sd, linetype='longdash')
-    p <- p + xlab('t')
+    ## uses too much space: p <- p + xlab('t')
     p <- p + ylab(paramname)
 #    p <- p + guides(colour = guide_legend(override.aes = list(alpha=1)))
     p <- p + theme(legend.position = "none") # legend with run just makes a mess
     p <- p + theme(axis.title = element_text(size = 8),
                    axis.text = element_text(size = 8),
+                   axis.title.x = element_blank(),
                    axis.text.x  = element_text(angle = 45))
     p <- p + scale_x_continuous(labels = my_scientific_10)
     plotlist <- c(plotlist, list(p))
