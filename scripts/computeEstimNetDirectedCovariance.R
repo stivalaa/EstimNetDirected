@@ -285,5 +285,5 @@ for (paramname in paramnames) {
 
 cat("TotalRuns", totalruns, "\n")
 cat("ConvergedRuns", keptcount, "\n")
-cat("alphaPooled", alphaPooled, "\n")
+##cat("alphaPooled", alphaPooled, "\n")
 
