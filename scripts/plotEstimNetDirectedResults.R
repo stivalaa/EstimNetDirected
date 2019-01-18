@@ -91,7 +91,7 @@ for (paramname in paramnames) {
     p <- p + ylab(paramname)
 #    p <- p + guides(colour = guide_legend(override.aes = list(alpha=1)))
     p <- p + theme(legend.position = "none") # legend with run just makes a mess
-    p <- p + theme(axis.title = element_text(size = 10),
+    p <- p + theme(axis.title = element_text(size = 8),
                    axis.text = element_text(size = 8),
                    axis.text.x  = element_text(angle = 45))
     p <- p + scale_x_continuous(labels = my_scientific_10)
@@ -133,7 +133,7 @@ for (paramname in paramnames) {
     p <- p + ylab(paramname)
 #    p <- p + guides(colour = guide_legend(override.aes = list(alpha=1)))
     p <- p + theme(legend.position = "none") # legend with run just makes a mess
-    p <- p + theme(axis.title = element_text(size = 10),
+    p <- p + theme(axis.title = element_text(size = 8),
                    axis.text = element_text(size = 8),
                    axis.text.x  = element_text(angle = 45))
     p <- p + scale_x_continuous(labels = my_scientific_10)
