@@ -31,9 +31,10 @@ for sampledir in ${joboutputroot}/sample*
 do
     estimationresults=${sampledir}/estimation.out
     sampleid=`basename "${sampledir}" | sed 's/sample//g'`
-    nodecount=`dos2unix < ${sampledir}/arclist.txt | grep -i '^*Vertices'| awk '{print $2}'`
+    nodecount=`cat ${sampledir}/arclist.txt | grep -i '^*Vertices'| awk '{print $2}'`
     totalruns=`fgrep -w TotalRuns ${estimationresults} | awk '{print $2}'`
     convergedruns=`fgrep -w ConvergedRuns ${estimationresults} | awk '{print $2}'`
     # also convert effect names into same as used in Snowball PNet 
-    cat ${estimationresults} | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns  |  sed 's/AltInStars/AinS/;s/AltOutStars/AoutS/;s/AltKTrianglesT/AKT-T/;s/AltTwoPathsTD/A2P-TD/;s/Sender_binaryAttribute/Sender/;s/Receiver_binaryAttribute/Receiver/;s/Interaction_binaryAttribute/Interaction/;s/Matching_categoricalAttribute/Matching/;s/MatchingReciprocity_categoricalAttribute/MatchingReciprocity/' | tr ' ' '\t' | sed "s/\$/\t${sampleid}\t${nodecount}\t${convergedruns}\t${totalruns}/"
+    # https://unix.stackexchange.com/questions/78472/print-lines-between-start-and-end-using-sed
+    cat ${estimationresults} | sed -n -e '/^Pooled/,/^TotalRuns/{//!p}' | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns  |  sed 's/AltInStars/AinS/;s/AltOutStars/AoutS/;s/AltKTrianglesT/AKT-T/;s/AltTwoPathsTD/A2P-TD/;s/Sender_binaryAttribute/Sender/;s/Receiver_binaryAttribute/Receiver/;s/Interaction_binaryAttribute/Interaction/;s/Matching_categoricalAttribute/Matching/;s/MatchingReciprocity_categoricalAttribute/MatchingReciprocity/' | tr ' ' '\t' | sed "s/\$/\t${sampleid}\t${nodecount}\t${convergedruns}\t${totalruns}/"
 done

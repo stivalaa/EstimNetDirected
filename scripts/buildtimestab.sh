@@ -39,7 +39,7 @@ do
     if [ -f ${networkfile} ]; then 
       nodecount=`cat ${networkfile} | grep -v '^$' |wc -l`
     elif [ -f ${networkedgefile} ]; then
-      nodecount=`dos2unix < ${networkedgefile} | grep -i '^*Vertices'| awk '{print $2}'`
+      nodecount=`cat ${networkedgefile} | grep -i '^*Vertices'| awk '{print $2}'`
     else
       nodecount="NA"
     fi
