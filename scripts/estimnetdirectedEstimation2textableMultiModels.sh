@@ -53,18 +53,21 @@ done
 echo '\\'
 echo '\hline'  
 
-# new version has 6 columns:
-# Effect   estimate   sd(theta)   est.MLE.std.err.   est.std.err  t.ratio
+# new version has results starting at line following "Pooled" at start
+# of line (pooling the individual run estimates values printed earlier) and
+# 5 columns:
+# Effect   estimate   sd(theta)   est.std.err  t.ratio
 # (and maybe *) plus
 # TotalRuns and ConvergedRuns e.g.:
-#Diff_completion_percentage -0.003543378 0.004887503 8.481051e-05 0.004972314 0.01630916
+#Diff_completion_percentage -0.002270358 0.005812427 0.01295886 0.021386
 #TotalRuns 2
 #ConvergedRuns 2
 # (see computeEstimNetDirectedCovariance.R)
 model=1
 for estimationresults in $*
 do
-    cat ${estimationresults}  | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns | awk '{print $1,$2,$5,$6}'  |  tr ' ' '\t' | sed "s/^/${model}\t/" >> ${estimnet_tmpfile}
+    # https://unix.stackexchange.com/questions/78472/print-lines-between-start-and-end-using-sed
+    cat ${estimationresults} | sed -n -e '/^Pooled/,/^TotalRuns/{//!p}'  | tr -d '*' | fgrep -vw AcceptanceRate | fgrep -vw TotalRuns | fgrep -vw ConvergedRuns | awk '{print $1,$2,$4,$5}'  |  tr ' ' '\t' | sed "s/^/${model}\t/" >> ${estimnet_tmpfile}
     model=`expr $model + 1`
 done
 
