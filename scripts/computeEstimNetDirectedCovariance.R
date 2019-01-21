@@ -138,8 +138,13 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   if (any(is.nan(as.matrix(thetarun)))) {
     cat("Removed run", run, "due to NaN\n", file=stderr())
     removed_runs <- c(removed_runs, run)
-##  } else if (any(abs(as.matrix(thetarun)) > 1e10)) {
-##   cat("Removed run", run, "due to huge values\n", file=stderr())
+  } else if (any(abs(as.matrix(thetarun)) > 1e100)) {
+    cat("Removed run", run, "due to huge values\n", file=stderr())
+    removed_runs <- c(removed_runs, run)
+    ## Otherwise get this error in mcse.multi(): 
+    ##   Error in eigen(sig.mat, only.values = TRUE) :
+    ##     infinite or missing values in 'x'
+    ##   Calls: mcse.multi -> eigen
   } else {
     keptcount <- keptcount + 1
     theta <- rbind(theta, thetarun)
