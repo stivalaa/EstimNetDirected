@@ -160,10 +160,21 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
                         dzAfile))
   if (!(run %in% removed_runs))  {
     dzArun <- read.table(dzAfile, header=TRUE)
-    dzArun$run <- run
-    dzA <- rbind(dzA, dzArun)
+    amatrix <- as.matrix(dzArun[which(dzArun$t > firstiter), paramnames])
+    acov <- cov(amatrix)
+    ## http://r.789695.n4.nabble.com/Catching-errors-from-solve-with-near-singular-matrices-td4652794.html
+    if (rcond(acov) < .Machine$double.eps)  {
+        cat("Removed run ", run, " due to computationally singular covariance matrix (possibly degenerate model)\n", file=stderr())
+        removed_runs <- c(removed_runs, run)
+        ## also have to remove this run from theta data frame now
+        theta <- theta[which(theta$run != run), ]
+        keptcount <- keptcount - 1
+    } else {
+      dzArun$run <- run
+      dzA <- rbind(dzA, dzArun)
+    }
   } else {
-    cat("removed run", run, "from dzA\n", file=stderr())
+      cat("removed run", run, "from dzA\n", file=stderr())
   }
 }
 
