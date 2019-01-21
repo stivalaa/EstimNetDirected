@@ -135,10 +135,11 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   totalruns <- totalruns + 1
   thetarun <- read.table(thetafile, header=TRUE)
   thetarun$run <- run
-  if (any(is.nan(as.matrix(thetarun)))) {
+  paramnames <- names(theta)[which(!(names(theta) %in% nonParamVars))]
+  if (any(is.nan(as.matrix(thetarun[,paramnames])))) {
     cat("Removed run", run, "due to NaN\n", file=stderr())
     removed_runs <- c(removed_runs, run)
-  } else if (any(abs(as.matrix(thetarun)) > 1e10)) {
+  } else if (any(abs(as.matrix(thetarun[,paramnames])) > 1e10)) {
     cat("Removed run", run, "due to huge values\n", file=stderr())
     removed_runs <- c(removed_runs, run)
     ## Otherwise get this error in mcse.multi(): 
@@ -153,7 +154,6 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
 
 stopifnot(totalruns - keptcount == length(removed_runs))
 
-paramnames <- names(theta)[which(!(names(theta) %in% nonParamVars))]
 
 theta <- theta[which(theta$t > firstiter),]
 
