@@ -84,7 +84,7 @@ if (use_sd_theta) {
 if (nrow(D[which(D$Effect == 'Receiver'),]) > 0) {
     # if binary attribute present then add the binary attribute effects true values      
     effects <- c('Arc', 'Reciprocity', 'AinS', 'AoutS', 'AKT-T', 'A2P-TD', 'Receiver', 'Sender', 'Interaction')
-    effect_names <- c('Arc', 'Reciprocity', 'AinStar', 'AoutStar', 'AT-T', 'A2P-TD', 'Receiver', 'Sender', 'Interaction reciprocity')
+    effect_names <- c('Arc', 'Reciprocity', 'AinStar', 'AoutStar', 'AKT-T', 'A2P-TD', 'Receiver', 'Sender', 'Interaction')
     true_parameters <- c(-1.0, 4.25, -2.0, -1.5, 0.6, -0.15, 1.0, 1.5, 2.0)
 } else if (nrow(D[which(D$Effect == 'Matching'),]) > 0) {
     # if categorical attribute present then add the categorical attribute effects true values      
