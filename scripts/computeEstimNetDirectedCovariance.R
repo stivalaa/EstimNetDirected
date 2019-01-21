@@ -138,7 +138,7 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   if (any(is.nan(as.matrix(thetarun)))) {
     cat("Removed run", run, "due to NaN\n", file=stderr())
     removed_runs <- c(removed_runs, run)
-  } else if (any(abs(as.matrix(thetarun)) > 1e100)) {
+  } else if (any(abs(as.matrix(thetarun)) > 1e10)) {
     cat("Removed run", run, "due to huge values\n", file=stderr())
     removed_runs <- c(removed_runs, run)
     ## Otherwise get this error in mcse.multi(): 
@@ -195,80 +195,82 @@ if (keptcount < totalruns) {
     dzA$run <- as.integer(factor(dzA$run, levels = levels(fac))) - 1
 }
 
-num_runs <- length(unique(theta$run))
-stopifnot(length(unique(dzA$run)) == num_runs)
-## runs are numbered 0..N-1
-stopifnot(min(theta$run) == 0)
-stopifnot(max(theta$run) == num_runs-1)
-stopifnot(min(dzA$run) == 0)
-stopifnot(max(dzA$run) == num_runs-1)
-
-## matrix of theta point estimates, each row is a run (each col a parameter)
-theta_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
-colnames(theta_estimates) <- paramnames
-## also do this for standard error and t-ratio estimates
-se_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
-colnames(se_estimates) <- paramnames
-t_ratios <- matrix(nrow = num_runs, ncol = length(paramnames))
-colnames(t_ratios) <- paramnames
-
-for (run in unique(theta$run)) {
-    this_theta <- theta[which(theta$run == run), paramnames]
-    this_dzA <- dzA[which(dzA$run == run), paramnames]
-
-    ## covariance matrix for MCMC error
-    ## mcerror <- mcse.initseq(x = this_theta)
-    ## (Not using the conservative initial sequence method (Dai & Jones, 2017)
-    ## as we often don't seem to have enough samples for this, unlike the
-    ## other methods.)
-    ## Instead use the (default) "batch means"
-    ## method (Jones 2006; Vats et al., 2017; Vats et al., 2018)
-    mcerror <- mcse.multi(x = this_theta, method="bm") 
-    est_theta <- mcerror$est    # point estimate (mean)
-    Nmcmc <- nrow(this_theta) # number of MCMC samples
-    ## mcse.multi returns asymptotic covariance matrix so need to divide
-    ## by Nmcmc and take sqrt to get MCMC standard error estimate
-    ## (see mcmcse vignette pp.4,8,9): "Note: cov returns an estimate
-    ## of \Sigma and not \Sigma/n." (p. 8)
-    mcmc_cov <- mcerror$cov / Nmcmc  # covariance matrix
-
-    ## covariance matrix for ERGM MLE error
-    mcerror_dz <- mcse.multi(x = this_dzA, method="bm")
-    stopifnot(mcerror_dz$nsim == Nmcmc)
-    acov <- mcerror_dz$cov / Nmcmc
-    mle_cov = solve(acov) # solve(A) is matrix inverse of A
-    
-    total_cov <- mcmc_cov + mle_cov
-    est_stderr <- sqrt(diag(total_cov))
-    names(est_stderr) <- paramnames
-
-    theta_sd <- sapply(this_theta, sd)
-        
-    ## estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
-    est_t_ratio <- sapply(this_dzA, FUN = function(v) mean(v)/sd(v))
-
-    ## runs are numbered from 0 so need to add 1 for R matrix indexing
-    theta_estimates[run+1, ] <- est_theta
-    se_estimates[run+1, ] <- est_stderr
-    t_ratios[run+1, ] <- est_t_ratio
-
-    ## get z-score for alpha (e.g. approx. 1.96 for alpha=0.05)
-    zSigma <- qnorm(alpha/2, lower.tail=FALSE)
-    
-    ## output estimates for this run
-    cat('\nRun ', run, '\n')
-    for (paramname in paramnames) {
-      signif <- ''
-        if (!is.na(est_t_ratio[paramname]) &&
-            abs(est_t_ratio[paramname]) <= t_ratio_threshold &&
-            abs(est_theta[paramname]) > zSigma*est_stderr[paramname]) {
-          signif <- '*'
-        }
-        cat(paramname, est_theta[paramname], theta_sd[paramname],
-            est_stderr[paramname], est_t_ratio[paramname], signif, '\n')
+if (keptcount > 0 ) {
+  num_runs <- length(unique(theta$run))
+  stopifnot(length(unique(dzA$run)) == num_runs)
+  ## runs are numbered 0..N-1
+  stopifnot(min(theta$run) == 0)
+  stopifnot(max(theta$run) == num_runs-1)
+  stopifnot(min(dzA$run) == 0)
+  stopifnot(max(dzA$run) == num_runs-1)
+  
+  ## matrix of theta point estimates, each row is a run (each col a parameter)
+  theta_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
+  colnames(theta_estimates) <- paramnames
+  ## also do this for standard error and t-ratio estimates
+  se_estimates <- matrix(nrow = num_runs, ncol = length(paramnames))
+  colnames(se_estimates) <- paramnames
+  t_ratios <- matrix(nrow = num_runs, ncol = length(paramnames))
+  colnames(t_ratios) <- paramnames
+  
+  for (run in unique(theta$run)) {
+      this_theta <- theta[which(theta$run == run), paramnames]
+      this_dzA <- dzA[which(dzA$run == run), paramnames]
+  
+      ## covariance matrix for MCMC error
+      ## mcerror <- mcse.initseq(x = this_theta)
+      ## (Not using the conservative initial sequence method (Dai & Jones, 2017)
+      ## as we often don't seem to have enough samples for this, unlike the
+      ## other methods.)
+      ## Instead use the (default) "batch means"
+      ## method (Jones 2006; Vats et al., 2017; Vats et al., 2018)
+      mcerror <- mcse.multi(x = this_theta, method="bm") 
+      est_theta <- mcerror$est    # point estimate (mean)
+      Nmcmc <- nrow(this_theta) # number of MCMC samples
+      ## mcse.multi returns asymptotic covariance matrix so need to divide
+      ## by Nmcmc and take sqrt to get MCMC standard error estimate
+      ## (see mcmcse vignette pp.4,8,9): "Note: cov returns an estimate
+      ## of \Sigma and not \Sigma/n." (p. 8)
+      mcmc_cov <- mcerror$cov / Nmcmc  # covariance matrix
+  
+      ## covariance matrix for ERGM MLE error
+      mcerror_dz <- mcse.multi(x = this_dzA, method="bm")
+      stopifnot(mcerror_dz$nsim == Nmcmc)
+      acov <- mcerror_dz$cov / Nmcmc
+      mle_cov = solve(acov) # solve(A) is matrix inverse of A
+      
+      total_cov <- mcmc_cov + mle_cov
+      est_stderr <- sqrt(diag(total_cov))
+      names(est_stderr) <- paramnames
+  
+      theta_sd <- sapply(this_theta, sd)
+          
+      ## estimated t-ratio is mean(dzA)/sd(dzA) for each parameter
+      est_t_ratio <- sapply(this_dzA, FUN = function(v) mean(v)/sd(v))
+  
+      ## runs are numbered from 0 so need to add 1 for R matrix indexing
+      theta_estimates[run+1, ] <- est_theta
+      se_estimates[run+1, ] <- est_stderr
+      t_ratios[run+1, ] <- est_t_ratio
+  
+      ## get z-score for alpha (e.g. approx. 1.96 for alpha=0.05)
+      zSigma <- qnorm(alpha/2, lower.tail=FALSE)
+      
+      ## output estimates for this run
+      cat('\nRun ', run, '\n')
+      for (paramname in paramnames) {
+        signif <- ''
+          if (!is.na(est_t_ratio[paramname]) &&
+              abs(est_t_ratio[paramname]) <= t_ratio_threshold &&
+              abs(est_theta[paramname]) > zSigma*est_stderr[paramname]) {
+            signif <- '*'
+          }
+          cat(paramname, est_theta[paramname], theta_sd[paramname],
+              est_stderr[paramname], est_t_ratio[paramname], signif, '\n')
+      }
     }
-  }
-
+}
+  
 ##
 ## meta-analysis (pooling runs by inverse-variance weighted mean)
 ##
@@ -278,25 +280,31 @@ alphaPooled <- alpha
 zSigma <- qnorm(alphaPooled/2, lower.tail=FALSE)
 
 cat('\nPooled\n')
-for (paramname in paramnames) {
-    pooled_est <- inverse_variance_wm(theta_estimates[, paramname],
-                                      se_estimates[, paramname])
-
-    ## estimated t-ratio mean(dzA)/sd(dzA) for each parameter,
-    ## combining all runs
-    est_t_ratio <-  mean(dzA[,paramname])/sd(dzA[,paramname])
-
-    ## output pooled estimate for this parameter
-    signif <- ''
-    if (!is.na(est_t_ratio) &&
-        abs(est_t_ratio) <= t_ratio_threshold &&
-        abs(pooled_est$estimate) > zSigma*pooled_est$se) {
-        signif <- '*'
-    }
-    cat(paramname, pooled_est$estimate, sd(theta[,paramname]), 
-        pooled_est$se, est_t_ratio, signif, '\n')
+if (keptcount > 0) {
+  for (paramname in paramnames) {
+      pooled_est <- inverse_variance_wm(theta_estimates[, paramname],
+                                        se_estimates[, paramname])
+  
+      ## estimated t-ratio mean(dzA)/sd(dzA) for each parameter,
+      ## combining all runs
+      est_t_ratio <-  mean(dzA[,paramname])/sd(dzA[,paramname])
+  
+      ## output pooled estimate for this parameter
+      signif <- ''
+      if (!is.na(est_t_ratio) &&
+          abs(est_t_ratio) <= t_ratio_threshold &&
+          abs(pooled_est$estimate) > zSigma*pooled_est$se) {
+          signif <- '*'
+      }
+      cat(paramname, pooled_est$estimate, sd(theta[,paramname]), 
+          pooled_est$se, est_t_ratio, signif, '\n')
+  }
+} else {
+  for (paramname in paramnames) {
+      cat(paramname, NA, NA,
+          NA, NA, '', '\n')
+  }
 }
-
 
 
 cat("TotalRuns", totalruns, "\n")
