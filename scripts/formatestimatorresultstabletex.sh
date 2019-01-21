@@ -28,7 +28,7 @@ write_header() {
 \hline
 N &  Attributes  &  Effect &  Bias &  RMSE &  Mean           & Std. dev.   & Total    &   Mean     &  Total \\\\
   &              &         &       &       &  standard       &   estimate  & networks & runs       &  runs per \\\\
-  &              &         &       &       &  error          &             &          & converged  &  network  \\\\
+  &              &         &       &       &  error          &             & converged& converged  &  network  \\\\
 \hline
 EOF
 }

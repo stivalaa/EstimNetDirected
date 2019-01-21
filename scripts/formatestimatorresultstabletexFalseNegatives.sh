@@ -29,7 +29,7 @@ write_header() {
 \hline
 N &  Attributes &  Effect &  Bias &  RMSE &  \multicolumn{3}{c}{False negative rate (\%)}  & in C.I.    & Total     & Mean       & Total\\\\
   &             &         &       &       &   Estim. & \multicolumn{2}{c}{95\% C.I.}       &  (\%)      & networks  & runs       & runs per\\\\
-  &             &         &       &       &   & lower & upper                              &            &           & converged  & network\\\\
+  &             &         &       &       &   & lower & upper                              &            & converged & converged  & network\\\\
 \hline
 EOF
 }
