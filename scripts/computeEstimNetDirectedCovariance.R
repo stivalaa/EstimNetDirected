@@ -146,7 +146,6 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   }
 }
 
-cat("Using", keptcount, "of", totalruns, "runs\n", file=stderr())
 stopifnot(totalruns - keptcount == length(removed_runs))
 
 paramnames <- names(theta)[which(!(names(theta) %in% nonParamVars))]
@@ -177,6 +176,9 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
       cat("removed run", run, "from dzA\n", file=stderr())
   }
 }
+
+cat("Using", keptcount, "of", totalruns, "runs\n", file=stderr())
+stopifnot(totalruns - keptcount == length(removed_runs))
 
 dzA <- dzA[which(dzA$t > firstiter),]
 
