@@ -27,11 +27,11 @@ zSigma <- 2 # nominal 95% CI
 options(digits=4) # for printing rmse etc. values
 
 
-results_filenames <- c('estimnetdirected_estimates_n2000_sim.txt',
-                       'estimnetdirected_estimates_n2000_binattr.txt',
-                       'estimnetdirected_estimates_n2000_cat3.txt',
-                       'estimnetdirected_estimates_n5000_sim.txt')
-
+results_filenames <- c(#'estimnetdirected_estimates_n2000_sim.txt',
+                       'estimnetdirected_estimates_n2000_binattr.txt' 
+                       #'estimnetdirected_estimates_n2000_cat3.txt',
+                       #'estimnetdirected_estimates_n5000_sim.txt'
+                      )
 
 args <- commandArgs(trailingOnly=TRUE)
 use_sd_theta <- FALSE
