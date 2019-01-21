@@ -31,7 +31,7 @@ for sampledir in ${joboutputroot}/sample*
 do
     estimationresults=${sampledir}/estimation.out
     sampleid=`basename "${sampledir}" | sed 's/sample//g'`
-    nodecount=`cat ${sampledir}/arclist.txt | tr -d '' | grep -i '^*Vertices'| awk '{print $2}'`
+    nodecount=`cat ${sampledir}/arclist.txt | tr -d '\015' | grep -i '^*Vertices'| awk '{print $2}'`
     totalruns=`fgrep -w TotalRuns ${estimationresults} | awk '{print $2}'`
     convergedruns=`fgrep -w ConvergedRuns ${estimationresults} | awk '{print $2}'`
     # also convert effect names into same as used in Snowball PNet 
