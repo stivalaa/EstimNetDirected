@@ -166,7 +166,7 @@ for (results_filename in results_filenames) {
         # remove samples with NaN or infinite Estimate
         De <- De[which(!is.na(De$Estimate)), ]
         De <- De[which(!is.infinite(De$Estimate)),]
-        ##De <- De[which(abs(De$Estimate) < 1e03),] # sometimes not inf but still huge
+        De <- De[which(abs(De$Estimate) < 1e03),] # sometimes not inf but still huge
         # remove samples with zero or extreme values as StdErr 
         ## De <- De[which(De$StdErr != 0),]
         ## De <- De[which(!is.na(De$StdErr)),]
