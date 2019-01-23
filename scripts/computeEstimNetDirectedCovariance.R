@@ -136,7 +136,10 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   thetarun <- read.table(thetafile, header=TRUE)
   thetarun$run <- run
   paramnames <- names(theta)[which(!(names(theta) %in% nonParamVars))]
-  if (any(is.nan(as.matrix(thetarun[,paramnames])))) {
+  if (max(thetarun$t) < firstiter) {
+    cat("Removed run", run, "due to not enough iterations\n", file=stderr())
+    removed_runs <- c(removed_runs, run)
+  } else if (any(is.nan(as.matrix(thetarun[,paramnames])))) {
     cat("Removed run", run, "due to NaN\n", file=stderr())
     removed_runs <- c(removed_runs, run)
   } else if (any(abs(as.matrix(thetarun[,paramnames])) > 1e10)) {

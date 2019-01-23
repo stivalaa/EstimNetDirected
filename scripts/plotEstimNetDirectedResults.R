@@ -34,7 +34,7 @@ library(scales)
 #zSigma <- 2.00 # number of standard deviations for 95% confidence interval
 zSigma <- 1.96 # number of standard deviations for nominal 95% confidence interval
 
-firstiter = 20000 # XXX skip first 20000 iterations
+firstiter = 10000 # XXX skip first 10000 iterations
 
 # http://stackoverflow.com/questions/10762287/how-can-i-format-axis-labels-with-exponents-with-ggplot2-and-scales
 orig_scientific_10 <- function(x) {
@@ -112,6 +112,10 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
                         dzAfile))
   print(run)#XXX
   dzArun <- read.table(dzAfile, header=TRUE)
+  if (nrow(dzArun) == 0) {
+     cat("skipping run ", run, " as no data\n")
+     next
+   }
   dzArun$run <- run
   dzA <- rbind(dzA, dzArun)
 }
