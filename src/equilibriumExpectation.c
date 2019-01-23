@@ -347,9 +347,9 @@ if (!(theta_sd >= 0)) { fprintf(stderr, "theta_sd = %g theta_mean = %g\n", theta
         D0[l] *= sqrt(compC / (theta_sd / fabs(theta_mean)));
       }
     }
-      if(Kafile) { fprintf(Kafile, "\n"); fflush(Kafile);  } /* FIXME should be task local*/
-      fflush(dzA_outfile);
-      fflush(theta_outfile); 
+    if(Kafile) { fprintf(Kafile, "\n"); fflush(Kafile);  } /* FIXME should be task local*/
+    fflush(dzA_outfile);
+    fflush(theta_outfile); 
   }
   for (l = 0; l < n; l++)
     free(thetamatrix[l]);
@@ -412,12 +412,12 @@ if (!(theta_sd >= 0)) { fprintf(stderr, "theta_sd = %g theta_mean = %g\n", theta
  *   
  *
  * Return value:
- *   None.
+ *   Nonzero on error, 0 if OK.
  *
  * The theta and Dmean array parameters, which must be allocted by caller,
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
-void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  change_stats_func_t *change_stats_funcs[],
                  attr_change_stats_func_t *attr_change_stats_funcs[],
                  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
@@ -433,6 +433,7 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
   uint_t         i;
+  int            errcode = 0;
 
   /*array of n derivative estimate values corresponding to theta. */  
   double *Dmean = (double *)safe_malloc(n*sizeof(double));
@@ -492,25 +493,37 @@ void ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   fflush(theta_outfile);
 
   printf("\ntask %u: initial value of D0 for algorithm_EE = ", tasknum);
-  for (i = 0; i < n; i++) 
+  for (i = 0; i < n; i++) {
     printf("%g ", Dmean[i]);
+  }
   printf("\n");
 
-  printf("task %u: running Algorithm EE...\n", tasknum);
-  gettimeofday(&start_timeval, NULL);
+  for (i = 0; i < n; i++) {
+    if (isinf(Dmean[i])) {
+      fprintf(stderr, "task %u: ERROR: D0 is NaN for parameter %d, "
+	      "model may be degenerate, not continuing\n", tasknum, i);
+      errcode = 1;
+    }
+  }
 
-  algorithm_EE(g, n, n_attr, n_dyadic, change_stats_funcs, 
-               attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices,
-               Mouter, M, sampler_m, ACA_EE, compC,
-               Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
-               useIFDsampler, ifd_K, useConditionalEstimation,
-               forbidReciprocity);
+  if (errcode == 0) {
+    printf("task %u: running Algorithm EE...\n", tasknum);
+    gettimeofday(&start_timeval, NULL);
 
-  gettimeofday(&end_timeval, NULL);
-  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
-  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-  printf("task %u: Algorithm EE took %.2f s\n", tasknum, (double)etime/1000);
+    algorithm_EE(g, n, n_attr, n_dyadic, change_stats_funcs, 
+		 attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices,
+		 Mouter, M, sampler_m, ACA_EE, compC,
+		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
+		 useIFDsampler, ifd_K, useConditionalEstimation,
+		 forbidReciprocity);
+
+    gettimeofday(&end_timeval, NULL);
+    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+    etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+    printf("task %u: Algorithm EE took %.2f s\n", tasknum, (double)etime/1000);
+  }
   free(Dmean);
+  return errcode;
 }
 
 /*
