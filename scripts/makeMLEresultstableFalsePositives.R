@@ -40,7 +40,9 @@ results_filenames <- c('estimnetdirected_estimates_n2000_binattr_A2P0.txt',
                        'estimnetdirected_estimates_n2000_cat3_reciprocity0.txt',
                        'estimnetdirected_estimates_n2000_cat3_matchingreciprocity0.txt',
                        'estimnetdirected_estimates_n2000_cat3_AT0.txt',
-                       'estimnetdirected_estimates_n2000_cat3_A2P0.txt')
+                       'estimnetdirected_estimates_n2000_cat3_A2P0.txt',
+                       'estimnetdirected_estimates_n2000_cat3_AinS0.txt',
+                       'estimnetdirected_estimates_n2000_cat3_AoutS0.txt')
 
  
 args <- commandArgs(trailingOnly=TRUE)
