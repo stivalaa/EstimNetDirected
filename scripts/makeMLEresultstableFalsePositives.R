@@ -36,7 +36,8 @@ results_filenames <- c('estimnetdirected_estimates_n2000_binattr_A2P0.txt',
                        'estimnetdirected_estimates_n2000_binattr_interaction0.txt', 
                        'estimnetdirected_estimates_n2000_binattr_reciprocity0.txt', 
                        'estimnetdirected_estimates_n2000_binattr_sender0.txt', 
-                       'estimnetdirected_estimates_n2000_binattr_receiver0.txt')
+                       'estimnetdirected_estimates_n2000_binattr_receiver0.txt',
+                       'estimnetdirected_estimates_n2000_cat3_reciprocity0.txt')
 
  
 args <- commandArgs(trailingOnly=TRUE)
@@ -155,11 +156,33 @@ for (results_filename in results_filenames) {
         zero_effect <- effects[9]
       }
     } else if (length(grep('cat3', results_filename, fixed=TRUE)) > 0) {
-        # if categorical attribute present then add the categorical attribute effects true values      
-        attribute_descr <- 'Categorical'
-        effects <- c('Arc', 'Reciprocity', 'AinS', 'AoutS', 'AKT-T', 'A2P-TD', 'Matching', 'MatchingReciprocity')
-        effect_names <- c('Arc', 'Reciprocity', 'AinStar', 'AoutStar', 'AKT-T', 'A2P-TD', 'Matching', 'Matching reciprocity')
-        true_parameters <- c(-1.0, 4.25, -2.0, -1.5, 1.0, -0.15, 1.5, 2.0)
+      # if categorical attribute present then add the categorical attribute effects true values      
+      attribute_descr <- 'Categorical'
+      effects <- c('Arc', 'Reciprocity', 'AinS', 'AoutS', 'AKT-T', 'A2P-TD', 'Matching', 'MatchingReciprocity')
+      effect_names <- c('Arc', 'Reciprocity', 'AinStar', 'AoutStar', 'AKT-T', 'A2P-TD', 'Matching', 'Matching reciprocity')
+      true_parameters <- c(-1.0, 4.25, -2.0, -1.5, 1.0, -0.15, 1.5, 2.0)
+      # use filename to see if data had one of the parameters set to zero
+      if (length(grep("_reciprocity0", results_filename)) > 0) {
+        true_parameters[2] <- 0.0
+        zero_effect <- effects[2]
+      }
+        
+      if (length(grep("_AT0", results_filename)) > 0) {
+        true_parameters[5] <- 0.0
+        zero_effect <- effects[5]
+      }
+      if (length(grep("_A2P0", results_filename)) > 0) {
+        true_parameters[6] <- 0.0
+        zero_effect <- effects[6]
+      }
+      if (length(grep("_matching0", results_filename)) > 0 ) {
+        true_parameters[7] <- 0.0
+        zero_effect <- effects[7]
+      }
+      if (length(grep("_matchingreciprocity0", results_filename)) > 0 ) {
+        true_parameters[8] <- 0.0
+        zero_effect <- effects[8]
+      }
     }
     
     for (i in 1:length(effects)) {
