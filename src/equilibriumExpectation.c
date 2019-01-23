@@ -252,6 +252,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double arc_correction_val; /* only used for IFD sampler */
   double dzArc; /* only used for IFD sampler */
   double ifd_aux_param = 0; /* auxiliary parameter for IFD sampler */
+  int i;
 
   if (useIFDsampler) 
     arc_correction_val = arcCorrection(g);
@@ -338,6 +339,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
           theta_mean = 0.1;
       if(Kafile) fprintf(Kafile, "%g ", theta_sd / fabs(theta_mean)); /* FIXME should be task local*/
       /* theta_sd is a standard deviation so must be non-negative */
+if (!(theta_sd >= 0)) { fprintf(stderr, "theta_sd = %g theta_mean = %g\n", theta_sd, theta_mean); for(i = 0; i < Minner; i++){ fprintf(stderr, "%g\n", thetamatrix[l][i]);}}//XXX
       assert(theta_sd >= 0);
       if (theta_sd > 1e-10) { /* TODO make this a parameter */
         /* as per email from Max 21 July 2018, only adjust D0 this way
