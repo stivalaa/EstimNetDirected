@@ -139,7 +139,14 @@ for (results_filename in results_filenames) {
         true_parameters[2] <- 0.0
         zero_effect <- effects[2]
       }
-        
+      if (length(grep("_AinS0", results_filename)) > 0) {
+        true_parameters[3] <- 0.0
+        zero_effect <- effects[3]
+      }
+      if (length(grep("_AoutS0", results_filename)) > 0) {
+        true_parameters[4] <- 0.0
+        zero_effect <- effects[4]
+      }
       if (length(grep("_AT0", results_filename)) > 0) {
         true_parameters[5] <- 0.0
         zero_effect <- effects[5]
@@ -171,7 +178,14 @@ for (results_filename in results_filenames) {
         true_parameters[2] <- 0.0
         zero_effect <- effects[2]
       }
-        
+      if (length(grep("_AinS0", results_filename)) > 0) {
+        true_parameters[3] <- 0.0
+        zero_effect <- effects[3]
+      }
+      if (length(grep("_AoutS0", results_filename)) > 0) {
+        true_parameters[4] <- 0.0
+        zero_effect <- effects[4]
+      }
       if (length(grep("_AT0", results_filename)) > 0) {
         true_parameters[5] <- 0.0
         zero_effect <- effects[5]
