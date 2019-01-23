@@ -498,8 +498,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (i = 0; i < n; i++) {
     if (isinf(Dmean[i])) {
-      fprintf(stderr, "task %u: ERROR: D0 is NaN for parameter %d, "
-	      "model may be degenerate, not continuing\n", tasknum, i);
+      fprintf(stderr, "task %u: WARNING: D0 is NaN for parameter %d, "
+	      "model may be degenerate, not continuing this run\n", tasknum, i);
       errcode = 1;
     }
   }
