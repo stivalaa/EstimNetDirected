@@ -182,6 +182,15 @@ static const config_param_t CONFIG_PARAMS[] = {
      TODO should have some more general way of specifying constraints
      like ergm-constraints in statnet instead of this ad-hoc way */
 
+  {"useBorisenkoUpdate",PARAM_TYPE_BOOL, offsetof(config_t, useBorisenkoUpdate),
+   "use Borisenko et al. (2019) parameter update algorithm in algorithm EE"},
+
+  {"learningRate",     PARAM_TYPE_DOUBLE,offsetof(config_t, learningRate),
+   "learning rate a in Borisenko update step of algorithm EE"},
+
+  {"minTheta",         PARAM_TYPE_DOUBLE,offsetof(config_t, minTheta),
+   "min value of theta to stop zero in Borisenko EE algorithm update step"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -294,6 +303,9 @@ config_t CONFIG = {
   NULL,  /* zone_filename */
   FALSE, /* useConditionalEstimation */
   FALSE, /* forbidReciprocity */
+  FALSE, /* useBorisenkoUpdate */
+  0.001, /* learningRate */
+  0.01,  /* minTheta */
   0,     /* num_change_stats_funcs */
   NULL,  /* change_stats_funcs */
   NULL,  /* param_names */

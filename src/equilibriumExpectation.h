@@ -18,6 +18,11 @@
  *   large network data". Scientific Reports 8:11509
  *   doi:10.1038/s41598-018-29725-8
  *
+ * And for the Borisenko update step in the EE algorithm is:
+ *
+ *   Borisenko, A., Byshkin, M., & Lomi, A. (2019). A Simple Algorithm
+ *   for Scalable Monte Carlo Inference. arXiv preprint arXiv:1901.00533.
+ *
  ****************************************************************************/
 
 #include "configparser.h"
@@ -51,21 +56,24 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity);
+                  bool forbidReciprocity,
+                  bool useBorisenkoUpdate,
+                  double learningRate, double minTheta);
 
 
 int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
-                 change_stats_func_t *change_stats_funcs[],
-                 attr_change_stats_func_t *attr_change_stats_funcs[],
-                 dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                 uint_t attr_indices[],
-                 uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
-                 uint_t Msteps, double ACA_S, double ACA_EE, double compC,
-                 double theta[], uint_t tasknum,
-                 FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
-                 bool useIFDsampler, double ifd_K,
-                 bool useConditionalEstimation,
-                 bool forbidReciprocity);
+                change_stats_func_t *change_stats_funcs[],
+                attr_change_stats_func_t *attr_change_stats_funcs[],
+                dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                uint_t attr_indices[],
+                uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
+                uint_t Msteps, double ACA_S, double ACA_EE, double compC,
+                double theta[], uint_t tasknum,
+                FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
+                bool useIFDsampler, double ifd_K,
+                bool useConditionalEstimation,
+                bool forbidReciprocity,
+                bool useBorisenkoUpdate, double learningRate, double minTheta);
 
 int do_estimation(config_t *config, uint_t tasknum);
 

@@ -53,6 +53,10 @@ typedef struct config_s {
   char *zone_filename;    /* filename of snowball sampling zone file or NULL */
   bool  useConditionalEstimation; /*conditional estimation of snowball sample */ 
   bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
+  bool  useBorisenkoUpdate; /* use Borisenko et al. update algorithm */
+  double learningRate;      /* learning rate (multiplier) in Borisenko update */
+  double minTheta;          /* minimum theta value in Borisenko update */
+  
   /*
    * values built by confiparser.c functions from parsed config settings
    */

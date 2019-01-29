@@ -13,6 +13,11 @@ Byshkin, M., Stivala, A., Mira, A., Krause, R., Robins, G., & Lomi,
 A. (2016). Auxiliary parameter MCMC for exponential random graph
 models. Journal of Statistical Physics, 165(4), 740-754.
 
+Reference for the Borisenko update step in the EE algorithm is:
+
+Borisenko, A., Byshkin, M., & Lomi, A. (2019). A Simple Algorithm for
+Scalable Monte Carlo Inference. arXiv preprint
+arXiv:1901.00533. https://arxiv.org/abs/1901.00533
 
 Reference for the change statistics functions is:
 

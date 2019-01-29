@@ -22,6 +22,10 @@
  *   large network data". Scientific Reports 8:11509
  *   doi:10.1038/s41598-018-29725-8
  *
+ * And for the Borisenko update step in the EE algorithm is:
+ *
+ *   Borisenko, A., Byshkin, M., & Lomi, A. (2019). A Simple Algorithm
+ *   for Scalable Monte Carlo Inference. arXiv preprint arXiv:1901.00533.
  *
  ****************************************************************************/
 
@@ -190,15 +194,18 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
- *   Mouter     - Number of iteratoins of Algorithm EE (outer loop)
- *   Minner     - Number of iteratoins of Algorithm EE (inner loop)
+ *   Mouter     - Number of iterations of Algorithm EE (outer loop)
+ *   Minner     - Number of iterations of Algorithm EE (inner loop)
  *   sampler_m  - Number of proposals (sampling iterations) 
  *                 [per step of Alg.EE]
  *   ACA        - multiplier of D0 to get K_A step size multiplier
+ *                (not used if useBorisenkUpdate is True)
  *   compC      - multiplier of sd(theta)/mean(theta) to limit
  *                  theta variance 
+ *                (not used if useBorisenkoUpdate is True)
  *   D0     -   array of n derivative estimate values corresponding to theta,
  *              results of algorithm_S()
+ *                (not used if useBorisenkoUpdate is True)
  *   theta  - (In/Out) array of n parameter values corresponding to
  *                  change stats funcs. Input starting values (from 
  *                  alorithm_S(), output EE values.
@@ -211,7 +218,13 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                   size (only used if useIFDsampler is True).
  *  useConditionalEstimation - if True, do conditional estimation for snowball
  *                             network samples.
- *   forbidReciprocity - if True do not allow reciprocated arcs.
+ *  forbidReciprocity - if True do not allow reciprocated arcs.
+ *  useBorisenkoUpdate- if True use the Borisenko et al. (2019) theta update
+ *  learningRate      - learning rate (step size multiplier) if 
+ *                      useBorisenkoUpdate is True
+ *  minTheta          - small positive constant c in Borisenko update step
+ *                      to avoid zero step at zero parameter values if
+ *                      useBorisenkoUpdate is true.
  *
  * Return value:
  *   None.
@@ -232,7 +245,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity)
+                  bool forbidReciprocity, bool useBorisenkoUpdate,
+                  double learningRate, double minTheta)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -333,7 +347,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* force minimum magnitude to stop theta sticking at zero */
       /* TODO 0.1 in next two lines was changed in an earlier commit
          from another value with no explanation. It should be made a
-         parameter setting instead, or at least a named constant. */
+         parameter setting instead, or at least a named constant;
+         in fact it should be the new parameter minTheta */
       if (fabs(theta_mean) < 0.1)
           theta_mean = 0.1;
       if(Kafile) fprintf(Kafile, "%g ", theta_sd / fabs(theta_mean)); /* FIXME should be task local*/
@@ -407,6 +422,12 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                       arcs are not allowed to be created (so estimation
  *                       is conditional on no reciprocated arcs, should have
  *                       none in input observed graph).
+ *  useBorisenkoUpdate- if True use the Borisenko et al. (2019) theta update
+ *  learningRate      - learning rate (step size multiplier) if 
+ *                      useBorisenkoUpdate is True
+ *  minTheta          - small positive constant c in Borisenko update step
+ *                      to avoid zero step at zero parameter values if
+ *                      useBorisenkoUpdate is true.
  *   
  *
  * Return value:
@@ -416,17 +437,18 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
 int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
-                 change_stats_func_t *change_stats_funcs[],
-                 attr_change_stats_func_t *attr_change_stats_funcs[],
-                 dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                 uint_t attr_indices[],
-                 uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
-                 uint_t Msteps, double ACA_S, double ACA_EE, double compC,
-                 double theta[], uint_t tasknum,
-                 FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
-                 bool useIFDsampler, double ifd_K,
-                 bool useConditionalEstimation,
-                 bool forbidReciprocity)
+                change_stats_func_t *change_stats_funcs[],
+                attr_change_stats_func_t *attr_change_stats_funcs[],
+                dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                uint_t attr_indices[],
+                uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
+                uint_t Msteps, double ACA_S, double ACA_EE, double compC,
+                double theta[], uint_t tasknum,
+                FILE *theta_outfile, FILE *dzA_outfile, bool outputAllSteps,
+                bool useIFDsampler, double ifd_K,
+                bool useConditionalEstimation,
+                bool forbidReciprocity, bool useBorisenkoUpdate,
+                double learningRate, double minTheta)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -436,10 +458,17 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   /*array of n derivative estimate values corresponding to theta. */  
   double *Dmean = (double *)safe_malloc(n*sizeof(double));
 
-  printf("task %u: ACA_S = %g, ACA_EE = %g, compC = %g, samplerSteps = %u, "
-         "Ssteps = %u, EEsteps = %u, EEinnerSteps = %u\n", tasknum,
-         ACA_S, ACA_EE, compC, sampler_m, M1_steps, Mouter, Msteps);
-
+  if (useBorisenkoUpdate) {
+    printf("task %u: ACA_S = %g, ACA_EE = %g, compC = %g, samplerSteps = %u, "
+           "Ssteps = %u, EEsteps = %u, EEinnerSteps = %u\n", tasknum,
+           ACA_S, ACA_EE, compC, sampler_m, M1_steps, Mouter, Msteps);
+  } else {
+    printf("task %u:  ACA_S = %g, Borisenko update learningRate = %g, "
+           "minTheta = %g, samplerSteps = %u, "
+           "Ssteps = %u, EEsteps = %u, EEinnerSteps = %u\n", tasknum,
+           ACA_S, learningRate, minTheta, sampler_m, M1_steps, Mouter, Msteps);
+  }
+    
   if (useIFDsampler)
     printf("task %u: IFD sampler ifd_K = %g, arcCorrection = %g\n",
            tasknum, ifd_K, arcCorrection(g));
@@ -513,7 +542,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 		 Mouter, M, sampler_m, ACA_EE, compC,
 		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
 		 useIFDsampler, ifd_K, useConditionalEstimation,
-		 forbidReciprocity);
+		 forbidReciprocity, useBorisenkoUpdate, learningRate,
+                 minTheta);
 
     gettimeofday(&end_timeval, NULL);
     timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -699,7 +729,9 @@ int do_estimation(config_t * config, uint_t tasknum)
               config->outputAllSteps,
               config->useIFDsampler, config->ifd_K,
               config->useConditionalEstimation,
-              config->forbidReciprocity);
+              config->forbidReciprocity,
+              config->useBorisenkoUpdate, config->learningRate,
+              config->minTheta);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);
