@@ -687,6 +687,27 @@ int do_estimation(config_t * config, uint_t tasknum)
      }
    }
 
+   /* Give warnings if parameters set that are not used in selected
+      algorithm variation */
+   if (!config->useIFDsampler &&
+       !DOUBLE_APPROX_EQ(config->ifd_K, DEFAULT_IFD_K)) {
+     fprintf(stderr,
+             "WARNING: ifd_K is set to %g not default value"
+             " but IFD sampler not used\n", config->ifd_K);
+   }
+
+   if (!config->useBorisenkoUpdate) {
+     if (!DOUBLE_APPROX_EQ(config->learningRate, DEFAULT_LEARNING_RATE)) {
+       fprintf(stderr, "WARNING: learningRate is set to %g not default value"
+               " but useBorisenkoUpdate is not True\n", config->learningRate);
+     }
+     if (!DOUBLE_APPROX_EQ(config->minTheta, DEFAULT_MIN_THETA)) {
+       fprintf(stderr, "WARNING: minTheta is set to %g not default value"
+               " but useBorisenkoUpdate is not True\n", config->minTheta);
+     }
+   }
+   
+
    /* Ensure that if conditional estimation is to be used, the snowball
       sampling zone structure was specified */
    if (config->useConditionalEstimation) {

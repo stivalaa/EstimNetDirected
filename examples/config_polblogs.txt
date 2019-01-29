@@ -6,6 +6,7 @@
 #
 
 ################## Algorithm constants #######################################
+minTheta = 0.001
 
 ACA_S = 0.1     # multiplier for step size in Algorithm S
 

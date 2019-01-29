@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/time.h>
+#include <float.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,7 +77,9 @@ extern "C" {
   
 /* Index into 2d n x n array stored row-major in contiguous memory  */
 #define INDEX2D(i,j,n) ( ((size_t)(i)*(n) + (j)) )
-
+  
+/* Approximate double floating point equality */
+#define DOUBLE_APPROX_EQ(a, b) ( fabs((a) - (b)) <= DBL_EPSILON )
   
 /*****************************************************************************
  *

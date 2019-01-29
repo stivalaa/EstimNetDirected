@@ -283,15 +283,15 @@ static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
  */
 config_t CONFIG = {
   0.1,   /* ACA_S */       
-  1e-09, /* ACA_EE */      
-  1e-02, /* compC */       
+  DEFAULT_ACA_EE, /* ACA_EE */      
+  DEFAULT_COMPC, /* compC */       
   1000,  /* samplerSteps */
   100,   /* Ssteps */      
   500,   /* EEsteps */     
   100,   /* EEinnerSteps */
   FALSE, /* outputAllSteps */
   FALSE, /* useIFDsampler */
-  0.1,   /* ifd_K */
+  DEFAULT_IFD_K,   /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
   NULL,  /* arclist_filename */
   NULL,  /* binattr_filename */
@@ -304,8 +304,8 @@ config_t CONFIG = {
   FALSE, /* useConditionalEstimation */
   FALSE, /* forbidReciprocity */
   FALSE, /* useBorisenkoUpdate */
-  0.001, /* learningRate */
-  0.01,  /* minTheta */
+  DEFAULT_LEARNING_RATE, /* learningRate */
+  DEFAULT_MIN_THETA,     /* minTheta */
   0,     /* num_change_stats_funcs */
   NULL,  /* change_stats_funcs */
   NULL,  /* param_names */
@@ -356,6 +356,9 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* zone_filename */
   FALSE, /* useConditionalEstimation */
   FALSE, /* forbidReciprocity */
+  FALSE, /* useBorisenkoUpdate */
+  FALSE, /* learningRate */
+  FALSE, /* minTheta */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE  /* (NOT USED) dyadicParams */
