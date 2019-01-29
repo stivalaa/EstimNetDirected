@@ -526,12 +526,16 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   printf("\n");
   fflush(theta_outfile);
 
-  printf("\ntask %u: initial value of D0 for algorithm_EE = ", tasknum);
-  for (i = 0; i < n; i++) {
-    printf("%g ", Dmean[i]);
+  if (!useBorisenkoUpdate) {
+    /* D0 not used for Borisenko et al. 2019 update theta algorithm in EE */
+    printf("\ntask %u: initial value of D0 for algorithm_EE = ", tasknum);
+    for (i = 0; i < n; i++) {
+      printf("%g ", Dmean[i]);
+    }
+    printf("\n");
   }
-  printf("\n");
 
+  /* but it is still useful to test for possible model degeneracy */
   for (i = 0; i < n; i++) {
     if (isinf(Dmean[i])) {
       fprintf(stderr, "task %u: WARNING: D0 is NaN for parameter %d, "
