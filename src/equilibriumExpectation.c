@@ -696,7 +696,16 @@ int do_estimation(config_t * config, uint_t tasknum)
              " but IFD sampler not used\n", config->ifd_K);
    }
 
-   if (!config->useBorisenkoUpdate) {
+   if (config->useBorisenkoUpdate) {
+     if (!DOUBLE_APPROX_EQ(config->ACA_EE, DEFAULT_ACA_EE)) {
+       fprintf(stderr, "WARNING: ACA_EE is set to %g not default value"
+               " but useBorisenkoUpdate is True so not used\n", config->ACA_EE);
+     }
+     if (!DOUBLE_APPROX_EQ(config->compC, DEFAULT_COMPC)) {
+       fprintf(stderr, "WARNING: compC is set to %g not default value "
+               "but useBorisenkoUpdate is True so not used\n", config->compC);
+     }
+   } else {
      if (!DOUBLE_APPROX_EQ(config->learningRate, DEFAULT_LEARNING_RATE)) {
        fprintf(stderr, "WARNING: learningRate is set to %g not default value"
                " but useBorisenkoUpdate is not True\n", config->learningRate);
