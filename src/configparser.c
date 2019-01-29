@@ -189,7 +189,7 @@ static const config_param_t CONFIG_PARAMS[] = {
    "learning rate a in Borisenko update step of algorithm EE"},
 
   {"minTheta",         PARAM_TYPE_DOUBLE,offsetof(config_t, minTheta),
-   "min value of theta to stop zero in Borisenko EE algorithm update step"},
+   "min abs value of theta to stop zero in Borisenko EE algorithm update step"},
 
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},

@@ -55,7 +55,7 @@ typedef struct config_s {
   bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
   bool  useBorisenkoUpdate; /* use Borisenko et al. update algorithm */
   double learningRate;      /* learning rate (multiplier) in Borisenko update */
-  double minTheta;          /* minimum theta value in Borisenko update */
+  double minTheta;          /* minimum abs theta value in Borisenko update */
   
   /*
    * values built by confiparser.c functions from parsed config settings

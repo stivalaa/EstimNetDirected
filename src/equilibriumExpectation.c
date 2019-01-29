@@ -325,8 +325,13 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
         dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
         ALGEE_DEBUG_PRINT(("addChangeStats[%u] = %g delChangeStats[%u] = %g\n",
                           l, addChangeStats[l], l, delChangeStats[l]));
-        da[l] = D0[l] * ACA;
-        theta_step[l] = (dzA[l] < 0 ? 1 : -1) * da[l] * dzA[l]*dzA[l];
+        if (useBorisenkoUpdate) {
+          theta_step[l] = (dzA[l] < 0 ? 1 : -1) *
+            learningRate * MAX(fabs(theta[l]), minTheta);
+        } else {
+          da[l] = D0[l] * ACA;
+          theta_step[l] = (dzA[l] < 0 ? 1 : -1) * da[l] * dzA[l]*dzA[l];
+        }
         theta[l] += theta_step[l];
         if (outputAllSteps || tinner == 0) {
           fprintf(dzA_outfile, "%g ", dzA[l]);
@@ -340,27 +345,29 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       }
       t++;
     }
-    /* get mean and sd of each theta value over inner loop iterations
-       and adjust D0 to limit variance of theta (see S.I.) */
-    for (l = 0; l < n; l++) {
-      theta_mean = mean_and_sd(thetamatrix[l], Minner, &theta_sd);
-      /* force minimum magnitude to stop theta sticking at zero */
-      /* TODO 0.1 in next two lines was changed in an earlier commit
-         from another value with no explanation. It should be made a
-         parameter setting instead, or at least a named constant;
-         in fact it should be the new parameter minTheta */
-      if (fabs(theta_mean) < 0.1)
+    if (!useBorisenkoUpdate) {
+      /* get mean and sd of each theta value over inner loop iterations
+         and adjust D0 to limit variance of theta (see S.I.) */
+      for (l = 0; l < n; l++) {
+        theta_mean = mean_and_sd(thetamatrix[l], Minner, &theta_sd);
+        /* force minimum magnitude to stop theta sticking at zero */
+        /* TODO 0.1 in next two lines was changed in an earlier commit
+           from another value with no explanation. It should be made a
+           parameter setting instead, or at least a named constant;
+           in fact it should be the new parameter minTheta */
+        if (fabs(theta_mean) < 0.1)
           theta_mean = 0.1;
-      if(Kafile) fprintf(Kafile, "%g ", theta_sd / fabs(theta_mean)); /* FIXME should be task local*/
-      /* theta_sd is a standard deviation so must be non-negative */
-      assert(theta_sd >= 0);
-      if (theta_sd > 1e-10) { /* TODO make this a parameter */
-        /* as per email from Max 21 July 2018, only adjust D0 this way
-         * if sd(theta) is large enough */
-        D0[l] *= sqrt(compC / (theta_sd / fabs(theta_mean)));
+        if(Kafile) fprintf(Kafile, "%g ", theta_sd / fabs(theta_mean)); /* FIXME should be task local*/
+        /* theta_sd is a standard deviation so must be non-negative */
+        assert(theta_sd >= 0);
+        if (theta_sd > 1e-10) { /* TODO make this a parameter */
+          /* as per email from Max 21 July 2018, only adjust D0 this way
+           * if sd(theta) is large enough */
+          D0[l] *= sqrt(compC / (theta_sd / fabs(theta_mean)));
+        }
       }
+      if(Kafile) { fprintf(Kafile, "\n"); fflush(Kafile);  } /* FIXME should be task local*/
     }
-    if(Kafile) { fprintf(Kafile, "\n"); fflush(Kafile);  } /* FIXME should be task local*/
     fflush(dzA_outfile);
     fflush(theta_outfile); 
   }
