@@ -466,14 +466,14 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *Dmean = (double *)safe_malloc(n*sizeof(double));
 
   if (useBorisenkoUpdate) {
-    printf("task %u: ACA_S = %g, ACA_EE = %g, compC = %g, samplerSteps = %u, "
-           "Ssteps = %u, EEsteps = %u, EEinnerSteps = %u\n", tasknum,
-           ACA_S, ACA_EE, compC, sampler_m, M1_steps, Mouter, Msteps);
-  } else {
     printf("task %u:  ACA_S = %g, Borisenko update learningRate = %g, "
            "minTheta = %g, samplerSteps = %u, "
            "Ssteps = %u, EEsteps = %u, EEinnerSteps = %u\n", tasknum,
            ACA_S, learningRate, minTheta, sampler_m, M1_steps, Mouter, Msteps);
+  } else {
+    printf("task %u: ACA_S = %g, ACA_EE = %g, compC = %g, samplerSteps = %u, "
+           "Ssteps = %u, EEsteps = %u, EEinnerSteps = %u\n", tasknum,
+           ACA_S, ACA_EE, compC, sampler_m, M1_steps, Mouter, Msteps);
   }
     
   if (useIFDsampler)
