@@ -135,7 +135,11 @@ for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
   totalruns <- totalruns + 1
   thetarun <- read.table(thetafile, header=TRUE)
   thetarun$run <- run
-  paramnames <- names(theta)[which(!(names(theta) %in% nonParamVars))]
+  paramnames <- names(thetarun)[which(!(names(thetarun) %in% nonParamVars))]
+  print(thetafile)#XXX
+  print(run)#XXX
+  print(names(theta))#XXX
+  print(paramnames)#XXX
   if (max(thetarun$t) < firstiter) {
     cat("Removed run", run, "due to not enough iterations\n", file=stderr())
     removed_runs <- c(removed_runs, run)
@@ -167,11 +171,15 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
                         dzAfile))
   if (!(run %in% removed_runs))  {
     dzArun <- read.table(dzAfile, header=TRUE)
+    print(dzArun)#XXX
     amatrix <- as.matrix(dzArun[which(dzArun$t > firstiter), paramnames])
+    print(amatrix)#XXX
     print("About to do cov(amatrix)...")#XXX
     acov <- cov(amatrix)
     print("cov(amatrix) done")#XXX
     ## http://r.789695.n4.nabble.com/Catching-errors-from-solve-with-near-singular-matrices-td4652794.html
+    print(run)#XXX
+    print(acov)#XXX
     print("about to test rcond(acov)..")#XXX
     if (rcond(acov) < .Machine$double.eps)  {
         cat("Removed run ", run, " due to computationally singular covariance matrix (possibly degenerate model)\n", file=stderr())
