@@ -168,8 +168,11 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
   if (!(run %in% removed_runs))  {
     dzArun <- read.table(dzAfile, header=TRUE)
     amatrix <- as.matrix(dzArun[which(dzArun$t > firstiter), paramnames])
+    print("About to do cov(amatrix)...")#XXX
     acov <- cov(amatrix)
+    print("cov(amatrix) done")#XXX
     ## http://r.789695.n4.nabble.com/Catching-errors-from-solve-with-near-singular-matrices-td4652794.html
+    print("about to test rcond(acov)..")#XXX
     if (rcond(acov) < .Machine$double.eps)  {
         cat("Removed run ", run, " due to computationally singular covariance matrix (possibly degenerate model)\n", file=stderr())
         removed_runs <- c(removed_runs, run)
@@ -177,6 +180,7 @@ for (dzAfile in Sys.glob(paste(dzA_prefix, "_[0-9]*[.]txt", sep=''))) {
         theta <- theta[which(theta$run != run), ]
         keptcount <- keptcount - 1
     } else {
+      print("rcond(acov) done (OK)")#XXX
       dzArun$run <- run
       dzA <- rbind(dzA, dzArun)
     }
@@ -227,7 +231,9 @@ if (keptcount > 0 ) {
       ## other methods.)
       ## Instead use the (default) "batch means"
       ## method (Jones 2006; Vats et al., 2017; Vats et al., 2018)
-      mcerror <- mcse.multi(x = this_theta, method="bm") 
+      print(this_theta)#XXX
+      mcerror <- mcse.multi(x = this_theta, method="bm")
+      print("mcse.multi() done")#XXX
       est_theta <- mcerror$est    # point estimate (mean)
       Nmcmc <- nrow(this_theta) # number of MCMC samples
       ## mcse.multi returns asymptotic covariance matrix so need to divide
