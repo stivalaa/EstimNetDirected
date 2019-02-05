@@ -101,6 +101,27 @@ def convert_to_int_cat(attrs):
     return ['NA' if x == '' else fdict[x] for x in attrs]
 
 
+def str_to_float(sval):
+    """
+    str_to_float() - convert string to floating point handling NA
+
+    Parameters:
+        sval - string to convert
+
+    Return value:
+        floating point value or "NA"
+    """
+    val = sval
+    if val != "NA":
+        if val == '':
+            val = "NA"
+        else:
+            val = float(val)
+            if math.isnan(val):
+                val = "NA"
+    return val
+
+
 def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
     """
     write_attributes_file_binary() - write binary node attribute file 
@@ -206,20 +227,27 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    contattrs = ['APPYEAR', 'GYEAR', 'GDATE', 'CLAIMS']
+    contattrs = ['APPYEAR', 'GYEAR', 'GDATE', 'CLAIMS',
+                 'APPYEARBASE75', 'APPYEARBASE63']  # constructed here
     contattr_names = contattrs
     with open(filename, 'w') as f:
         f.write(' '.join(contattr_names) + '\n')
         for i in nodelist:
             for attr in contattrs:
-                val = patdata[i][colnames[attr]]
-                if val != "NA":
-                    if val == '':
-                        val = "NA"
-                    else:
-                        val = float(val)
-                        if math.isnan(val):
-                            val = "NA"
+                if attr == 'APPYEARBASE75':
+                    # application year - 1975
+                    # for citing year effects
+                    val = str_to_float(patdata[i][colnames["APPYEAR"]])
+                    if val != "NA":
+                        val = val - 1975 if val >= 1975 else "NA"
+                elif attr == 'APPYEARBASE63':
+                    # application year - 1963
+                    # for cited year effects
+                    val = str_to_float(patdata[i][colnames["APPYEAR"]])
+                    if val != "NA":
+                        val = val - 1963 if val >= 1963 else "NA"
+                else:
+                    val = str_to_float(patdata[i][colnames[attr]])
                 f.write(str(val))
                 if attr == contattrs[-1]:
                     f.write('\n')
