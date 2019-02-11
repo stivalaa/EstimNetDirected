@@ -388,7 +388,8 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* minTheta */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
-  FALSE  /* (NOT USED) dyadicParams */
+  FALSE, /* (NOT USED) dyadicParams */
+  FALSE  /* (NOT USED) attrInteractionParams */
 };
 static const uint_t NUM_CONFIG_IS_SET = sizeof(CONFIG_IS_SET)/sizeof(CONFIG_IS_SET[0]);
 
