@@ -22,10 +22,11 @@
 
 /* These must be macros not const to use in initializer  */
 /* not case sensitive */
-#define STRUCT_PARAMS_STR  "structParams"
-#define ATTR_PARAMS_STR    "attrParams"
-#define DYADIC_PARAMS_STR  "dyadicParams"
-#define ARC_PARAM_STR      "Arc"
+#define STRUCT_PARAMS_STR             "structParams"
+#define ATTR_PARAMS_STR               "attrParams"
+#define DYADIC_PARAMS_STR             "dyadicParams"
+#define ARC_PARAM_STR                 "Arc"
+#define ATTR_INTERACTION_PARAMS_STR   "attrInteractionParams"
 
 #define DEFAULT_ACA_EE        1e-09   /* default value for ACA_EE */
 #define DEFAULT_COMPC         1e-02   /* default value for compC */
@@ -78,6 +79,11 @@ typedef struct config_s {
   char                       **dyadic_names; /* names corresponding to above */
   uint_t *dyadic_indices;  /* idx into digraph binattr/cattr/contattr for above */
   const char **dyadic_param_names; /* names corresponding to above two */
+  uint_t num_attr_interaction_change_stats_funcs;  /* length of attr_interaction_change_stats_funcs */
+  attr_interaction_change_stats_func_t **attr_interaction_change_stats_funcs; /* attr interaction param stats */
+  char                     **attr_interaction_names; /* names of attributes for above */
+  uint_t *attr_interaction_indices;   /* idx into digraph binattr/cattr/contattr for above */
+  const char **attr_interaction_param_names; /* names corresponding to above two */
 } config_t;
 
 void init_config_parser(void);

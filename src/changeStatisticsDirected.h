@@ -61,6 +61,8 @@ typedef double (attr_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j
    only used for GeoDistance for now */
 typedef double (dyadic_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t );
 
+/* change statistics with pairs of nodal attributes (attribute interactions) */
+typedef double (attr_interaction_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, uint_t a, uint_t b);
 
 /************************* Structural ****************************************/
 
@@ -110,6 +112,25 @@ double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
 double changeGeoDistance(const digraph_t *g, uint_t i, uint_t j);
 double changeLogGeoDistance(const digraph_t *g, uint_t i, uint_t j);
+
+
+/************ Actor attribute interaction (categorical) *********************/
+
+double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
+                                 uint_t a, uint_t b);
+
+
+/*************************** Other functions *********************************/
+
+double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
+                       uint_t n, uint_t n_attr, uint_t n_dyadic,
+                       change_stats_func_t *change_stats_funcs[],
+                       attr_change_stats_func_t *attr_change_stats_funcs[],
+                       dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                       uint_t attr_indices[], const double theta[],
+                       bool isDelete,
+                       double changestats[]);
+
 
 #endif /* CHANGESTATISTICSDIRECTED_H */
 

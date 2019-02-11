@@ -147,7 +147,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   int     Nadd = 0;     /* number of delete moves */
   double  ifd_aux_param_step;
   double  acceptance_rate;
-  uint_t  i,j,k,l,param_i;
+  uint_t  i,j,k,l;
   uint_t  arcidx = 0;
 
   
@@ -235,27 +235,10 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       Nadd++;
     }
 
-    total = 0;
-    param_i = 0;
-    /* structural effects */
-    for (l = 0; l < n - n_attr - n_dyadic; l++) { 
-      changestats[param_i] = (*change_stats_funcs[l])(g, i, j);
-      total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-      param_i++;
-    }
-    /* nodal attribute effects */
-    for (l = 0; l < n_attr; l++) {
-      changestats[param_i] = (*attr_change_stats_funcs[l])
-        (g, i, j, attr_indices[l]);
-      total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-      param_i++;
-    }
-    /* dyadic covariate effects */
-    for (l = 0; l < n_dyadic; l++) {
-      changestats[param_i] = (*dyadic_change_stats_funcs[l])(g, i, j);
-      total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-      param_i++;
-    }
+    total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, change_stats_funcs,
+                            attr_change_stats_funcs, dyadic_change_stats_funcs,
+                            attr_indices, theta, isDelete, changestats);
+
     
     /* add the IFD auxiliary parameter value */
     total += (isDelete ? -1 : 1) * *ifd_aux_param;

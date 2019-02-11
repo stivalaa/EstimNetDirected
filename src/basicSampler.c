@@ -111,7 +111,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 {
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
-  uint_t i,j,k,l,param_i;
+  uint_t i,j,k,l;
   bool   isDelete = FALSE; /* only init to fix warning */
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */
@@ -166,29 +166,10 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       removeArc(g, i, j);
     }
 
-    total = 0;
-    param_i = 0;
-    /* structural effects */
-    for (l = 0; l < n - n_attr - n_dyadic; l++) { 
-      changestats[param_i] = (*change_stats_funcs[l])(g, i, j);
-      total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-      param_i++;
-    }
-    /* nodal attribute effects */
-    for (l = 0; l < n_attr; l++) {
-      changestats[param_i] = (*attr_change_stats_funcs[l])
-        (g, i, j, attr_indices[l]);
-      total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-      param_i++;
-    }
-    /* dyadic covariate effects */
-    for (l = 0; l < n_dyadic; l++) {
-      changestats[param_i] = (*dyadic_change_stats_funcs[l])(g, i, j);
-      total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-      param_i++;
-    }
+    total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, change_stats_funcs,
+                            attr_change_stats_funcs, dyadic_change_stats_funcs,
+                            attr_indices, theta, isDelete, changestats);
     
-
     /* now exp(total) is the acceptance probability */
     if (urand() < exp(total)) {
       accepted++;

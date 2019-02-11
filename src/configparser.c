@@ -85,6 +85,13 @@ typedef struct dyadic_param_s {
   dyadic_change_stats_func_t *dyadic_change_stats_func; /* corresponding func. */
 } dyadic_param_t;
 
+/* ERGM attribute interaction parameter */
+typedef struct attr_interaction_param_s {
+  const char          *name;       /* attribute interaction parameter name */
+  attr_type_e          type;       /* attribute interaction parameter type */
+  attr_interaction_change_stats_func_t *attr_interaction_change_stats_func;  /* corresponding func. */
+} attr_interaction_param_t;
+
 /*****************************************************************************
  *
  * constants
@@ -198,7 +205,10 @@ static const config_param_t CONFIG_PARAMS[] = {
   "binary/categorical/continuous attribute parameters to estimate"},
 
   {DYADIC_PARAMS_STR, PARAM_TYPE_SET,       0, /*no offset, coded explicitly*/
-  "dyadic covariate parameters to estimate"}
+  "dyadic covariate parameters to estimate"},
+
+  {ATTR_INTERACTION_PARAMS_STR,PARAM_TYPE_SET, 0,/*no offset, coded explicitly*/
+   "attribute pair interaction parameters to estimate"}
 };
 static const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
   sizeof(CONFIG_PARAMS[0]);
@@ -255,6 +265,7 @@ static const attr_param_t ATTR_PARAMS[] =
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
 
+
 /*
  * Dyadic covariate parameters allowed sa the names in the set for the
  * dyadicParams parameters. Names are not case sensitive.
@@ -266,6 +277,17 @@ static const dyadic_param_t DYADIC_PARAMS[] =
 };
 static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
   sizeof(DYADIC_PARAMS[0]);
+
+/*
+ * Attribute pair interaction parameters allowed as the names in the
+ * set for the attrInteractionParams parameters. Names are not case sensitive.
+ */
+static const attr_interaction_param_t ATTR_INTERACTION_PARAMS[] =
+{
+  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, changeMatchingInteraction},
+};
+static const uint_t NUM_ATTR_INTERACTION_PARAMS =
+  sizeof(ATTR_INTERACTION_PARAMS) / sizeof(ATTR_INTERACTION_PARAMS[0]);
 
 
 /*****************************************************************************
@@ -318,7 +340,12 @@ config_t CONFIG = {
   NULL,  /* dyadic_change_stats_funcs */
   NULL,  /* dyadic_names */
   NULL,  /* dyadic_indices */
-  NULL   /* dyadic_param_names */
+  NULL,  /* dyadic_param_names */
+  0,     /* num_attr_interaction_change_stats_funcs */
+  NULL,  /* attr_attr_interaction_change_stats_funcs */
+  NULL,  /* attr_interaction_names */
+  NULL,  /* attr_interaction_indices */
+  NULL   /* attr_interaction_param_names */
 };
 
 

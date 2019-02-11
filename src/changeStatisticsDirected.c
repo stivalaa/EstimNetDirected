@@ -75,6 +75,8 @@ static double signum(double x)
   return (0 < x) - (x < 0);
 }
 
+
+
 /*****************************************************************************
  *
  * change statistics functions
@@ -590,4 +592,79 @@ double changeLogGeoDistance(const digraph_t *g, uint_t i, uint_t j)
   } else {
     return 0;
   }
+}
+
+
+/*****************************************************************************
+ *
+ * other external functions
+ *
+ ****************************************************************************/
+
+/*
+ *
+ * Compute the change statistics for addition of arc i->j
+ * This involves summing over all the statistics specified for structural
+ * effects, nodal attribute effects, dyadic covariate effects, and attribute
+ * interaction effects.
+ *
+ * Parameters:
+ *   g      - digraph object. Modifed if performMove is true.
+ *   i      - node source of arc being added (or deleted)
+ *   j      - node dest of arc being added (or deleted)
+ *   n      - number of parameters (length of theta vector and total
+ *            number of change statistic functions)
+ *   n_attr - number of attribute change stats functions
+ *   n_dyadic -number of dyadic covariate change stats funcs
+ *   change_stats_funcs - array of pointers to change statistics functions
+ *                        length is n-n_attr
+ *   attr_change_stats_funcs - array of pointers to change statistics functions
+ *                             length is n_attr
+ *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
+ *                             length is n_dyadic
+ *   attr_indices   - array of n_attr attribute indices (index into g->binattr
+ *                    or g->catattr) corresponding to attr_change_stats_funcs
+ *                    E.g. for Sender effect on the first binary attribute,
+ *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
+ *                    changeSender
+ *   theta  - array of n parameter values corresponding to change stats funcs
+ *   isDelete - TRUE if arc is being deleted (statistics negated then)
+ *   changestats - (OUT) array of n change statistics values corresponding to
+ *                 change stats funcs. Allocated by caller.
+ *
+ * Return value:
+ *   Sum of all change statistics for additionof arc i->j
+ */
+double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
+                       uint_t n, uint_t n_attr, uint_t n_dyadic,
+                       change_stats_func_t *change_stats_funcs[],
+                       attr_change_stats_func_t *attr_change_stats_funcs[],
+                       dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                       uint_t attr_indices[], const double theta[],
+                       bool isDelete,
+                       double changestats[])
+{
+  double total = 0;  /* sum of theta*changestats */
+  uint_t l, param_i = 0;
+  
+  /* structural effects */
+  for (l = 0; l < n - n_attr - n_dyadic; l++) { 
+    changestats[param_i] = (*change_stats_funcs[l])(g, i, j);
+    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
+    param_i++;
+  }
+  /* nodal attribute effects */
+  for (l = 0; l < n_attr; l++) {
+    changestats[param_i] = (*attr_change_stats_funcs[l])
+      (g, i, j, attr_indices[l]);
+    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
+    param_i++;
+  }
+  /* dyadic covariate effects */
+  for (l = 0; l < n_dyadic; l++) {
+    changestats[param_i] = (*dyadic_change_stats_funcs[l])(g, i, j);
+    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
+    param_i++;
+  }
+  return total;
 }
