@@ -847,6 +847,167 @@ static int parse_dyadic_params(FILE *infile)
 
 
 
+/*
+ * Parse a single attrInteractionParams attribute interaction
+ * parameter (paramName and corresponding attr_change_stats_func) in
+ * the attrParams set from infile.  These are a single comma-delmited
+ * paior of attribute names inside parentheses e.g.
+ * "MatchingInteraction(class1,class2)".  See
+ * parse_attr_interaction_params() for note on note validating these
+ * names yet, just setting them in
+ * CONFIG.attr_interaction_pair_names[].  Return nonzero on error else
+ * zero.
+ */
+static int parse_one_attr_interaction_param(const char *paramName,
+                  attr_interaction_change_stats_func_t *attr_interaction_change_stats_func,
+                  FILE *infile)
+{
+  char      tokenbuf[TOKSIZE];
+  char     *token;
+  bool      last_token_was_attrname = FALSE;
+  bool      opening = TRUE; /* true for first iteration only to expect '(' */
+  uint_t    num_attr_names = 0;
+
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for attrInteractionParam %s\n",
+            paramName);
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_PAREN_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_one_attr_interaction_param token '%s'\n", token));
+    if (opening) {
+      if (!(strlen(token) == 1 && token[0] == OPEN_PAREN_CHAR)) {
+        fprintf(stderr, "ERROR: expecting %c to open list of attribute "
+                "names after attrParam %s but got '%s'\n",
+                OPEN_PAREN_CHAR, paramName, token);
+        return 1;
+      }
+      opening = FALSE;
+    } else {
+      if (last_token_was_attrname) {
+        last_token_was_attrname = FALSE;
+        if (strcmp(token, ",") != 0) {
+          fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
+                  "two parameter names "
+                  "separated by comma\n", paramName);
+          return 1;
+        }
+      } else {
+        CONFIG_DEBUG_PRINT(("attrInteractionParam %s('%s')\n",
+                            paramName, token));
+        last_token_was_attrname = TRUE;
+        if (num_attr_names == 0) {
+          CONFIG.attr_interaction_param_names = (const char **)
+            safe_realloc(CONFIG.attr_interaction_param_names,
+                         (CONFIG.num_attr_interaction_change_stats_funcs + 1) *
+                         sizeof(const char *));
+          CONFIG.attr_interaction_change_stats_funcs =
+            (attr_interaction_change_stats_func_t **)
+            safe_realloc(CONFIG.attr_interaction_change_stats_funcs,
+                         (CONFIG.num_attr_interaction_change_stats_funcs + 1) *
+                         sizeof(attr_interaction_change_stats_func_t *));
+          CONFIG.attr_interaction_pair_names = (string_pair_t *)safe_realloc(
+            CONFIG.attr_interaction_pair_names,
+            (CONFIG.num_attr_interaction_change_stats_funcs + 1) * sizeof(string_pair_t));
+          CONFIG.attr_interaction_pair_names[
+            CONFIG.num_attr_interaction_change_stats_funcs].first = safe_strdup(token);
+          CONFIG.attr_interaction_pair_names[
+            CONFIG.num_attr_interaction_change_stats_funcs].second = NULL;
+          CONFIG.attr_interaction_param_names[CONFIG.num_attr_interaction_change_stats_funcs] = paramName;
+          CONFIG.attr_interaction_change_stats_funcs[CONFIG.num_attr_interaction_change_stats_funcs] =
+            attr_interaction_change_stats_func;
+          CONFIG.num_attr_interaction_change_stats_funcs++;
+          num_attr_names++;
+        }  else if (num_attr_names == 1) {
+          CONFIG.attr_interaction_pair_names[
+            CONFIG.num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
+          num_attr_names++;
+        } else {
+          fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
+                  "exactly two parameter names "
+                  "separated by comma\n", paramName);
+          return 1;
+        }
+      }
+    }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+}
+
+/* 
+ * Parse the attribute parameters attrInteractionParams from (open
+ * read) file infile. These are the set type, comma delimited names
+ * of parameters enclosed in braces, eg.:
+ * "{MatchingInteraction(class1,class2)}"
+ *   
+ * The attr_interaction_change_stats_funcs and
+ * attr_intearction_pair_names fields in the CONFIG (file static)
+ * structure is set to corresponding list of change statistics
+ * function pointers.  The ATTR_INTERACTION_PARAMS constant has the
+ * table of parameter names and corresponding change statistic
+ * functions.  Return nonzero on error else zero.
+ *
+ * Note that we cannot validate the attribute names yet (while parsing
+ * the config file), as it requires the attributes to have been loaded
+ * from the files named in the config file. So the
+ * attr_interaction_pairnames field is set, and the attr_indices are
+ * only built from the names later after the attributes values have
+ * been loaded, by calling
+ * build_attr_interaction_indices_from_names().
+ */
+static int parse_attr_interaction_params(FILE *infile)
+{
+  char        tokenbuf[TOKSIZE];
+  char       *token;
+  bool        found_paramname;
+  bool        last_token_was_paramname = FALSE;
+  uint_t      i;
+  
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for attrInteractionParams\n");
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_attr_interaction_interaction_params "
+                        "token '%s'\n", token));
+    if (last_token_was_paramname) {
+      last_token_was_paramname = FALSE;
+      if (strcmp(token, ",") != 0) {
+        fprintf(stderr, "ERROR: attrIntearctionParams expecting "
+                "parameter names separated by comma\n");
+        return 1;
+      }
+    } else {
+      found_paramname = FALSE;
+      for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
+        if (strcasecmp(token, ATTR_INTERACTION_PARAMS[i].name) == 0) {
+          found_paramname = TRUE;
+          break;
+        }
+      }
+      if (!found_paramname) {
+        fprintf(stderr, "ERROR: '%s' is not a valid attribute parameter "
+                "name for attrInteractionParams\n", token);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("attrInteractionParam %s\n", token));
+      last_token_was_paramname = TRUE;
+      if (parse_one_attr_interaction_param(ATTR_INTERACTION_PARAMS[i].name,
+                               ATTR_INTERACTION_PARAMS[i].attr_interaction_change_stats_func,
+                               infile)) {
+        fprintf(stderr, "ERROR parsing attrInteractionParams %s\n",
+                ATTR_INTERACTION_PARAMS[i].name);
+        return 1;
+      }
+          }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+}
+
+
+
 /* 
  * Given the parameter name and value parsed from the config file,
  * check that they are valid, using the file global constant
