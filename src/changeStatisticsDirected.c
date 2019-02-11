@@ -595,6 +595,15 @@ double changeLogGeoDistance(const digraph_t *g, uint_t i, uint_t j)
 }
 
 
+/******************Attribute interaction (categorical) ***********************/
+
+double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
+                                 uint_t a, uint_t b)
+{
+  /* TODO*/ return 0;
+}
+
+
 /*****************************************************************************
  *
  * other external functions

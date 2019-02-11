@@ -1121,6 +1121,13 @@ static int check_and_set_param_value(const char *paramname,
           return 1;
         }
         return parse_dyadic_params(infile);
+      } else if (strcasecmp(paramname, ATTR_INTERACTION_PARAMS_STR) == 0) {
+        if (CONFIG.num_attr_interaction_change_stats_funcs > 0) {
+          fprintf(stderr, "ERROR: %s specified more than once\n",
+                  ATTR_INTERACTION_PARAMS_STR);
+          return 1;
+        }
+        return parse_attr_interaction_params(infile);
       } else {
         fprintf(stderr, "ERROR (internal): unknown parameter %s\n", paramname);
         return 1;
