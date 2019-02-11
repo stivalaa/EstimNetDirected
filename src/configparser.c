@@ -1135,6 +1135,25 @@ static dyadic_type_e get_dyadic_param_type(const char *dyadicParamName)
   return DYADIC_TYPE_INVALID;
 }
 
+/*
+ * Given name of attribute interaction parameter, returns its type, by searching
+ * in the ATTR_INTERACTION_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+static attr_type_e get_attr_interaction_param_type(const char
+                                                   *attrInteractionParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
+    if (strcasecmp(ATTR_INTERACTION_PARAMS[i].name,
+                   attrInteractionParamName) == 0) {
+      return ATTR_INTERACTION_PARAMS[i].type;
+    }
+  }
+  return ATTR_TYPE_INVALID;
+}
+
 
 /*
  * build_attr_indices_from_names() is called after the config file

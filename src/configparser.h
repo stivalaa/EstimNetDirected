@@ -34,6 +34,20 @@
 #define DEFAULT_LEARNING_RATE 0.001   /* default value of learningRate */
 #define DEFAULT_MIN_THETA     0.01    /* default value of minTheta */
 
+typedef struct string_pair_s /* pair (tuple) of strings */
+{
+  char *first;
+  char *second;
+} string_pair_t;
+
+typedef struct uint_pair_s /* pair (tuple) of unsigned integers */
+{
+  uint_t first;
+  uint_t second;
+} uint_pair_t;
+  
+  
+
 typedef struct config_s {
   /*
    * Parameters parsed directly from config file
@@ -81,8 +95,8 @@ typedef struct config_s {
   const char **dyadic_param_names; /* names corresponding to above two */
   uint_t num_attr_interaction_change_stats_funcs;  /* length of attr_interaction_change_stats_funcs */
   attr_interaction_change_stats_func_t **attr_interaction_change_stats_funcs; /* attr interaction param stats */
-  char                     **attr_interaction_names; /* names of attributes for above */
-  uint_t *attr_interaction_indices;   /* idx into digraph binattr/cattr/contattr for above */
+  string_pair_t *attr_interaction_pair_names; /* names of pairs of attributes for above */
+  uint_pair_t  *attr_interaction_pair_indices;   /* pairs of indices into digraph binattr/cattr/contattr for above */
   const char **attr_interaction_param_names; /* names corresponding to above two */
 } config_t;
 
