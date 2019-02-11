@@ -1045,12 +1045,19 @@ void free_config_struct(config_t *config)
   free(config->zone_filename);
   free(config->change_stats_funcs);
   free(config->param_names);
+  free(config->attr_param_names);
   for (i = 0; i < config->num_attr_change_stats_funcs; i++) 
     free(config->attr_names[i]);
   free(config->attr_indices);
   for (i = 0; i < config->num_dyadic_change_stats_funcs; i++) 
     free(config->dyadic_names[i]);
   free(config->dyadic_indices);
+  free(config->attr_interaction_param_names);
+  for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++)  {
+    free(config->attr_interaction_pair_names[i].first);
+    free(config->attr_interaction_pair_names[i].second);
+  }
+  free(config->attr_interaction_pair_indices);
 }
 
 /*
@@ -1358,6 +1365,15 @@ void dump_parameter_names(void)
     fprintf(stderr, " %s (%s)\n", DYADIC_PARAMS[i].name,
             DYADIC_PARAMS[i].type == DYADIC_TYPE_GEODISTANCE ?
             "latitude,longitude" : "*UNKNOWN*");
+  }
+  fprintf(stderr, "Attribute interaction parameters (%s)\n",
+          ATTR_INTERACTION_PARAMS_STR);
+  for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
+    fprintf(stderr, " %s (%s)\n", ATTR_INTERACTION_PARAMS[i].name,
+            ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
+            (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
+             (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
+              "*UNKNOWN*")));
   }
   fprintf(stderr, "\n");
 }
