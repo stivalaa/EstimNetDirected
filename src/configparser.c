@@ -893,8 +893,8 @@ static int parse_one_attr_interaction_param(const char *paramName,
           return 1;
         }
       } else {
-        CONFIG_DEBUG_PRINT(("attrInteractionParam %s('%s')\n",
-                            paramName, token));
+        CONFIG_DEBUG_PRINT(("attrInteractionParam %s('%s') [%u]\n",
+                            paramName, token, num_attr_names));
         last_token_was_attrname = TRUE;
         if (num_attr_names == 0) {
           CONFIG.attr_interaction_param_names = (const char **)
@@ -916,12 +916,12 @@ static int parse_one_attr_interaction_param(const char *paramName,
           CONFIG.attr_interaction_param_names[CONFIG.num_attr_interaction_change_stats_funcs] = paramName;
           CONFIG.attr_interaction_change_stats_funcs[CONFIG.num_attr_interaction_change_stats_funcs] =
             attr_interaction_change_stats_func;
-          CONFIG.num_attr_interaction_change_stats_funcs++;
           num_attr_names++;
         }  else if (num_attr_names == 1) {
           CONFIG.attr_interaction_pair_names[
             CONFIG.num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
           num_attr_names++;
+          CONFIG.num_attr_interaction_change_stats_funcs++;
         } else {
           fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
                   "exactly two parameter names "
@@ -1572,7 +1572,7 @@ int build_attr_interaction_pair_indices_from_names(config_t *config,
             }
             CONFIG_DEBUG_PRINT(("catattr interaction [%s] %s(%s) index %u\n",
                                 first ? "first" : "second",
-                                config->attr_param_names[i],
+                                config->attr_interaction_param_names[i],
                                 attrname, j));
           }
         }

@@ -452,7 +452,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                          requires pairs of indices.
  *   sampler_m      - sampler iterations (per algorithm step)
  *   M1_steps       - Steps of Algorithm 1 
- *   Mouter         - outer iteration of Algorihtm EE
+ *   Mouter         - outer iteration of Algorithm EE
  *   Msteps         - number of inner steps of Algorithm EE
  *   ACA_S          -  multiplier of da to get K1A step size multiplier 
  *   ACA_EE         - multiplier of D0 to get K_A step size multiplier
@@ -805,11 +805,20 @@ int do_estimation(config_t * config, uint_t tasknum)
     snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", config->param_names[i]);
   
   for (i = 0; i < config->num_attr_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s", config->attr_param_names[i],
-       config->attr_names[i]);
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
+             config->attr_param_names[i],
+             config->attr_names[i]);
   
    for (i = 0; i < config->num_dyadic_change_stats_funcs; i++)
-     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s", config->dyadic_param_names[i]);
+     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s",
+              config->dyadic_param_names[i]);
+
+   for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++) 
+     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s_%s",
+              config->attr_interaction_param_names[i],
+              config->attr_interaction_pair_names[i].first,
+              config->attr_interaction_pair_names[i].second);
+
   
   fprintf(theta_outfile,  "%s AcceptanceRate\n", fileheader);
   fprintf(dzA_outfile, "%s\n", fileheader);
