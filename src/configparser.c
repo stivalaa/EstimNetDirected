@@ -932,6 +932,11 @@ static int parse_one_attr_interaction_param(const char *paramName,
     }
     token = get_token(infile, tokenbuf);
   }
+  if (num_attr_names != 2) {
+    fprintf(stderr, "ERROR: attrInteractionParams %s was expecting "
+            "exactly two parameter names separated by a comma\n", paramName);
+    return 1;
+  }
   return 0;
 }
 
