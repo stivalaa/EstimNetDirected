@@ -34,19 +34,6 @@
 #define DEFAULT_LEARNING_RATE 0.001   /* default value of learningRate */
 #define DEFAULT_MIN_THETA     0.01    /* default value of minTheta */
 
-typedef struct string_pair_s /* pair (tuple) of strings */
-{
-  char *first;
-  char *second;
-} string_pair_t;
-
-typedef struct uint_pair_s /* pair (tuple) of unsigned integers */
-{
-  uint_t first;
-  uint_t second;
-} uint_pair_t;
-  
-  
 
 typedef struct config_s {
   /*

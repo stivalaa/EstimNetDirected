@@ -90,8 +90,20 @@ extern "C" {
 typedef unsigned int       uint32_t;
 typedef unsigned int       uint_t;
 typedef int                bool;
-  
 
+typedef struct string_pair_s /* pair (tuple) of strings */
+{
+  char *first;
+  char *second;
+} string_pair_t;
+
+typedef struct uint_pair_s /* pair (tuple) of unsigned integers */
+{
+  uint_t first;
+  uint_t second;
+} uint_pair_t;
+
+  
 /*****************************************************************************
  *
  * function prototypes

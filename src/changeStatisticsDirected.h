@@ -124,10 +124,15 @@ double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
 
 double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
                        uint_t n, uint_t n_attr, uint_t n_dyadic,
+                       uint_t n_attr_interaction,
                        change_stats_func_t *change_stats_funcs[],
                        attr_change_stats_func_t *attr_change_stats_funcs[],
                        dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                       uint_t attr_indices[], const double theta[],
+                       attr_interaction_change_stats_func_t 
+                                        *attr_interaction_change_stats_funcs[],
+                       uint_t attr_indices[],
+                       uint_pair_t attr_interaction_pair_indices[],
+                       const double theta[],
                        bool isDelete,
                        double changestats[]);
 

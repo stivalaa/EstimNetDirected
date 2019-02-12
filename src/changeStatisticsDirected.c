@@ -625,17 +625,26 @@ double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
  *            number of change statistic functions)
  *   n_attr - number of attribute change stats functions
  *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n-n_attr
+ *                        length is n-n_attr-n_dyadic-n_attr_interaction
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
  *                             length is n_dyadic
+ *   add_interaction_change_stats_funcs - array of points to attribute 
+ *                                        interaction change statstistics
+ *                                        functinons. Length is
+ *                                        n_attr_interaction.
  *   attr_indices   - array of n_attr attribute indices (index into g->binattr
  *                    or g->catattr) corresponding to attr_change_stats_funcs
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction attribute pair
+ *                                   indices (as above, but each element is
+ *                                   a pair of such indices) for attribute
+ *                                   interaction effects.
  *   theta  - array of n parameter values corresponding to change stats funcs
  *   isDelete - TRUE if arc is being deleted (statistics negated then)
  *   changestats - (OUT) array of n change statistics values corresponding to
@@ -646,10 +655,15 @@ double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
  */
 double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
                        uint_t n, uint_t n_attr, uint_t n_dyadic,
+                       uint_t n_attr_interaction,
                        change_stats_func_t *change_stats_funcs[],
                        attr_change_stats_func_t *attr_change_stats_funcs[],
                        dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                       uint_t attr_indices[], const double theta[],
+                       attr_interaction_change_stats_func_t 
+                                        *attr_interaction_change_stats_funcs[],
+                       uint_t attr_indices[],
+                       uint_pair_t attr_interaction_pair_indices[],
+                       const double theta[],
                        bool isDelete,
                        double changestats[])
 {
@@ -657,7 +671,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
   uint_t l, param_i = 0;
   
   /* structural effects */
-  for (l = 0; l < n - n_attr - n_dyadic; l++) { 
+  for (l = 0; l < n - n_attr - n_dyadic - n_attr_interaction; l++) { 
     changestats[param_i] = (*change_stats_funcs[l])(g, i, j);
     total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
     param_i++;
@@ -673,6 +687,13 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
   for (l = 0; l < n_dyadic; l++) {
     changestats[param_i] = (*dyadic_change_stats_funcs[l])(g, i, j);
     total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
+    param_i++;
+  }
+  /* attribute pair interaction effects */
+  for (l = 0; l < n_attr_interaction; l++) {
+    changestats[param_i] = (*attr_interaction_change_stats_funcs[l])
+      (g, i, j, attr_interaction_pair_indices[l].first,
+       attr_interaction_pair_indices[l].second);
     param_i++;
   }
   return total;

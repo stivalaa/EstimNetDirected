@@ -52,17 +52,25 @@
  *            length of all change statistics functions)
  *   n_attr - number of attribute change stats funcs
  *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n - n_attr
+ *                        length is n - n_attr - n_dyadic - n_attr_interacion
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
  *                             length is n_dyadic
+ *   attr_interaction_change_stats_funcs - array of pointers to attribute
+ *                           interaction (pair) change statistics functions.
+ *                           length is n_attr_interaction.
  *   attr_indices   - array of n_attr attribute indices (index into g->binattr
  *                    or g->catattr) corresponding to attr_change_stats_funcs
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction pairs
+ *                          of attribute inidices similar to above but
+ *                          for attr_interaction_change_setats_funcs which
+ *                          requires pairs of indices.
  *   M1          - Number of iterations of Algorithm S
  *   sampler_m   - Number of proposals (sampling iterations) [per step of Alg.S]
  *   ACA         -  multiplier of da to get K1A step size multiplier 
@@ -85,10 +93,14 @@
  */
 
 void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                 uint_t n_attr_interaction,
                  change_stats_func_t *change_stats_funcs[],
                  attr_change_stats_func_t *attr_change_stats_funcs[],
                  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                 attr_interaction_change_stats_func_t
+                                  *attr_interaction_change_stats_funcs[],
                  uint_t attr_indices[],
+                 uint_pair_t attr_interaction_pair_indices[],
                  uint_t M1,
                  uint_t sampler_m,
                  double ACA,
@@ -122,10 +134,15 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (t = 0; t < M1; t++) {
     fprintf(theta_outfile, "%d ", t-M1);
     if (useIFDsampler) {
-      acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, change_stats_funcs,
+      acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic,
+                                   n_attr_interaction,
+                                   change_stats_funcs,
                                    attr_change_stats_funcs,
                                    dyadic_change_stats_funcs,
-                                   attr_indices, theta,
+                                   attr_interaction_change_stats_funcs,
+                                   attr_indices,
+                                   attr_interaction_pair_indices,
+                                   theta,
                                    addChangeStats, delChangeStats, sampler_m,
                                    FALSE,
                                    ifd_K, &dzArc, &ifd_aux_param,
@@ -134,10 +151,15 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else {
-      acceptance_rate = basicSampler(g, n, n_attr, n_dyadic, change_stats_funcs,
+      acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
+                                     n_attr_interaction,
+                                     change_stats_funcs,
                                      attr_change_stats_funcs,
                                      dyadic_change_stats_funcs,
-                                     attr_indices, theta,
+                                     attr_interaction_change_stats_funcs,
+                                     attr_indices,
+                                     attr_interaction_pair_indices,
+                                     theta,
                                      addChangeStats, delChangeStats, sampler_m,
                                      FALSE, useConditionalEstimation,
                                      forbidReciprocity);
@@ -181,17 +203,25 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *            total number of change stats funcs)
  *   n_attr - number of attribute change stats functions
  *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n - n_attr
+ *                        length is n - n_attr - n_dyadic - n_attr_interaction
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                              length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
  *                             length is n_dyadic
+ *   attr_interaction_change_stats_funcs - array of pointers to attribute
+ *                           interaction (pair) change statistics functions.
+ *                           length is n_attr_interaction.
  *   attr_indices   - array of n_attr attribute indices (index into g->binattr
  *                    or g->catattr) corresponding to attr_change_stats_funcs
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction pairs
+ *                          of attribute inidices similar to above but
+ *                          for attr_interaction_change_setats_funcs which
+ *                          requires pairs of indices.
  *   Mouter     - Number of iterations of Algorithm EE (outer loop)
  *   Minner     - Number of iterations of Algorithm EE (inner loop)
  *   sampler_m  - Number of proposals (sampling iterations) 
@@ -231,10 +261,14 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
 void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                  uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   attr_change_stats_func_t *attr_change_stats_funcs[],
                   dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                  attr_interaction_change_stats_func_t
+                                   *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
+                  uint_pair_t attr_interaction_pair_indices[],
                   uint_t Mouter, uint_t Minner,
                   uint_t sampler_m,
                   double ACA, double compC,
@@ -292,10 +326,14 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 #endif /* DEBUG_MEMUSAGE */
       }
       if (useIFDsampler) {
-        acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, change_stats_funcs, 
+        acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
+                                     change_stats_funcs, 
                                      attr_change_stats_funcs,
                                      dyadic_change_stats_funcs,
-                                     attr_indices, theta,
+                                     attr_interaction_change_stats_funcs,
+                                     attr_indices,
+                                     attr_interaction_pair_indices,
+                                     theta,
                                      addChangeStats, delChangeStats, sampler_m,
                                      TRUE, /*Algorithm EE actually does moves */
                                      ifd_K, &dzArc, &ifd_aux_param,
@@ -309,12 +347,17 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
         }
       } else {
         acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
+                                       n_attr_interaction,
                                        change_stats_funcs, 
                                        attr_change_stats_funcs,
                                        dyadic_change_stats_funcs,
-                                       attr_indices, theta,
-                                       addChangeStats, delChangeStats, sampler_m,
-                                       TRUE,/*Algorithm EE actually does moves */
+                                       attr_interaction_change_stats_funcs,
+                                       attr_indices,
+                                       attr_interaction_pair_indices,
+                                       theta,
+                                       addChangeStats, delChangeStats,
+                                       sampler_m,
+                                       TRUE,/*Algorithm EE actually does moves*/
                                        useConditionalEstimation,
                                        forbidReciprocity);
       }
@@ -388,17 +431,25 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *            number of change statistics functions)
  *   n_attr - number of attribute change statistics functions
  *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n - n_attr
+ *                        length is n - n_attr - n_dyadic - n_attr_interaction
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
  *                             length is n_dyadic
+ *   attr_interaction_change_stats_funcs - array of pointers to attribute
+ *                           interaction (pair) change statistics functions.
+ *                           length is n_attr_interaction.
  *   attr_indices   - array of n_attr attribute indices (index into g->binattr
  *                    or g->catattr) corresponding to attr_change_stats_funcs
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction pairs
+ *                          of attribute inidices similar to above but
+ *                          for attr_interaction_change_setats_funcs which
+ *                          requires pairs of indices.
  *   sampler_m      - sampler iterations (per algorithm step)
  *   M1_steps       - Steps of Algorithm 1 
  *   Mouter         - outer iteration of Algorihtm EE
@@ -439,10 +490,14 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
 int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                uint_t n_attr_interaction,
                 change_stats_func_t *change_stats_funcs[],
                 attr_change_stats_func_t *attr_change_stats_funcs[],
                 dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                attr_interaction_change_stats_func_t
+                                 *attr_interaction_change_stats_funcs[],
                 uint_t attr_indices[],
+                uint_pair_t attr_interaction_pair_indices[],
                 uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
                 uint_t Msteps, double ACA_S, double ACA_EE, double compC,
                 double theta[], uint_t tasknum,
@@ -503,8 +558,10 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   printf("task %u: running Algorithm S...\n", tasknum);
   gettimeofday(&start_timeval, NULL);
 
-  algorithm_S(g, n, n_attr, n_dyadic, change_stats_funcs,
-              attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices, 
+  algorithm_S(g, n, n_attr, n_dyadic, n_attr_interaction, change_stats_funcs,
+              attr_change_stats_funcs, dyadic_change_stats_funcs,
+              attr_interaction_change_stats_funcs,
+              attr_indices, attr_interaction_pair_indices,
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
               ifd_K, useConditionalEstimation, forbidReciprocity);
 
@@ -543,8 +600,11 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("task %u: running Algorithm EE...\n", tasknum);
     gettimeofday(&start_timeval, NULL);
 
-    algorithm_EE(g, n, n_attr, n_dyadic, change_stats_funcs, 
-		 attr_change_stats_funcs, dyadic_change_stats_funcs, attr_indices,
+    algorithm_EE(g, n, n_attr, n_dyadic, n_attr_interaction,
+                 change_stats_funcs, 
+		 attr_change_stats_funcs, dyadic_change_stats_funcs,
+                 attr_interaction_change_stats_funcs,
+                 attr_indices, attr_interaction_pair_indices,
 		 Mouter, M, sampler_m, ACA_EE, compC,
 		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
 		 useIFDsampler, ifd_K, useConditionalEstimation,
@@ -587,7 +647,7 @@ int do_estimation(config_t * config, uint_t tasknum)
   char           sim_outfilename[PATH_MAX+1];
   char           suffix[16]; /* only has to be large enough for "_xx.txt" 
                                 where xx is tasknum */
-  uint_t         n_struct, n_attr, n_dyadic, num_param;
+  uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
 #define HEADER_MAX 65536
   char fileheader[HEADER_MAX];  
@@ -651,7 +711,8 @@ int do_estimation(config_t * config, uint_t tasknum)
   n_struct = config->num_change_stats_funcs;
   n_attr = config->num_attr_change_stats_funcs;
   n_dyadic = config->num_dyadic_change_stats_funcs;
-  num_param =  n_struct + n_attr + n_dyadic;
+  n_attr_interaction = config->num_attr_interaction_change_stats_funcs;
+  num_param =  n_struct + n_attr + n_dyadic + n_attr_interaction;
     
   theta = (double *)safe_malloc(num_param*sizeof(double));
 
@@ -753,9 +814,13 @@ int do_estimation(config_t * config, uint_t tasknum)
   fprintf(theta_outfile,  "%s AcceptanceRate\n", fileheader);
   fprintf(dzA_outfile, "%s\n", fileheader);
   
-  ee_estimate(g, num_param, n_attr, n_dyadic, config->change_stats_funcs,
+  ee_estimate(g, num_param, n_attr, n_dyadic, n_attr_interaction,
+              config->change_stats_funcs,
               config->attr_change_stats_funcs,
-              config->dyadic_change_stats_funcs, config->attr_indices,
+              config->dyadic_change_stats_funcs,
+              config->attr_interaction_change_stats_funcs,
+              config->attr_indices,
+              config->attr_interaction_pair_indices,
               config->samplerSteps, config->Ssteps,
               config->EEsteps, config->EEinnerSteps,
               config->ACA_S, config->ACA_EE, config->compC,

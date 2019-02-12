@@ -29,10 +29,14 @@
 #include "changeStatisticsDirected.h"
 
 void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                 uint_t n_attr_interaction,
                  change_stats_func_t *change_stats_funcs[],
                  attr_change_stats_func_t *attr_change_stats_funcs[],
                  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                 attr_interaction_change_stats_func_t
+                                  *attr_interaction_change_stats_funcs[],
                  uint_t attr_indices[],
+                 uint_pair_t attr_interaction_pair_indices[],
                  uint_t M1,
                  uint_t sampler_m,
                  double ACA,
@@ -44,10 +48,14 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  bool forbidReciprocity);
 
 void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                  uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   attr_change_stats_func_t *attr_change_stats_funcs[],
                   dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                  attr_interaction_change_stats_func_t
+                                   *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
+                  uint_pair_t attr_interaction_pair_indices[],
                   uint_t Mouter, uint_t Minner,
                   uint_t sampler_m,
                   double ACA, double compC,
@@ -62,10 +70,14 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
 
 int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                uint_t n_attr_interaction,
                 change_stats_func_t *change_stats_funcs[],
                 attr_change_stats_func_t *attr_change_stats_funcs[],
                 dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                attr_interaction_change_stats_func_t
+                                 *attr_interaction_change_stats_funcs[],
                 uint_t attr_indices[],
+                uint_pair_t attr_interaction_pair_indices[],
                 uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
                 uint_t Msteps, double ACA_S, double ACA_EE, double compC,
                 double theta[], uint_t tasknum,

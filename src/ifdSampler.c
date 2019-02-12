@@ -90,17 +90,25 @@ double arcCorrection(const digraph_t *g) {
  *            number of change statistic functions)
  *   n_attr - number of attribute change stats functions
  *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n-n_attr
+ *                        length is n-n_attr-n_dyadic-n_attr_interaction
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
  *                             length is n_dyadic
+ *   attr_interaction_change_stats_funcs - array of pointers to attribute
+ *                           interaction (pair) change statistics functions.
+ *                           length is n_attr_interaction.
  *   attr_indices   - array of n_attr attribute indices (index into g->binattr
  *                    or g->catattr) corresponding to attr_change_stats_funcs
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction pairs
+ *                          of attribute inidices similar to above but
+ *                          for attr_interaction_change_setats_funcs which
+ *                          requires pairs of indices.
  *   theta  - array of n parameter values corresponding to change stats funcs
  *   addChangeStats - (Out) vector of n change stats for add moves
  *                    Allocated by caller.
@@ -126,10 +134,15 @@ double arcCorrection(const digraph_t *g) {
  * change statistics for add and delete moves respectively.
  */
 double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
+                  uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   attr_change_stats_func_t *attr_change_stats_funcs[],
                   dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                  uint_t attr_indices[], double theta[],
+                  attr_interaction_change_stats_func_t
+                                   *attr_interaction_change_stats_funcs[],
+                  uint_t attr_indices[],
+                  uint_pair_t attr_interaction_pair_indices[],
+                  double theta[],
                   double addChangeStats[], double delChangeStats[],
                   uint_t sampler_m,
                   bool performMove,
@@ -235,9 +248,14 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       Nadd++;
     }
 
-    total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, change_stats_funcs,
-                            attr_change_stats_funcs, dyadic_change_stats_funcs,
-                            attr_indices, theta, isDelete, changestats);
+    total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, n_attr_interaction,
+                            change_stats_funcs,
+                            attr_change_stats_funcs,
+                            attr_interaction_change_stats_funcs,
+                            dyadic_change_stats_funcs,
+                            attr_indices,
+                            attr_interaction_pair_indices,
+                            theta, isDelete, changestats);
 
     
     /* add the IFD auxiliary parameter value */

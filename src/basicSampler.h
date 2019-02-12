@@ -50,11 +50,16 @@
 #include "changeStatisticsDirected.h"
 
 double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
+                    uint_t n_attr_interaction,
                     change_stats_func_t *change_stats_funcs[],
                     attr_change_stats_func_t *attr_change_stats_funcs[],
                     dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                    uint_t attr_indices[], double theta[],
-                    double addChangeStats[], double delChangeStats[], 
+                    attr_interaction_change_stats_func_t
+                                     *attr_interaction_change_stats_funcs[],
+                    uint_t attr_indices[],
+                    uint_pair_t attr_interaction_pair_indices[],
+                    double theta[],
+                    double addChangeStats[], double delChangeStats[],
                     uint_t sampler_m,
                     bool performMove,
                     bool useConditionalEstimation,
