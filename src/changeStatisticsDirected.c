@@ -705,6 +705,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
     changestats[param_i] = (*attr_interaction_change_stats_funcs[l])
       (g, i, j, attr_interaction_pair_indices[l].first,
        attr_interaction_pair_indices[l].second);
+    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i]; 
     param_i++;
   }
   return total;
