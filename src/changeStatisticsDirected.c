@@ -555,7 +555,7 @@ double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 /********************* Dyadic covariate (continuous) *************************/
 
 /* 
- * Change steatistic for geographical distance between two nodes,
+ * Change statistic for geographical distance between two nodes,
  * using for each node the pair of continuous attributes labelled 
  * as being latitude and longitude
  */
@@ -578,7 +578,7 @@ double changeGeoDistance(const digraph_t *g, uint_t i, uint_t j)
 }
 
 /* 
- * Change steatistic for logarithm of geographical distance between two nodes,
+ * Change statistic for logarithm of geographical distance between two nodes,
  * using for each node the pair of continuous attributes labelled 
  * as being latitude and longitude
  */
@@ -597,10 +597,21 @@ double changeLogGeoDistance(const digraph_t *g, uint_t i, uint_t j)
 
 /******************Attribute interaction (categorical) ***********************/
 
+/* 
+ * Change statistic for interaction effect of two categorical attributes 
+ * matching: adding arc i->j increases statistic by 1 when
+ * nodes i and j have the same categorical attribute value attribute a
+ * and also have the same categorical attribute value for attribute b
+ * (note a and b are different attributes, they don't have to have the same
+ * value)
+ */
 double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
                                  uint_t a, uint_t b)
 {
-  /* TODO*/ return 0;
+  return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
+    g->catattr[b][i] != CAT_NA && g->catattr[b][j] != CAT_NA &&
+    g->catattr[a][i] == g->catattr[a][j] &&
+    g->catattr[b][i] == g->catattr[b][j];
 }
 
 
