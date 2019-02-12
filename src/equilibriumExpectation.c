@@ -639,6 +639,11 @@ int do_estimation(config_t * config, uint_t tasknum)
     fprintf(stderr, "ERROR in dyadic covariate parameters\n");
     return -1;
   }
+  /* and attribute interaction parameters */
+  if (build_attr_interaction_pair_indices_from_names(config, g) != 0) {
+    fprintf(stderr, "ERROR in attribute interaction parameters\n");
+    return -1;
+  }
 
   /* note num_param is computed here as build_dyadic_indices_from_names()
      can decrease config->num_dyadic_change_stats_funcs from its 

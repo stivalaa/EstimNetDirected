@@ -104,6 +104,8 @@ void init_config_parser(void);
 config_t *parse_config_file(const char *config_filename);
 int build_attr_indices_from_names(config_t *config, const digraph_t *g);
 int build_dyadic_indices_from_names(config_t *config, digraph_t *g);
+int build_attr_interaction_pair_indices_from_names(config_t *config,
+                                                   const digraph_t *g);
 void free_config_struct(config_t *config);
 
 void dump_config_names(void);

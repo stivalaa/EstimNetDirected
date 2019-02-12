@@ -1509,6 +1509,90 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
 }
 
 
+/*
+ * build_attr_interaction_pair_indices_from_names() is called after the
+ * config file is parsed by parse_config_file() and also after the
+ * attributes are loaded by calling load_digraph_from_arclist_file()
+ * since the relevant filenames have to be parsed from the config file
+ * before their contents can be loaded. (Could enforce that those
+ * filenames are earlier in the config file than the attribute
+ * parameters and do it all in one pass, but did not do so).
+ *
+ * The attribute names specified for attribute parameter estimation
+ * are searched for in the names loaded from the attribute data files
+ * stored in the digraph structure g, and if they are present, the
+ * indices stored in the config.attr_indices array. Returns nonzero on
+ * error else 0.
+ *
+ * Note that the types of attributes (binary, categorical,continuous)
+ * are mixed together in the config.attr_interaction_pairindices[]
+ * array; the index could be into g->binattr or g->catattr or
+ * g->contattr, but because each change statistics function is for one
+ * particular type, it uses the index in the correct array without
+ * ambiguity.
+ */
+int build_attr_interaction_pair_indices_from_names(config_t *config,
+                                                   const digraph_t *g)
+{
+  uint_t i, j;
+  bool   found;
+  bool   first;
+  char  *attrname;
+
+  config->attr_interaction_pair_indices = safe_malloc(
+    config->num_attr_interaction_change_stats_funcs * sizeof(uint_pair_t));
+
+  for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++) {
+    found = FALSE;
+    first = TRUE;
+    if (first) {
+      attrname = config->attr_interaction_pair_names[i].first;
+    } else {
+      attrname = config->attr_interaction_pair_names[i].second;
+    }
+    switch (get_attr_interaction_param_type(
+              config->attr_interaction_param_names[i])) {
+      case ATTR_TYPE_BINARY:
+        assert(FALSE); /* TODO binary attribute interaction */
+        break;
+
+      case ATTR_TYPE_CATEGORICAL:
+        for (j = 0; j < g->num_catattr; j++) {
+          if (strcasecmp(attrname, g->catattr_names[j]) == 0) {
+            found = TRUE;
+            if (first) {
+              config->attr_interaction_pair_indices[i].first = j;
+            } else {
+              config->attr_interaction_pair_indices[i].second = j;         
+            }
+            CONFIG_DEBUG_PRINT(("catattr interaction [%s] %s(%s) index %u\n",
+                                first ? "first" : "second",
+                                config->attr_param_names[i],
+                                attrname, j));
+          }
+        }
+        if (!found) {
+          fprintf(stderr, "ERROR: categorical attribute %s not found\n",
+                  attrname);
+          return 1;
+        }
+        break;
+
+      case ATTR_TYPE_CONTINUOUS:
+        assert(FALSE); /* TODO contiuous attribute interaction */
+        break;
+
+      default:
+        fprintf(stderr, "ERROR (internal): unknown attribute type %u\n",
+                get_attr_interaction_param_type(attrname));
+        return 1;
+        break;
+    }
+  }
+  return 0;
+}
+
+
 
 /*
  * Write the allowed ERGM estimation parameters to stderr 
