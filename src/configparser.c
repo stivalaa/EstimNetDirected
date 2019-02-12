@@ -1539,59 +1539,59 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
 int build_attr_interaction_pair_indices_from_names(config_t *config,
                                                    const digraph_t *g)
 {
-  uint_t i, j;
+  uint_t i, j, attrnum;
   bool   found;
-  bool   first;
   char  *attrname;
 
   config->attr_interaction_pair_indices = safe_malloc(
     config->num_attr_interaction_change_stats_funcs * sizeof(uint_pair_t));
 
   for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++) {
-    found = FALSE;
-    first = TRUE;
-    if (first) {
-      attrname = config->attr_interaction_pair_names[i].first;
-    } else {
-      attrname = config->attr_interaction_pair_names[i].second;
-    }
-    switch (get_attr_interaction_param_type(
-              config->attr_interaction_param_names[i])) {
-      case ATTR_TYPE_BINARY:
-        assert(FALSE); /* TODO binary attribute interaction */
-        break;
+    for (attrnum = 0; attrnum < 2 /* 0=first and 1=second */; attrnum++) {
+      found = FALSE;
+      if (attrnum == 0) {
+        attrname = config->attr_interaction_pair_names[i].first;
+      } else {
+        attrname = config->attr_interaction_pair_names[i].second;
+      }
+      switch (get_attr_interaction_param_type(
+                config->attr_interaction_param_names[i])) {
+        case ATTR_TYPE_BINARY:
+          assert(FALSE); /* TODO binary attribute interaction */
+          break;
 
-      case ATTR_TYPE_CATEGORICAL:
-        for (j = 0; j < g->num_catattr; j++) {
-          if (strcasecmp(attrname, g->catattr_names[j]) == 0) {
-            found = TRUE;
-            if (first) {
-              config->attr_interaction_pair_indices[i].first = j;
-            } else {
-              config->attr_interaction_pair_indices[i].second = j;         
+        case ATTR_TYPE_CATEGORICAL:
+          for (j = 0; j < g->num_catattr; j++) {
+            if (strcasecmp(attrname, g->catattr_names[j]) == 0) {
+              found = TRUE;
+              if (attrnum == 0) {
+                config->attr_interaction_pair_indices[i].first = j;
+              } else {
+                config->attr_interaction_pair_indices[i].second = j;         
+              }
+              CONFIG_DEBUG_PRINT(("catattr interaction [%s] %s(%s) index %u\n",
+                                  attrnum == 0 ? "first" : "second",
+                                  config->attr_interaction_param_names[i],
+                                  attrname, j));
             }
-            CONFIG_DEBUG_PRINT(("catattr interaction [%s] %s(%s) index %u\n",
-                                first ? "first" : "second",
-                                config->attr_interaction_param_names[i],
-                                attrname, j));
           }
-        }
-        if (!found) {
-          fprintf(stderr, "ERROR: categorical attribute %s not found\n",
-                  attrname);
+          if (!found) {
+            fprintf(stderr, "ERROR: categorical attribute %s not found\n",
+                    attrname);
+            return 1;
+          }
+          break;
+
+        case ATTR_TYPE_CONTINUOUS:
+          assert(FALSE); /* TODO contiuous attribute interaction */
+          break;
+
+        default:
+          fprintf(stderr, "ERROR (internal): unknown attribute type %u\n",
+                  get_attr_interaction_param_type(attrname));
           return 1;
-        }
-        break;
-
-      case ATTR_TYPE_CONTINUOUS:
-        assert(FALSE); /* TODO contiuous attribute interaction */
-        break;
-
-      default:
-        fprintf(stderr, "ERROR (internal): unknown attribute type %u\n",
-                get_attr_interaction_param_type(attrname));
-        return 1;
-        break;
+          break;
+      }
     }
   }
   return 0;
