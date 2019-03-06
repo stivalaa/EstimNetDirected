@@ -32,7 +32,7 @@ E.g.
     (G, patdata, colnames) = load_patentsview_extract_data('/home/stivala/PatentViewAlfonsExtract')
 
 
-
+NB this uses at least 5 GB memory and tmp directory space
 """
 
 import os,sys
