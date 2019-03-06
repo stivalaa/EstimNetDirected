@@ -113,6 +113,8 @@ def load_patentsview_extract_data(indirname):
     colnames = csviter.next()[1:] # skip patent_id column 0
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
-    patentdata = list(csviter)
-    patentdict = dict([(int(x[0]), x[1]) for x in patentdata])
+    # remove the patents that have an id that is not an int (starts with a 
+    # letter) as these are not utility patents (design patents etc.)
+    patentdata = [ (x[0], x[1:]) for x in  csviter]
+    patentdict = dict([(int(x[0]), x[1]) for x in patentdata if x[0].isdigit()])
     return (G, patentdict, patent_colnames)
