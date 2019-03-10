@@ -56,7 +56,7 @@ NB this uses around 7 GB memory and 5 GB tmp directory space
 import sys,os,time
 import getopt
 import math
-import datetime import datetime 
+from datetime import datetime 
 
 import snap
 
