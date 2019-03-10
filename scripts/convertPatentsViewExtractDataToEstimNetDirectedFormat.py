@@ -22,9 +22,11 @@ in a directory in format used by EstimNetDirected.
 
 Usage:
  
-   convertPatentsViewExtractDataToEstimNetdirectedFormat.py data_dir 
+   convertPatentsViewExtractDataToEstimNetdirectedFormat.py [-d] data_dir 
 
    data_dir is directory containing the extracted patent citation data
+
+   -d : only use subgraph of patents that have attribute data
 
 
 
@@ -234,7 +236,8 @@ def usage(progname):
     """
     print usage msg and exit
     """
-    sys.stderr.write("usage: " + progname + "  data_dir\n")
+    sys.stderr.write("usage: " + progname + "  data_dir\n"
+                     "-d : get subgraph with attribute data nodes only\n")
     sys.exit(1)
 
 
@@ -242,12 +245,16 @@ def main():
     """
     See usage message in module header block
     """
+    get_subgraph = False # if True discard nodes without attribute data
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "")
+        opts,args = getopt.getopt(sys.argv[1:], "d")
     except:
         usage(sys.argv[0])
     for opt,arg in opts:
-        usage(sys.argv[0])
+        if opt == "-d":
+            get_subgraph = True
+        else:
+            usage(sys.argv[0])
 
     if len(args) != 1:
         usage(sys.argv[0])
@@ -294,20 +301,32 @@ def main():
 
     nodelist = list()  # keep the iteration below in list so we always use same order in future
 
-    # keep all the graph and just put NA for all data attributes
-    citepatent_count = 0
-    patentdata_count = 0
-    for node in G.Nodes():
-        citepatent_count += 1
-        patid = node.GetId()
-        nodelist.append(patid)
-        #print citepatent_count, patentdata_count, patid  #XXX
-        if not patdata.has_key(patid):
-            #print 'NA for ', patid #XXX
-            patdata[patid] = len(colnames)*["NA"]
-        else:
-            patentdata_count += 1
-    sys.stdout.write("There are %d unique cited/citing patents of which %d (%f%%) have patent data\n" % (citepatent_count, patentdata_count, 100*float(patentdata_count)/citepatent_count))
+    if get_subgraph:
+        # get subgraph induced by nodes that have patent data 
+        nodeVec = snap.TIntV() # nodelist in TIntV format for use in SNAP
+        for node in G.Nodes():
+            patid = node.GetId()
+            if patdata.has_key(patid):
+                nodelist.append(patid)
+                nodeVec.Add(patid)
+        G = snap.GetSubGraph(G, nodeVec)
+        print 'Subgraph with only nodes with patent attribute data:'
+        snap.PrintInfo(G)
+    else:
+        # keep all the graph and just put NA for all data attributes
+        citepatent_count = 0
+        patentdata_count = 0
+        for node in G.Nodes():
+            citepatent_count += 1
+            patid = node.GetId()
+            nodelist.append(patid)
+            #print citepatent_count, patentdata_count, patid  #XXX
+            if not patdata.has_key(patid):
+                #print 'NA for ', patid #XXX
+                patdata[patid] = len(colnames)*["NA"]
+            else:
+                patentdata_count += 1
+        sys.stdout.write("There are %d unique cited/citing patents of which %d (%f%%) have patent data\n" % (citepatent_count, patentdata_count, 100*float(patentdata_count)/citepatent_count))
 
 
     graph_filename = outputdir + os.path.sep + "patent_citations" + os.path.extsep + "txt"
