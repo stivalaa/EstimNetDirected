@@ -190,8 +190,9 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
         for i in nodelist:
             for attr in contattrs:
                 if attr == 'grantdate' or attr == 'filing_date':
-                    val = datetime.strptime(patdata[i][colnames[attr]],
-                                             '%Y-%m-%d').toordinal()
+                    if patdata[i][colnames[attr]] != "NA":
+                        val = datetime.strptime(patdata[i][colnames[attr]],
+                                               '%Y-%m-%d').toordinal()
                 else:
                     val = str_to_float(patdata[i][colnames[attr]])
                 f.write(str(val))
