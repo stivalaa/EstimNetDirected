@@ -55,8 +55,8 @@ NB this uses at least 5 GB memory and tmp directory space
 
 import sys,os,time
 import getopt
-import random
 import math
+import datetime
 
 import snap
 
@@ -190,7 +190,7 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
         for i in nodelist:
             for attr in contattrs:
                 if attr == 'grantdate' or attr == 'filing_date':
-                    val = datetime.striptime(patdata[i][colnames[attr]],
+                    val = datetime.strptime(patdata[i][colnames[attr]],
                                              '%Y-%m-%d').toordinal()
                 else:
                     val = str_to_float(patdata[i][colnames[attr]])
