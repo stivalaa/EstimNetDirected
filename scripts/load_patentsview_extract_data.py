@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# load_patentsview_extract_data.py -  load NBER patent citation data
+# load_patentsview_extract_data.py -  load extracted PatentsView data
 #
 #
 # File:    load_patentsview_extract_data.py
@@ -109,6 +109,10 @@ def load_patentsview_extract_data(indirname):
     zf = zipfile.ZipFile(patentpath)
     csviter = csv.reader(zf.open("patent_utility_patentsview.csv"))
     #  get header line patent_id,grantdate,num_claims,filing_country,filing_date,techcategory_nber,techsubcategory_nber
+    # e.g.:
+    # 10000000,2018-06-19,20,US,2015-03-10,,
+    # 3930277,1976-01-06,7,US,1974-08-21,6,69
+    # 9999999,2018-06-19,2,US,2015-12-07,,
     # but patent_id column 0 used as dict key so skip it
     colnames = csviter.next()[1:] # skip patent_id column 0
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
@@ -118,3 +122,5 @@ def load_patentsview_extract_data(indirname):
     patentdata = [ (x[0], x[1:]) for x in  csviter]
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata if x[0].isdigit()])
     return (G, patentdict, patent_colnames)
+
+
