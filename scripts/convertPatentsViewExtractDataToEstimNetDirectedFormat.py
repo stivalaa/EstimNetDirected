@@ -49,14 +49,14 @@ http://snap.stanford.edu/snappy/index.html
 
 Used version 4.1.0.
 
-NB this uses at least 5 GB memory and tmp directory space
+NB this uses around 7 GB memory and 5 GB tmp directory space
 
 """
 
 import sys,os,time
 import getopt
 import math
-import datetime
+import datetime import datetime 
 
 import snap
 
