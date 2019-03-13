@@ -60,7 +60,7 @@ from datetime import datetime
 
 import snap
 
-from load_patentsview_extract_data import load_patentsview_extract_data
+from load_patentsview_extract_data import load_patentsview_extract_data,patch_years
 from snowballSample import write_graph_file
 
 
@@ -329,6 +329,7 @@ def main():
                 patentdata_count += 1
         sys.stdout.write("There are %d unique cited/citing patents of which %d (%f%%) have patent data\n" % (citepatent_count, patentdata_count, 100*float(patentdata_count)/citepatent_count))
 
+    patch_years(data_dir, patdata, colnames) # fix up some wrong date data
 
     graph_filename = outputdir + os.path.sep + "patent_citations" + os.path.extsep + "txt"
     write_graph_file(graph_filename, G, nodelist)

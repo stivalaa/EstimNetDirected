@@ -17,6 +17,9 @@ Input files (in specified directory):
     patent_utility_patentsview.zip                   - data on granted US utility patents
     uspatentcitation_examinercites_patentsview.zip   - examiner citations
     uspatentcitation_utility_patentsview.zip         - US utility patent citations
+    patentsview_patch.zip: 
+             patent_utility_patchednberyear.csv      - corrected years for some patents
+             own_cat_subcat_patentview.csv           - recoding of category and subcategory
 
 For PatentsView see
 
@@ -124,3 +127,33 @@ def load_patentsview_extract_data(indirname):
     return (G, patentdict, patent_colnames)
 
 
+
+def patch_years(indirname, patentdict, patent_colnames):
+    """Patch the years on some entries with bad dates
+
+    
+    Parameters:
+        indirname - path name of directory to load from
+        patentdict - dictionary mapping patent ID (int) to list
+                  of attributes (all strings) [IN/OUT]
+        patent_colnames - dict mapping attribute name to 
+                  index of the patent list so e.g. we can look
+                  up filing_date of userid 123 with 
+                   patent[123][patent_colnames['filing_date']]
+
+    Return value:
+        None. Updates patentdict.
+    """
+    patchzip = os.path.join(indirname, "patentsview_patch.zip")
+    zf = zipfile.ZipFile(patchzip)
+    csviter = csv.reader(zf.open("patent_utility_patchednberyear.csv"))
+    #  skip header line patent_id,appyear,gyear
+    # Then data in each row is e.g.:
+    # 3933359,1974,1976
+    csviter.next() # skip header
+    for (patid, appyear, gyear) in csviter:
+        patid = int(patid)
+        if patentdict.has_key(patid):
+            print 'XXX patch_years',patid,appyear,gyear
+            patentdict[patid][patent_colnames['filing_date']] = appyear + patentdict[patid][patent_colnames['filing_date']][4:]
+            patentdict[patid][patent_colnames['grantdate']] = gyear + patentdict[patid][patent_colnames['grantdate']][4:]
