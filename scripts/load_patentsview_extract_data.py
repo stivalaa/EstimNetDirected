@@ -154,6 +154,8 @@ def patch_years(indirname, patentdict, patent_colnames):
     for (patid, appyear, gyear) in csviter:
         patid = int(patid)
         if patentdict.has_key(patid):
-            print 'XXX patch_years',patid,appyear,gyear
+            print 'XXX patch_years',patid,appyear,gyear,
             patentdict[patid][patent_colnames['filing_date']] = appyear + patentdict[patid][patent_colnames['filing_date']][4:]
             patentdict[patid][patent_colnames['grantdate']] = gyear + patentdict[patid][patent_colnames['grantdate']][4:]
+            print patentdict[patid][patent_colnames['filing_date']], #XXX
+            print patentdict[patid][patent_colnames['grantdate']] #XXX
