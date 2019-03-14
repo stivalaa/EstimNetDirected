@@ -12,14 +12,14 @@
 """Function to load the patent PatentsView data query extract
 
 Input files (in specified directory):
-    assignee_patentsview.zip                         - data on assignees
-    inventor_patentsview.zip                         - data on inventorss
-    patent_utility_patentsview.zip                   - data on granted US utility patents
-    uspatentcitation_examinercites_patentsview.zip   - examiner citations
-    uspatentcitation_utility_patentsview.zip         - US utility patent citations
+    assignee_patentsview.zip                       - data on assignees
+    inventor_patentsview.zip                       - data on inventorss
+    patent_utility_patentsview.zip                 - data on granted US utility patents
+    uspatentcitation_examinercites_patentsview.zip - examiner citations
+    uspatentcitation_utility_patentsview.zip       - US utility patent citations
     patentsview_patch.zip: 
-             patent_utility_patchednberyear.csv      - corrected years for some patents
-             own_cat_subcat_patentview.csv           - recoding of category and subcategory
+     patent_utility_patchednberyear.csv      - corrected years for some patents
+     own_cat_subcat_patentview.csv           - recoding of category and subcategory
 
 For PatentsView see
 
@@ -118,12 +118,36 @@ def load_patentsview_extract_data(indirname):
     # 9999999,2018-06-19,2,US,2015-12-07,,
     # but patent_id column 0 used as dict key so skip it
     colnames = csviter.next()[1:] # skip patent_id column 0
+    # append columns owncat and ownsubcat for data to be added later
+    colnames += ['owncat','ownsubcat']
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
     # remove the patents that have an id that is not an int (starts with a 
     # letter) as these are not utility patents (design patents etc.)
-    patentdata = [ (x[0], x[1:]) for x in  csviter]
+    patentdata = [ (x[0], x[1:] + ['NA', 'NA']) for x in  csviter] # append NAs for owncat,ownsubcat to have values added later
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata if x[0].isdigit()])
+
+    # get the recoded technology category and subcategory data
+    # from patentsview_patch.zip: 
+    #    own_cat_subcat_patentview.csv
+    patentpatchpath = os.path.join(indirname, "patentsview_patch.zip")
+    zf = zipfile.ZipFile(patentpatchpath)
+    csviter = csv.reader(zf.open("own_cat_subcat_patentview.csv"))
+    # get header line
+    #patent_id,mainclass_id_current,subclass_id_current,sequence,mainclass_id,subclass_id,owncat,ownsubcat
+    # e.g.
+    #3930271,2,2/161.4,0,2,2/161A,6,63
+    # (but no documentation for most of these - just using owncat,ownsubcat)
+    owncolnames = csviter.next()
+    assert owncolnames[0] == 'patent_id'
+    assert owncolnames[6] == 'owncat'
+    assert owncolnames[7] == 'ownsubcat'
+    for (patent_id,mainclass_id_current,subclass_id_current,sequence,mainclass_id,subclass_id,owncat,ownsubcat) in csviter:
+        patid = int(patent_id)
+        if patentdict.has_key(patid):
+            patentdict[patid][patent_colnames['owncat']] = owncat
+            patentdict[patid][patent_colnames['ownsubcat']] = ownsubcat
+
     return (G, patentdict, patent_colnames)
 
 
@@ -159,3 +183,6 @@ def patch_years(indirname, patentdict, patent_colnames):
             patentdict[patid][patent_colnames['grantdate']] = gyear + patentdict[patid][patent_colnames['grantdate']][4:]
             print patentdict[patid][patent_colnames['filing_date']], #XXX
             print patentdict[patid][patent_colnames['grantdate']] #XXX
+
+
+

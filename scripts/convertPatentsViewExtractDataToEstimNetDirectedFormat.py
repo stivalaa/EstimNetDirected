@@ -138,7 +138,8 @@ def write_attributes_file_categorical(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    catattrs = ['filing_country', "techcategory_nber", "techsubcategory_nber"]
+    catattrs = ['filing_country', "techcategory_nber", "techsubcategory_nber",
+                "owncat", "ownsubcat"]
     catattr_names = catattrs
     with open(filename, 'w') as f:
         f.write(' '.join(catattr_names) + '\n')
