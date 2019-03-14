@@ -139,7 +139,8 @@ def write_attributes_file_categorical(filename, G, nodelist, patdata, colnames):
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
     catattrs = ['filing_country', "techcategory_nber", "techsubcategory_nber",
-                "owncat", "ownsubcat"]
+                "owncat", "ownsubcat",
+                'inventor_city','inventor_state','inventor_country']
     catattr_names = catattrs
     with open(filename, 'w') as f:
         f.write(' '.join(catattr_names) + '\n')
@@ -184,7 +185,8 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
 
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    contattrs = ['grantdate','num_claims','filing_date']
+    contattrs = ['grantdate','num_claims','filing_date',
+                 'inventor_lat','inventor_long']
     contattr_names = contattrs
     with open(filename, 'w') as f:
         f.write(' '.join(contattr_names) + '\n')
@@ -289,19 +291,13 @@ def main():
     # GetSubGraph() so we can used these to index the patdata
     # dictoinary in the subgraphs
 
-    # columns are:
-    # patent_id,grantdate,num_claims,filing_country,filing_date,techcategory_nber,techsubcategory_nber
-    # e.g.:
-    # 10000000,2018-06-19,20,US,2015-03-10,,
-    # 3930277,1976-01-06,7,US,1974-08-21,6,69
-    # 9999999,2018-06-19,2,US,2015-12-07,,
-
-    id_countries = [(k, p[colnames['filing_country']]) for (k,p) in patdata.iteritems()]
-    id_countries_int = convert_to_int_cat([x[1] for x in id_countries])
-    for i in xrange(len(id_countries)):
-        patdata[id_countries[i][0]][colnames['filing_country']] = id_countries_int[i]
-    for attr in ['filing_country']:
-        sys.stdout.write('There are %d NA for %s\n' % ([p[colnames[attr]] for p in patdata.itervalues()].count('NA'), attr))
+    # convert categorical attribute values to integers like factor in R
+    for cat_colname in ['filing_country','inventor_city','inventor_state','inventor_country']:
+        catvalues = [(k, p[colnames[cat_colname]]) for (k,p) in patdata.iteritems()]
+        catvalues_int = convert_to_int_cat([x[1] for x in catvalues])
+        for i in xrange(len(catvalues)):
+            patdata[catvalues[i][0]][colnames[cat_colname]] = catvalues_int[i]
+        sys.stdout.write('There are %d NA for %s\n' % ([p[colnames[cat_colname]] for p in patdata.itervalues()].count('NA'), cat_colname))
 
 
     nodelist = list()  # keep the iteration below in list so we always use same order in future

@@ -119,12 +119,15 @@ def load_patentsview_extract_data(indirname):
     # but patent_id column 0 used as dict key so skip it
     colnames = csviter.next()[1:] # skip patent_id column 0
     # append columns owncat and ownsubcat for data to be added later
-    colnames += ['owncat','ownsubcat']
+    newcolnames = ['owncat','ownsubcat']
+    # append inventor data columns names for data to be added later
+    newcolnames += ['inventor_id','inventor_city','inventor_state','inventor_country','inventor_lat','inventor_long']
+    colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
     # remove the patents that have an id that is not an int (starts with a 
     # letter) as these are not utility patents (design patents etc.)
-    patentdata = [ (x[0], x[1:] + ['NA', 'NA']) for x in  csviter] # append NAs for owncat,ownsubcat to have values added later
+    patentdata = [ (x[0], x[1:] + len(newcolnames)*['NA']) for x in  csviter] # append NAs for new columns to have values added later
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata if x[0].isdigit()])
 
     # get the recoded technology category and subcategory data
@@ -147,6 +150,41 @@ def load_patentsview_extract_data(indirname):
         if patentdict.has_key(patid):
             patentdict[patid][patent_colnames['owncat']] = owncat
             patentdict[patid][patent_colnames['ownsubcat']] = ownsubcat
+    
+    # Get the inventor data:
+    #Archive:  inventor_patentsview.zip
+    #  inflating: inventor_patentsview.csv
+    #patent_id,inventor_id,inventor_sequence,location_id,city,state,country,latlong
+    #10000000,10000000-1,0,mwfp6gfqjew8,Manhattan Beach,CA,US,33.8847|-118.41
+    inventorpath = os.path.join(indirname, "inventor_patentsview.zip")
+    zf = zipfile.ZipFile(inventorpath)
+    csviter = csv.reader(zf.open("inventor_patentsview.csv"))
+    inventorcolnames = csviter.next()
+    assert inventorcolnames[0] == 'patent_id'
+    assert inventorcolnames[1] == 'inventor_id'
+    assert inventorcolnames[4] == 'city'
+    assert inventorcolnames[5] == 'state'
+    assert inventorcolnames[6] == 'country'
+    assert inventorcolnames[7] == 'latlong'
+    for (patent_id,inventor_id,inventor_sequence,location_id,city,state,country,latlong) in csviter:
+        if not patent_id[0].isdigit():
+            continue  # only want utility patents, which id are all digits
+        patid = int(patent_id)
+        if patentdict.has_key(patid):
+            # only use the inventor id with -1 on the end meaning first inventor
+            if inventor_id[-2:] == '-1':
+                inentor_id = inventor_id[:-2] # and remove the -1 off the end
+                patentdict[patid][patent_colnames['inventor_id']] = inventor_id
+                patentdict[patid][patent_colnames['inventor_city']] = city
+                patentdict[patid][patent_colnames['inventor_state']] = state
+                patentdict[patid][patent_colnames['inventor_country']] = country
+                try:
+                    (lati,longi) = latlong.split('|')
+                except ValueError:
+                    (lati,longi) = ('NA','NA')
+                patentdict[patid][patent_colnames['inventor_lat']] = lati
+                patentdict[patid][patent_colnames['inventor_long']] = longi
+            
 
     return (G, patentdict, patent_colnames)
 
