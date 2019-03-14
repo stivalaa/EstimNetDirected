@@ -49,7 +49,7 @@ http://snap.stanford.edu/snappy/index.html
 
 Used version 4.1.0.
 
-NB this uses around 7 GB memory and 5 GB tmp directory space
+NB this uses around 9 GB memory and 5 GB tmp directory space
 
 """
 
@@ -140,7 +140,8 @@ def write_attributes_file_categorical(filename, G, nodelist, patdata, colnames):
     assert(len(patdata) >= G.GetNodes())
     catattrs = ['filing_country', "techcategory_nber", "techsubcategory_nber",
                 "owncat", "ownsubcat",
-                'inventor_city','inventor_state','inventor_country']
+                # these are not clean, too many problems: 'inventor_city','inventor_state',
+                'inventor_country']
     catattr_names = catattrs
     with open(filename, 'w') as f:
         f.write(' '.join(catattr_names) + '\n')
