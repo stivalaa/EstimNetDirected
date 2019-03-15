@@ -96,8 +96,7 @@ def load_epo_patent_data(indirname):
         fout.close()
         G = snap.LoadEdgeList(snap.PNGraph, filename, 0, 1, ',')
     finally:
-        pass
-        #XXX cleanup_tmpdir(tmpdir)
+        cleanup_tmpdir(tmpdir)
 
     patentpath = os.path.join(indirname, "Archive.zip")
     zf = zipfile.ZipFile(patentpath)
