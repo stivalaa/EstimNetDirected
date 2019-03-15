@@ -142,6 +142,9 @@ def write_attributes_file_categorical(filename, G, nodelist, patdata, colnames):
                 "owncat", "ownsubcat",
                 # these are not clean, too many problems: 'inventor_city','inventor_state',
                 'inventor_country']
+    # FIXME even inventor_country is not clean, contains '', 'NULL', spaces
+    # lowercase, mixed case, etc. and not sure all country codes are valid
+    # even otherwise. Need to clean data and check or not use it.
     catattr_names = catattrs
     with open(filename, 'w') as f:
         f.write(' '.join(catattr_names) + '\n')
