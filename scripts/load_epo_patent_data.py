@@ -11,6 +11,7 @@
 
 """Function to load the EPO patent citation data extract from USI Informatics
 
+For SNAP see
 
 http://snap.stanford.edu/snappy/index.html
 
