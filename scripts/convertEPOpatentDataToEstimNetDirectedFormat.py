@@ -29,7 +29,7 @@ Usage:
 
  Output files in cwd (WARNING overwritten):
      patent_citations.txt
-     patent_binattr.txt
+     patent_binattr.txt  [Not used]
      patent_catattr.txt
      patent_contattr.txt
      nodeid.txt
@@ -79,7 +79,7 @@ def convert_to_int_cat(attrs):
     # build dict mapping string to integer for unique strings in attrs list
     fdict = dict([(y,x) for (x,y) in enumerate(set(attrs))])
     print(fdict) # output for possible future reversal (TODO write to file)
-    return ['NA' if x == '' else fdict[x] for x in attrs]
+    return ['NA' if (x == '' or x == 'XX') else fdict[x] for x in attrs]
 
 
 def str_to_float(sval):
@@ -269,7 +269,7 @@ def main():
 
 
     # convert categorical attribute values to integers like factor in R
-    for cat_colname in ['Language','Country','Applicant','PrimaryClass']:
+    for cat_colname in ['Language','Country','PrimaryClass']:
         catvalues = [(k, p[colnames[cat_colname]]) for (k,p) in patdata.iteritems()]
         catvalues_int = convert_to_int_cat([x[1] for x in catvalues])
         for i in xrange(len(catvalues)):
@@ -309,11 +309,9 @@ def main():
 
     graph_filename = outputdir + os.path.sep + "patent_citations" + os.path.extsep + "txt"
     write_graph_file(graph_filename, G, nodelist)
-    attributes_binary_filename = outputdir + os.path.sep + "patent_binattr" + os.path.extsep + "txt"
     attributes_categorical_filename = outputdir + os.path.sep + "patent_catattr"  + os.path.extsep + "txt"
     attributes_continuous_filename = outputdir + os.path.sep + "patent_contattr" + os.path.extsep + "txt"
 
-    write_attributes_file_binary(attributes_binary_filename, G, nodelist, patdata, colnames)
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
 
