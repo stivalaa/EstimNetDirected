@@ -109,8 +109,16 @@ def load_epo_patent_data(indirname):
     # but PatID column 0 used as dict key so skip it
     # and we remove the leading 'EP' on each patent to get (still unique) integer ids
     colnames = csviter.next()[1:] # skip PatID column 0
+    # append new column nanmes for data added later
+    newcolnames = ['PrimaryClass']
+    colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
-    patentdata = [ (x[0][2:], x[1:]) for x in  csviter] 
+    patentdata = [ (x[0][2:], x[1:] + len(newcolnames)*['NA']) for x in  csviter] 
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata])
+
+    # Now add the new column PrimaryClass which is just the first class
+    # in the comma-delimited list of classes
+    for patid in patentdict.iterkeys():
+        patentdict[patid][patent_colnames['PrimaryClass']] =  patentdict[patid][patent_colnames['Classes']].split(',')[0]
     return (G, patentdict, patent_colnames)
