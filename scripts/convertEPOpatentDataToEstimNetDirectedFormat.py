@@ -170,13 +170,21 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    contattrs = ['Year']
+    contattrs = ['Year',          # in data
+                 'YearBase1978' ] # constructed here
     contattr_names = contattrs
     with open(filename, 'w') as f:
         f.write(' '.join(contattr_names) + '\n')
         for i in nodelist:
             for attr in contattrs:
-                val = str_to_float(patdata[i][colnames[attr]])
+                if attr == 'YearBase1978':
+                    # year - 1978
+                    # for sender or receiver year effects
+                    val = str_to_float(patdata[i][colnames["Year"]])
+                    if val != "NA":
+                        val = val - 1978 if val >= 1978 else "NA"
+                else:
+                    val = str_to_float(patdata[i][colnames[attr]])
                 f.write(str(val))
                 if attr == contattrs[-1]:
                     f.write('\n')
