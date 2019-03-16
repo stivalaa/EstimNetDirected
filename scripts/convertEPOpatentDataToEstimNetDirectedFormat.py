@@ -254,7 +254,8 @@ def main():
     snap.PrintInfo(G)
 
     # Remove loops (self-edges).
-    # There is actually for some reason one loop (patent id 5489070).
+    # There is actually for some reason 92 nodes with self-loops
+    # e.g. EP0021443
     # G is a PNGraph so multiple edges not allowed in this type anyway.
     snap.DelSelfEdges(G)
     snap.PrintInfo(G)
