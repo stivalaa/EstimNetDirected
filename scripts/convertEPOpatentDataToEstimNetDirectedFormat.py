@@ -279,7 +279,7 @@ def main():
 
 
     # convert categorical attribute values to integers like factor in R
-    for cat_colname in ['Language','Country']
+    for cat_colname in ['Language','Country']:
         catvalues = [(k, p[colnames[cat_colname]]) for (k,p) in patdata.iteritems()]
         catvalues_int = convert_to_int_cat([x[1] for x in catvalues])
         for i in xrange(len(catvalues)):
