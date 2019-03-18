@@ -334,4 +334,10 @@ def main():
 if __name__ == "__main__":
     main()
 
-
+# convert set(['d','b']) from possible elements of set(['a','b','d'])
+# to list of integer indices
+# which were buit with
+#  a = ['a','d','b']
+#  fdict = dict([(y,x) for (x,y) in enumerate(set(a))])
+# (as used in convert_to_int_cat):
+# ','.join( [str(fdict[x]) for x in set(['d','b'])] )
