@@ -170,7 +170,7 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    contattrs = ['Year',          # in data
+    contattrs = ['Year',          # in data: application year
                  'YearBase1978' ] # constructed here
     contattr_names = contattrs
     with open(filename, 'w') as f:
