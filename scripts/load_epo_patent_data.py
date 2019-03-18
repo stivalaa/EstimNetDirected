@@ -87,6 +87,7 @@ def load_epo_patent_data(indirname):
         csviter = csv.reader(zf.open("valid-ep-citations.csv"))
         fout = open(filename, 'w')
         # skip header line CiteeID,CitedID
+        # it really means col 1 is citing patent, col 2 is cited patent
         (a,b) = csviter.next()
         assert a == "CiteeID"
         assert b == "CitedID"
@@ -110,15 +111,18 @@ def load_epo_patent_data(indirname):
     # and we remove the leading 'EP' on each patent to get (still unique) integer ids
     colnames = csviter.next()[1:] # skip PatID column 0
     # append new column nanmes for data added later
-    newcolnames = ['PrimaryClass']
+    newcolnames = ['NumClasses']
     colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
     patentdata = [ (x[0][2:], x[1:] + len(newcolnames)*['NA']) for x in  csviter] 
     patentdict = dict([(int(x[0]), x[1]) for x in patentdata])
 
-    # Now add the new column PrimaryClass which is just the first class
-    # in the comma-delimited list of classes
+    # Now add the new column NumClasses which is just length of
+    # the comma-delimited list of classes
+    # TODO need a new set type so we can use it to list all
+    # classes as an attribute of each patent and then do
+    # Jaccard coefficient in estimation code
     for patid in patentdict.iterkeys():
-        patentdict[patid][patent_colnames['PrimaryClass']] =  patentdict[patid][patent_colnames['Classes']].split(',')[0]
+        patentdict[patid][patent_colnames['NumClasses']] =  len(patentdict[patid][patent_colnames['Classes']].split(','))
     return (G, patentdict, patent_colnames)

@@ -130,7 +130,7 @@ def write_attributes_file_categorical(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    catattrs = ['Language','Country','PrimaryClass']
+    catattrs = ['Language','Country']
     catattr_names = catattrs
     with open(filename, 'w') as f:
         f.write(' '.join(catattr_names) + '\n')
@@ -170,7 +170,8 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    contattrs = ['Year',          # in data: application year
+    contattrs = ['NumClasses',    # number of technology classes
+                 'Year',          # in data: application year
                  'YearBase1978' ] # constructed here
     contattr_names = contattrs
     with open(filename, 'w') as f:
@@ -278,7 +279,7 @@ def main():
 
 
     # convert categorical attribute values to integers like factor in R
-    for cat_colname in ['Language','Country','PrimaryClass']:
+    for cat_colname in ['Language','Country']
         catvalues = [(k, p[colnames[cat_colname]]) for (k,p) in patdata.iteritems()]
         catvalues_int = convert_to_int_cat([x[1] for x in catvalues])
         for i in xrange(len(catvalues)):
