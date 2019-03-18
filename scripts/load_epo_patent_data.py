@@ -103,7 +103,7 @@ def load_epo_patent_data(indirname):
     csviter = csv.reader(zf.open("patents_ep_selfcontained.csv"), delimiter='|')
     #  get header line 
     #    PatID|Year|Language|Country|Applicant|Classes
-    # Note separator is ';' not ',' as ',' is used as delimiter of list of classes
+    # Note separator is '|' not ',' as ',' is used as delimiter of list of classes
     # e.g.
     # EP0000001|1978|DE|LU|FISW GMBH|F25,B27,G06,F28,B23,G11,H04
     # but PatID column 0 used as dict key so skip it
