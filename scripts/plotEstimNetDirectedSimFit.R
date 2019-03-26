@@ -402,7 +402,7 @@ plotlist <- c(plotlist, list(p))
 ### Transitivity (global clustering coefficient and avg. local clustering coef.)
 ###
 
-cctypes <- c('global', 'average local')
+cctypes <- c('average local', 'global') # must be in alphabetical order!
 system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
 system.time(cc_obs <- transitivity(g_obs, type='global'))
 cat('obs global cc: ', cc_obs, '\n')
