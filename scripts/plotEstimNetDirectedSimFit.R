@@ -162,6 +162,9 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     ## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
     p <- p + ptheme
     p <- p + xlab(paste(mode, '-degree', sep='')) + ylab('fraction of nodes')
+    if (maxdeg > 200) {
+        p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 200))
+    }
     end = Sys.time()
     cat(mode, "-degree plotting took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
