@@ -24,3 +24,5 @@ Byshkin, M., Stivala, A., Mira, A., Robins, G., & Lomi, A. (2018). [Fast Maximum
 
 Byshkin, M., Stivala, A., Mira, A., Krause, R., Robins, G., & Lomi, A. (2016). Auxiliary parameter MCMC for exponential random graph models. *Journal of Statistical Physics*, 165(4), 740-754. https://doi.org/10.1007/s10955-016-1650-5
 
+Stivala, A., Robins, G., & Lomi, A. (2019). Exponential random graph model parameter estimation for very large directed networks. arXiv preprint arXiv:1904.08063. https://arxiv.org/abs/1904.08063
+
