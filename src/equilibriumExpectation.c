@@ -15,6 +15,12 @@
  * and Algoritm EE accumulates the change dzA values, which are zeroed
  * every iteration in Algorithm S (see reference below).
  *
+ * Reference for ths implementation is
+ *
+ *   Stivala, A., Robins, G., & Lomi, A. (2019). Exponential random graph
+ *   model parameter estimation for very large directed networks.
+ *   arXiv preprint arXiv:1904.08063. https://arxiv.org/abs/1904.08063
+ *
  * Reference for the algorithm (originally for undirected networks) is
  *
  *   Byshkin M, Stivala A, Mira A, Robins G, Lomi A 2018 "Fast

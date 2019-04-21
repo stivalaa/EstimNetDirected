@@ -1,6 +1,13 @@
 Directory for C implementation of EE algorithm for directed networks.
 
-Reference for original algorithm (for undirected networks) is:
+Reference:
+
+Stivala, A., Robins, G., & Lomi, A. (2019). Exponential random graph
+model parameter estimation for very large directed networks.
+arXiv preprint arXiv:1904.08063. https://arxiv.org/abs/1904.08063
+
+
+Reference for algorithm (originally for undirected networks) is:
 
 Byshkin M, Stivala A, Mira A, Robins G, Lomi A 2018 "Fast maximum
 likelihood estimation via equilibrium expectation for large network
