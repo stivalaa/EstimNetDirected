@@ -106,10 +106,12 @@ def main():
     f = open('yeast_binattr.txt', 'w')
     f.write('self\n')
     f.write('\n'.join([('1' if x else '0') for x in g.vs['self']]))
+    f.write('\n')
     f.close()
 
     f = open('yeast_idmap.txt', 'w')
     f.write('\n'.join(y +'\t'+ str(x) for (x,y) in enumerate(g.vs['name'])))
+    f.write('\n')
     f.close()
 
 if __name__ == "__main__":
