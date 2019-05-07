@@ -1435,6 +1435,8 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
   uint_t euclideanIndex        = 0;
   int    firstGeoIndex         = -1; /* -1 until set to first index */
   int    firstEuclideanIndex   = -1;
+  char  *tmpGeoName, *tmpEuclideanName, *tmpGeoParamName, *tmpEuclideanParamName;
+  dyadic_change_stats_func_t *tmpGeoFunc, *tmpEuclideanFunc;
   
   config->dyadic_indices = safe_malloc(config->num_dyadic_change_stats_funcs *
                                      sizeof(uint_t));
@@ -1523,7 +1525,7 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
               break;
           }
           if (firstGeoIndex < 0) {
-            firstGeoIndex = geoIndex;
+            firstGeoIndex = j;
           }
           geoIndex++;
           break;
@@ -1546,7 +1548,7 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
               break;
           }
           if (firstEuclideanIndex < 0) {
-            firstEuclideanIndex = euclideanIndex;
+            firstEuclideanIndex = j;
           }
           euclideanIndex++;
           break;
@@ -1571,19 +1573,33 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
     
     if (numGeoAttr > 0 && numEuclideanAttr > 0) {
       /* [log]GeoDistance and EuclideanDistance */
+      assert(firstGeoIndex >= 0);
+      assert(firstEuclideanIndex >= 0);
+      assert(firstGeoIndex != firstEuclideanIndex);
+      assert(get_dyadic_param_type(config->dyadic_param_names[firstGeoIndex]) == DYADIC_TYPE_GEODISTANCE);
+      assert(get_dyadic_param_type(config->dyadic_param_names[firstEuclideanIndex]) == DYADIC_TYPE_EUCLIDEANDISTANCE);
       assert(config->num_dyadic_change_stats_funcs == 5);
-      config->dyadic_names[0] = config->dyadic_names[firstGeoIndex];
-      config->dyadic_change_stats_funcs[0] =
-                              config->dyadic_change_stats_funcs[firstGeoIndex];
-      config->dyadic_names[1] = config->dyadic_names[firstEuclideanIndex];
-      config->dyadic_change_stats_funcs[1] =
-                        config->dyadic_change_stats_funcs[firstEuclideanIndex];
+      tmpGeoName = safe_strdup(config->dyadic_names[firstGeoIndex]);
+      tmpGeoParamName = safe_strdup(config->dyadic_param_names[firstGeoIndex]);
+      tmpGeoFunc = config->dyadic_change_stats_funcs[firstGeoIndex];
+      tmpEuclideanName = safe_strdup(config->dyadic_names[firstEuclideanIndex]);
+      tmpEuclideanParamName = safe_strdup(config->dyadic_param_names[firstEuclideanIndex]);
+      tmpEuclideanFunc = config->dyadic_change_stats_funcs[firstEuclideanIndex];
+      config->dyadic_names[0] = tmpGeoName;
+      config->dyadic_param_names[0] = tmpGeoParamName;
+      config->dyadic_change_stats_funcs[0] = tmpGeoFunc;
+      config->dyadic_types[0] = DYADIC_TYPE_GEODISTANCE;
+      config->dyadic_names[1] = tmpEuclideanName;
+      config->dyadic_param_names[1] = tmpEuclideanParamName;
+      config->dyadic_change_stats_funcs[1] = tmpEuclideanFunc;
+      config->dyadic_types[1] = DYADIC_TYPE_EUCLIDEANDISTANCE;
       config->num_dyadic_change_stats_funcs = 2;      
       free(config->dyadic_names[2]);
       free(config->dyadic_names[3]);
       free(config->dyadic_names[4]);
     } else if (numGeoAttr > 0) {
       /* only [log]GeoDistance */
+      assert(firstGeoIndex >= 0);
       assert(config->num_dyadic_change_stats_funcs == 2);
       assert(get_dyadic_param_type(config->dyadic_param_names[0])
              == DYADIC_TYPE_GEODISTANCE &&
@@ -1593,6 +1609,7 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
       free(config->dyadic_names[1]);
     } else if (numEuclideanAttr > 0) {
       /* only EuclideanDistance */
+      assert(firstEuclideanIndex >= 0);
       assert(config->num_dyadic_change_stats_funcs == 3);
       assert(get_dyadic_param_type(config->dyadic_param_names[0])
              == DYADIC_TYPE_EUCLIDEANDISTANCE &&
