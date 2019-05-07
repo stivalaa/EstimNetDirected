@@ -595,6 +595,34 @@ double changeLogGeoDistance(const digraph_t *g, uint_t i, uint_t j)
 }
 
 
+/* 
+ * Change statistic for Euclidean distance between two nodes,
+ * using for each node the triple of continuous attributes labelled 
+ * as being x, y, and z coordinates.
+ */
+double changeEuclideanDistance(const digraph_t *g, uint_t i, uint_t j)
+{
+  double dist, xi, xj, yi, yj, zi, zj;
+
+  xi  = g->contattr[g->x_index][i];
+  xj  = g->contattr[g->x_index][j];
+  yi  = g->contattr[g->y_index][i];
+  yj  = g->contattr[g->y_index][j];
+  zi  = g->contattr[g->z_index][i];
+  zj  = g->contattr[g->z_index][j];
+  
+
+  if (isnan(xi) || isnan(yi) || isnan(zi) ||
+      isnan(xj) || isnan(yj) || isnan(zj)) {
+    return 0;
+  }
+  else {
+    dist = euclidean_distance(xi, yi, zi, xj, yj, zj);
+    return dist;
+  }
+}
+
+
 /******************Attribute interaction (categorical) ***********************/
 
 /* 

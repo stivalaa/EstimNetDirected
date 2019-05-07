@@ -136,6 +136,9 @@ double geo_distance(double lat1, double lon1, double lat2, double lon2);
 
 
 /* miscellaneous */
+
+double euclidean_distance(double x1, double y1, double z1,
+                          double x2, double y2, double z2);
   
 int iDivUp(int a, int b);
 int get_num_cores(void);
