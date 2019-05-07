@@ -34,6 +34,32 @@
 #define DEFAULT_LEARNING_RATE 0.001   /* default value of learningRate */
 #define DEFAULT_MIN_THETA     0.01    /* default value of minTheta */
 
+/* config parameter types */
+typedef enum param_type_e {
+  PARAM_TYPE_INVALID,  /* invalid type, used as error return value */
+  PARAM_TYPE_DOUBLE,   /* numeric (floating point) */
+  PARAM_TYPE_UINT,     /* numeric (unsigned integer) */
+  PARAM_TYPE_BOOL,     /* Boolean ("True" or "False" in config, bool in struct*/
+  PARAM_TYPE_STRING,   /* string (may be quoted, not necessarily) */
+  PARAM_TYPE_SET       /* comma delimited set of other params enclosed in {} */
+} param_type_e;
+
+/* ERGM attribute parameter type */
+typedef enum attr_type_e {
+  ATTR_TYPE_INVALID,        /* invalid type, used as error return value */
+  ATTR_TYPE_BINARY,         /* binary attribute type (0/1)*/
+  ATTR_TYPE_CATEGORICAL,    /* categorical attribute type (uint) */
+  ATTR_TYPE_CONTINUOUS      /* continuous attribute type (double) */
+} attr_type_e;
+
+/* ERGM dyadic covariate parameter type */
+typedef enum dyadic_type_e {
+  DYADIC_TYPE_INVALID,       /* invalid type, used as error return value */
+  DYADIC_TYPE_GEODISTANCE,   /* continuous geographic distance from lat/long */
+  DYADIC_TYPE_EUCLIDEANDISTANCE /* continuous Euclidean distance from x/y/z */
+} dyadic_type_e;
+
+
 
 typedef struct config_s {
   /*
@@ -79,6 +105,7 @@ typedef struct config_s {
   dyadic_change_stats_func_t **dyadic_change_stats_funcs;/* dyadic change stats*/
   char                       **dyadic_names; /* names corresponding to above */
   uint_t *dyadic_indices;  /* idx into digraph binattr/cattr/contattr for above */
+  dyadic_type_e *dyadic_types; /* dyadic paramter type corresponding to above */
   const char **dyadic_param_names; /* names corresponding to above two */
   uint_t num_attr_interaction_change_stats_funcs;  /* length of attr_interaction_change_stats_funcs */
   attr_interaction_change_stats_func_t **attr_interaction_change_stats_funcs; /* attr interaction param stats */

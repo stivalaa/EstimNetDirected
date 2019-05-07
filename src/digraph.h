@@ -96,6 +96,11 @@ typedef struct digraph_s
   uint_t latitude_index;  /* index in digraph contattr of latitude */
   uint_t longitude_index; /* index in digraph contattr of longitude */
 
+  /* use for EuclidenDistance, need to mark contiuous attributes for x/y/z */
+  uint_t x_index;         /* index in digraph contattr of x coordinate */
+  uint_t y_index;         /* index in digraph contattr of y coordinate */
+  uint_t z_index;         /* index in digraph contattr of z coordinate */
+
   /* snowball sampling information, only used for conditional estimation */
   uint_t *zone;        /* for each node, snowball sampling zone (0 for seeds) */
   uint_t max_zone;     /* highest zone number (zone number of outermost wave) */

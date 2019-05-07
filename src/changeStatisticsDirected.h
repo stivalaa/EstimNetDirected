@@ -112,6 +112,7 @@ double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
 double changeGeoDistance(const digraph_t *g, uint_t i, uint_t j);
 double changeLogGeoDistance(const digraph_t *g, uint_t i, uint_t j);
+double changeEuclideanDistance(const digraph_t *g, uint_t i, uint_t j);
 
 
 /************ Actor attribute interaction (categorical) *********************/

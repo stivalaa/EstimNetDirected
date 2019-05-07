@@ -33,30 +33,6 @@
  *
  ****************************************************************************/
 
-/* config parameter types */
-typedef enum param_type_e {
-  PARAM_TYPE_INVALID,  /* invalid type, used as error return value */
-  PARAM_TYPE_DOUBLE,   /* numeric (floating point) */
-  PARAM_TYPE_UINT,     /* numeric (unsigned integer) */
-  PARAM_TYPE_BOOL,     /* Boolean ("True" or "False" in config, bool in struct*/
-  PARAM_TYPE_STRING,   /* string (may be quoted, not necessarily) */
-  PARAM_TYPE_SET       /* comma delimited set of other params enclosed in {} */
-} param_type_e;
-
-/* ERGM attribute parameter type */
-typedef enum attr_type_e {
-  ATTR_TYPE_INVALID,        /* invalid type, used as error return value */
-  ATTR_TYPE_BINARY,         /* binary attribute type (0/1)*/
-  ATTR_TYPE_CATEGORICAL,    /* categorical attribute type (uint) */
-  ATTR_TYPE_CONTINUOUS      /* continuous attribute type (double) */
-} attr_type_e;
-
-/* ERGM dyadic covariate parameter type */
-typedef enum dyadic_type_e {
-  DYADIC_TYPE_INVALID,       /* invalid type, used as error return value */
-  DYADIC_TYPE_GEODISTANCE    /* continuous geographic distance from lat/long */
-} dyadic_type_e;
-
 /* configuration parameter */
 typedef struct config_param_s {
   const char   *name;  /* parameter name (keyword), not case sensitive */
@@ -273,7 +249,8 @@ static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
 static const dyadic_param_t DYADIC_PARAMS[] =
 {
   {"GeoDistance",    DYADIC_TYPE_GEODISTANCE,   changeGeoDistance},
-  {"logGeoDistance", DYADIC_TYPE_GEODISTANCE,   changeLogGeoDistance}
+  {"logGeoDistance", DYADIC_TYPE_GEODISTANCE,   changeLogGeoDistance},
+  {"EuclideanDistance", DYADIC_TYPE_EUCLIDEANDISTANCE, changeEuclideanDistance}
 };
 static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
   sizeof(DYADIC_PARAMS[0]);
@@ -340,6 +317,7 @@ config_t CONFIG = {
   NULL,  /* dyadic_change_stats_funcs */
   NULL,  /* dyadic_names */
   NULL,  /* dyadic_indices */
+  NULL,  /* dyadic_types */
   NULL,  /* dyadic_param_names */
   0,     /* num_attr_interaction_change_stats_funcs */
   NULL,  /* attr_attr_interaction_change_stats_funcs */
@@ -1225,6 +1203,7 @@ void free_config_struct(config_t *config)
   for (i = 0; i < config->num_dyadic_change_stats_funcs; i++) 
     free(config->dyadic_names[i]);
   free(config->dyadic_indices);
+  free(config->dyadic_types);
   free(config->attr_interaction_param_names);
   for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++)  {
     free(config->attr_interaction_pair_names[i].first);
@@ -1443,42 +1422,61 @@ int build_attr_indices_from_names(config_t *config, const digraph_t *g)
  * indices stored in the config.dyadic_indices array. Returns nonzero on
  * error else 0.
  *
- * Note that currently only the DYADIC_TYPE_GEODISTANCE is used
- * and GeoDistance (or logGeoDistance) is the only dyadic covariate parameter: this
- * is a special case which takes exactly two continuous attribute
- * names and sets their indices as the latitude_index and 
- * longitude_index in the digraph structure.
- *
  */
 int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
 {
   uint_t i, j;
   bool   found;
-
+  dyadic_type_e dyadicType;
+  uint_t numGeoAttr     = 0; /* number of GeoDistance or LogGeodistance attrs */
+  uint_t numEuclideanAttr = 0; /* number of EuclideanDistance attrs */
+  uint_t numAttrs; /* total number of dyadic attributes */
+  uint_t geoIndex         = 0;
+  uint_t euclideanIndex   = 0;
+  
   config->dyadic_indices = safe_malloc(config->num_dyadic_change_stats_funcs *
                                      sizeof(uint_t));
+  config->dyadic_types = safe_malloc(config->num_dyadic_change_stats_funcs *
+                                     sizeof(uint_t));  
   
   for (i = 0; i < config->num_dyadic_change_stats_funcs; i++) {
     found = FALSE;
-    switch (get_dyadic_param_type(config->dyadic_param_names[i])) {
+    dyadicType = get_dyadic_param_type(config->dyadic_param_names[i]);
+    switch (dyadicType) {
 
       case DYADIC_TYPE_GEODISTANCE:
+      case DYADIC_TYPE_EUCLIDEANDISTANCE:
+        
         for (j = 0; j < g->num_contattr; j++) {
           if (strcasecmp(config->dyadic_names[i], g->contattr_names[j]) == 0) {
             found = TRUE;
             config->dyadic_indices[i] = j;
-            CONFIG_DEBUG_PRINT(("dyadic covariate contattr %s(%s) index %u\n",
+            config->dyadic_types[i] = dyadicType;
+            CONFIG_DEBUG_PRINT(("dyadic covariate type %s "
+                                "contattr %s(%s) index %u\n",
+                                (dyadicType == DYADIC_TYPE_GEODISTANCE ?
+                                 "GEODISTANCE" :
+                                 (dyadicType == DYADIC_TYPE_EUCLIDEANDISTANCE ?
+                                  "EUCLIDEANDISTANCE" : "*ERROR*")),
                                 config->dyadic_param_names[i],
                                 config->dyadic_names[i], j));
+            if (dyadicType == DYADIC_TYPE_GEODISTANCE) {
+              numGeoAttr++;
+            } else if (dyadicType == DYADIC_TYPE_EUCLIDEANDISTANCE) {
+              numEuclideanAttr++;
+            } else {
+              assert(FALSE);
+            }
           }
         }
+
         if (!found) {
           fprintf(stderr, "ERROR: dyadic covariate continuous attribute %s not found\n",
                   config->dyadic_names[i]);
           return 1;
         }
         break;
-        
+
       default:
         fprintf(stderr, "ERROR (internal): unknown dyadic covariate type %u\n",
                 get_dyadic_param_type(config->dyadic_param_names[i]));
@@ -1486,26 +1484,78 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
         break;
     }
   }
-
-  if (i > 0) {
-    /* only one defined so far, GeoDistance, which requires exactly 2
+  numAttrs = 0;
+  
+  if (numAttrs > 0) {
+    /* only two defined so far, GeoDistance, which requires exactly 2
        continuous attributes, for latitude and longitude respectively
-       (logGeoDistance is just the same, but funciton does log of distance)*/
-    if (i != 2) {
+       (logGeoDistance is just the same, but funciton does log of distance)
+       and EuclideanDistance, which requires exactly 3 continuous attribute,
+       for x, y, and z coordinates respectively.
+    */
+    if (numGeoAttr > 0 && numGeoAttr != 2) {
       fprintf(stderr,
               "ERROR: GeoDistance or logGeoDistance requires exactly two continuous attribute "
               "names, for latitude and longitude respectively\n");
       return 1;
     }
-    g->latitude_index = config->dyadic_indices[0];
-    g->longitude_index = config->dyadic_indices[1];
+    if (numEuclideanAttr > 0 && numEuclideanAttr != 3) {
+      fprintf(stderr,
+              "ERROR: EuclideanDistance requires exactly three continuous "
+              "attribute names, for x, y, and z coordinates respectively\n");
+      return 1;
+    }
+    for (j = 0; j < numAttrs; j++) {
+      switch (config->dyadic_types[j]) {
+        case DYADIC_TYPE_GEODISTANCE:
+          switch (geoIndex) {
+            case 0:
+              g->latitude_index = config->dyadic_indices[j];
+              break;
+            case 1:
+              g->longitude_index = config->dyadic_indices[j];
+              break;
+            default:
+              fprintf(stderr, "ERROR (internal): geoIndex == %u\n",geoIndex);
+              return 1;
+          }
+          geoIndex++;
+          break;
+          
+        case DYADIC_TYPE_EUCLIDEANDISTANCE:
+          switch (euclideanIndex) {
+            case 0:
+              g->x_index = config->dyadic_indices[j];
+              break;
+            case 1:
+              g->y_index = config->dyadic_indices[j];
+              break;
+            case 2:
+              g->z_index = config->dyadic_indices[j];
+              break;
+            default:
+              fprintf(stderr, "ERROR (internal): euclideanIndex == %u\n",
+                      euclideanIndex);
+              return 1;
+              break;
+          }
+          euclideanIndex++;
+          break;
+          
+        default:
+          fprintf(stderr, "ERROR (internal): unknown dyadic type %d\n",
+                  (int)config->dyadic_types[j]);
+          return 1;
+          break;
+      }
+    }
     /* Because is has two attribute names, we get two entries for the
        change statistic. But for [log]GeoDistance we only want one (it uses
        two attributes at each node), so delete the second. */
     assert(config->num_dyadic_change_stats_funcs == 2);
     assert(get_dyadic_param_type(config->dyadic_param_names[0])
            == DYADIC_TYPE_GEODISTANCE &&
-      get_dyadic_param_type(config->dyadic_param_names[1])
+           get_dyadic_param_type(config->dyadic_param_names[1])
            == DYADIC_TYPE_GEODISTANCE);
     config->num_dyadic_change_stats_funcs = 1;
     free(config->dyadic_names[1]);
@@ -1621,7 +1671,9 @@ void dump_parameter_names(void)
   for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
     fprintf(stderr, " %s (%s)\n", DYADIC_PARAMS[i].name,
             DYADIC_PARAMS[i].type == DYADIC_TYPE_GEODISTANCE ?
-            "latitude,longitude" : "*UNKNOWN*");
+            "latitude,longitude" :
+            (DYADIC_PARAMS[i].type == DYADIC_TYPE_EUCLIDEANDISTANCE ?
+             "x, y, z" : "*UNKNOWN*"));
   }
   fprintf(stderr, "Attribute interaction parameters (%s)\n",
           ATTR_INTERACTION_PARAMS_STR);
