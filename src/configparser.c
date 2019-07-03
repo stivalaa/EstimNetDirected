@@ -416,10 +416,10 @@ static int isParamNameChar(int c)
 static int isValidParamname(const char *s)
 {
   const char *p;
-  for (p = s; p != '\0'; p++)
+  for (p = s; *p != '\0'; p++)
     if (!isParamNameChar(*p))
-      return 1;
-  return 0;
+      return 0;
+  return 1;
 }
 
 /*
