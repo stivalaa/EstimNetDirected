@@ -519,7 +519,9 @@ static int load_float_attributes(const char *attr_filename,
  *    str       - input string comma-delimited list of nonnegative integers
  *    firstpass - if True, do not do any allocation or build output value,
  *                just set output parameter size to max int value in list
- *    size      - (Out) max int value parsed in set, if firstpass is True
+ *    size      - (in/Out) (out) max int value parsed in set, if firstpass
+ *                         else if firstpass not True then (in) size from
+ *                         first pass
  *    setval    - (Out) set value parsed, if firstpass False
  *                Must be allocated by caller to large enough (from max
  *                size ever set here on firstpass). Not use if firstpass True.
@@ -528,9 +530,38 @@ static int load_float_attributes(const char *attr_filename,
  *    0 if OK, -1 on error.
  *
  */
-static int parse_category_set(const char* str, bool firstpass, uint_t *size,
+static int parse_category_set(char *str, bool firstpass, int *size,
                               bool *setval)
 {
+  const char *delims   = ","; /* strtok_r() delimiters  */
+  char *saveptr        = NULL; /* for strtok_r() */
+  char *token          = NULL; /* from strtok_r() */
+  int   val;
+  int   maxval         = 0;
+  int   i;
+
+  token = strtok_r(str, delims, &saveptr);
+  while(token) {
+    if (sscanf(token, "%u", &val) != 1) {
+      fprintf(stderr, "ERROR: bad value '%s' in set\n", token);
+      return -1;
+    }
+    if (firstpass) {
+      /* first pass, just get largest int for size of set */
+      if (val > maxval) {
+        maxval = val;
+      }
+    } else {
+      /* second pass, set the flags in the set for each int present in list */
+      assert(val >= 0 && val < *size);
+      setval[val] = TRUE;
+    }
+    token = strtok_r(NULL, delims, &saveptr);
+  }
+  if (firstpass) {
+    *size = maxval;
+  }
+  return 0;
 }
 
 /*
@@ -583,8 +614,8 @@ static int parse_category_set(const char* str, bool firstpass, uint_t *size,
 static int load_set_attributes(const char *attr_filename,
                                uint_t num_nodes,
                                char ***out_attr_names,
-                               bool  ****out_attr_values,
-                               uint_t **out_set_sizes)
+                               bool ****out_attr_values,
+                               int  **out_set_sizes)
 {
   const char *delims    = " \t\r\n"; /* strtok_r() delimiters  */
   uint_t nodenum        = 0;   /* node number values are for */
@@ -594,12 +625,12 @@ static int load_set_attributes(const char *attr_filename,
   int   ***attr_values = NULL; /* attr_values[u][i] is value of attr u for node i */
   char *saveptr        = NULL; /* for strtok_r() */
   char *token          = NULL; /* from strtok_r() */
-  uint_t  *setsizes    = NULL; /* max integer in set for each attribute */
+  int  *setsizes       = NULL; /* max integer in set for each attribute */
   FILE *attr_file;
   char buf[BUFSIZE];
   uint_t  i;
   bool   *setval;
-  uint_t  this_setsize = 0;
+  int     this_setsize = 0;
   int     pass;
   bool    firstpass;
 
@@ -623,7 +654,7 @@ static int load_set_attributes(const char *attr_filename,
   saveptr = NULL; /* reset strtok() for next line */
 
   /* Now that we know how many attributes there are, allocate space for values */
-  setsizes = (uint_t *)safe_malloc(num_attributes * sizeof(uint_t));
+  setsizes = (int *)safe_malloc(num_attributes * sizeof(int));
   attr_values = (int ***)safe_malloc(num_attributes * sizeof(int **));
   for (i = 0; i < num_attributes; i++)
     attr_values[i] = (int **)safe_malloc(num_nodes * sizeof(int *));
