@@ -318,7 +318,7 @@ static int load_integer_attributes(const char *attr_filename,
   saveptr = NULL; /* reset strtok() for next line */
 
   /* Now that we know how many attributes there are, allocate space for values */
-  attr_values = (int **)safe_malloc(num_attributes * sizeof(int **));
+  attr_values = (int **)safe_malloc(num_attributes * sizeof(int *));
   for (i = 0; i < num_attributes; i++)
     attr_values[i] = (int *)safe_malloc(num_nodes * sizeof(int));
 
@@ -444,7 +444,7 @@ static int load_float_attributes(const char *attr_filename,
   saveptr = NULL; /* reset strtok() for next line */
 
   /* Now that we know how many attributes there are, allocate space for values */
-  attr_values = (double **)safe_malloc(num_attributes * sizeof(double **));
+  attr_values = (double **)safe_malloc(num_attributes * sizeof(double *));
   for (i = 0; i < num_attributes; i++)
     attr_values[i] = (double *)safe_malloc(num_nodes * sizeof(double));
 
@@ -497,6 +497,136 @@ static int load_float_attributes(const char *attr_filename,
   return num_attributes;
 }
 
+
+
+/*
+ * Load set (of categorical) attributes from file.
+ * The format of the file is a header line with whitespace
+ * delimited attribute names, and each subsequent line
+ * the attribute values for each attribute.
+ * The format of the attribute values (set of categories) is a comma
+ * delimited (note must have no whitespace as different attributes
+ * are delimited by whitespace) list of integers making up the set of
+ * categories.
+ * The first line (after the header) has the values for
+ * node 0, then the next line node 1, and so on.
+ * 
+ * E.g.:
+ *
+ * type   class
+ * 0,9    1
+ * 3,1    2,3,4,5,6
+ * 2      3,10,98
+ * none   0
+ *
+ *
+ * Valid values are integer >= 0 for each of the comma-delimited categories,
+ * or a single NONE (case insensitive) for empty set, 
+ * or a single NA (case insensitve) for missing data.
+ *
+ * The highest value of any integer for an attribute gives the size of
+ * the set for that attribute. The values do not need to be contiguous,
+ * and the set is stored as an array of bool for maximum flexibility
+ * (rather than more efficient fixed size bit set),
+ * so e.g. for 'type' in the example above the set is an array of size
+ * 10 indexed 0..9 as 9 is the highest value, and for 'class' an array
+ * of size 99 indexed 0..98 as 98 is the highest value.
+ * 
+ *
+ * Parameters:
+ *   attr_filenname - filename of file to read
+ *   num_nodes - number of nodes (must be this many values)
+ *   out_attr_names - (Out) attribute names array
+ *   out_attr_values - (Out) (*attr_values)[u][i] is value of attr u for node i
+ * 
+ * Return value:
+ *   Number of attributes, or -1 on error.
+ *
+ * The attribute names and values arrays are allocated by 
+ * this function.
+ */
+static int load_set_attributes(const char *attr_filename,
+                               uint_t num_nodes,
+                               char ***out_attr_names,
+                               int  ****out_attr_values)
+{
+  const char *delims    = " \t\r\n"; /* strtok_r() delimiters  */
+  uint_t nodenum        = 0;   /* node number values are for */
+  uint_t num_attributes = 0;   /* number of different attributes */
+  uint_t thisline_values= 0;   /* number values read this line */
+  char  **attr_names   = NULL; /* array of attribute names */
+  int   ***attr_values = NULL; /* attr_values[u][i] is value of attr u for node i */
+  char *saveptr        = NULL; /* for strtok_r() */
+  char *token          = NULL; /* from strtok_r() */
+  FILE *attr_file;
+  char buf[BUFSIZE];
+  uint_t  i;
+  int     val;
+
+  if (!(attr_file = fopen(attr_filename, "r"))) {
+    fprintf(stderr, "ERROR: could not open set attribute file %s (%s)\n",
+            attr_filename, strerror(errno));
+    return -1;
+  }
+  if (!fgets(buf, sizeof(buf)-1, attr_file)) {
+    fprintf(stderr, "ERROR: could not read header line in set attriubutes file %s (%s)\n",
+            attr_filename, strerror(errno));
+    return -1;
+  }
+  token = strtok_r(buf, delims, &saveptr);
+  while(token) {
+    attr_names = (char **)safe_realloc(attr_names, 
+                                       (num_attributes + 1) * sizeof(char *));
+    attr_names[num_attributes++] = safe_strdup(token);
+    token = strtok_r(NULL, delims, &saveptr);
+  }
+  saveptr = NULL; /* reset strtok() for next line */
+
+  /* Now that we know how many attributes there are, allocate space for values */
+  attr_values = (int ***)safe_malloc(num_attributes * sizeof(int **));
+  for (i = 0; i < num_attributes; i++)
+    attr_values[i] = (int **)safe_malloc(num_nodes * sizeof(int *));
+
+  if (!fgets(buf, sizeof(buf)-1, attr_file)) {
+    fprintf(stderr, "ERROR: could not read first values line in set attributes file %s (%s)\n",
+            attr_filename, strerror(errno));
+    return -1;
+  }
+  while (!feof(attr_file)) {
+    thisline_values = 0;
+    token = strtok_r(buf, delims, &saveptr);
+    while(token) {
+      val = NULL; /*XXX get value */
+      if (thisline_values < num_attributes && nodenum < num_nodes) 
+        attr_values[thisline_values][nodenum] = val;
+      thisline_values++;
+      token = strtok_r(NULL, delims, &saveptr);
+    }
+    if (thisline_values != num_attributes) {
+      fprintf(stderr, "ERROR: %u set values for node %u but expected %u in file %s\n",
+              thisline_values, nodenum, num_attributes, attr_filename);
+      return -1;
+    }
+    if (!fgets(buf, sizeof(buf)-1, attr_file)) {
+      if (!feof(attr_file)) {
+        fprintf(stderr, "ERROR: attempting to read set attributes in file %s (%s)\n",
+                attr_filename, strerror(errno));
+        return -1;
+      }
+    }
+    nodenum++;
+    saveptr = NULL; /* reset strtok() for next line */
+  }
+  if (nodenum != num_nodes) {
+    fprintf(stderr, "ERROR: %u rows after header but expected %u in file %s\n",
+            nodenum, num_nodes, attr_filename);
+    return -1;
+  }
+  fclose(attr_file);
+  *out_attr_names = attr_names;
+  *out_attr_values = attr_values;
+  return num_attributes;
+}
 
    
 /*****************************************************************************
