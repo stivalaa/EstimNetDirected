@@ -497,7 +497,41 @@ static int load_float_attributes(const char *attr_filename,
   return num_attributes;
 }
 
-
+/*
+ * Parse comma-delimited list of int into set.
+ *
+ * The format of the input isa a comma delimited (note must have no
+ * whitespace as different attributes are delimited by whitespace)
+ * list of integers making up the set of categories.  Valid values are
+ * integer >= 0 for each of the comma-delimited categories, or a
+ * single NONE (case insensitive) for empty set, or a single NA (case
+ * insensitve) for missing data.
+ *
+ * The highest value of any integer for an attribute gives the size of
+ * the set for that attribute. The values do not need to be contiguous,
+ * and the set is stored as an array of bool for maximum flexibility
+ * (rather than more efficient fixed size bit set),
+ * so e.g. for 'type' in the example above the set is an array of size
+ * 10 indexed 0..9 as 9 is the highest value, and for 'class' an array
+ * of size 99 indexed 0..98 as 98 is the highest value.
+ *
+ * Parameters:
+ *    str       - input string comma-delimited list of nonnegative integers
+ *    firstpass - if True, do not do any allocation or build output value,
+ *                just set output parameter size to max int value in list
+ *    size      - (Out) max int value parsed in set, if firstpass is True
+ *    setval    - (Out) set value parsed, if firstpass False
+ *                Must be allocated by caller to large enough (from max
+ *                size ever set here on firstpass). Not use if firstpass True.
+ *
+ * Return value:
+ *    0 if OK, -1 on error.
+ *
+ */
+static int parse_category_set(const char* str, bool firstpass, uint_t *size,
+                              bool *setval)
+{
+}
 
 /*
  * Load set (of categorical) attributes from file.
@@ -538,6 +572,7 @@ static int load_float_attributes(const char *attr_filename,
  *   num_nodes - number of nodes (must be this many values)
  *   out_attr_names - (Out) attribute names array
  *   out_attr_values - (Out) (*attr_values)[u][i] is value of attr u for node i
+ *   out_set_sizes   - (Out) size of set for each attribute
  * 
  * Return value:
  *   Number of attributes, or -1 on error.
@@ -548,7 +583,8 @@ static int load_float_attributes(const char *attr_filename,
 static int load_set_attributes(const char *attr_filename,
                                uint_t num_nodes,
                                char ***out_attr_names,
-                               int  ****out_attr_values)
+                               bool  ****out_attr_values,
+                               uint_t **out_set_sizes)
 {
   const char *delims    = " \t\r\n"; /* strtok_r() delimiters  */
   uint_t nodenum        = 0;   /* node number values are for */
@@ -558,10 +594,14 @@ static int load_set_attributes(const char *attr_filename,
   int   ***attr_values = NULL; /* attr_values[u][i] is value of attr u for node i */
   char *saveptr        = NULL; /* for strtok_r() */
   char *token          = NULL; /* from strtok_r() */
+  uint_t  *setsizes    = NULL; /* max integer in set for each attribute */
   FILE *attr_file;
   char buf[BUFSIZE];
   uint_t  i;
-  int     val;
+  bool   *setval;
+  uint_t  this_setsize = 0;
+  int     pass;
+  bool    firstpass;
 
   if (!(attr_file = fopen(attr_filename, "r"))) {
     fprintf(stderr, "ERROR: could not open set attribute file %s (%s)\n",
@@ -583,6 +623,7 @@ static int load_set_attributes(const char *attr_filename,
   saveptr = NULL; /* reset strtok() for next line */
 
   /* Now that we know how many attributes there are, allocate space for values */
+  setsizes = (uint_t *)safe_malloc(num_attributes * sizeof(uint_t));
   attr_values = (int ***)safe_malloc(num_attributes * sizeof(int **));
   for (i = 0; i < num_attributes; i++)
     attr_values[i] = (int **)safe_malloc(num_nodes * sizeof(int *));
@@ -592,39 +633,74 @@ static int load_set_attributes(const char *attr_filename,
             attr_filename, strerror(errno));
     return -1;
   }
-  while (!feof(attr_file)) {
-    thisline_values = 0;
-    token = strtok_r(buf, delims, &saveptr);
-    while(token) {
-      val = NULL; /*XXX get value */
-      if (thisline_values < num_attributes && nodenum < num_nodes) 
-        attr_values[thisline_values][nodenum] = val;
-      thisline_values++;
-      token = strtok_r(NULL, delims, &saveptr);
-    }
-    if (thisline_values != num_attributes) {
-      fprintf(stderr, "ERROR: %u set values for node %u but expected %u in file %s\n",
-              thisline_values, nodenum, num_attributes, attr_filename);
-      return -1;
-    }
-    if (!fgets(buf, sizeof(buf)-1, attr_file)) {
-      if (!feof(attr_file)) {
-        fprintf(stderr, "ERROR: attempting to read set attributes in file %s (%s)\n",
+  for (pass = 0; pass < 2; pass++) {
+    /* on first pass, get max int in set for each attribute so can allocate
+       arrays, actually build them on second pass */
+    firstpass = (pass == 0);
+    if (!firstpass) {
+      /* on second pass have to reopen file and skip over header line */
+      if (!(attr_file = fopen(attr_filename, "r"))) {
+        fprintf(stderr, "ERROR: could not open set attribute file %s (%s)\n",
+            attr_filename, strerror(errno));
+        return -1;
+      }
+      if (!fgets(buf, sizeof(buf)-1, attr_file)) {
+        fprintf(stderr, "ERROR: could not read header line in set attriubutes file %s (%s)\n",
                 attr_filename, strerror(errno));
         return -1;
       }
     }
-    nodenum++;
     saveptr = NULL; /* reset strtok() for next line */
+    while (!feof(attr_file)) {
+      thisline_values = 0;
+      token = strtok_r(buf, delims, &saveptr);
+      while(token) {
+        if (!firstpass) {
+          setval = (bool *)safe_malloc(setsizes[thisline_values] *
+                                       sizeof(bool));
+        }
+        if (parse_category_set(token, firstpass, &this_setsize, setval) < 0) {
+          fprintf(stderr, "ERROR: bad set value '%s' for node %u\n", token,
+                  nodenum);
+          return -1;
+        }
+        if (thisline_values < num_attributes && nodenum < num_nodes) {
+          if (firstpass) {
+            if (this_setsize > setsizes[thisline_values]) {
+              setsizes[thisline_values] = this_setsize;
+            }
+          } else {
+            attr_values[thisline_values][nodenum] = setval;
+          }
+        }
+        thisline_values++;
+        token = strtok_r(NULL, delims, &saveptr);
+      }
+      if (thisline_values != num_attributes) {
+        fprintf(stderr, "ERROR: %u set values for node %u but expected %u in file %s\n",
+                thisline_values, nodenum, num_attributes, attr_filename);
+        return -1;
+      }
+      if (!fgets(buf, sizeof(buf)-1, attr_file)) {
+        if (!feof(attr_file)) {
+          fprintf(stderr, "ERROR: attempting to read set attributes in file %s (%s)\n",
+                  attr_filename, strerror(errno));
+          return -1;
+        }
+      }
+      nodenum++;
+      saveptr = NULL; /* reset strtok() for next line */
+    }
+    if (nodenum != num_nodes) {
+      fprintf(stderr, "ERROR: %u rows after header but expected %u in file %s\n",
+              nodenum, num_nodes, attr_filename);
+      return -1;
+    }
+    fclose(attr_file);
   }
-  if (nodenum != num_nodes) {
-    fprintf(stderr, "ERROR: %u rows after header but expected %u in file %s\n",
-            nodenum, num_nodes, attr_filename);
-    return -1;
-  }
-  fclose(attr_file);
   *out_attr_names = attr_names;
   *out_attr_values = attr_values;
+  *out_set_sizes = setsizes;
   return num_attributes;
 }
 
