@@ -538,7 +538,6 @@ static int parse_category_set(char *str, bool firstpass, int *size,
   char *token          = NULL; /* from strtok_r() */
   int   val;
   int   maxval         = 0;
-  int   i;
 
   token = strtok_r(str, delims, &saveptr);
   while(token) {
