@@ -64,9 +64,6 @@ def main():
 
 
     n = int(args[0])
-    if len(args) > 1:
-      mu = float(args[1])
-      sigma = float(args[2])
 
     sys.stdout.write("setAttribute1 setAttribute2\n")
     for i in xrange(n):
