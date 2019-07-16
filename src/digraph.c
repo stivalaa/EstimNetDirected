@@ -47,6 +47,9 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
 
 static const char *NA_STRING = "NA"; /* string in attributes files to indicate
                                         missing data (case insensitive) */
+static const char *SET_NONE_STRING = "NONE"; /* string in set attribute file
+                                                to indicate no elements in
+                                                set (case insensitive) */
 
    
 /*****************************************************************************
@@ -509,7 +512,7 @@ static int load_float_attributes(const char *attr_filename,
  *
  * The highest value of any integer for an attribute gives the size of
  * the set for that attribute. The values do not need to be contiguous,
- * and the set is stored as an array of bool for maximum flexibility
+ * and the set is stored as an array of set_elem_e for maximum flexibility
  * (rather than more efficient fixed size bit set),
  * so e.g. for 'type' in the example above the set is an array of size
  * 10 indexed 0..9 as 9 is the highest value, and for 'class' an array
@@ -519,7 +522,7 @@ static int load_float_attributes(const char *attr_filename,
  *    str       - input string comma-delimited list of nonnegative integers
  *    firstpass - if True, do not do any allocation or build output value,
  *                just set output parameter size to max int value in list
- *    size      - (in/Out) (out) max int value parsed in set, if firstpass
+ *    size      - (in/Out) max int value parsed in set, if firstpass
  *                         else if firstpass not True then (in) size from
  *                         first pass
  *    setval    - (Out) set value parsed, if firstpass False
@@ -531,34 +534,51 @@ static int load_float_attributes(const char *attr_filename,
  *
  */
 static int parse_category_set(char *str, bool firstpass, int *size,
-                              bool *setval)
+                              set_elem_e *setval)
 {
   const char *delims   = ","; /* strtok_r() delimiters  */
   char *saveptr        = NULL; /* for strtok_r() */
   char *token          = NULL; /* from strtok_r() */
-  int   val;
-  int   maxval         = 0;
+  int   val            = 0;
+  int   i;
 
-  token = strtok_r(str, delims, &saveptr);
-  while(token) {
-    if (sscanf(token, "%u", &val) != 1) {
-      fprintf(stderr, "ERROR: bad value '%s' in set\n", token);
-      return -1;
-    }
-    if (firstpass) {
-      /* first pass, just get largest int for size of set */
-      if (val > maxval) {
-        maxval = val;
+  if (strcasecmp(str, NA_STRING) == 0) {
+    if (!firstpass) {
+      for (i = 0; i < *size; i++) {
+        setval[i] = SET_NA;
       }
-    } else {
-      /* second pass, set the flags in the set for each int present in list */
-      assert(val >= 0 && val < *size);
-      setval[val] = TRUE;
     }
-    token = strtok_r(NULL, delims, &saveptr);
-  }
-  if (firstpass) {
-    *size = maxval;
+  } else if (strcasecmp(str, SET_NONE_STRING) == 0) {
+    if (!firstpass) {
+      for (i = 0; i < *size; i++) {
+        setval[i] = SET_ELEM_ABSENT;
+      }
+    }
+  } else {
+    if (!firstpass) {
+      /* on second pass set have size so all the elements to absent to start */
+      for (i = 0; i < *size; i++) {
+        setval[i] = SET_ELEM_ABSENT;
+      }
+    }
+    token = strtok_r(str, delims, &saveptr);
+    while(token) {
+      if (sscanf(token, "%u", &val) != 1) {
+        fprintf(stderr, "ERROR: bad value '%s' in set\n", token);
+        return -1;
+      }
+      if (firstpass) {
+        /* first pass, just get largest int for size of set */
+        if (val > *size) {
+          *size = val;
+        }
+      } else {
+        /* second pass, set the flags in the set for each int present in list */
+        assert(val >= 0 && val < *size);
+        setval[val] = SET_ELEM_PRESENT;
+      }
+      token = strtok_r(NULL, delims, &saveptr);
+    }
   }
   return 0;
 }
@@ -590,7 +610,7 @@ static int parse_category_set(char *str, bool firstpass, int *size,
  *
  * The highest value of any integer for an attribute gives the size of
  * the set for that attribute. The values do not need to be contiguous,
- * and the set is stored as an array of bool for maximum flexibility
+ * and the set is stored as an array of set_elem_e for maximum flexibility
  * (rather than more efficient fixed size bit set),
  * so e.g. for 'type' in the example above the set is an array of size
  * 10 indexed 0..9 as 9 is the highest value, and for 'class' an array
@@ -613,7 +633,7 @@ static int parse_category_set(char *str, bool firstpass, int *size,
 static int load_set_attributes(const char *attr_filename,
                                uint_t num_nodes,
                                char ***out_attr_names,
-                               bool ****out_attr_values,
+                               set_elem_e ****out_attr_values,
                                int  **out_set_sizes)
 {
   const char *delims    = " \t\r\n"; /* strtok_r() delimiters  */
@@ -628,7 +648,7 @@ static int load_set_attributes(const char *attr_filename,
   FILE *attr_file;
   char buf[BUFSIZE];
   uint_t  i;
-  bool   *setval;
+  set_elem_e   *setval;
   int     this_setsize = 0;
   int     pass;
   bool    firstpass;
@@ -686,8 +706,8 @@ static int load_set_attributes(const char *attr_filename,
       token = strtok_r(buf, delims, &saveptr);
       while(token) {
         if (!firstpass) {
-          setval = (bool *)safe_malloc(setsizes[thisline_values] *
-                                       sizeof(bool));
+          setval = (set_elem_e *)safe_malloc(setsizes[thisline_values] *
+                                       sizeof(set_elem_e));
         }
         if (parse_category_set(token, firstpass, &this_setsize, setval) < 0) {
           fprintf(stderr, "ERROR: bad set value '%s' for node %u\n", token,

@@ -25,6 +25,14 @@
 
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
 #define CAT_NA  -1  /* value for catagorical missing data (otherwise >= 0) */
+#define SET_NA  -1  /* value for set element missing data (otherwise >= 0) */
+
+/* set element type, each element in array is either present, absent, or NA */
+typedef enum set_elem_e {
+  SET_ELEM_NA        = -1,
+  SET_ELEM_ABSENT    =  0,
+  SET_ELEM_PRESENT   =  1
+} set_elem_e;
 
 typedef struct nodepair_s /* pair of nodes (i, j) */
 {
