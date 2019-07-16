@@ -49,7 +49,8 @@ typedef enum attr_type_e {
   ATTR_TYPE_INVALID,        /* invalid type, used as error return value */
   ATTR_TYPE_BINARY,         /* binary attribute type (0/1)*/
   ATTR_TYPE_CATEGORICAL,    /* categorical attribute type (uint) */
-  ATTR_TYPE_CONTINUOUS      /* continuous attribute type (double) */
+  ATTR_TYPE_CONTINUOUS,     /* continuous attribute type (double) */
+  ATTR_TYPE_SET             /* set attribute type (array of set_elem_e) */
 } attr_type_e;
 
 /* ERGM dyadic covariate parameter type */
@@ -80,6 +81,7 @@ typedef struct config_s {
   char *binattr_filename; /* filename of binary attributes file or NULL */
   char *catattr_filename; /* filename of categorical attributes file or NULL */
   char *contattr_filename;/* filename of continuous attributes file or NULL */
+  char *setattr_filename; /* filename of set attributes file or NULL */
   char *theta_file_prefix;/* theta output filename prefix */
   char *dzA_file_prefix;  /* dzA output filename prefix */
   char *sim_net_file_prefix; /* simulated network output filename prefix */

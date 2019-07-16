@@ -139,6 +139,9 @@ static const config_param_t CONFIG_PARAMS[] = {
   {"contattrFile",  PARAM_TYPE_STRING,   offsetof(config_t, contattr_filename),
   "continuous attributes file"},
 
+  {"setattrFile",   PARAM_TYPE_STRING,   offsetof(config_t, setattr_filename),
+  "set attributes file"},
+
   {"thetaFilePrefix",PARAM_TYPE_STRING,  offsetof(config_t, theta_file_prefix),
    "theta output file prefix"},
 
@@ -296,6 +299,7 @@ config_t CONFIG = {
   NULL,  /* binattr_filename */
   NULL,  /* catattr_filename */
   NULL,  /* contattr_filename */
+  NULL,  /* setattr_filename */
   NULL,  /* theta_file_prefix */
   NULL,  /* dzA_file_prefix */
   NULL,  /* sim_net_file_prefix */
@@ -355,6 +359,7 @@ bool CONFIG_IS_SET[] = {
   FALSE, /* binattr_filename */
   FALSE, /* catattr_filename */
   FALSE, /* contattr_filename */
+  FALSE, /* setattr_filename */
   FALSE, /* theta_file_prefix */
   FALSE, /* dzA_file_prefix */
   FALSE, /* sim_net_file_prefix */
@@ -1190,6 +1195,7 @@ void free_config_struct(config_t *config)
   free(config->binattr_filename);
   free(config->catattr_filename);
   free(config->contattr_filename);
+  free(config->setattr_filename);
   free(config->theta_file_prefix);
   free(config->dzA_file_prefix);
   free(config->sim_net_file_prefix);
@@ -1329,11 +1335,12 @@ static attr_type_e get_attr_interaction_param_type(const char
  * indices stored in the config.attr_indices array. Returns nonzero on
  * error else 0.
  *
- * Note that the types of attributes (binary, categorical,continuous)
- * are mixed together in the config.attr_indices[] array; the index
- * could be into g->binattr or g->catattr or g->contattr, but because
- * each change statistics function is for one particular type, it uses
- * the index in the correct array without ambiguity.
+ * Note that the types of attributes (binary, categorical,continuous,
+ * set) are mixed together in the config.attr_indices[] array; the
+ * index could be into g->binattr or g->catattr or g->contattr or
+ * g->setattr, but because each change statistics function is for one
+ * particular type, it uses the index in the correct array without
+ * ambiguity.
  */
 int build_attr_indices_from_names(config_t *config, const digraph_t *g)
 {
@@ -1392,6 +1399,23 @@ int build_attr_indices_from_names(config_t *config, const digraph_t *g)
         }
         if (!found) {
           fprintf(stderr, "ERROR: continuous attribute %s not found\n",
+                  config->attr_names[i]);
+          return 1;
+        }
+        break;
+
+      case ATTR_TYPE_SET:
+        for (j = 0; j < g->num_catattr; j++) {
+          if (strcasecmp(config->attr_names[i], g->setattr_names[j]) == 0) {
+            found = TRUE;
+            config->attr_indices[i] = j;
+            CONFIG_DEBUG_PRINT(("setattr %s(%s) index %u\n",
+                                config->attr_param_names[i],
+                                config->attr_names[i], j));
+          }
+        }
+        if (!found) {
+          fprintf(stderr, "ERROR: set attribute %s not found\n",
                   config->attr_names[i]);
           return 1;
         }
@@ -1644,12 +1668,12 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
  * indices stored in the config.attr_indices array. Returns nonzero on
  * error else 0.
  *
- * Note that the types of attributes (binary, categorical,continuous)
- * are mixed together in the config.attr_interaction_pairindices[]
- * array; the index could be into g->binattr or g->catattr or
- * g->contattr, but because each change statistics function is for one
- * particular type, it uses the index in the correct array without
- * ambiguity.
+ * Note that the types of attributes (binary, categorical,continuous,
+ * set) are mixed together in the
+ * config.attr_interaction_pairindices[] array; the index could be
+ * into g->binattr or g->catattr or g->contattr or g->setattr, but
+ * because each change statistics function is for one particular type,
+ * it uses the index in the correct array without ambiguity.
  */
 int build_attr_interaction_pair_indices_from_names(config_t *config,
                                                    const digraph_t *g)
@@ -1701,6 +1725,10 @@ int build_attr_interaction_pair_indices_from_names(config_t *config,
           assert(FALSE); /* TODO contiuous attribute interaction */
           break;
 
+        case ATTR_TYPE_SET:
+          assert(FALSE); /* TODO set attribute interaction (if it makes sense)*/
+          break;
+
         default:
           fprintf(stderr, "ERROR (internal): unknown attribute type %u\n",
                   get_attr_interaction_param_type(attrname));
@@ -1730,7 +1758,8 @@ void dump_parameter_names(void)
             ATTR_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
-              "*UNKNOWN*")));
+              (ATTR_PARAMS[i].type == ATTR_TYPE_SET ? "set" :
+               "*UNKNOWN*"))));
   }
   fprintf(stderr, "Dyadic covariate parameters (%s):\n", DYADIC_PARAMS_STR);
   for (i = 0; i < NUM_DYADIC_PARAMS; i++) {

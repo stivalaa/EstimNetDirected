@@ -514,9 +514,6 @@ static int load_float_attributes(const char *attr_filename,
  * the set for that attribute. The values do not need to be contiguous,
  * and the set is stored as an array of set_elem_e for maximum flexibility
  * (rather than more efficient fixed size bit set),
- * so e.g. for 'type' in the example above the set is an array of size
- * 10 indexed 0..9 as 9 is the highest value, and for 'class' an array
- * of size 99 indexed 0..98 as 98 is the highest value.
  *
  * Parameters:
  *    str       - input string comma-delimited list of nonnegative integers
@@ -569,8 +566,8 @@ static int parse_category_set(char *str, bool firstpass, int *size,
       }
       if (firstpass) {
         /* first pass, just get largest int for size of set */
-        if (val > *size) {
-          *size = val;
+        if (val + 1 > *size) {
+          *size = val + 1;
         }
       } else {
         /* second pass, set the flags in the set for each int present in list */
@@ -1113,6 +1110,10 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->num_contattr = 0;
   g->contattr_names = NULL;
   g->contattr = NULL;
+  g->num_setattr = 0;
+  g->setattr_names = NULL;
+  g->setattr_lengths = NULL;
+  g->setattr = NULL;
 
   g->zone  = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
   g->max_zone = 0;
@@ -1155,6 +1156,12 @@ void free_digraph(digraph_t *g)
   }
   free(g->contattr);
   free(g->contattr_names);
+  for (i = 0; i < g->num_setattr; i++) {
+    free(g->setattr_names[i]);
+    free(g->setattr[i]);
+  }
+  free(g->setattr);
+  free(g->setattr_names);
   for (i = 0; i < g->num_nodes; i++)  {
     free(g->arclist[i]);
     free(g->revarclist[i]);
