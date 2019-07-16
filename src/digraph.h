@@ -101,7 +101,7 @@ typedef struct digraph_s
                              or IEEE NaN for missin data (test with isnan()) */
   uint_t        num_setattr;   /* number of set (of categorical) attributes */
   char       **setattr_names;  /* set attributes names */
-  int         *setattr_lengths;/* size of each set array cattr[u][i][] */
+  uint_t      *setattr_lengths;/* size of each set array cattr[u][i][] */
   set_elem_e ***setattr;       /* set attribute. For each attribute
                                   attribute u, catattr[u][i][j] is the
                                   present, absent, or NA value for

@@ -307,7 +307,7 @@ static int load_integer_attributes(const char *attr_filename,
     return -1;
   }
   if (!fgets(buf, sizeof(buf)-1, attr_file)) {
-    fprintf(stderr, "ERROR: could not read header line in attriubutes file %s (%s)\n",
+    fprintf(stderr, "ERROR: could not read header line in attribuutes file %s (%s)\n",
             attr_filename, strerror(errno));
     return -1;
   }
@@ -433,7 +433,7 @@ static int load_float_attributes(const char *attr_filename,
     return -1;
   }
   if (!fgets(buf, sizeof(buf)-1, attr_file)) {
-    fprintf(stderr, "ERROR: could not read header line in continuous attriubutes file %s (%s)\n",
+    fprintf(stderr, "ERROR: could not read header line in continuous attributes file %s (%s)\n",
             attr_filename, strerror(errno));
     return -1;
   }
@@ -537,14 +537,14 @@ static int load_float_attributes(const char *attr_filename,
  *    0 if OK, -1 on error.
  *
  */
-static int parse_category_set(char *str, bool firstpass, int *size,
+static int parse_category_set(char *str, bool firstpass, uint_t *size,
                               set_elem_e *setval)
 {
   const char *delims   = ","; /* strtok_r() delimiters  */
   char *saveptr        = NULL; /* for strtok_r() */
   char *token          = NULL; /* from strtok_r() */
-  int   val            = 0;
-  int   i;
+  uint_t val            = 0;
+  uint_t i;
 
   if (strcasecmp(str, NA_STRING) == 0) {
     if (!firstpass) {
@@ -578,7 +578,7 @@ static int parse_category_set(char *str, bool firstpass, int *size,
         }
       } else {
         /* second pass, set the flags in the set for each int present in list */
-        assert(val >= 0 && val < *size);
+        assert(val < *size);
         setval[val] = SET_ELEM_PRESENT;
       }
       token = strtok_r(NULL, delims, &saveptr);
@@ -640,26 +640,26 @@ static int parse_category_set(char *str, bool firstpass, int *size,
  * The attribute names and values arrays are allocated by 
  * this function.
  */
-static int load_set_attributes(const char *attr_filename,
-                               uint_t num_nodes,
-                               char ***out_attr_names,
+static int load_set_attributes(const char   *attr_filename,
+                               uint_t        num_nodes,
+                               char        ***out_attr_names,
                                set_elem_e ****out_attr_values,
-                               int  **out_set_sizes)
+                               uint_t       **out_set_sizes)
 {
   const char *delims    = " \t\r\n"; /* strtok_r() delimiters  */
   uint_t nodenum        = 0;   /* node number values are for */
   uint_t num_attributes = 0;   /* number of different attributes */
   uint_t thisline_values= 0;   /* number values read this line */
   char  **attr_names   = NULL; /* array of attribute names */
-  int   ***attr_values = NULL; /* attr_values[u][i] is value of attr u for node i */
+  set_elem_e ***attr_values = NULL; /* attr_values[u][i] is value of attr u for node i */
   char *saveptr        = NULL; /* for strtok_r() */
   char *token          = NULL; /* from strtok_r() */
-  int  *setsizes       = NULL; /* max integer in set for each attribute */
+  uint_t  *setsizes    = NULL; /* max integer in set for each attribute */
   FILE *attr_file;
   char buf[BUFSIZE];
   uint_t  i;
   set_elem_e   *setval = NULL;
-  int     this_setsize = 0;
+  uint_t  this_setsize = 0;
   int     pass;
   bool    firstpass;
 
@@ -669,7 +669,7 @@ static int load_set_attributes(const char *attr_filename,
     return -1;
   }
   if (!fgets(buf, sizeof(buf)-1, attr_file)) {
-    fprintf(stderr, "ERROR: could not read header line in set attriubutes file %s (%s)\n",
+    fprintf(stderr, "ERROR: could not read header line in set attributes file %s (%s)\n",
             attr_filename, strerror(errno));
     return -1;
   }
@@ -683,16 +683,11 @@ static int load_set_attributes(const char *attr_filename,
   saveptr = NULL; /* reset strtok() for next line */
 
   /* Now that we know how many attributes there are, allocate space for values */
-  setsizes = (int *)safe_malloc(num_attributes * sizeof(int));
-  attr_values = (int ***)safe_malloc(num_attributes * sizeof(int **));
+  setsizes = (uint_t *)safe_malloc(num_attributes * sizeof(uint_t));
+  attr_values = (set_elem_e ***)safe_malloc(num_attributes * sizeof(set_elem_e **));
   for (i = 0; i < num_attributes; i++)
-    attr_values[i] = (int **)safe_malloc(num_nodes * sizeof(int *));
+    attr_values[i] = (set_elem_e **)safe_malloc(num_nodes * sizeof(set_elem_e *));
 
-  if (!fgets(buf, sizeof(buf)-1, attr_file)) {
-    fprintf(stderr, "ERROR: could not read first values line in set attributes file %s (%s)\n",
-            attr_filename, strerror(errno));
-    return -1;
-  }
   for (pass = 0; pass < 2; pass++) {
     /* on first pass, get max int in set for each attribute so can allocate
        arrays, actually build them on second pass */
@@ -705,16 +700,25 @@ static int load_set_attributes(const char *attr_filename,
         return -1;
       }
       if (!fgets(buf, sizeof(buf)-1, attr_file)) {
-        fprintf(stderr, "ERROR: could not read header line in set attriubutes file %s (%s)\n",
+        fprintf(stderr, "ERROR: could not read header line in set attributes file %s (%s)\n",
                 attr_filename, strerror(errno));
         return -1;
       }
+      DIGRAPH_DEBUG_PRINT(("load_set_attributes pass %d reopen %s at '%s'\n",
+                           pass, attr_filename, buf));
+    }
+    if (!fgets(buf, sizeof(buf)-1, attr_file)) {
+      fprintf(stderr, "ERROR: could not read first values line in set attributes file %s (%s)\n",
+              attr_filename, strerror(errno));
+      return -1;
     }
     saveptr = NULL; /* reset strtok() for next line */
     while (!feof(attr_file)) {
       thisline_values = 0;
       token = strtok_r(buf, delims, &saveptr);
       while(token) {
+        DIGRAPH_DEBUG_PRINT(("load_set_attributes pass %u token '%s'\n",
+                             pass, token));
         if (!firstpass) {
           setval = (set_elem_e *)safe_malloc(setsizes[thisline_values] *
                                        sizeof(set_elem_e));
@@ -1210,7 +1214,7 @@ void free_digraph(digraph_t *g)
  * vertex (just vertex number) then *arcs followed by arcs list one per
  * line. In this program the nodes must be numbered 1..N.
  *
- * The format of the attriubtes files is header line with whitespace-delimited
+ * The format of the attributes files is header line with whitespace-delimited
  * attribute names, followed by (whitespace delimited) attributes 
  * one line per node (corresponding to node number order).
  * If the attribute file handles are NULL then no attributes.
@@ -1505,7 +1509,7 @@ void print_data_summary(const digraph_t * g)
   }
   printf("%u set attributes\n", g->num_setattr);
   for (i = 0; i < g->num_setattr; i++) {
-    printf("  %s", g->setattr_names[i]);
+    printf("  %s (size %u)", g->setattr_names[i], g->setattr_lengths[i]);
     num_na_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
       if (g->setattr[i][j][0] == SET_NA) {
