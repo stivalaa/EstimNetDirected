@@ -1,3 +1,4 @@
+*.BAK
 variance_by_mean.txt
 theta_sim_n1000_sample_*.txt
 theta_ifd_sim_n1000_sample_*.txt
