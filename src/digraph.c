@@ -515,6 +515,13 @@ static int load_float_attributes(const char *attr_filename,
  * and the set is stored as an array of set_elem_e for maximum flexibility
  * (rather than more efficient fixed size bit set),
  *
+ * Note that NONE results simply in all elements of the set being
+ * absent with the normal semantics of the set, however NA results in
+ * all elements of the set (array) being set to SET_NA meaning there is
+ * really a single NA for that set attribute on that node, there is
+ * no individual meaning of SET_NA at a particular index in the array.
+ *
+ *
  * Parameters:
  *    str       - input string comma-delimited list of nonnegative integers
  *    firstpass - if True, do not do any allocation or build output value,
@@ -613,6 +620,12 @@ static int parse_category_set(char *str, bool firstpass, int *size,
  * 10 indexed 0..9 as 9 is the highest value, and for 'class' an array
  * of size 99 indexed 0..98 as 98 is the highest value.
  * 
+ * Note that NONE results simply in all elements of the set being
+ * absent with the normal semantics of the set, however NA results in
+ * all elements of the set (array) being set to SET_NA meaning there is
+ * really a single NA for that set attribute on that node, there is
+ * no individual meaning of SET_NA at a particular index in the array.
+ *
  *
  * Parameters:
  *   attr_filenname - filename of file to read
@@ -645,7 +658,7 @@ static int load_set_attributes(const char *attr_filename,
   FILE *attr_file;
   char buf[BUFSIZE];
   uint_t  i;
-  set_elem_e   *setval;
+  set_elem_e   *setval = NULL;
   int     this_setsize = 0;
   int     pass;
   bool    firstpass;
@@ -1207,7 +1220,8 @@ void free_digraph(digraph_t *g)
  *                   Closed by this function at end.
  *    binattr_filename - binary attributes filebane or NULL
  *    catattr_filename - categorical attribute filename or NULL
- *    contattr_filename- continuous attribule filename or NULL
+ *    contattr_filename- continuous attribute filename or NULL
+ *    setattr_filename - set attribute filename or NULL
  *
  * Return value:
  *    digraph object built from files.
@@ -1217,7 +1231,8 @@ void free_digraph(digraph_t *g)
 digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                                           const char *binattr_filename,
                                           const char *catattr_filename,
-                                          const char *contattr_filename)
+                                          const char *contattr_filename,
+                                          const char *setattr_filename)
 {
   digraph_t *g = NULL;
   int i, j;
@@ -1227,6 +1242,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   const char *delims = " \t\r\n"; /* strtok_r() delimiters for header lines */
   int num_vertices = 0;
   int num_attr;
+  bool setFailed = FALSE;
 #ifdef DEBUG_MEMUSAGE
   uint_t k, total_degree = 0;
 #ifdef TWOPATH_HASHTABLES
@@ -1401,6 +1417,30 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     }
     g->num_contattr = (uint_t)num_attr;
   }  
+  if (setattr_filename) {
+    if ((num_attr = load_set_attributes(setattr_filename, num_vertices,
+                                        &g->setattr_names,
+                                        &g->setattr,
+                                        &g->setattr_lengths)) < 0){
+      fprintf(stderr, "ERROR: loading set attributes from file %s failed\n", 
+              setattr_filename);
+      exit(1);
+    }
+    g->num_setattr = (uint_t)num_attr;
+    setFailed = FALSE;
+    for (i = 0; i < num_attr; i++) {
+      if (g->setattr_lengths[i] == 0) {
+        fprintf(stderr,
+                "ERROR: all values for set attribute %s are NA or NONE\n",
+                g->setattr_names[i]);
+        setFailed = TRUE;
+      }
+      if (setFailed) {
+        fprintf(stderr, "ERROR: some set attribute(s) not valid\n");
+        exit(1);
+      }
+    }
+  }
   
   return(g);
 }
@@ -1458,6 +1498,17 @@ void print_data_summary(const digraph_t * g)
     num_na_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
       if (isnan(g->contattr[i][j])) {
+        num_na_values++;
+      }
+    }
+    printf(" has %u NA values\n", num_na_values);
+  }
+  printf("%u set attributes\n", g->num_setattr);
+  for (i = 0; i < g->num_setattr; i++) {
+    printf("  %s", g->setattr_names[i]);
+    num_na_values = 0;
+    for (j = 0; j < g->num_nodes; j++) {
+      if (g->setattr[i][j][0] == SET_NA) {
         num_na_values++;
       }
     }

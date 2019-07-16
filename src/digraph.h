@@ -102,7 +102,7 @@ typedef struct digraph_s
   uint_t        num_setattr;   /* number of set (of categorical) attributes */
   char       **setattr_names;  /* set attributes names */
   int         *setattr_lengths;/* size of each set array cattr[u][i][] */
-  set_elem_e **setattr;        /* set attribute. For each attribute
+  set_elem_e ***setattr;       /* set attribute. For each attribute
                                   attribute u, catattr[u][i][j] is the
                                   present, absent, or NA value for
                                   element j of node i. */
@@ -136,7 +136,8 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
                                           const char *binattr_filename,
                                           const char *catattr_filename,
-                                          const char *contattr_filename);
+                                          const char *contattr_filename,
+                                          const char *setattr_filename);
 
 double density(const digraph_t *g); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */

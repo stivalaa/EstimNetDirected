@@ -669,7 +669,8 @@ int do_estimation(config_t * config, uint_t tasknum)
   g = load_digraph_from_arclist_file(arclist_file,
                                      config->binattr_filename,
                                      config->catattr_filename,
-                                     config->contattr_filename);
+                                     config->contattr_filename,
+                                     config->setattr_filename);
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
