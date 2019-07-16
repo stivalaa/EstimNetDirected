@@ -99,6 +99,11 @@ typedef struct digraph_s
   double **contattr;      /* continuous attribute. For each continuous
                              attribute u, contattr[u][i] is value for node i 
                              or IEEE NaN for missin data (test with isnan()) */
+  uint_t   num_setattr;   /* number of set (of categorical) attributes */
+  char   **setattr_names; /* set attributes names */
+  int    **setattr;       /* set attribute. For each attribute
+                             attribute u, catattr[u][i][j] is the present,
+                             absent, or NA value for element j of node i. */
 
   /* use for GeoDistance, need to mark continuous attributes for lat/long */
   uint_t latitude_index;  /* index in digraph contattr of latitude */
