@@ -575,6 +575,8 @@ static int parse_category_set(char *str, bool firstpass, uint_t *size,
         /* first pass, just get largest int for size of set */
         if (val + 1 > *size) {
           *size = val + 1;
+          DIGRAPH_DEBUG_PRINT(("parse_category_set token '%s' size now %u\n",
+                               token, *size));
         }
       } else {
         /* second pass, set the flags in the set for each int present in list */
@@ -683,7 +685,7 @@ static int load_set_attributes(const char   *attr_filename,
   saveptr = NULL; /* reset strtok() for next line */
 
   /* Now that we know how many attributes there are, allocate space for values */
-  setsizes = (uint_t *)safe_malloc(num_attributes * sizeof(uint_t));
+  setsizes = (uint_t *)safe_calloc((size_t)num_attributes, sizeof(uint_t));
   attr_values = (set_elem_e ***)safe_malloc(num_attributes * sizeof(set_elem_e **));
   for (i = 0; i < num_attributes; i++)
     attr_values[i] = (set_elem_e **)safe_malloc(num_nodes * sizeof(set_elem_e *));
@@ -712,6 +714,7 @@ static int load_set_attributes(const char   *attr_filename,
               attr_filename, strerror(errno));
       return -1;
     }
+    nodenum = 0;
     saveptr = NULL; /* reset strtok() for next line */
     while (!feof(attr_file)) {
       thisline_values = 0;
@@ -731,6 +734,9 @@ static int load_set_attributes(const char   *attr_filename,
         if (thisline_values < num_attributes && nodenum < num_nodes) {
           if (firstpass) {
             if (this_setsize > setsizes[thisline_values]) {
+              DIGRAPH_DEBUG_PRINT(("updated set size %u from %u to %u\n",
+                                  thisline_values, setsizes[thisline_values],
+                                  this_setsize));
               setsizes[thisline_values] = this_setsize;
             }
           } else {
