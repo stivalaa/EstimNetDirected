@@ -661,7 +661,6 @@ static int load_set_attributes(const char   *attr_filename,
   char buf[BUFSIZE];
   uint_t  i;
   set_elem_e   *setval = NULL;
-  uint_t  this_setsize = 0;
   int     pass;
   bool    firstpass;
 
@@ -726,20 +725,14 @@ static int load_set_attributes(const char   *attr_filename,
           setval = (set_elem_e *)safe_malloc(setsizes[thisline_values] *
                                        sizeof(set_elem_e));
         }
-        if (parse_category_set(token, firstpass, &this_setsize, setval) < 0) {
+        if (parse_category_set(token, firstpass,
+                               &setsizes[thisline_values], setval) < 0) {
           fprintf(stderr, "ERROR: bad set value '%s' for node %u\n", token,
                   nodenum);
           return -1;
         }
         if (thisline_values < num_attributes && nodenum < num_nodes) {
-          if (firstpass) {
-            if (this_setsize > setsizes[thisline_values]) {
-              DIGRAPH_DEBUG_PRINT(("updated set size %u from %u to %u\n",
-                                  thisline_values, setsizes[thisline_values],
-                                  this_setsize));
-              setsizes[thisline_values] = this_setsize;
-            }
-          } else {
+          if (!firstpass) {
             attr_values[thisline_values][nodenum] = setval;
           }
         }
