@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
   gettimeofday(&start_timeval, NULL);
   fprintf(stderr, "loading arc list from %s and building two-path tables...",
          arclist_filename);
-  g = load_digraph_from_arclist_file(file, NULL, NULL, NULL);
+  g = load_digraph_from_arclist_file(file, NULL, NULL, NULL, NULL);
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
