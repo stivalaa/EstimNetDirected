@@ -517,9 +517,9 @@ static int load_float_attributes(const char *attr_filename,
  *
  * Note that NONE results simply in all elements of the set being
  * absent with the normal semantics of the set, however NA results in
- * all elements of the set (array) being set to SET_NA meaning there is
+ * all elements of the set (array) being set to SET_ELEM_NA meaning there is
  * really a single NA for that set attribute on that node, there is
- * no individual meaning of SET_NA at a particular index in the array.
+ * no individual meaning of SET_ELEM_NA at a particular index in the array.
  *
  *
  * Parameters:
@@ -549,7 +549,7 @@ static int parse_category_set(char *str, bool firstpass, uint_t *size,
   if (strcasecmp(str, NA_STRING) == 0) {
     if (!firstpass) {
       for (i = 0; i < *size; i++) {
-        setval[i] = SET_NA;
+        setval[i] = SET_ELEM_NA;
       }
     }
   } else if (strcasecmp(str, SET_NONE_STRING) == 0) {
@@ -624,9 +624,9 @@ static int parse_category_set(char *str, bool firstpass, uint_t *size,
  * 
  * Note that NONE results simply in all elements of the set being
  * absent with the normal semantics of the set, however NA results in
- * all elements of the set (array) being set to SET_NA meaning there is
+ * all elements of the set (array) being set to SET_ELEM_NA meaning there is
  * really a single NA for that set attribute on that node, there is
- * no individual meaning of SET_NA at a particular index in the array.
+ * no individual meaning of SET_ELEM_NA at a particular index in the array.
  *
  *
  * Parameters:
@@ -1511,7 +1511,7 @@ void print_data_summary(const digraph_t * g)
     printf("  %s (size %u)", g->setattr_names[i], g->setattr_lengths[i]);
     num_na_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
-      if (g->setattr[i][j][0] == SET_NA) {
+      if (g->setattr[i][j][0] == SET_ELEM_NA) {
         num_na_values++;
       }
     }

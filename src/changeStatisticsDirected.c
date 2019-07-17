@@ -76,6 +76,83 @@ static double signum(double x)
 }
 
 
+/*
+ * Size of the intersection of two sets.  Each set is represented by
+ * array of set_elem_e indicating NA, ABSENT or PRESENT for each
+ * element, size of intersection is number of array indices where both
+ * are PRESENT. Note we ignore NA here.
+ *
+ * Parameters:
+ *      a - set
+ *      b - set
+ *      n - size of arrays a and b
+ *
+ * Return value:
+ *      number of elements that are in both sets a and b.
+ */
+static uint_t set_intersection_size(set_elem_e a[], set_elem_e b[], uint_t n)
+{
+  uint_t i;
+  uint_t count = 0;
+
+  for (i = 0; i < n; i++) {
+    if (a[i] == SET_ELEM_PRESENT && b[i] == SET_ELEM_PRESENT) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/*
+ * Size of the union of two sets.  Each set is represented by
+ * array of set_elem_e indicating NA, ABSENT or PRESENT for each
+ * element, size of union is number of array indices where either (or both)
+ * are PRESENT. Note we ignore NA here.
+ *
+ * Parameters:
+ *      a - set
+ *      b - set
+ *      n - size of arrays a and b
+ *
+ * Return value:
+ *      number of elements that are in either (or both) of the sets a and b.
+ */
+static uint_t set_union_size(set_elem_e a[], set_elem_e b[], uint_t n)
+{
+  uint_t i;
+  uint_t count = 0;
+
+  for (i = 0; i < n; i++) {
+    if (a[i] == SET_ELEM_PRESENT || b[i] == SET_ELEM_PRESENT) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/*
+ * Jaccard index (similarity) for two sets. The Jaccard index is the
+ * size of the intersection over the size of the union. (If a and b 
+ * are both empty it is defined as 1).
+ *
+ * Parameters:
+ *      a - set
+ *      b - set
+ *      n - size of arrays a and b
+ *
+ * Return value:
+ *      Jaccard coefficient (similarity) of the two sets a and b
+ */
+static double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
+{
+  uint_t intersection_size, union_size;
+
+  intersection_size = set_intersection_size(a, b, n);
+  union_size = set_union_size(a, b, n);
+  return (union_size == 0) ? 1 : (double)intersection_size / (double)union_size;
+}
+
+
 
 /*****************************************************************************
  *
@@ -559,7 +636,12 @@ double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
  */
 double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 {
-  return 0;
+  /* For NA values all elements of set are set to NA so just check first */
+  if (g->setattr[a][i][0] == SET_ELEM_NA || g->setattr[a][j][0] == SET_ELEM_NA)
+    return 0;
+  else
+    return jaccard_index(g->setattr[a][i], g->setattr[a][j],
+                         g->setattr_lengths[a]);
 }
 
 
