@@ -144,5 +144,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
                        double changestats[]);
 
 
+double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n);
+
 #endif /* CHANGESTATISTICSDIRECTED_H */
 

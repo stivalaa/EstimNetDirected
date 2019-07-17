@@ -142,8 +142,10 @@ static uint_t set_union_size(set_elem_e a[], set_elem_e b[], uint_t n)
  *
  * Return value:
  *      Jaccard coefficient (similarity) of the two sets a and b
+ *                                              
+ * Has external linkage for use in unit tests.
  */
-static double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
+double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
 {
   uint_t intersection_size, union_size;
 
