@@ -181,7 +181,7 @@ static const config_param_t CONFIG_PARAMS[] = {
   "structural parameters to estimate"},
 
   {ATTR_PARAMS_STR, PARAM_TYPE_SET,         0, /*no offset, coded explicitly*/
-  "binary/categorical/continuous attribute parameters to estimate"},
+  "binary/categorical/continuous/set attribute parameters to estimate"},
 
   {DYADIC_PARAMS_STR, PARAM_TYPE_SET,       0, /*no offset, coded explicitly*/
   "dyadic covariate parameters to estimate"},
@@ -239,14 +239,15 @@ static const attr_param_t ATTR_PARAMS[] =
   {"ContinuousReceiver",     ATTR_TYPE_CONTINUOUS, changeContinuousReceiver},
   {"Diff",                   ATTR_TYPE_CONTINUOUS, changeDiff},
   {"DiffReciprocity",        ATTR_TYPE_CONTINUOUS, changeDiffReciprocity},
-  {"DiffSign",               ATTR_TYPE_CONTINUOUS, changeDiffSign}
+  {"DiffSign",               ATTR_TYPE_CONTINUOUS, changeDiffSign},
+  {"JaccardSimilarity",      ATTR_TYPE_SET,        changeJaccardSimilarity}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
 
 
 /*
- * Dyadic covariate parameters allowed sa the names in the set for the
+ * Dyadic covariate parameters allowed as the names in the set for the
  * dyadicParams parameters. Names are not case sensitive.
  */
 static const dyadic_param_t DYADIC_PARAMS[] =
@@ -1405,7 +1406,7 @@ int build_attr_indices_from_names(config_t *config, const digraph_t *g)
         break;
 
       case ATTR_TYPE_SET:
-        for (j = 0; j < g->num_catattr; j++) {
+        for (j = 0; j < g->num_setattr; j++) {
           if (strcasecmp(config->attr_names[i], g->setattr_names[j]) == 0) {
             found = TRUE;
             config->attr_indices[i] = j;

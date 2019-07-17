@@ -118,5 +118,6 @@ structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT,
 # Attribute parameters
 #
 
+attrParams = {JaccardSimilarity(setAttribute1)}
 
 

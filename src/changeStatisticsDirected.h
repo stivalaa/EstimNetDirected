@@ -108,6 +108,12 @@ double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
+
+/********************* Actor attribute (set of categorical) *******************/
+
+double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+
+
 /********************* Dyadic covariate (continuous) *************************/
 
 double changeGeoDistance(const digraph_t *g, uint_t i, uint_t j);

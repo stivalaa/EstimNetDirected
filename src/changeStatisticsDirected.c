@@ -551,6 +551,17 @@ double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
     return signum(g->contattr[a][i] - g->contattr[a][j]);
 }
 
+/***************** Actor attribute (set of categorical) ********************/
+
+
+/*
+ * Change statistic for set Jaccard similarity
+ */
+double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+{
+  return 0;
+}
+
 
 /********************* Dyadic covariate (continuous) *************************/
 
