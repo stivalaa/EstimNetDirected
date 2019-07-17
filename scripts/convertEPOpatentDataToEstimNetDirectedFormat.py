@@ -32,6 +32,7 @@ Usage:
      patent_binattr.txt  [Not used]
      patent_catattr.txt
      patent_contattr.txt
+     patent_setattr.txt
      nodeid.txt
 
  WARNING: the output files are overwritten if they exist.
@@ -80,6 +81,24 @@ def convert_to_int_cat(attrs):
     fdict = dict([(y,x) for (x,y) in enumerate(set(attrs))])
     print(fdict) # output for possible future reversal (TODO write to file)
     return ['NA' if (x == '' or x == 'XX') else fdict[x] for x in attrs]
+
+
+def convert_to_int_set(attrs):
+    """
+    convert_to_int_cat_set() - convert string categorical list attrs to 
+                               integer sets
+
+    Parametrs:
+        attrs - list of list of string attributes
+
+    Return value:
+        list of integer sets corresponding to the string lists
+    """
+    allstrings = [item for sublist in attrs for item in sublist]
+    fdict = dict([(y,x) for (x,y) in enumerate(set(allstrings))])
+    print(fdict) # output for possible future reversal (TODO write to file)
+    return map(lambda x : set([fdict[y] for y in x]), attrs)
+
 
 
 def str_to_float(sval):
@@ -193,6 +212,53 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
                     f.write(' ' )
 
 
+def write_attributes_file_set(filename, G, nodelist, patdata, colnames):
+    """
+    write_attributes_file_set() - write set node attribute file 
+    
+    The EstimNetDirected format of the set actor attribute file is 
+    the header line with attribute names and then
+    the comma-delimited list of (integer categories) in the set on
+    each line for each attribute.
+
+    Parameters:
+        filename -filename to write to (warning: overwritten)
+        G - SNAP graph/network object.
+        nodelist - list of nodeids used to order the nodes in the output
+        patdata - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        colnames - dict mapping attribute name to 
+                  index of the patdata list so e.g. we can look
+                  up APPYEAR of patent id 123 with 
+                   patdata[123][colnames['APPYEAR']]
+          
+    Return value:
+      None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(patdata) >= G.GetNodes())
+    setattrs = ['Classes']    #  technology classes
+    setattr_names = setattrs
+    with open(filename, 'w') as f:
+        f.write(' '.join(setattr_names) + '\n')
+        for i in nodelist:
+            for attr in setattrs:
+                if attr == 'Classes':
+                    val = patdata[i][colnames[attr]]
+                else:
+                    assert(False)
+                if val is None:
+                    f.write('NA')
+                elif len(val) == 0:
+                    f.write('none')
+                else:
+                    f.write(','.join([str(x) for x in val]))
+                if attr == setattrs[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
+
+
 
 
 def write_subgraph_nodeids(filename, nodelist):
@@ -286,6 +352,15 @@ def main():
             patdata[catvalues[i][0]][colnames[cat_colname]] = catvalues_int[i]
         sys.stdout.write('There are %d NA for %s\n' % ([p[colnames[cat_colname]] for p in patdata.itervalues()].count('NA'), cat_colname))
 
+
+    # convert categorical set attribute values to integers like factor in R
+    for set_colname in ['Classes']:
+        setvalues = [(k, p[colnames[set_colname]]) for (k,p) in patdata.iteritems()]
+        setvalues_int = convert_to_int_set([x[1].split(',') for x in setvalues])
+        for i in xrange(len(setvalues)):
+            patdata[setvalues[i][0]][colnames[set_colname]] = setvalues_int[i]
+        sys.stdout.write('There are %d NA for %s\n' % ([p[colnames[set_colname]] for p in patdata.itervalues()].count('NA'), set_colname))
+
     nodelist = list()  # keep the iteration below in list so we always use same order in future
 
     if get_subgraph:
@@ -321,9 +396,11 @@ def main():
     write_graph_file(graph_filename, G, nodelist)
     attributes_categorical_filename = outputdir + os.path.sep + "patent_catattr"  + os.path.extsep + "txt"
     attributes_continuous_filename = outputdir + os.path.sep + "patent_contattr" + os.path.extsep + "txt"
+    attributes_set_filename = outputdir + os.path.sep + "patent_setattr" + os.path.extsep + "txt"
 
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
+    write_attributes_file_set(attributes_set_filename, G, nodelist, patdata, colnames)
 
     nodeid_filename = outputdir + os.path.sep + "nodeid" + os.path.extsep + "txt"
     write_subgraph_nodeids(nodeid_filename, nodelist)
@@ -334,10 +411,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-# convert set(['d','b']) from possible elements of set(['a','b','d'])
-# to list of integer indices
-# which were buit with
-#  a = ['a','d','b']
-#  fdict = dict([(y,x) for (x,y) in enumerate(set(a))])
-# (as used in convert_to_int_cat):
-# ','.join( [str(fdict[x]) for x in set(['d','b'])] )

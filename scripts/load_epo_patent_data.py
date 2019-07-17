@@ -120,9 +120,6 @@ def load_epo_patent_data(indirname):
 
     # Now add the new column NumClasses which is just length of
     # the comma-delimited list of classes
-    # TODO need a new set type so we can use it to list all
-    # classes as an attribute of each patent and then do
-    # Jaccard coefficient in estimation code
     for patid in patentdict.iterkeys():
         patentdict[patid][patent_colnames['NumClasses']] =  len(patentdict[patid][patent_colnames['Classes']].split(','))
     return (G, patentdict, patent_colnames)
