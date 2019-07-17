@@ -74,6 +74,7 @@ def main():
     if len(args) != 2:
         usage(sys.argv[0])
 
+    exitcode = 0
 
     setinput = args[0]
     testoutput = args[1]
@@ -86,8 +87,7 @@ def main():
         j = int(j)
         sim = float(sim)
         vsim = jaccard_index(setlist[i], setlist[j])
-        exitcode = 0
-        if (abs(sim - vsim) > 1e-04):
+        if (abs(sim - vsim) > 1e-05):
             print 'FAIL',i,j,sim,vsim
             exitcode = -1
 
