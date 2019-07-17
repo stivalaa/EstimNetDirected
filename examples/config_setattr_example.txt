@@ -95,15 +95,15 @@ setAttrFile = setAttributes_n1000.txt
 
 # Theta (estimated parameter) values output file prefix
 
-thetaFilePrefix = theta_sim_n1000_sample
+thetaFilePrefix = theta_sim_n1000_sample_setattr
 
 # dzA (statistics deltas, which should osciallate about zero at equilibrium)
 # values output file prefix 
 
-dzAFilePrefix = dzA_sim_n1000_sample
+dzAFilePrefix = dzA_sim_n1000_sample_setattr
 
 # Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
-simNetFilePrefix = sim_sim_n1000_sample
+simNetFilePrefix = sim_sim_n1000_sample_setattr
 
 ################## Parameters to estimate ####################################
 
