@@ -165,5 +165,8 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
 int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename);
 void dump_zone_info(const digraph_t *g);
 
+int parse_category_set(char *str, bool firstpass, uint_t *size,
+                       set_elem_e *setval);
+  
 #endif /* DIGRAPH_H */
 

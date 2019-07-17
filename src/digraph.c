@@ -500,94 +500,6 @@ static int load_float_attributes(const char *attr_filename,
   return num_attributes;
 }
 
-/*
- * Parse comma-delimited list of int into set.
- *
- * The format of the input isa a comma delimited (note must have no
- * whitespace as different attributes are delimited by whitespace)
- * list of integers making up the set of categories.  Valid values are
- * integer >= 0 for each of the comma-delimited categories, or a
- * single NONE (case insensitive) for empty set, or a single NA (case
- * insensitve) for missing data.
- *
- * The highest value of any integer for an attribute gives the size of
- * the set for that attribute. The values do not need to be contiguous,
- * and the set is stored as an array of set_elem_e for maximum flexibility
- * (rather than more efficient fixed size bit set),
- *
- * Note that NONE results simply in all elements of the set being
- * absent with the normal semantics of the set, however NA results in
- * all elements of the set (array) being set to SET_ELEM_NA meaning there is
- * really a single NA for that set attribute on that node, there is
- * no individual meaning of SET_ELEM_NA at a particular index in the array.
- *
- *
- * Parameters:
- *    str       - input string comma-delimited list of nonnegative integers
- *    firstpass - if True, do not do any allocation or build output value,
- *                just set output parameter size to max int value in list
- *    size      - (in/Out) max int value parsed in set, if firstpass
- *                         else if firstpass not True then (in) size from
- *                         first pass
- *    setval    - (Out) set value parsed, if firstpass False
- *                Must be allocated by caller to large enough (from max
- *                size ever set here on firstpass). Not use if firstpass True.
- *
- * Return value:
- *    0 if OK, -1 on error.
- *
- */
-static int parse_category_set(char *str, bool firstpass, uint_t *size,
-                              set_elem_e *setval)
-{
-  const char *delims   = ","; /* strtok_r() delimiters  */
-  char *saveptr        = NULL; /* for strtok_r() */
-  char *token          = NULL; /* from strtok_r() */
-  uint_t val            = 0;
-  uint_t i;
-
-  if (strcasecmp(str, NA_STRING) == 0) {
-    if (!firstpass) {
-      for (i = 0; i < *size; i++) {
-        setval[i] = SET_ELEM_NA;
-      }
-    }
-  } else if (strcasecmp(str, SET_NONE_STRING) == 0) {
-    if (!firstpass) {
-      for (i = 0; i < *size; i++) {
-        setval[i] = SET_ELEM_ABSENT;
-      }
-    }
-  } else {
-    if (!firstpass) {
-      /* on second pass set have size so all the elements to absent to start */
-      for (i = 0; i < *size; i++) {
-        setval[i] = SET_ELEM_ABSENT;
-      }
-    }
-    token = strtok_r(str, delims, &saveptr);
-    while(token) {
-      if (sscanf(token, "%u", &val) != 1) {
-        fprintf(stderr, "ERROR: bad value '%s' in set\n", token);
-        return -1;
-      }
-      if (firstpass) {
-        /* first pass, just get largest int for size of set */
-        if (val + 1 > *size) {
-          *size = val + 1;
-          DIGRAPH_DEBUG_PRINT(("parse_category_set token '%s' size now %u\n",
-                               token, *size));
-        }
-      } else {
-        /* second pass, set the flags in the set for each int present in list */
-        assert(val < *size);
-        setval[val] = SET_ELEM_PRESENT;
-      }
-      token = strtok_r(NULL, delims, &saveptr);
-    }
-  }
-  return 0;
-}
 
 /*
  * Load set (of categorical) attributes from file.
@@ -1761,4 +1673,96 @@ void dump_zone_info(const digraph_t *g)
     printf(" %u", g->prev_wave_degree[i]);
   }
   printf("\n");
+}
+
+
+/*
+ * Parse comma-delimited list of int into set.
+ *
+ * The format of the input isa a comma delimited (note must have no
+ * whitespace as different attributes are delimited by whitespace)
+ * list of integers making up the set of categories.  Valid values are
+ * integer >= 0 for each of the comma-delimited categories, or a
+ * single NONE (case insensitive) for empty set, or a single NA (case
+ * insensitve) for missing data.
+ *
+ * The highest value of any integer for an attribute gives the size of
+ * the set for that attribute. The values do not need to be contiguous,
+ * and the set is stored as an array of set_elem_e for maximum flexibility
+ * (rather than more efficient fixed size bit set),
+ *
+ * Note that NONE results simply in all elements of the set being
+ * absent with the normal semantics of the set, however NA results in
+ * all elements of the set (array) being set to SET_ELEM_NA meaning there is
+ * really a single NA for that set attribute on that node, there is
+ * no individual meaning of SET_ELEM_NA at a particular index in the array.
+ *
+ *
+ * Parameters:
+ *    str       - input string comma-delimited list of nonnegative integers
+ *    firstpass - if True, do not do any allocation or build output value,
+ *                just set output parameter size to max int value in list
+ *    size      - (in/Out) max int value parsed in set, if firstpass
+ *                         else if firstpass not True then (in) size from
+ *                         first pass
+ *    setval    - (Out) set value parsed, if firstpass False
+ *                Must be allocated by caller to large enough (from max
+ *                size ever set here on firstpass). Not use if firstpass True.
+ *
+ * Return value:
+ *    0 if OK, -1 on error.
+ *
+ *
+ * This function has external linkage only so it can be used in unit tests.
+ */
+int parse_category_set(char *str, bool firstpass, uint_t *size,
+                              set_elem_e *setval)
+{
+  const char *delims   = ","; /* strtok_r() delimiters  */
+  char *saveptr        = NULL; /* for strtok_r() */
+  char *token          = NULL; /* from strtok_r() */
+  uint_t val            = 0;
+  uint_t i;
+
+  if (strcasecmp(str, NA_STRING) == 0) {
+    if (!firstpass) {
+      for (i = 0; i < *size; i++) {
+        setval[i] = SET_ELEM_NA;
+      }
+    }
+  } else if (strcasecmp(str, SET_NONE_STRING) == 0) {
+    if (!firstpass) {
+      for (i = 0; i < *size; i++) {
+        setval[i] = SET_ELEM_ABSENT;
+      }
+    }
+  } else {
+    if (!firstpass) {
+      /* on second pass set have size so all the elements to absent to start */
+      for (i = 0; i < *size; i++) {
+        setval[i] = SET_ELEM_ABSENT;
+      }
+    }
+    token = strtok_r(str, delims, &saveptr);
+    while(token) {
+      if (sscanf(token, "%u", &val) != 1) {
+        fprintf(stderr, "ERROR: bad value '%s' in set\n", token);
+        return -1;
+      }
+      if (firstpass) {
+        /* first pass, just get largest int for size of set */
+        if (val + 1 > *size) {
+          *size = val + 1;
+          DIGRAPH_DEBUG_PRINT(("parse_category_set token '%s' size now %u\n",
+                               token, *size));
+        }
+      } else {
+        /* second pass, set the flags in the set for each int present in list */
+        assert(val < *size);
+        setval[val] = SET_ELEM_PRESENT;
+      }
+      token = strtok_r(NULL, delims, &saveptr);
+    }
+  }
+  return 0;
 }
