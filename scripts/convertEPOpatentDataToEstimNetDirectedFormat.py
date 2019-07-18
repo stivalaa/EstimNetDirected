@@ -147,7 +147,7 @@ def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    binattrs = ['English','Switzerland']
+    binattrs = ['English','Switzerland','Belgium']
     with open(filename, 'w') as f:
         f.write(' '.join(binattrs) + '\n')
         for i in nodelist:
