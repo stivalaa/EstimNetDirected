@@ -29,7 +29,7 @@ Usage:
 
  Output files in cwd (WARNING overwritten):
      patent_citations.txt
-     patent_binattr.txt  [Not used]
+     patent_binattr.txt
      patent_catattr.txt
      patent_contattr.txt
      patent_setattr.txt
@@ -121,6 +121,44 @@ def str_to_float(sval):
                 val = "NA"
     return val
 
+
+def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
+    """
+    write_attributes_file_binary() - write categorical node attribute file 
+    
+    The EstimNetDirected format of the binary actor attribute file is 
+    the header line with attribute names and then
+    bthe attribute value (0 or 1) for each on one line per node.  See
+    load_integer_attributes() in digraph.c
+
+    Parameters:
+        filename -filename to write to (warning: overwritten)
+        G - SNAP graph/network object.
+        nodelist - list of nodeids used to order the nodes in the output
+        patdata - dictionary mapping node ID (int) to list
+                  of attributes (all strings)
+        colnames - dict mapping attribute name to 
+                  index of the patdata list so e.g. we can look
+                  up APPYEAR of patent id 123 with 
+                   patdata[123][colnames['APPYEAR']]
+          
+    Return value:
+      None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(patdata) >= G.GetNodes())
+    binattrs = ['English','Switzerland']
+    with open(filename, 'w') as f:
+        f.write(' '.join(binattrs) + '\n')
+        for i in nodelist:
+            for attr in binattrs:
+                val = patdata[i][colnames[attr]]
+                val = str(val) if val in [0,1] else 'NA'
+                f.write(val)
+                if attr == binattrs[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
 
 
 
@@ -394,10 +432,12 @@ def main():
 
     graph_filename = outputdir + os.path.sep + "patent_citations" + os.path.extsep + "txt"
     write_graph_file(graph_filename, G, nodelist)
+    attributes_binary_filename = outputdir + os.path.sep + "patent_binattr"  + os.path.extsep + "txt"
     attributes_categorical_filename = outputdir + os.path.sep + "patent_catattr"  + os.path.extsep + "txt"
     attributes_continuous_filename = outputdir + os.path.sep + "patent_contattr" + os.path.extsep + "txt"
     attributes_set_filename = outputdir + os.path.sep + "patent_setattr" + os.path.extsep + "txt"
 
+    write_attributes_file_binary(attributes_binary_filename, G, nodelist, patdata, colnames)
     write_attributes_file_categorical(attributes_categorical_filename, G, nodelist, patdata, colnames)
     write_attributes_file_continuous(attributes_continuous_filename, G, nodelist, patdata, colnames)
     write_attributes_file_set(attributes_set_filename, G, nodelist, patdata, colnames)

@@ -111,7 +111,7 @@ def load_epo_patent_data(indirname):
     # and we remove the leading 'EP' on each patent to get (still unique) integer ids
     colnames = csviter.next()[1:] # skip PatID column 0
     # append new column nanmes for data added later
-    newcolnames = ['NumClasses']
+    newcolnames = ['NumClasses','English','Switzerland']
     colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
@@ -122,4 +122,10 @@ def load_epo_patent_data(indirname):
     # the comma-delimited list of classes
     for patid in patentdict.iterkeys():
         patentdict[patid][patent_colnames['NumClasses']] =  len(patentdict[patid][patent_colnames['Classes']].split(','))
+
+    # Add build binary attributes for language English and country Switzerland
+    for patid in patentdict.iterkeys():
+        patentdict[patid][patent_colnames['English']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'EN' else 0))
+        patentdict[patid][patent_colnames['Switzerland']] = ('NA' if patentdict[patid][patent_colnames['Country']] == '' else (1 if patentdict[patid][patent_colnames['Country']] == 'CH' else 0))
+    
     return (G, patentdict, patent_colnames)
