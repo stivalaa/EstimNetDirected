@@ -111,7 +111,7 @@ def load_epo_patent_data(indirname):
     # and we remove the leading 'EP' on each patent to get (still unique) integer ids
     colnames = csviter.next()[1:] # skip PatID column 0
     # append new column nanmes for data added later
-    newcolnames = ['NumClasses','English','Switzerland','Belgium']
+    newcolnames = ['NumClasses','English','Switzerland','Belgium','Sections','NumSections']
     colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
@@ -128,5 +128,27 @@ def load_epo_patent_data(indirname):
         patentdict[patid][patent_colnames['English']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'EN' else 0))
         patentdict[patid][patent_colnames['Switzerland']] = ('NA' if patentdict[patid][patent_colnames['Country']] == '' else (1 if patentdict[patid][patent_colnames['Country']] == 'CH' else 0))
         patentdict[patid][patent_colnames['Belgium']] = ('NA' if patentdict[patid][patent_colnames['Country']] == '' else (1 if patentdict[patid][patent_colnames['Country']] == 'BE' else 0))
+
+    # Add CPC section which is the first character (letter) in the class
+    # and also number of sections each patent is in.
+    # There are 9 CPC sections:
+    # https://www.epo.org/searching-for-patents/helpful-resources/first-time-here/classification/cpc.html
+    # A = Human necessities
+    # B = Performing operations; transporting 
+    # C = Chemistry; metallurgy 
+    # D = Textiles; paper
+    # E = Fixed constructions
+    # F = Mechanical engineering; lighting; heating; weapons; blasting engines or pumps 
+    # G = Physics
+    # H = Electicity
+    # Y = General tagging of new technological developments; general tagging of cross-sectional technologies spanning over several sections of the IPC; technical subjects covered by former USPC cross-reference art collections [XRACs] and digests
+    for patid in patentdict.iterkeys():
+        patentdict[patid][patent_colnames['Sections']] =  ','.join([tclass[0] for tclass in patentdict[patid][patent_colnames['Classes']].split(',')])
+
+    # Now add the new column NumSections which is number of unique sections in
+    # the comma-delimited list of sections
+    # note we use set here to make sure we count unique sections
+    for patid in patentdict.iterkeys():
+        patentdict[patid][patent_colnames['NumSections']] =  len(set(patentdict[patid][patent_colnames['Sections']].split(',')))
     
     return (G, patentdict, patent_colnames)

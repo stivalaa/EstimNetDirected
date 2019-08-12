@@ -228,6 +228,7 @@ def write_attributes_file_continuous(filename, G, nodelist, patdata, colnames):
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
     contattrs = ['NumClasses',    # number of technology classes
+                 'NumSections',   # number of technology sections (highest level)
                  'Year',          # in data: application year
                  'YearBase1978' ] # constructed here
     contattr_names = contattrs
@@ -275,13 +276,13 @@ def write_attributes_file_set(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    setattrs = ['Classes']    #  technology classes
+    setattrs = ['Classes', 'Sections']    #  technology classes and sections
     setattr_names = setattrs
     with open(filename, 'w') as f:
         f.write(' '.join(setattr_names) + '\n')
         for i in nodelist:
             for attr in setattrs:
-                if attr == 'Classes':
+                if attr == 'Classes' or attr == 'Sections':
                     val = patdata[i][colnames[attr]]
                 else:
                     assert(False)
@@ -392,7 +393,7 @@ def main():
 
 
     # convert categorical set attribute values to integers like factor in R
-    for set_colname in ['Classes']:
+    for set_colname in ['Classes','Sections']:
         setvalues = [(k, p[colnames[set_colname]]) for (k,p) in patdata.iteritems()]
         setvalues_int = convert_to_int_set([x[1].split(',') for x in setvalues])
         for i in xrange(len(setvalues)):
