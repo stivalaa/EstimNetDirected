@@ -111,7 +111,7 @@ def load_epo_patent_data(indirname):
     # and we remove the leading 'EP' on each patent to get (still unique) integer ids
     colnames = csviter.next()[1:] # skip PatID column 0
     # append new column nanmes for data added later
-    newcolnames = ['NumClasses','English','Switzerland','Belgium','Sections','NumSections']
+    newcolnames = ['NumClasses','English','Switzerland','Belgium','Sections','NumSections', 'SectionA', 'SectionB','SectionC', 'SectionD', 'SectionE', 'SectionF', 'SectionG', 'SectionH', 'SectionY','CPCsections']
     colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
@@ -123,7 +123,7 @@ def load_epo_patent_data(indirname):
     for patid in patentdict.iterkeys():
         patentdict[patid][patent_colnames['NumClasses']] =  len(patentdict[patid][patent_colnames['Classes']].split(','))
 
-    # Add build binary attributes for language English and country Switzerland
+    # Build binary attributes for language English and country Switzerland
     for patid in patentdict.iterkeys():
         patentdict[patid][patent_colnames['English']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'EN' else 0))
         patentdict[patid][patent_colnames['Switzerland']] = ('NA' if patentdict[patid][patent_colnames['Country']] == '' else (1 if patentdict[patid][patent_colnames['Country']] == 'CH' else 0))
@@ -143,12 +143,22 @@ def load_epo_patent_data(indirname):
     # H = Electicity
     # Y = General tagging of new technological developments; general tagging of cross-sectional technologies spanning over several sections of the IPC; technical subjects covered by former USPC cross-reference art collections [XRACs] and digests
     for patid in patentdict.iterkeys():
+        # Sections and CPCsections are the same, but Sections will be 
+        # converted to int set later and CPCsections will not;
+        # we will only list unique CPCsections here (but leave Sections
+        # as the R 'factor' like code will do that later)
         patentdict[patid][patent_colnames['Sections']] =  ','.join([tclass[0] for tclass in patentdict[patid][patent_colnames['Classes']].split(',')])
+        patentdict[patid][patent_colnames['CPCsections']] =  ','.join(set([tclass[0] for tclass in patentdict[patid][patent_colnames['Classes']].split(',')]))
 
     # Now add the new column NumSections which is number of unique sections in
     # the comma-delimited list of sections
     # note we use set here to make sure we count unique sections
     for patid in patentdict.iterkeys():
         patentdict[patid][patent_colnames['NumSections']] =  len(set(patentdict[patid][patent_colnames['Sections']].split(',')))
+
+    # Build binary attribute for each CPC Section
+    for patid in patentdict.iterkeys():
+        for cpcsection in ['A','B','C','D','E','F','G','H','Y']:
+            patentdict[patid][patent_colnames['Section'+cpcsection]] = (1 if cpcsection in patentdict[patid][patent_colnames['Sections']].split(',') else 0)
     
     return (G, patentdict, patent_colnames)

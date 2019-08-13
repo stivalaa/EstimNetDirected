@@ -34,6 +34,7 @@ Usage:
      patent_contattr.txt
      patent_setattr.txt
      nodeid.txt
+     patent_sections.txt [not used by EstimNetDirected but useful to read in R]
 
  WARNING: the output files are overwritten if they exist.
 
@@ -147,7 +148,7 @@ def write_attributes_file_binary(filename, G, nodelist, patdata, colnames):
     """
     assert(len(nodelist) == G.GetNodes())
     assert(len(patdata) >= G.GetNodes())
-    binattrs = ['English','Switzerland','Belgium']
+    binattrs = ['English','Switzerland','Belgium','SectionA', 'SectionB','SectionC', 'SectionD', 'SectionE', 'SectionF', 'SectionG', 'SectionH', 'SectionY']
     with open(filename, 'w') as f:
         f.write(' '.join(binattrs) + '\n')
         for i in nodelist:
@@ -446,6 +447,15 @@ def main():
     nodeid_filename = outputdir + os.path.sep + "nodeid" + os.path.extsep + "txt"
     write_subgraph_nodeids(nodeid_filename, nodelist)
 
+    # write patent sections as original letters before converting to int
+    # This cannot be used by EstimNetDirected but is useful to read in R
+    # and factor there so that the original names are preserved
+    sections_filename = outputdir + os.path.sep + "patent_sections" + os.path.extsep + "txt"
+    with open(sections_filename, 'w') as f:
+        f.write('CPCsections\n')
+        for i in nodelist:
+            val = patdata[i][colnames['CPCsections']]
+            f.write(val + '\n')
         
 
     
