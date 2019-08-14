@@ -127,7 +127,7 @@ def load_epo_patent_data(indirname):
     for patid in patentdict.iterkeys():
         patentdict[patid][patent_colnames['English']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'EN' else 0))
         patentdict[patid][patent_colnames['French']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'FR' else 0))
-        patentdict[patid][patent_colnames['German']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'GR' else 0))
+        patentdict[patid][patent_colnames['German']] = ('NA' if patentdict[patid][patent_colnames['Language']] == '' or patentdict[patid][patent_colnames['Language']] == 'XX' else  (1 if patentdict[patid][patent_colnames['Language']] == 'DE' else 0))
         patentdict[patid][patent_colnames['Switzerland']] = ('NA' if patentdict[patid][patent_colnames['Country']] == '' else (1 if patentdict[patid][patent_colnames['Country']] == 'CH' else 0))
         patentdict[patid][patent_colnames['Belgium']] = ('NA' if patentdict[patid][patent_colnames['Country']] == '' else (1 if patentdict[patid][patent_colnames['Country']] == 'BE' else 0))
 
