@@ -34,7 +34,7 @@ Usage:
      patent_contattr.txt
      patent_setattr.txt
      nodeid.txt
-     patent_sections.txt [not used by EstimNetDirected but useful to read in R]
+     patent_string_categories.txt [not used by EstimNetDirected but useful to read in R]
 
  WARNING: the output files are overwritten if they exist.
 
@@ -308,8 +308,8 @@ def write_subgraph_nodeids(filename, nodelist):
     Writes the original graph node identifiers in file one per line in
     same order as zones and attributes so we can cross-reference the
     subgraph nodes back to the original grpah if necessary.  First
-    line is just header "nodeid" than next line is original node id of
-    node 1 in subgraph, etc.
+    line is just header "nodeid" than next line is original 
+    patent identifier (nodeid) of node 1 in subgraph, etc.
 
     Paramters:
         filename - filename to write to (warning: overwritten)
@@ -450,13 +450,19 @@ def main():
     # write patent sections as original letters before converting to int
     # This cannot be used by EstimNetDirected but is useful to read in R
     # and factor there so that the original names are preserved
-    sections_filename = outputdir + os.path.sep + "patent_sections" + os.path.extsep + "txt"
+    sections_filename = outputdir + os.path.sep + "patent_string_categories" + os.path.extsep + "txt"
+    attrnames = ['CPCsections','LanguageCode','CountryCode']
     with open(sections_filename, 'w') as f:
-        f.write('CPCsections\n')
+        f.write(' '.join(attrnames) + '\n')
         for i in nodelist:
-            val = patdata[i][colnames['CPCsections']]
-            f.write(val + '\n')
-        
+            for attrname in attrnames:
+                val = patdata[i][colnames[attrname]]
+                val = 'NA' if (val == 'NA' or val == 'XX') else val
+                f.write(val)
+                if attrname == attrnames[-1]:
+                    f.write('\n')
+                else:
+                    f.write(' ' )
 
     
 if __name__ == "__main__":

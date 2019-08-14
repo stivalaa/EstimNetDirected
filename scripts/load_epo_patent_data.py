@@ -111,7 +111,7 @@ def load_epo_patent_data(indirname):
     # and we remove the leading 'EP' on each patent to get (still unique) integer ids
     colnames = csviter.next()[1:] # skip PatID column 0
     # append new column nanmes for data added later
-    newcolnames = ['NumClasses','English','Switzerland','Belgium','Sections','NumSections', 'SectionA', 'SectionB','SectionC', 'SectionD', 'SectionE', 'SectionF', 'SectionG', 'SectionH', 'SectionY','CPCsections']
+    newcolnames = ['NumClasses','English','Switzerland','Belgium','Sections','NumSections', 'SectionA', 'SectionB','SectionC', 'SectionD', 'SectionE', 'SectionF', 'SectionG', 'SectionH', 'SectionY','CPCsections', 'LanguageCode', 'CountryCode']
     colnames += newcolnames
     patent_colnames = dict([(name, col) for (col, name) in enumerate(colnames)])
     # have already read header line so rest of iterable csv read is the data
@@ -160,5 +160,13 @@ def load_epo_patent_data(indirname):
     for patid in patentdict.iterkeys():
         for cpcsection in ['A','B','C','D','E','F','G','H','Y']:
             patentdict[patid][patent_colnames['Section'+cpcsection]] = (1 if cpcsection in patentdict[patid][patent_colnames['Sections']].split(',') else 0)
+    
+    # LanguageCode and CountryCode are jsut Language and Country
+    # but kept as original strings for convenience in R not made integers
+    # for EstimNetDirected
+    for patid in patentdict.iterkeys():
+        patentdict[patid][patent_colnames['CountryCode']] = patentdict[patid][patent_colnames['Country']]
+        patentdict[patid][patent_colnames['LanguageCode']] = patentdict[patid][patent_colnames['Language']]
+        
     
     return (G, patentdict, patent_colnames)
