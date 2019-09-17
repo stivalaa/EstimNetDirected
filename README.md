@@ -14,7 +14,11 @@ Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 200
 
 is included. This network was downloaded from Mark Newman's network data page.
 
-If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below in any resulting publications.
+If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below, and specifically Stivala, Robins, & Lomi (2019), in any resulting publications.
+
+## Funding
+
+Development of the EstimNetDirected software was funded by the Swiss National Science Foundation NRP 75 project number 167326.
 
 ## References
 
