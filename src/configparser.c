@@ -240,6 +240,7 @@ static const attr_param_t ATTR_PARAMS[] =
   {"Diff",                   ATTR_TYPE_CONTINUOUS, changeDiff},
   {"DiffReciprocity",        ATTR_TYPE_CONTINUOUS, changeDiffReciprocity},
   {"DiffSign",               ATTR_TYPE_CONTINUOUS, changeDiffSign},
+  {"DiffDirSR",              ATTR_TYPE_CONTINUOUS, changeDiffDirSR},
   {"JaccardSimilarity",      ATTR_TYPE_SET,        changeJaccardSimilarity}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
