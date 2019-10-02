@@ -653,6 +653,31 @@ double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a)
   }
 }
 
+/*
+ * Change statistic for signed continuous difference
+ * for attr_j - attr_i if attr_j > attr_i and zero otherwise.
+ * (so larger as recieving node has higher attribute value and 0
+ * when sending node has higher attribute value, and the value is always
+ * positive).
+ * Like diff(dir="h-t", sign.action="posonly") in statnet.
+ * ("tail" is sender, "head" is receiver)
+ */
+double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+{
+  if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
+  {
+    return 0;
+  }
+  else {
+    if (g->contattr[a][j] > g->contattr[a][i])
+      return g->contattr[a][j] - g->contattr[a][i];
+    else
+      return 0;
+  }
+}
+
+
+
 
 /***************** Actor attribute (set of categorical) ********************/
 

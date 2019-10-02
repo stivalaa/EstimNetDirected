@@ -108,6 +108,7 @@ double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
 
 /********************* Actor attribute (set of categorical) *******************/
