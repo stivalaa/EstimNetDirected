@@ -143,7 +143,7 @@ static const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
 
 /*****************************************************************************
  *
- * file static variables
+ * externally visible variables
  *
  ****************************************************************************/
 
@@ -204,6 +204,13 @@ config_t CONFIG = {
 };
 
 
+/*****************************************************************************
+ *
+ * file static variables
+ *
+ ****************************************************************************/
+
+
 /* 
  * Array of flags to set to TRUE when a parameter value is set. 
  * If we don't check this then the same parameter can be set multiple
@@ -216,7 +223,7 @@ config_t CONFIG = {
  * but simply check CONFIG.num_change_stats_funcs and 
  * CONFIG.num_attr_change_stats_funcs
  */
-bool CONFIG_IS_SET[] = {
+static bool CONFIG_IS_SET[] = {
   FALSE, /* ACA_S */       
   FALSE, /* ACA_EE */      
   FALSE, /* compC */       
@@ -991,7 +998,7 @@ void init_config_parser(void)
  * Write the allowed configuration parameters, their descriptions and 
  * default values, to stderr
  */
-void dump_config_names(void)
+void dump_config_names(void *config)
 {
   uint_t i;
   fprintf(stderr, "Configuration parameters:\n");
@@ -1001,24 +1008,24 @@ void dump_config_names(void)
     switch (CONFIG_PARAMS[i].type) {
       case PARAM_TYPE_DOUBLE:
         fprintf(stderr, "(floating point) [default %g]\n",
-                *(double *)((char *)&CONFIG + CONFIG_PARAMS[i].offset));
+                *(double *)((char *)config + CONFIG_PARAMS[i].offset));
         break;
         
       case PARAM_TYPE_UINT:
         fprintf(stderr, "(unsigned integer) [default %u]\n",
-                *(uint_t *)((char *)&CONFIG + CONFIG_PARAMS[i].offset));
+                *(uint_t *)((char *)config + CONFIG_PARAMS[i].offset));
         break;
 
       case PARAM_TYPE_BOOL:
         fprintf(stderr, "(Boolean) [default %s]\n",
-                *(bool *)((char *)&CONFIG + CONFIG_PARAMS[i].offset) ?
+                *(bool *)((char *)config + CONFIG_PARAMS[i].offset) ?
                 "True" : "False");
         break;
 
       case PARAM_TYPE_STRING:
         fprintf(stderr, "(string)");
-        if (*(char **)((char *)&CONFIG + CONFIG_PARAMS[i].offset))
-          fprintf(stderr, " [default %s]\n", *(char **)((char *)&CONFIG + CONFIG_PARAMS[i].offset));
+        if (*(char **)((char *)config + CONFIG_PARAMS[i].offset))
+          fprintf(stderr, " [default %s]\n", *(char **)((char *)config + CONFIG_PARAMS[i].offset));
         else
           fprintf(stderr, "\n");
         break;

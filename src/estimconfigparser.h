@@ -60,6 +60,13 @@ typedef struct config_s {
   param_config_t param_config;
 } config_t;
 
+/*****************************************************************************
+ *
+ * externally visible variable declarations
+ *
+ ****************************************************************************/
+
+extern config_t CONFIG;
 
 /*****************************************************************************
  *
@@ -73,6 +80,6 @@ void free_config_struct(config_t *config);
 
 void init_config_parser(void);
 
-void dump_config_names(void);
+void dump_config_names(void *config);
 
 #endif /* ESTIMCONFIGPARSER_H */
