@@ -44,26 +44,14 @@ int do_simulation(sim_config_t * config)
   char           sim_outfilename[PATH_MAX+1];
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   
-  if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
-    fprintf(stderr, "error opening file %s (%s)\n", 
-            config->arclist_filename, strerror(errno));
+  g = allocate_digraph(config->numNodes);
+  if (load_attributes(g, config->binattr_filename,
+                      config->catattr_filename,
+                      config->contattr_filename,
+                      config->setattr_filename)) {
+    fprintf(stderr, "ERROR: loading node attributes failed\n");
     return -1;
   }
-  gettimeofday(&start_timeval, NULL);
-  printf("loading arc list from %s and building two-path matrices...",
-         config->arclist_filename);
-  g = load_digraph_from_arclist_file(arclist_file,
-                                     config->binattr_filename,
-                                     config->catattr_filename,
-                                     config->contattr_filename,
-                                     config->setattr_filename);
-  gettimeofday(&end_timeval, NULL);
-  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
-  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-  printf("%.2f s\n", (double)etime/1000);
-#ifdef DEBUG_DIGRAPH
-  dump_digraph_arclist(g);
-#endif /*DEBUG_DIGRAPH*/
 
   if (config->zone_filename) {
     if (add_snowball_zones_to_digraph(g, config->zone_filename)) {
@@ -76,10 +64,8 @@ int do_simulation(sim_config_t * config)
 #endif /* DEBUG_SNOWBALL */
   }
   
-  
   print_data_summary(g);
   print_zone_summary(g);
-
 
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */

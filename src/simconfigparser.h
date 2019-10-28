@@ -35,11 +35,11 @@ typedef struct sim_config_s {
    * Parameters parsed directly from config file
    */
 
+  uint_t numNodes;        /* number of nodes in digraph */
   uint_t samplerSteps;    /* sampler iterations per algorithm step */
   bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
   double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
   bool  outputSimulatedNetwork; /* output simulated network at end */
-  char *arclist_filename; /* filename of Pajek file with digraph to estimate */
   char *binattr_filename; /* filename of binary attributes file or NULL */
   char *catattr_filename; /* filename of categorical attributes file or NULL */
   char *contattr_filename;/* filename of continuous attributes file or NULL */

@@ -40,6 +40,9 @@
  * Configuration parameter names (keywords) are not case sensitive.
  */
 const config_param_t SIM_CONFIG_PARAMS[] = {
+  {"numNodes",      PARAM_TYPE_UINT,     offsetof(sim_config_t, numNodes),
+   "number of nodes in digraph"},
+  
   {"samplerSteps",  PARAM_TYPE_UINT,     offsetof(sim_config_t, samplerSteps),
    "sampler iterations (per algorithm step)"},
 
@@ -52,9 +55,6 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"outputSimulatedNetwork", PARAM_TYPE_BOOL,
    offsetof(sim_config_t, outputSimulatedNetwork),
    "output simulated network in Pajek format at end of MCMC simulation"},
-
-  {"arclistFile",   PARAM_TYPE_STRING,   offsetof(sim_config_t, arclist_filename),
-  "Network in Pajek arc list format"},
 
   {"binattrFile",   PARAM_TYPE_STRING,   offsetof(sim_config_t, binattr_filename),
   "binary attributes file"},
@@ -120,11 +120,11 @@ const uint_t NUM_SIM_CONFIG_PARAMS = sizeof(SIM_CONFIG_PARAMS) /
  * therefore set in code with strdup() just like specified values.
  */
 sim_config_t SIM_CONFIG = {
+  0,     /* numNodes */
   1000,  /* samplerSteps */
   FALSE, /* useIFDsampler */
   SIM_DEFAULT_IFD_K,   /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
-  NULL,  /* arclist_filename */
   NULL,  /* binattr_filename */
   NULL,  /* catattr_filename */
   NULL,  /* contattr_filename */
@@ -177,11 +177,11 @@ sim_config_t SIM_CONFIG = {
  * CONFIG.num_attr_change_stats_funcs
  */
 static bool SIM_CONFIG_IS_SET[] = {
+  FALSE, /* numNodes */ 
   FALSE, /* samplerSteps */
   FALSE, /* useIFDsampler */
   FALSE, /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
-  FALSE, /* arclist_filename */
   FALSE, /* binattr_filename */
   FALSE, /* catattr_filename */
   FALSE, /* contattr_filename */
@@ -274,7 +274,6 @@ void free_sim_config_struct(sim_config_t *config)
   if (!config)
     return;
   assert(config == &SIM_CONFIG);
-  free(config->arclist_filename);
   free(config->binattr_filename);
   free(config->catattr_filename);
   free(config->contattr_filename);
