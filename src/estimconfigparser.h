@@ -94,11 +94,11 @@ extern estim_config_t ESTIM_CONFIG;
  *
  ****************************************************************************/
 
-estim_config_t *parse_config_file(const char *config_filename);
+estim_config_t *parse_estim_config_file(const char *config_filename);
 
-void free_config_struct(estim_config_t *config);
+void free_estim_config_struct(estim_config_t *config);
 
-void init_config_parser(void);
+void init_estim_config_parser(void);
 
 
 

@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
   init_prng(rank); /* initialize pseudorandom number generator */
 
-  init_config_parser();
+  init_estim_config_parser();
 
   while ((c = getopt(argc, argv, "h")) != -1)  {
     switch (c)   {
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
   printf("MPI name %s rank %d of total %d\n",myname,rank,numtasks);
   
   config_filename = argv[optind];
-  if (!(config = parse_config_file(config_filename))) {
+  if (!(config = parse_estim_config_file(config_filename))) {
     if (rank == MPI_RANK_MASTER) {
       fprintf(stderr, "ERROR parsing configuration file %s\n", config_filename);
     }
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
   } else {
     rc = do_estimation(config, rank);
   }
-  free_config_struct(config);
+  free_estim_config_struct(config);
   MPI_Finalize();
   exit(rc);
 }

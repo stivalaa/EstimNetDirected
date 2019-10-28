@@ -284,7 +284,7 @@ static const uint_t NUM_ESTIM_CONFIG_IS_SET = sizeof(ESTIM_CONFIG_IS_SET)/sizeof
  * Return value:
  *   Pointer to structure with parsed confiugration values or NULL on error.
  */
-estim_config_t *parse_config_file(const char *config_filename)
+estim_config_t *parse_estim_config_file(const char *config_filename)
 {
   char        paramname[TOKSIZE];  /* parameter name buffer */
   char        value[TOKSIZE];      /* parameter value buffer */
@@ -326,7 +326,7 @@ estim_config_t *parse_config_file(const char *config_filename)
  * Return value:
  *     None
  */
-void free_config_struct(estim_config_t *config)
+void free_estim_config_struct(estim_config_t *config)
 {
   /* In fact parse_config_file() returns pointer to static CONFIG struct,
      so just free the pointers inside it */
@@ -351,7 +351,7 @@ void free_config_struct(estim_config_t *config)
  * Initialize the parser. This consists only of setting the default string
  * parameter values (see comments on initialization of static CONFIG struct)
  */
-void init_config_parser(void)
+void init_estim_config_parser(void)
 {
   assert(NUM_ESTIM_CONFIG_IS_SET == NUM_ESTIM_CONFIG_PARAMS);
   ESTIM_CONFIG.theta_file_prefix = safe_strdup("theta_values");

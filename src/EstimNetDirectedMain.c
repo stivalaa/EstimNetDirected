@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
   init_prng(0); /* initialize pseudorandom number generator */
 
-  init_config_parser();
+  init_estim_config_parser();
   
   while ((c = getopt(argc, argv, "h")) != -1)  {
     switch (c)   {
@@ -62,13 +62,13 @@ int main(int argc, char *argv[])
     usage(argv[0]);
 
   config_filename = argv[optind];
-  if (!(config = parse_config_file(config_filename))) {
+  if (!(config = parse_estim_config_file(config_filename))) {
     fprintf(stderr, "ERROR parsing configuration file %s\n", config_filename);
     rc = 1;
   } else {
     rc = do_estimation(config, 0);
   }
-  free_config_struct(config);
+  free_estim_config_struct(config);
   exit(rc);
 }
 
