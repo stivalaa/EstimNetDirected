@@ -200,7 +200,7 @@ void free_param_config_struct(param_config_t *pconfig);
 
 void dump_parameter_names(void);
 
-void dump_config_names(void *config,
+void dump_config_names(const void *config,
                        const config_param_t *config_params,
                        uint_t num_config_params);
 

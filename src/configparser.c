@@ -815,7 +815,7 @@ void free_param_config_struct(param_config_t *pconfig)
  * Write the allowed configuration parameters, their descriptions and 
  * default values, to stderr
  */
-void dump_config_names(void *config,
+void dump_config_names(const void *config,
                        const config_param_t *config_params,
                        uint_t num_config_params)
 {
@@ -827,24 +827,24 @@ void dump_config_names(void *config,
     switch (config_params[i].type) {
       case PARAM_TYPE_DOUBLE:
         fprintf(stderr, "(floating point) [default %g]\n",
-                *(double *)((char *)config + config_params[i].offset));
+                *(const double *)((const char *)config + config_params[i].offset));
         break;
         
       case PARAM_TYPE_UINT:
         fprintf(stderr, "(unsigned integer) [default %u]\n",
-                *(uint_t *)((char *)config + config_params[i].offset));
+                *(const uint_t *)((const char *)config + config_params[i].offset));
         break;
 
       case PARAM_TYPE_BOOL:
         fprintf(stderr, "(Boolean) [default %s]\n",
-                *(bool *)((char *)config + config_params[i].offset) ?
+                *(const bool *)((const char *)config + config_params[i].offset) ?
                 "True" : "False");
         break;
 
       case PARAM_TYPE_STRING:
         fprintf(stderr, "(string)");
-        if (*(char **)((char *)config + config_params[i].offset))
-          fprintf(stderr, " [default %s]\n", *(char **)((char *)config + config_params[i].offset));
+        if (*(const char * const *)((const char *)config + config_params[i].offset))
+          fprintf(stderr, " [default %s]\n", *(const char * const *)((const char *)config + config_params[i].offset));
         else
           fprintf(stderr, "\n");
         break;
