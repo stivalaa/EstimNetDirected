@@ -1,0 +1,89 @@
+#ifndef SIMCONFIGPARSER_H
+#define SIMCONFIGPARSER_H
+/*****************************************************************************
+ * 
+ * File:    simconfigparser.h
+ * Author:  Alex Stivala
+ * Created: October 2019
+ *
+ * Parse the simulation configuration file to get algorithm
+ * parameters, input filenames, parameters to estimate, etc.
+ *
+ * The config file is a text file with comments marked by '#'
+ * character, and "keyword = value" pairs.  See config.txt for example
+ * config file.
+ *
+ *
+ ****************************************************************************/
+
+#include "configparser.h"
+
+
+/* These must be macros not const to use in initializer  */
+
+#define SIM_DEFAULT_IFD_K         0.1     /* default value of ifd_K  */
+
+
+/*****************************************************************************
+ *
+ * type definitions
+ *
+ ****************************************************************************/
+
+typedef struct sim_config_s {
+  /*
+   * Parameters parsed directly from config file
+   */
+
+  uint_t samplerSteps;    /* sampler iterations per algorithm step */
+  bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
+  double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
+  bool  outputSimulatedNetwork; /* output simulated network at end */
+  char *arclist_filename; /* filename of Pajek file with digraph to estimate */
+  char *binattr_filename; /* filename of binary attributes file or NULL */
+  char *catattr_filename; /* filename of categorical attributes file or NULL */
+  char *contattr_filename;/* filename of continuous attributes file or NULL */
+  char *setattr_filename; /* filename of set attributes file or NULL */
+  char *sim_net_file_prefix; /* simulated network output filename prefix */
+  char *zone_filename;    /* filename of snowball sampling zone file or NULL */
+  bool  useConditionalEstimation; /*conditional estimation of snowball sample */  bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
+  
+  /*
+   * values built by confiparser.c functions from parsed config settings
+   */
+  param_config_t param_config;
+} sim_config_t;
+
+
+/*****************************************************************************
+ *
+ * constant declarations
+ *
+ ****************************************************************************/
+
+extern const config_param_t SIM_CONFIG_PARAMS[];
+extern const uint_t NUM_SIM_CONFIG_PARAMS;
+
+/*****************************************************************************
+ *
+ * externally visible variable declarations
+ *
+ ****************************************************************************/
+
+extern sim_config_t SIM_CONFIG;
+
+/*****************************************************************************
+ *
+ * function prototypes
+ *
+ ****************************************************************************/
+
+sim_config_t *parse_sim_config_file(const char *config_filename);
+
+void free_sim_config_struct(sim_config_t *config);
+
+void init_sim_config_parser(void);
+
+
+
+#endif /* SIMCONFIGPARSER_H */

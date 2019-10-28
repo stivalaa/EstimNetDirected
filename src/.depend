@@ -23,3 +23,6 @@ EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
 EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsDirected.h digraph.h \
  equilibriumExpectation.h
+SimulateERGMmain.o: SimulateERGMmain.c utils.h estimconfigparser.h \
+ configparser.h changeStatisticsDirected.h digraph.h \
+ equilibriumExpectation.h

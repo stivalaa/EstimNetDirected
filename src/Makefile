@@ -22,37 +22,56 @@ include common.mk
 
 DEPENDFILE = .depend
 
-COMMON_C_OBJS =  utils.o digraph.o \
+ESTIM_COMMON_C_OBJS =  utils.o digraph.o \
                  changeStatisticsDirected.o basicSampler.o \
                  equilibriumExpectation.o configparser.o estimconfigparser.o \
                  ifdSampler.o
 
-MPI_C_OBJS    = EstimNetDirectedMPImain.o
-NONMPI_C_OBJS = EstimNetDirectedMain.o
+SIM_COMMON_C_OBJS =  utils.o digraph.o \
+                 changeStatisticsDirected.o basicSampler.o \
+                 configparser.o simconfigparser.o ifdSampler.o
 
-COMMON_C_SRCS = $(COMMON_C_OBJS:.o=.c)
-MPI_C_SRCS    = $(MPI_C_OBJS:.o=.c)
-NONMPI_C_SRCS = $(NONMPI_C_OBJS:.o=.c)
+ESTIM_MPI_C_OBJS    = EstimNetDirectedMPImain.o
+ESTIM_NONMPI_C_OBJS = EstimNetDirectedMain.o
 
-COMMON_HASH_C_OBJS = $(COMMON_C_OBJS:.o=_hash.o)
+SIM_C_OBJS = SimulateERGMmain.o
 
-OBJS = $(COMMON_C_OBJS) $(MPI_C_OBJS) $(NONMPI_C_OBJS) $(COMMON_HASH_C_OBJS)
-SRCS = $(COMMON_C_SRCS) $(MPI_C_SRCS) $(NONMPI_C_SRCS)
+ESTIM_COMMON_C_SRCS = $(ESTIM_COMMON_C_OBJS:.o=.c)
+ESTIM_MPI_C_SRCS    = $(ESTIM_MPI_C_OBJS:.o=.c)
+ESTIM_NONMPI_C_SRCS = $(ESTIM_NONMPI_C_OBJS:.o=.c)
+SIM_C_SRCS          = $(SIM_C_OBJS:.o=.c)
 
-all: EstimNetDirected EstimNetDirected_mpi EstimNetDirected_hashtables EstimNetDirected_mpi_hashtables
+ESTIM_COMMON_HASH_C_OBJS = $(ESTIM_COMMON_C_OBJS:.o=_hash.o)
+SIM_COMMON_HASH_C_OBJS = $(SIM_COMMON_C_OBJS:.o=_hash.o)
 
-EstimNetDirected: $(COMMON_C_OBJS) $(NONMPI_C_OBJS)
+
+OBJS = $(ESTIM_COMMON_C_OBJS) $(ESTIM_MPI_C_OBJS) $(ESTIM_NONMPI_C_OBJS) $(ESTIM_COMMON_HASH_C_OBJS) $(SIM_COMMON_C_OBJS) $(SIM_COMMON_HASH_C_OBJS)
+SRCS = $(ESTIM_COMMON_C_SRCS) $(ESTIM_MPI_C_SRCS) $(ESTIM_NONMPI_C_SRCS) $(SIM_C_SRCS)
+
+all: EstimNetDirected EstimNetDirected_mpi EstimNetDirected_hashtables EstimNetDirected_mpi_hashtables SimulateERGM SimulateERGM_hashtables
+
+EstimNetDirected: $(ESTIM_COMMON_C_OBJS) $(ESTIM_NONMPI_C_OBJS)
 	$(LD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
 
-EstimNetDirected_mpi: $(COMMON_C_OBJS) $(MPI_C_OBJS)
+EstimNetDirected_mpi: $(ESTIM_COMMON_C_OBJS) $(ESTIM_MPI_C_OBJS)
 	$(MPILD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
+
+SimulateERGM:  $(SIM_COMMON_C_OBJS) $(SIM_C_OBJS)
+	$(LD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
+
 
 # These versions use hash tables instead of arrays for two-paths lookup
-EstimNetDirected_hashtables: $(COMMON_HASH_C_OBJS) $(NONMPI_C_OBJS)
+EstimNetDirected_hashtables: $(ESTIM_COMMON_HASH_C_OBJS) $(ESTIM_NONMPI_C_OBJS)
 	$(LD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
 
-EstimNetDirected_mpi_hashtables: $(COMMON_HASH_C_OBJS) $(MPI_C_OBJS)
+EstimNetDirected_mpi_hashtables: $(ESTIM_COMMON_HASH_C_OBJS) $(ESTIM_MPI_C_OBJS)
 	$(MPILD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
+
+SimulateERGM_hashtables: $(SIM_COMMON_HASH_C_OBJS) $(SIM_C_OBJS)
+	$(LD) $(LDFLAGS) $(LDLIBPATH)  -o $@ $^  $(LDLIBS)
+
+
+
 
 tags: $(SRCS)
 	$(MAKETAGS) $(SRCS)
