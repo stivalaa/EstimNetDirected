@@ -178,6 +178,7 @@ sim_config_t SIM_CONFIG = {
  */
 static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* samplerSteps */
+  FALSE, /* useIFDsampler */
   FALSE, /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
   FALSE, /* arclist_filename */
