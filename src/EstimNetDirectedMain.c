@@ -16,7 +16,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include "utils.h"
-#include "configparser.h"
+#include "estimconfigparser.h"
 #include "equilibriumExpectation.h"
 
 

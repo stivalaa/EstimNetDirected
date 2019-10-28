@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <mpi.h>
 #include "utils.h"
-#include "configparser.h"
+#include "estimconfigparser.h"
 #include "equilibriumExpectation.h"
 
 /*****************************************************************************

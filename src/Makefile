@@ -24,7 +24,7 @@ DEPENDFILE = .depend
 
 COMMON_C_OBJS =  utils.o digraph.o \
                  changeStatisticsDirected.o basicSampler.o \
-                 equilibriumExpectation.o configparser.o \
+                 equilibriumExpectation.o configparser.o estimconfigparser.o \
                  ifdSampler.o
 
 MPI_C_OBJS    = EstimNetDirectedMPImain.o

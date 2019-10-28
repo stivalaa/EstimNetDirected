@@ -31,7 +31,7 @@
  *
  ****************************************************************************/
 
-#include "configparser.h"
+#include "estimconfigparser.h"
 #include "changeStatisticsDirected.h"
 
 void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
