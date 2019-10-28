@@ -31,11 +31,6 @@
 #define ARC_PARAM_STR                 "Arc"
 #define ATTR_INTERACTION_PARAMS_STR   "attrInteractionParams"
 
-#define DEFAULT_ACA_EE        1e-09   /* default value for ACA_EE */
-#define DEFAULT_COMPC         1e-02   /* default value for compC */
-#define DEFAULT_IFD_K         0.1     /* default value of ifd_K  */
-#define DEFAULT_LEARNING_RATE 0.001   /* default value of learningRate */
-#define DEFAULT_MIN_THETA     0.01    /* default value of minTheta */
 
 
 /*****************************************************************************
