@@ -29,7 +29,7 @@
 
 /*****************************************************************************
  *
- * constants
+ * constant definitions
  *
  ****************************************************************************/
 
@@ -39,7 +39,7 @@
  * define what is parsed from the config file, and the help/error messages.
  * Configuration parameter names (keywords) are not case sensitive.
  */
-static const config_param_t CONFIG_PARAMS[] = {
+const config_param_t CONFIG_PARAMS[] = {
   {"ACA_S",         PARAM_TYPE_DOUBLE,   offsetof(config_t, ACA_S),
    "multiplier for step size in Algorithm S"},
 
@@ -136,7 +136,7 @@ static const config_param_t CONFIG_PARAMS[] = {
   {ATTR_INTERACTION_PARAMS_STR,PARAM_TYPE_SET, 0,/*no offset, coded explicitly*/
    "attribute pair interaction parameters to estimate"}
 };
-static const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
+const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
   sizeof(CONFIG_PARAMS[0]);
 
 
@@ -994,50 +994,3 @@ void init_config_parser(void)
 
 
 
-/*
- * Write the allowed configuration parameters, their descriptions and 
- * default values, to stderr
- */
-void dump_config_names(void *config)
-{
-  uint_t i;
-  fprintf(stderr, "Configuration parameters:\n");
-  for (i = 0; i < NUM_CONFIG_PARAMS; i++) {
-    fprintf(stderr, "  %s: %s ", CONFIG_PARAMS[i].name,
-            CONFIG_PARAMS[i].description);
-    switch (CONFIG_PARAMS[i].type) {
-      case PARAM_TYPE_DOUBLE:
-        fprintf(stderr, "(floating point) [default %g]\n",
-                *(double *)((char *)config + CONFIG_PARAMS[i].offset));
-        break;
-        
-      case PARAM_TYPE_UINT:
-        fprintf(stderr, "(unsigned integer) [default %u]\n",
-                *(uint_t *)((char *)config + CONFIG_PARAMS[i].offset));
-        break;
-
-      case PARAM_TYPE_BOOL:
-        fprintf(stderr, "(Boolean) [default %s]\n",
-                *(bool *)((char *)config + CONFIG_PARAMS[i].offset) ?
-                "True" : "False");
-        break;
-
-      case PARAM_TYPE_STRING:
-        fprintf(stderr, "(string)");
-        if (*(char **)((char *)config + CONFIG_PARAMS[i].offset))
-          fprintf(stderr, " [default %s]\n", *(char **)((char *)config + CONFIG_PARAMS[i].offset));
-        else
-          fprintf(stderr, "\n");
-        break;
-
-      case PARAM_TYPE_SET:
-        fprintf(stderr, "(set of ERGM parameter names)\n");
-        break;
-        
-      default:
-      fprintf(stderr, "ERROR (internal): unknown parameter type %d\n",
-              CONFIG_PARAMS[i].type);
-      break;
-    }
-  }
-}

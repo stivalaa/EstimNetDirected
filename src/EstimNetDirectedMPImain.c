@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
   while ((c = getopt(argc, argv, "h")) != -1)  {
     switch (c)   {
       case 'h':
-        dump_config_names(&CONFIG);
+        dump_config_names(&CONFIG, &CONFIG_PARAMS, NUM_CONFIG_PARAMS);
         dump_parameter_names();
         exit(0);
         break;

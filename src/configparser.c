@@ -809,3 +809,54 @@ void free_param_config_struct(param_config_t *pconfig)
   free(pconfig->attr_interaction_pair_indices);
 }
 
+
+
+/*
+ * Write the allowed configuration parameters, their descriptions and 
+ * default values, to stderr
+ */
+void dump_config_names(void *config,
+                       const config_param_t *config_params,
+                       uint_t num_config_params)
+{
+  uint_t i;
+  fprintf(stderr, "Configuration parameters:\n");
+  for (i = 0; i < num_config_params; i++) {
+    fprintf(stderr, "  %s: %s ", config_params[i].name,
+            config_params[i].description);
+    switch (config_params[i].type) {
+      case PARAM_TYPE_DOUBLE:
+        fprintf(stderr, "(floating point) [default %g]\n",
+                *(double *)((char *)config + config_params[i].offset));
+        break;
+        
+      case PARAM_TYPE_UINT:
+        fprintf(stderr, "(unsigned integer) [default %u]\n",
+                *(uint_t *)((char *)config + config_params[i].offset));
+        break;
+
+      case PARAM_TYPE_BOOL:
+        fprintf(stderr, "(Boolean) [default %s]\n",
+                *(bool *)((char *)config + config_params[i].offset) ?
+                "True" : "False");
+        break;
+
+      case PARAM_TYPE_STRING:
+        fprintf(stderr, "(string)");
+        if (*(char **)((char *)config + config_params[i].offset))
+          fprintf(stderr, " [default %s]\n", *(char **)((char *)config + config_params[i].offset));
+        else
+          fprintf(stderr, "\n");
+        break;
+
+      case PARAM_TYPE_SET:
+        fprintf(stderr, "(set of ERGM parameter names)\n");
+        break;
+        
+      default:
+      fprintf(stderr, "ERROR (internal): unknown parameter type %d\n",
+              config_params[i].type);
+      break;
+    }
+  }
+}
