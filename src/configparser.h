@@ -40,6 +40,15 @@
 
 /*****************************************************************************
  *
+ * constant declarations
+ *
+ ****************************************************************************/
+
+extern const size_t TOKSIZE;   /* maximum size of a token */
+
+
+/*****************************************************************************
+ *
  * type definitions
  *
  ****************************************************************************/
@@ -136,39 +145,6 @@ typedef struct param_config_s {
 } param_config_t;
 
 
-
-/*****************************************************************************
- *
- * constant declarations
- *
- ****************************************************************************/
-
-extern const size_t BUFSIZE;  /* line buffer size for reading files */
-extern const size_t TOKSIZE;   /* maximum size of a token */
-extern const char   COMMENT_CHAR; /* comment character */
-extern const char   OPEN_SET_CHAR;  /* set of parameter vals open */
-extern const char   CLOSE_SET_CHAR; /* set of parameter vals close */
-extern const char   OPEN_PAREN_CHAR;
-extern const char   CLOSE_PAREN_CHAR;
-
-
-/* True and False values for Boolean config value type. Not case sensitive */
-extern const char *TRUE_STR;
-extern const char *FALSE_STR;
-
-
-
-extern const struct_param_t STRUCT_PARAMS[];
-extern const uint_t NUM_STRUCT_PARAMS;
-
-extern const attr_param_t ATTR_PARAMS[];
-extern const uint_t NUM_ATTR_PARAMS;
-
-extern const dyadic_param_t DYADIC_PARAMS[];
-extern const uint_t NUM_DYADIC_PARAMS;
-
-extern const attr_interaction_param_t ATTR_INTERACTION_PARAMS[];
-extern const uint_t NUM_ATTR_INTERACTION_PARAMS;
 
 
 /*****************************************************************************

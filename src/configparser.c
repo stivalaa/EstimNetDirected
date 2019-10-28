@@ -33,29 +33,36 @@
 
 /*****************************************************************************
  *
- * constant definitions
+ * externally visibl constant definitions
  *
  ****************************************************************************/
 
-const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
 const size_t TOKSIZE = 1024;   /* maximum size of a token */
-const char   COMMENT_CHAR = '#'; /* comment character */
-const char   OPEN_SET_CHAR = '{';  /* set of parameter vals open */
-const char   CLOSE_SET_CHAR = '}'; /* set of parameter vals close */
-const char   OPEN_PAREN_CHAR = '(';
-const char   CLOSE_PAREN_CHAR = ')';
+
+/*****************************************************************************
+ *
+ * local constant definitions
+ *
+ ****************************************************************************/
+
+static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
+static const char   COMMENT_CHAR = '#'; /* comment character */
+static const char   OPEN_SET_CHAR = '{';  /* set of parameter vals open */
+static const char   CLOSE_SET_CHAR = '}'; /* set of parameter vals close */
+static const char   OPEN_PAREN_CHAR = '(';
+static const char   CLOSE_PAREN_CHAR = ')';
 
 
 /* True and False values for Boolean config value type. Not case sensitive */
-const char *TRUE_STR = "true";
-const char *FALSE_STR = "false";
+static const char *TRUE_STR = "true";
+static const char *FALSE_STR = "false";
 
 
 /*
  * Structural parameters allowed as the names in the set for the 
  * structParams parameter. Names are not case sensitive 
  */
-const struct_param_t STRUCT_PARAMS[] =
+static const struct_param_t STRUCT_PARAMS[] =
 {
   {ARC_PARAM_STR,       changeArc},
   {"Reciprocity",       changeReciprocity},
@@ -78,14 +85,14 @@ const struct_param_t STRUCT_PARAMS[] =
   {"AltTwoPathsU",      changeAltTwoPathsU},
   {"AltTwoPathsTD",     changeAltTwoPathsTD}
 };
-const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
+static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
 
 /*
  * Attribute parameters allowed as the names in the set for the 
  * attrParams  parameters. Names are not case sensitive.
  */
-const attr_param_t ATTR_PARAMS[] =
+static const attr_param_t ATTR_PARAMS[] =
 {
   {"Sender",       ATTR_TYPE_BINARY,      changeSender},
   {"Receiver",     ATTR_TYPE_BINARY,      changeReceiver},
@@ -103,7 +110,7 @@ const attr_param_t ATTR_PARAMS[] =
   {"DiffDirRS",              ATTR_TYPE_CONTINUOUS, changeDiffDirRS},
   {"JaccardSimilarity",      ATTR_TYPE_SET,        changeJaccardSimilarity}
 };
-const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
+static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
 
 
@@ -111,24 +118,24 @@ const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
  * Dyadic covariate parameters allowed as the names in the set for the
  * dyadicParams parameters. Names are not case sensitive.
  */
-const dyadic_param_t DYADIC_PARAMS[] =
+static const dyadic_param_t DYADIC_PARAMS[] =
 {
   {"GeoDistance",    DYADIC_TYPE_GEODISTANCE,   changeGeoDistance},
   {"logGeoDistance", DYADIC_TYPE_GEODISTANCE,   changeLogGeoDistance},
   {"EuclideanDistance", DYADIC_TYPE_EUCLIDEANDISTANCE, changeEuclideanDistance}
 };
-const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
+static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
   sizeof(DYADIC_PARAMS[0]);
 
 /*
  * Attribute pair interaction parameters allowed as the names in the
  * set for the attrInteractionParams parameters. Names are not case sensitive.
  */
-const attr_interaction_param_t ATTR_INTERACTION_PARAMS[] =
+static const attr_interaction_param_t ATTR_INTERACTION_PARAMS[] =
 {
   {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, changeMatchingInteraction},
 };
-const uint_t NUM_ATTR_INTERACTION_PARAMS =
+static const uint_t NUM_ATTR_INTERACTION_PARAMS =
   sizeof(ATTR_INTERACTION_PARAMS) / sizeof(ATTR_INTERACTION_PARAMS[0]);
 
 
