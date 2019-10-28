@@ -269,7 +269,7 @@ static const uint_t NUM_CONFIG_IS_SET = sizeof(CONFIG_IS_SET)/sizeof(CONFIG_IS_S
  * corresponding change statistic functions.
  * Return nonzero on error else zero.
  */
-static int parse_struct_params(FILE *infile)
+static int parse_struct_params(FILE *infile, param_config_t *pconfig)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -304,18 +304,18 @@ static int parse_struct_params(FILE *infile)
       }
       CONFIG_DEBUG_PRINT(("structParam %s\n", token));
       last_token_was_paramname = TRUE;
-      CONFIG.param_config.param_names = (const char **)safe_realloc(CONFIG.param_config.param_names,
-                                        (CONFIG.param_config.num_change_stats_funcs + 1) *
+      pconfig->param_names = (const char **)safe_realloc(pconfig->param_names,
+                                        (pconfig->num_change_stats_funcs + 1) *
                                         sizeof(const char *));
-      CONFIG.param_config.change_stats_funcs = (change_stats_func_t **)
-        safe_realloc(CONFIG.param_config.change_stats_funcs,
-                  (CONFIG.param_config.num_change_stats_funcs + 1) *
+      pconfig->change_stats_funcs = (change_stats_func_t **)
+        safe_realloc(pconfig->change_stats_funcs,
+                  (pconfig->num_change_stats_funcs + 1) *
                      sizeof(change_stats_func_t *));
-      CONFIG.param_config.param_names[CONFIG.param_config.num_change_stats_funcs] =
+      pconfig->param_names[pconfig->num_change_stats_funcs] =
         STRUCT_PARAMS[i].name;
-      CONFIG.param_config.change_stats_funcs[CONFIG.param_config.num_change_stats_funcs] =
+      pconfig->change_stats_funcs[pconfig->num_change_stats_funcs] =
         STRUCT_PARAMS[i].change_stats_func;
-      CONFIG.param_config.num_change_stats_funcs++;
+      pconfig->num_change_stats_funcs++;
     }
     token = get_token(infile, tokenbuf);
   }
@@ -332,7 +332,7 @@ static int parse_struct_params(FILE *infile)
  */
 static int parse_one_attr_param(const char *paramName,
                                 attr_change_stats_func_t *attr_change_stats_func,
-                                FILE *infile)
+                                FILE *infile, param_config_t *pconfig)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
@@ -364,21 +364,21 @@ static int parse_one_attr_param(const char *paramName,
       } else {
         CONFIG_DEBUG_PRINT(("attrParam %s('%s')\n", paramName, token));
         last_token_was_attrname = TRUE;
-        CONFIG.param_config.attr_param_names = (const char **)
-          safe_realloc(CONFIG.param_config.attr_param_names,
-                       (CONFIG.param_config.num_attr_change_stats_funcs + 1) *
+        pconfig->attr_param_names = (const char **)
+          safe_realloc(pconfig->attr_param_names,
+                       (pconfig->num_attr_change_stats_funcs + 1) *
                        sizeof(const char *));
-        CONFIG.param_config.attr_change_stats_funcs = (attr_change_stats_func_t **)
-          safe_realloc(CONFIG.param_config.attr_change_stats_funcs,
-                       (CONFIG.param_config.num_attr_change_stats_funcs + 1) *
+        pconfig->attr_change_stats_funcs = (attr_change_stats_func_t **)
+          safe_realloc(pconfig->attr_change_stats_funcs,
+                       (pconfig->num_attr_change_stats_funcs + 1) *
                        sizeof(attr_change_stats_func_t *));
-        CONFIG.param_config.attr_names = (char **)safe_realloc(CONFIG.param_config.attr_names,
-              (CONFIG.param_config.num_attr_change_stats_funcs + 1) * sizeof(const char *));
-        CONFIG.param_config.attr_param_names[CONFIG.param_config.num_attr_change_stats_funcs] = paramName;
-        CONFIG.param_config.attr_change_stats_funcs[CONFIG.param_config.num_attr_change_stats_funcs] =
+        pconfig->attr_names = (char **)safe_realloc(pconfig->attr_names,
+              (pconfig->num_attr_change_stats_funcs + 1) * sizeof(const char *));
+        pconfig->attr_param_names[pconfig->num_attr_change_stats_funcs] = paramName;
+        pconfig->attr_change_stats_funcs[pconfig->num_attr_change_stats_funcs] =
           attr_change_stats_func;
-        CONFIG.param_config.attr_names[CONFIG.param_config.num_attr_change_stats_funcs] = safe_strdup(token);
-        CONFIG.param_config.num_attr_change_stats_funcs++;
+        pconfig->attr_names[pconfig->num_attr_change_stats_funcs] = safe_strdup(token);
+        pconfig->num_attr_change_stats_funcs++;
       }
     }
     token = get_token(infile, tokenbuf);
@@ -412,7 +412,7 @@ static int parse_one_attr_param(const char *paramName,
  * after the attributes values have been loaded, by calling
  * build_attr_indices_from_names().
  */
-static int parse_attr_params(FILE *infile)
+static int parse_attr_params(FILE *infile, param_config_t *pconfig)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -449,7 +449,7 @@ static int parse_attr_params(FILE *infile)
       last_token_was_paramname = TRUE;
       if (parse_one_attr_param(ATTR_PARAMS[i].name,
                                ATTR_PARAMS[i].attr_change_stats_func,
-                               infile)) {
+                               infile, pconfig)) {
         fprintf(stderr, "ERROR parsing attrParams %s\n", ATTR_PARAMS[i].name);
         return 1;
       }
@@ -476,7 +476,7 @@ static int parse_attr_params(FILE *infile)
  */
 static int parse_one_dyadic_param(const char *paramName,
                                 dyadic_change_stats_func_t *dyadic_change_stats_func,
-                                FILE *infile)
+                                  FILE *infile, param_config_t *pconfig)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
@@ -508,21 +508,21 @@ static int parse_one_dyadic_param(const char *paramName,
       } else {
         CONFIG_DEBUG_PRINT(("dyadicParam %s('%s')\n", paramName, token));
         last_token_was_attrname = TRUE;
-        CONFIG.param_config.dyadic_param_names = (const char **)
-          safe_realloc(CONFIG.param_config.dyadic_param_names,
-                       (CONFIG.param_config.num_dyadic_change_stats_funcs + 1) *
+        pconfig->dyadic_param_names = (const char **)
+          safe_realloc(pconfig->dyadic_param_names,
+                       (pconfig->num_dyadic_change_stats_funcs + 1) *
                        sizeof(const char *));
-        CONFIG.param_config.dyadic_change_stats_funcs = (dyadic_change_stats_func_t **)
-          safe_realloc(CONFIG.param_config.dyadic_change_stats_funcs,
-                       (CONFIG.param_config.num_dyadic_change_stats_funcs + 1) *
+        pconfig->dyadic_change_stats_funcs = (dyadic_change_stats_func_t **)
+          safe_realloc(pconfig->dyadic_change_stats_funcs,
+                       (pconfig->num_dyadic_change_stats_funcs + 1) *
                        sizeof(dyadic_change_stats_func_t *));
-        CONFIG.param_config.dyadic_names = (char **)safe_realloc(CONFIG.param_config.dyadic_names,
-              (CONFIG.param_config.num_dyadic_change_stats_funcs + 1) * sizeof(char *));
-        CONFIG.param_config.dyadic_param_names[CONFIG.param_config.num_dyadic_change_stats_funcs] = paramName;
-        CONFIG.param_config.dyadic_change_stats_funcs[CONFIG.param_config.num_dyadic_change_stats_funcs] =
+        pconfig->dyadic_names = (char **)safe_realloc(pconfig->dyadic_names,
+              (pconfig->num_dyadic_change_stats_funcs + 1) * sizeof(char *));
+        pconfig->dyadic_param_names[pconfig->num_dyadic_change_stats_funcs] = paramName;
+        pconfig->dyadic_change_stats_funcs[pconfig->num_dyadic_change_stats_funcs] =
           dyadic_change_stats_func;
-        CONFIG.param_config.dyadic_names[CONFIG.param_config.num_dyadic_change_stats_funcs] = safe_strdup(token);
-        CONFIG.param_config.num_dyadic_change_stats_funcs++;
+        pconfig->dyadic_names[pconfig->num_dyadic_change_stats_funcs] = safe_strdup(token);
+        pconfig->num_dyadic_change_stats_funcs++;
       }
     }
     token = get_token(infile, tokenbuf);
@@ -543,7 +543,7 @@ static int parse_one_dyadic_param(const char *paramName,
  * functions.  Return nonzero on error else zero.
  *
  */
-static int parse_dyadic_params(FILE *infile)
+static int parse_dyadic_params(FILE *infile, param_config_t *pconfig)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -579,8 +579,8 @@ static int parse_dyadic_params(FILE *infile)
       CONFIG_DEBUG_PRINT(("dyadicParam %s\n", token));
       last_token_was_paramname = TRUE;
       if (parse_one_dyadic_param(DYADIC_PARAMS[i].name,
-                               DYADIC_PARAMS[i].dyadic_change_stats_func,
-                               infile)) {
+                                 DYADIC_PARAMS[i].dyadic_change_stats_func,
+                                 infile, pconfig)) {
         fprintf(stderr, "ERROR parsing dyadicParams %s\n", DYADIC_PARAMS[i].name);
         return 1;
       }
@@ -606,7 +606,7 @@ static int parse_dyadic_params(FILE *infile)
  */
 static int parse_one_attr_interaction_param(const char *paramName,
                   attr_interaction_change_stats_func_t *attr_interaction_change_stats_func,
-                  FILE *infile)
+                  FILE *infile, param_config_t *pconfig)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
@@ -643,31 +643,31 @@ static int parse_one_attr_interaction_param(const char *paramName,
                             paramName, token, num_attr_names));
         last_token_was_attrname = TRUE;
         if (num_attr_names == 0) {
-          CONFIG.param_config.attr_interaction_param_names = (const char **)
-            safe_realloc(CONFIG.param_config.attr_interaction_param_names,
-                         (CONFIG.param_config.num_attr_interaction_change_stats_funcs + 1) *
+          pconfig->attr_interaction_param_names = (const char **)
+            safe_realloc(pconfig->attr_interaction_param_names,
+                         (pconfig->num_attr_interaction_change_stats_funcs + 1) *
                          sizeof(const char *));
-          CONFIG.param_config.attr_interaction_change_stats_funcs =
+          pconfig->attr_interaction_change_stats_funcs =
             (attr_interaction_change_stats_func_t **)
-            safe_realloc(CONFIG.param_config.attr_interaction_change_stats_funcs,
-                         (CONFIG.param_config.num_attr_interaction_change_stats_funcs + 1) *
+            safe_realloc(pconfig->attr_interaction_change_stats_funcs,
+                         (pconfig->num_attr_interaction_change_stats_funcs + 1) *
                          sizeof(attr_interaction_change_stats_func_t *));
-          CONFIG.param_config.attr_interaction_pair_names = (string_pair_t *)safe_realloc(
-            CONFIG.param_config.attr_interaction_pair_names,
-            (CONFIG.param_config.num_attr_interaction_change_stats_funcs + 1) * sizeof(string_pair_t));
-          CONFIG.param_config.attr_interaction_pair_names[
-            CONFIG.param_config.num_attr_interaction_change_stats_funcs].first = safe_strdup(token);
-          CONFIG.param_config.attr_interaction_pair_names[
-            CONFIG.param_config.num_attr_interaction_change_stats_funcs].second = NULL;
-          CONFIG.param_config.attr_interaction_param_names[CONFIG.param_config.num_attr_interaction_change_stats_funcs] = paramName;
-          CONFIG.param_config.attr_interaction_change_stats_funcs[CONFIG.param_config.num_attr_interaction_change_stats_funcs] =
+          pconfig->attr_interaction_pair_names = (string_pair_t *)safe_realloc(
+            pconfig->attr_interaction_pair_names,
+            (pconfig->num_attr_interaction_change_stats_funcs + 1) * sizeof(string_pair_t));
+          pconfig->attr_interaction_pair_names[
+            pconfig->num_attr_interaction_change_stats_funcs].first = safe_strdup(token);
+          pconfig->attr_interaction_pair_names[
+            pconfig->num_attr_interaction_change_stats_funcs].second = NULL;
+          pconfig->attr_interaction_param_names[pconfig->num_attr_interaction_change_stats_funcs] = paramName;
+          pconfig->attr_interaction_change_stats_funcs[pconfig->num_attr_interaction_change_stats_funcs] =
             attr_interaction_change_stats_func;
           num_attr_names++;
         }  else if (num_attr_names == 1) {
-          CONFIG.param_config.attr_interaction_pair_names[
-            CONFIG.param_config.num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
+          pconfig->attr_interaction_pair_names[
+            pconfig->num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
           num_attr_names++;
-          CONFIG.param_config.num_attr_interaction_change_stats_funcs++;
+          pconfig->num_attr_interaction_change_stats_funcs++;
         } else {
           fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
                   "exactly two parameter names "
@@ -685,6 +685,7 @@ static int parse_one_attr_interaction_param(const char *paramName,
   }
   return 0;
 }
+
 
 /* 
  * Parse the attribute parameters attrInteractionParams from (open
@@ -707,7 +708,7 @@ static int parse_one_attr_interaction_param(const char *paramName,
  * been loaded, by calling
  * build_attr_interaction_indices_from_names().
  */
-static int parse_attr_interaction_params(FILE *infile)
+static int parse_attr_interaction_params(FILE *infile, param_config_t *pconfig)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -746,7 +747,7 @@ static int parse_attr_interaction_params(FILE *infile)
       last_token_was_paramname = TRUE;
       if (parse_one_attr_interaction_param(ATTR_INTERACTION_PARAMS[i].name,
                                ATTR_INTERACTION_PARAMS[i].attr_interaction_change_stats_func,
-                               infile)) {
+                                           infile, pconfig)) {
         fprintf(stderr, "ERROR parsing attrInteractionParams %s\n",
                 ATTR_INTERACTION_PARAMS[i].name);
         return 1;
@@ -857,28 +858,28 @@ static int check_and_set_param_value(const char *paramname,
                   STRUCT_PARAMS_STR);
           return 1;
         } 
-        return parse_struct_params(infile); 
+        return parse_struct_params(infile, &CONFIG.param_config); 
       } else if (strcasecmp(paramname, ATTR_PARAMS_STR) == 0) {
         if (CONFIG.param_config.num_attr_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   ATTR_PARAMS_STR);
           return 1;
         }
-        return parse_attr_params(infile);
+        return parse_attr_params(infile, &CONFIG.param_config);
       } else if (strcasecmp(paramname, DYADIC_PARAMS_STR) == 0) {        
         if (CONFIG.param_config.num_dyadic_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   DYADIC_PARAMS_STR);
           return 1;
         }
-        return parse_dyadic_params(infile);
+        return parse_dyadic_params(infile, &CONFIG.param_config);
       } else if (strcasecmp(paramname, ATTR_INTERACTION_PARAMS_STR) == 0) {
         if (CONFIG.param_config.num_attr_interaction_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   ATTR_INTERACTION_PARAMS_STR);
           return 1;
         }
-        return parse_attr_interaction_params(infile);
+        return parse_attr_interaction_params(infile, &CONFIG.param_config);
       } else {
         fprintf(stderr, "ERROR (internal): unknown parameter %s\n", paramname);
         return 1;
