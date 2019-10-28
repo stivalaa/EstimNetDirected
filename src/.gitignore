@@ -10,3 +10,7 @@ EstimNetDirected_mpi_hashtables
 *~
 TAGS
 local.mk
+SimulateERGM
+SimulateERGM_hashtables
+SimulateERGM.exe
+SimulateERGM_hashtables.exe
