@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include "utils.h"
 #include "simconfigparser.h"
+#include "simulation.h"
 
 
 /*****************************************************************************
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "ERROR parsing configuration file %s\n", config_filename);
     rc = 1;
   } else {
-    rc = do_simulation(config, 0);
+    rc = do_simulation(config);
   }
   free_sim_config_struct(config);
   exit(rc);

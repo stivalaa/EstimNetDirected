@@ -1156,8 +1156,6 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   char *token     = NULL; /* from strtok_r() */
   const char *delims = " \t\r\n"; /* strtok_r() delimiters for header lines */
   int num_vertices = 0;
-  int num_attr;
-  bool setFailed = FALSE;
 #ifdef DEBUG_MEMUSAGE
   uint_t k, total_degree = 0;
 #ifdef TWOPATH_HASHTABLES
@@ -1300,61 +1298,12 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
   MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->outTwoPathHashTab)/(1024*1024)));
 #endif /* TWOPATH_HASHTABLES */
 #endif /* DEBUG_MEMUSAGE */
-  
-  if (binattr_filename) {
-    if ((num_attr = load_integer_attributes(binattr_filename, num_vertices,
-                                            TRUE, &g->binattr_names,
-                                            &g->binattr)) < 0){
-      fprintf(stderr, "ERROR: loading binary attributes from file %s failed\n", 
-              binattr_filename);
-      exit(1);
-    }
-    g->num_binattr = (uint_t)num_attr;
-  }
 
-  if (catattr_filename) {
-    if ((num_attr = load_integer_attributes(catattr_filename, num_vertices,
-                                            FALSE, &g->catattr_names,
-                                            &g->catattr)) < 0){
-      fprintf(stderr, "ERROR: loading categorical attributes from file %s failed\n", 
-              catattr_filename);
-      exit(1);
-    }
-    g->num_catattr = (uint_t)num_attr;
-  }
-  if (contattr_filename) {
-    if ((num_attr = load_float_attributes(contattr_filename, num_vertices,
-                                          &g->contattr_names,
-                                          &g->contattr)) < 0){
-      fprintf(stderr, "ERROR: loading continuous attributes from file %s failed\n", 
-              contattr_filename);
-      exit(1);
-    }
-    g->num_contattr = (uint_t)num_attr;
-  }  
-  if (setattr_filename) {
-    if ((num_attr = load_set_attributes(setattr_filename, num_vertices,
-                                        &g->setattr_names,
-                                        &g->setattr,
-                                        &g->setattr_lengths)) < 0){
-      fprintf(stderr, "ERROR: loading set attributes from file %s failed\n", 
-              setattr_filename);
-      exit(1);
-    }
-    g->num_setattr = (uint_t)num_attr;
-    setFailed = FALSE;
-    for (i = 0; i < num_attr; i++) {
-      if (g->setattr_lengths[i] == 0) {
-        fprintf(stderr,
-                "ERROR: all values for set attribute %s are NA or NONE\n",
-                g->setattr_names[i]);
-        setFailed = TRUE;
-      }
-      if (setFailed) {
-        fprintf(stderr, "ERROR: some set attribute(s) not valid\n");
-        exit(1);
-      }
-    }
+
+  if (load_attributes(g, binattr_filename, catattr_filename,
+                      contattr_filename, setattr_filename)) {
+    fprintf(stderr, "ERROR: loading nodal attributes failed\n");
+    exit(1);
   }
   
   return(g);
@@ -1766,3 +1715,94 @@ int parse_category_set(char *str, bool firstpass, uint_t *size,
   }
   return 0;
 }
+
+
+/*
+ * Load the nodal attributes from files.
+ *
+ * The format of the attributes files is header line with whitespace-delimited
+ * attribute names, followed by (whitespace delimited) attributes 
+ * one line per node (corresponding to node number order).
+ * If the attribute file handles are NULL then no attributes.
+ *
+ * Parameters:
+ *    g                - (in/out) digraph object
+ *                       updated with attributes loaded
+ *                       (number of nodes must match files)
+ *    binattr_filename - binary attributes filebane or NULL
+ *    catattr_filename - categorical attribute filename or NULL
+ *    contattr_filename- continuous attribute filename or NULL
+ *    setattr_filename - set attribute filename or NULL
+ *
+ * Return value:
+ *    nonzero on error
+ *
+ */
+int load_attributes(digraph_t *g, 
+                    const char *binattr_filename,
+                    const char *catattr_filename,
+                    const char *contattr_filename,
+                    const char *setattr_filename)
+{
+  int  num_attr;
+  int  i;
+  bool setFailed = FALSE;
+    
+  if (binattr_filename) {
+    if ((num_attr = load_integer_attributes(binattr_filename, g->num_nodes,
+                                            TRUE, &g->binattr_names,
+                                            &g->binattr)) < 0){
+      fprintf(stderr, "ERROR: loading binary attributes from file %s failed\n", 
+              binattr_filename);
+      return 1;
+    }
+    g->num_binattr = (uint_t)num_attr;
+  }
+
+  if (catattr_filename) {
+    if ((num_attr = load_integer_attributes(catattr_filename, g->num_nodes,
+                                            FALSE, &g->catattr_names,
+                                            &g->catattr)) < 0){
+      fprintf(stderr, "ERROR: loading categorical attributes from file %s failed\n", 
+              catattr_filename);
+      return 1;
+    }
+    g->num_catattr = (uint_t)num_attr;
+  }
+  if (contattr_filename) {
+    if ((num_attr = load_float_attributes(contattr_filename, g->num_nodes,
+                                          &g->contattr_names,
+                                          &g->contattr)) < 0){
+      fprintf(stderr, "ERROR: loading continuous attributes from file %s failed\n", 
+              contattr_filename);
+      return 1;
+    }
+    g->num_contattr = (uint_t)num_attr;
+  }  
+  if (setattr_filename) {
+    if ((num_attr = load_set_attributes(setattr_filename, g->num_nodes,
+                                        &g->setattr_names,
+                                        &g->setattr,
+                                        &g->setattr_lengths)) < 0){
+      fprintf(stderr, "ERROR: loading set attributes from file %s failed\n", 
+              setattr_filename);
+      return 1;
+    }
+    g->num_setattr = (uint_t)num_attr;
+    setFailed = FALSE;
+    for (i = 0; i < num_attr; i++) {
+      if (g->setattr_lengths[i] == 0) {
+        fprintf(stderr,
+                "ERROR: all values for set attribute %s are NA or NONE\n",
+                g->setattr_names[i]);
+        setFailed = TRUE;
+      }
+      if (setFailed) {
+        fprintf(stderr, "ERROR: some set attribute(s) not valid\n");
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+

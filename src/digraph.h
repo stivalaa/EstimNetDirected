@@ -167,6 +167,12 @@ void dump_zone_info(const digraph_t *g);
 
 int parse_category_set(char *str, bool firstpass, uint_t *size,
                        set_elem_e *setval);
-  
+
+int load_attributes(digraph_t *g, 
+                    const char *binattr_filename,
+                    const char *catattr_filename,
+                    const char *contattr_filename,
+                    const char *setattr_filename);
+
 #endif /* DIGRAPH_H */
 
