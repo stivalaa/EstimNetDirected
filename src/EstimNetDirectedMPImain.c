@@ -52,7 +52,7 @@ static int  numtasks, rank;                   /* MPI number of tasks, rank */
 static void usage(const char *progname)
 {
   fprintf(stderr, "Usage: %s [-h] config_filename\n"
-          "  -h : write parameter names to stderr\n"
+          "  -h : write parameter names to stderr and exit\n"
           , progname);
   exit(1);
 }
@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
       case 'h':
         dump_config_names();
         dump_parameter_names();
+        exit(0);
         break;
       default:
         usage(argv[0]);

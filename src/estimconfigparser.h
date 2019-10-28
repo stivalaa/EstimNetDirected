@@ -57,25 +57,7 @@ typedef struct config_s {
   /*
    * values built by confiparser.c functions from parsed config settings
    */
-  uint_t num_change_stats_funcs;           /* length of change_stats_funcs */
-  change_stats_func_t **change_stats_funcs; /* structural parameter stats */
-  const char          **param_names;        /* names corresponding to above */
-  uint_t num_attr_change_stats_funcs;  /* length of attr_change_stats_funcs */
-  attr_change_stats_func_t **attr_change_stats_funcs; /* attr param stats */
-  char                     **attr_names; /* names of attributes for above */
-  uint_t *attr_indices;   /* idx into digraph binattr/cattr/contattr for above */
-  const char **attr_param_names; /* names corresponding to above two */
-  uint_t num_dyadic_change_stats_funcs;  /* length of dyadic_change_stats_funcs */  
-  dyadic_change_stats_func_t **dyadic_change_stats_funcs;/* dyadic change stats*/
-  char                       **dyadic_names; /* names corresponding to above */
-  uint_t *dyadic_indices;  /* idx into digraph binattr/cattr/contattr for above */
-  dyadic_type_e *dyadic_types; /* dyadic paramter type corresponding to above */
-  const char **dyadic_param_names; /* names corresponding to above two */
-  uint_t num_attr_interaction_change_stats_funcs;  /* length of attr_interaction_change_stats_funcs */
-  attr_interaction_change_stats_func_t **attr_interaction_change_stats_funcs; /* attr interaction param stats */
-  string_pair_t *attr_interaction_pair_names; /* names of pairs of attributes for above */
-  uint_pair_t  *attr_interaction_pair_indices;   /* pairs of indices into digraph binattr/cattr/contattr for above */
-  const char **attr_interaction_param_names; /* names corresponding to above two */
+  param_config_t param_config;
 } config_t;
 
 
@@ -86,10 +68,11 @@ typedef struct config_s {
  ****************************************************************************/
 
 config_t *parse_config_file(const char *config_filename);
-int build_attr_indices_from_names(config_t *config, const digraph_t *g);
-int build_dyadic_indices_from_names(config_t *config, digraph_t *g);
-int build_attr_interaction_pair_indices_from_names(config_t *config,
+int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g);
+int build_dyadic_indices_from_names(param_config_t *pconfig, digraph_t *g);
+int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
                                                    const digraph_t *g);
+void free_param_config_struct(param_config_t *pconfig);
 void free_config_struct(config_t *config);
 
 void init_config_parser(void);

@@ -697,17 +697,17 @@ int do_estimation(config_t * config, uint_t tasknum)
 
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */
-  if (build_attr_indices_from_names(config, g) != 0)  {
+  if (build_attr_indices_from_names(&config->param_config, g) != 0)  {
     fprintf(stderr, "ERROR in attribute parameters\n");
     return -1;
   }
   /* and similary for dyadic covariates */
-  if (build_dyadic_indices_from_names(config, g) != 0)  {
+  if (build_dyadic_indices_from_names(&config->param_config, g) != 0)  {
     fprintf(stderr, "ERROR in dyadic covariate parameters\n");
     return -1;
   }
   /* and attribute interaction parameters */
-  if (build_attr_interaction_pair_indices_from_names(config, g) != 0) {
+  if (build_attr_interaction_pair_indices_from_names(&config->param_config, g) != 0) {
     fprintf(stderr, "ERROR in attribute interaction parameters\n");
     return -1;
   }
@@ -715,10 +715,10 @@ int do_estimation(config_t * config, uint_t tasknum)
   /* note num_param is computed here as build_dyadic_indices_from_names()
      can decrease config->num_dyadic_change_stats_funcs from its 
      initial value */
-  n_struct = config->num_change_stats_funcs;
-  n_attr = config->num_attr_change_stats_funcs;
-  n_dyadic = config->num_dyadic_change_stats_funcs;
-  n_attr_interaction = config->num_attr_interaction_change_stats_funcs;
+  n_struct = config->param_config.num_change_stats_funcs;
+  n_attr = config->param_config.num_attr_change_stats_funcs;
+  n_dyadic = config->param_config.num_dyadic_change_stats_funcs;
+  n_attr_interaction = config->param_config.num_attr_interaction_change_stats_funcs;
   num_param =  n_struct + n_attr + n_dyadic + n_attr_interaction;
     
   theta = (double *)safe_malloc(num_param*sizeof(double));
@@ -742,8 +742,8 @@ int do_estimation(config_t * config, uint_t tasknum)
    /* Ensure that for the IFD sampler there is no Arc parameter included 
       as the IFD sampler computes this itself from the auxiliary parameter */
    if (config->useIFDsampler) {
-     for (i = 0; i < config->num_change_stats_funcs; i++) {
-       if (strcasecmp(config->param_names[i], ARC_PARAM_STR) == 0) {
+     for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
+       if (strcasecmp(config->param_config.param_names[i], ARC_PARAM_STR) == 0) {
          fprintf(stderr, 
                  "ERROR: cannot include Arc parameter when using IFD sampler.\n"
                  "Either unset useIFDsampler or remove Arc from %s.\n",
@@ -808,35 +808,35 @@ int do_estimation(config_t * config, uint_t tasknum)
   sprintf(fileheader, "t");
   if (config->useIFDsampler) /* IFD sampler always computes an Arc parameter */
     snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", ARC_PARAM_STR);
-  for (i = 0; i < config->num_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", config->param_names[i]);
+  for (i = 0; i < config->param_config.num_change_stats_funcs; i++) 
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", config->param_config.param_names[i]);
   
-  for (i = 0; i < config->num_attr_change_stats_funcs; i++) 
+  for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) 
     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
-             config->attr_param_names[i],
-             config->attr_names[i]);
+             config->param_config.attr_param_names[i],
+             config->param_config.attr_names[i]);
   
-   for (i = 0; i < config->num_dyadic_change_stats_funcs; i++)
+   for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs; i++)
      snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s",
-              config->dyadic_param_names[i]);
+              config->param_config.dyadic_param_names[i]);
 
-   for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++) 
+   for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs; i++) 
      snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s_%s",
-              config->attr_interaction_param_names[i],
-              config->attr_interaction_pair_names[i].first,
-              config->attr_interaction_pair_names[i].second);
+              config->param_config.attr_interaction_param_names[i],
+              config->param_config.attr_interaction_pair_names[i].first,
+              config->param_config.attr_interaction_pair_names[i].second);
 
   
   fprintf(theta_outfile,  "%s AcceptanceRate\n", fileheader);
   fprintf(dzA_outfile, "%s\n", fileheader);
   
   ee_estimate(g, num_param, n_attr, n_dyadic, n_attr_interaction,
-              config->change_stats_funcs,
-              config->attr_change_stats_funcs,
-              config->dyadic_change_stats_funcs,
-              config->attr_interaction_change_stats_funcs,
-              config->attr_indices,
-              config->attr_interaction_pair_indices,
+              config->param_config.change_stats_funcs,
+              config->param_config.attr_change_stats_funcs,
+              config->param_config.dyadic_change_stats_funcs,
+              config->param_config.attr_interaction_change_stats_funcs,
+              config->param_config.attr_indices,
+              config->param_config.attr_interaction_pair_indices,
               config->samplerSteps, config->Ssteps,
               config->EEsteps, config->EEinnerSteps,
               config->ACA_S, config->ACA_EE, config->compC,

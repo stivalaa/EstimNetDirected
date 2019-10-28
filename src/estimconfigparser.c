@@ -180,25 +180,27 @@ config_t CONFIG = {
   FALSE, /* useBorisenkoUpdate */
   DEFAULT_LEARNING_RATE, /* learningRate */
   DEFAULT_MIN_THETA,     /* minTheta */
-  0,     /* num_change_stats_funcs */
-  NULL,  /* change_stats_funcs */
-  NULL,  /* param_names */
-  0,     /* num_attr_change_stats_funcs */
-  NULL,  /* attr_change_stats_funcs */
-  NULL,  /* attr_names */
-  NULL,  /* attr_indices */
-  NULL,  /* attr_param_names */
-  0,     /* num_dyadic_change_stats_funcs */
-  NULL,  /* dyadic_change_stats_funcs */
-  NULL,  /* dyadic_names */
-  NULL,  /* dyadic_indices */
-  NULL,  /* dyadic_types */
-  NULL,  /* dyadic_param_names */
-  0,     /* num_attr_interaction_change_stats_funcs */
-  NULL,  /* attr_attr_interaction_change_stats_funcs */
-  NULL,  /* attr_interaction_names */
-  NULL,  /* attr_interaction_indices */
-  NULL   /* attr_interaction_param_names */
+  {
+    0,     /* num_change_stats_funcs */
+    NULL,  /* change_stats_funcs */
+    NULL,  /* param_names */
+    0,     /* num_attr_change_stats_funcs */
+    NULL,  /* attr_change_stats_funcs */
+    NULL,  /* attr_names */
+    NULL,  /* attr_indices */
+    NULL,  /* attr_param_names */
+    0,     /* num_dyadic_change_stats_funcs */
+    NULL,  /* dyadic_change_stats_funcs */
+    NULL,  /* dyadic_names */
+    NULL,  /* dyadic_indices */
+    NULL,  /* dyadic_types */
+    NULL,  /* dyadic_param_names */
+    0,     /* num_attr_interaction_change_stats_funcs */
+    NULL,  /* attr_attr_interaction_change_stats_funcs */
+    NULL,  /* attr_interaction_names */
+    NULL,  /* attr_interaction_indices */
+    NULL   /* attr_interaction_param_names */
+  } /* param_config */
 };
 
 
@@ -302,18 +304,18 @@ static int parse_struct_params(FILE *infile)
       }
       CONFIG_DEBUG_PRINT(("structParam %s\n", token));
       last_token_was_paramname = TRUE;
-      CONFIG.param_names = (const char **)safe_realloc(CONFIG.param_names,
-                                        (CONFIG.num_change_stats_funcs + 1) *
+      CONFIG.param_config.param_names = (const char **)safe_realloc(CONFIG.param_config.param_names,
+                                        (CONFIG.param_config.num_change_stats_funcs + 1) *
                                         sizeof(const char *));
-      CONFIG.change_stats_funcs = (change_stats_func_t **)
-        safe_realloc(CONFIG.change_stats_funcs,
-                  (CONFIG.num_change_stats_funcs + 1) *
+      CONFIG.param_config.change_stats_funcs = (change_stats_func_t **)
+        safe_realloc(CONFIG.param_config.change_stats_funcs,
+                  (CONFIG.param_config.num_change_stats_funcs + 1) *
                      sizeof(change_stats_func_t *));
-      CONFIG.param_names[CONFIG.num_change_stats_funcs] =
+      CONFIG.param_config.param_names[CONFIG.param_config.num_change_stats_funcs] =
         STRUCT_PARAMS[i].name;
-      CONFIG.change_stats_funcs[CONFIG.num_change_stats_funcs] =
+      CONFIG.param_config.change_stats_funcs[CONFIG.param_config.num_change_stats_funcs] =
         STRUCT_PARAMS[i].change_stats_func;
-      CONFIG.num_change_stats_funcs++;
+      CONFIG.param_config.num_change_stats_funcs++;
     }
     token = get_token(infile, tokenbuf);
   }
@@ -326,7 +328,7 @@ static int parse_struct_params(FILE *infile)
  * are comma-delmited attribute names inside parentheses e.g.
  * "Matching(class1,class2)". See parse_attr_params() for note on note
  * validating these names yet, just setting them in
- * CONFIG.attr_names[].  Return nonzero on error else zero.
+ * CONFIG.param_config.attr_names[].  Return nonzero on error else zero.
  */
 static int parse_one_attr_param(const char *paramName,
                                 attr_change_stats_func_t *attr_change_stats_func,
@@ -362,21 +364,21 @@ static int parse_one_attr_param(const char *paramName,
       } else {
         CONFIG_DEBUG_PRINT(("attrParam %s('%s')\n", paramName, token));
         last_token_was_attrname = TRUE;
-        CONFIG.attr_param_names = (const char **)
-          safe_realloc(CONFIG.attr_param_names,
-                       (CONFIG.num_attr_change_stats_funcs + 1) *
+        CONFIG.param_config.attr_param_names = (const char **)
+          safe_realloc(CONFIG.param_config.attr_param_names,
+                       (CONFIG.param_config.num_attr_change_stats_funcs + 1) *
                        sizeof(const char *));
-        CONFIG.attr_change_stats_funcs = (attr_change_stats_func_t **)
-          safe_realloc(CONFIG.attr_change_stats_funcs,
-                       (CONFIG.num_attr_change_stats_funcs + 1) *
+        CONFIG.param_config.attr_change_stats_funcs = (attr_change_stats_func_t **)
+          safe_realloc(CONFIG.param_config.attr_change_stats_funcs,
+                       (CONFIG.param_config.num_attr_change_stats_funcs + 1) *
                        sizeof(attr_change_stats_func_t *));
-        CONFIG.attr_names = (char **)safe_realloc(CONFIG.attr_names,
-              (CONFIG.num_attr_change_stats_funcs + 1) * sizeof(const char *));
-        CONFIG.attr_param_names[CONFIG.num_attr_change_stats_funcs] = paramName;
-        CONFIG.attr_change_stats_funcs[CONFIG.num_attr_change_stats_funcs] =
+        CONFIG.param_config.attr_names = (char **)safe_realloc(CONFIG.param_config.attr_names,
+              (CONFIG.param_config.num_attr_change_stats_funcs + 1) * sizeof(const char *));
+        CONFIG.param_config.attr_param_names[CONFIG.param_config.num_attr_change_stats_funcs] = paramName;
+        CONFIG.param_config.attr_change_stats_funcs[CONFIG.param_config.num_attr_change_stats_funcs] =
           attr_change_stats_func;
-        CONFIG.attr_names[CONFIG.num_attr_change_stats_funcs] = safe_strdup(token);
-        CONFIG.num_attr_change_stats_funcs++;
+        CONFIG.param_config.attr_names[CONFIG.param_config.num_attr_change_stats_funcs] = safe_strdup(token);
+        CONFIG.param_config.num_attr_change_stats_funcs++;
       }
     }
     token = get_token(infile, tokenbuf);
@@ -506,21 +508,21 @@ static int parse_one_dyadic_param(const char *paramName,
       } else {
         CONFIG_DEBUG_PRINT(("dyadicParam %s('%s')\n", paramName, token));
         last_token_was_attrname = TRUE;
-        CONFIG.dyadic_param_names = (const char **)
-          safe_realloc(CONFIG.dyadic_param_names,
-                       (CONFIG.num_dyadic_change_stats_funcs + 1) *
+        CONFIG.param_config.dyadic_param_names = (const char **)
+          safe_realloc(CONFIG.param_config.dyadic_param_names,
+                       (CONFIG.param_config.num_dyadic_change_stats_funcs + 1) *
                        sizeof(const char *));
-        CONFIG.dyadic_change_stats_funcs = (dyadic_change_stats_func_t **)
-          safe_realloc(CONFIG.dyadic_change_stats_funcs,
-                       (CONFIG.num_dyadic_change_stats_funcs + 1) *
+        CONFIG.param_config.dyadic_change_stats_funcs = (dyadic_change_stats_func_t **)
+          safe_realloc(CONFIG.param_config.dyadic_change_stats_funcs,
+                       (CONFIG.param_config.num_dyadic_change_stats_funcs + 1) *
                        sizeof(dyadic_change_stats_func_t *));
-        CONFIG.dyadic_names = (char **)safe_realloc(CONFIG.dyadic_names,
-              (CONFIG.num_dyadic_change_stats_funcs + 1) * sizeof(char *));
-        CONFIG.dyadic_param_names[CONFIG.num_dyadic_change_stats_funcs] = paramName;
-        CONFIG.dyadic_change_stats_funcs[CONFIG.num_dyadic_change_stats_funcs] =
+        CONFIG.param_config.dyadic_names = (char **)safe_realloc(CONFIG.param_config.dyadic_names,
+              (CONFIG.param_config.num_dyadic_change_stats_funcs + 1) * sizeof(char *));
+        CONFIG.param_config.dyadic_param_names[CONFIG.param_config.num_dyadic_change_stats_funcs] = paramName;
+        CONFIG.param_config.dyadic_change_stats_funcs[CONFIG.param_config.num_dyadic_change_stats_funcs] =
           dyadic_change_stats_func;
-        CONFIG.dyadic_names[CONFIG.num_dyadic_change_stats_funcs] = safe_strdup(token);
-        CONFIG.num_dyadic_change_stats_funcs++;
+        CONFIG.param_config.dyadic_names[CONFIG.param_config.num_dyadic_change_stats_funcs] = safe_strdup(token);
+        CONFIG.param_config.num_dyadic_change_stats_funcs++;
       }
     }
     token = get_token(infile, tokenbuf);
@@ -599,7 +601,7 @@ static int parse_dyadic_params(FILE *infile)
  * "MatchingInteraction(class1,class2)".  See
  * parse_attr_interaction_params() for note on note validating these
  * names yet, just setting them in
- * CONFIG.attr_interaction_pair_names[].  Return nonzero on error else
+ * CONFIG.param_config.attr_interaction_pair_names[].  Return nonzero on error else
  * zero.
  */
 static int parse_one_attr_interaction_param(const char *paramName,
@@ -641,31 +643,31 @@ static int parse_one_attr_interaction_param(const char *paramName,
                             paramName, token, num_attr_names));
         last_token_was_attrname = TRUE;
         if (num_attr_names == 0) {
-          CONFIG.attr_interaction_param_names = (const char **)
-            safe_realloc(CONFIG.attr_interaction_param_names,
-                         (CONFIG.num_attr_interaction_change_stats_funcs + 1) *
+          CONFIG.param_config.attr_interaction_param_names = (const char **)
+            safe_realloc(CONFIG.param_config.attr_interaction_param_names,
+                         (CONFIG.param_config.num_attr_interaction_change_stats_funcs + 1) *
                          sizeof(const char *));
-          CONFIG.attr_interaction_change_stats_funcs =
+          CONFIG.param_config.attr_interaction_change_stats_funcs =
             (attr_interaction_change_stats_func_t **)
-            safe_realloc(CONFIG.attr_interaction_change_stats_funcs,
-                         (CONFIG.num_attr_interaction_change_stats_funcs + 1) *
+            safe_realloc(CONFIG.param_config.attr_interaction_change_stats_funcs,
+                         (CONFIG.param_config.num_attr_interaction_change_stats_funcs + 1) *
                          sizeof(attr_interaction_change_stats_func_t *));
-          CONFIG.attr_interaction_pair_names = (string_pair_t *)safe_realloc(
-            CONFIG.attr_interaction_pair_names,
-            (CONFIG.num_attr_interaction_change_stats_funcs + 1) * sizeof(string_pair_t));
-          CONFIG.attr_interaction_pair_names[
-            CONFIG.num_attr_interaction_change_stats_funcs].first = safe_strdup(token);
-          CONFIG.attr_interaction_pair_names[
-            CONFIG.num_attr_interaction_change_stats_funcs].second = NULL;
-          CONFIG.attr_interaction_param_names[CONFIG.num_attr_interaction_change_stats_funcs] = paramName;
-          CONFIG.attr_interaction_change_stats_funcs[CONFIG.num_attr_interaction_change_stats_funcs] =
+          CONFIG.param_config.attr_interaction_pair_names = (string_pair_t *)safe_realloc(
+            CONFIG.param_config.attr_interaction_pair_names,
+            (CONFIG.param_config.num_attr_interaction_change_stats_funcs + 1) * sizeof(string_pair_t));
+          CONFIG.param_config.attr_interaction_pair_names[
+            CONFIG.param_config.num_attr_interaction_change_stats_funcs].first = safe_strdup(token);
+          CONFIG.param_config.attr_interaction_pair_names[
+            CONFIG.param_config.num_attr_interaction_change_stats_funcs].second = NULL;
+          CONFIG.param_config.attr_interaction_param_names[CONFIG.param_config.num_attr_interaction_change_stats_funcs] = paramName;
+          CONFIG.param_config.attr_interaction_change_stats_funcs[CONFIG.param_config.num_attr_interaction_change_stats_funcs] =
             attr_interaction_change_stats_func;
           num_attr_names++;
         }  else if (num_attr_names == 1) {
-          CONFIG.attr_interaction_pair_names[
-            CONFIG.num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
+          CONFIG.param_config.attr_interaction_pair_names[
+            CONFIG.param_config.num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
           num_attr_names++;
-          CONFIG.num_attr_interaction_change_stats_funcs++;
+          CONFIG.param_config.num_attr_interaction_change_stats_funcs++;
         } else {
           fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
                   "exactly two parameter names "
@@ -850,28 +852,28 @@ static int check_and_set_param_value(const char *paramname,
                   OPEN_SET_CHAR, valuestr);
           return 1;
         }
-        if (CONFIG.num_change_stats_funcs > 0) {
+        if (CONFIG.param_config.num_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   STRUCT_PARAMS_STR);
           return 1;
         } 
         return parse_struct_params(infile); 
       } else if (strcasecmp(paramname, ATTR_PARAMS_STR) == 0) {
-        if (CONFIG.num_attr_change_stats_funcs > 0) {
+        if (CONFIG.param_config.num_attr_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   ATTR_PARAMS_STR);
           return 1;
         }
         return parse_attr_params(infile);
       } else if (strcasecmp(paramname, DYADIC_PARAMS_STR) == 0) {        
-        if (CONFIG.num_dyadic_change_stats_funcs > 0) {
+        if (CONFIG.param_config.num_dyadic_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   DYADIC_PARAMS_STR);
           return 1;
         }
         return parse_dyadic_params(infile);
       } else if (strcasecmp(paramname, ATTR_INTERACTION_PARAMS_STR) == 0) {
-        if (CONFIG.num_attr_interaction_change_stats_funcs > 0) {
+        if (CONFIG.param_config.num_attr_interaction_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   ATTR_INTERACTION_PARAMS_STR);
           return 1;
@@ -960,88 +962,88 @@ config_t *parse_config_file(const char *config_filename)
  * particular type, it uses the index in the correct array without
  * ambiguity.
  */
-int build_attr_indices_from_names(config_t *config, const digraph_t *g)
+int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g)
 {
   uint_t i, j;
   bool   found;
 
-  config->attr_indices = safe_malloc(config->num_attr_change_stats_funcs *
+  pconfig->attr_indices = safe_malloc(pconfig->num_attr_change_stats_funcs *
                                      sizeof(uint_t));
   
-  for (i = 0; i < config->num_attr_change_stats_funcs; i++) {
+  for (i = 0; i < pconfig->num_attr_change_stats_funcs; i++) {
     found = FALSE;
-    switch (get_attr_param_type(config->attr_param_names[i])) {
+    switch (get_attr_param_type(pconfig->attr_param_names[i])) {
       case ATTR_TYPE_BINARY:
         for (j = 0; j < g->num_binattr; j++) {
-          if (strcasecmp(config->attr_names[i], g->binattr_names[j]) == 0) {
+          if (strcasecmp(pconfig->attr_names[i], g->binattr_names[j]) == 0) {
             found = TRUE;
-            config->attr_indices[i] = j;
+            pconfig->attr_indices[i] = j;
             CONFIG_DEBUG_PRINT(("binattr %s(%s) index %u\n",
-                                config->attr_param_names[i],
-                                config->attr_names[i], j));
+                                pconfig->attr_param_names[i],
+                                pconfig->attr_names[i], j));
           }
         }
         if (!found) {
           fprintf(stderr, "ERROR: binary attribute %s not found\n",
-                  config->attr_names[i]);
+                  pconfig->attr_names[i]);
           return 1;
         }
         break;
         
       case ATTR_TYPE_CATEGORICAL:
         for (j = 0; j < g->num_catattr; j++) {
-          if (strcasecmp(config->attr_names[i], g->catattr_names[j]) == 0) {
+          if (strcasecmp(pconfig->attr_names[i], g->catattr_names[j]) == 0) {
             found = TRUE;
-            config->attr_indices[i] = j;
+            pconfig->attr_indices[i] = j;
             CONFIG_DEBUG_PRINT(("catattr %s(%s) index %u\n",
-                                config->attr_param_names[i],
-                                config->attr_names[i], j));
+                                pconfig->attr_param_names[i],
+                                pconfig->attr_names[i], j));
           }
         }
         if (!found) {
           fprintf(stderr, "ERROR: categorical attribute %s not found\n",
-                  config->attr_names[i]);
+                  pconfig->attr_names[i]);
           return 1;
         }
         break;
 
       case ATTR_TYPE_CONTINUOUS:
         for (j = 0; j < g->num_contattr; j++) {
-          if (strcasecmp(config->attr_names[i], g->contattr_names[j]) == 0) {
+          if (strcasecmp(pconfig->attr_names[i], g->contattr_names[j]) == 0) {
             found = TRUE;
-            config->attr_indices[i] = j;
+            pconfig->attr_indices[i] = j;
             CONFIG_DEBUG_PRINT(("contattr %s(%s) index %u\n",
-                                config->attr_param_names[i],
-                                config->attr_names[i], j));
+                                pconfig->attr_param_names[i],
+                                pconfig->attr_names[i], j));
           }
         }
         if (!found) {
           fprintf(stderr, "ERROR: continuous attribute %s not found\n",
-                  config->attr_names[i]);
+                  pconfig->attr_names[i]);
           return 1;
         }
         break;
 
       case ATTR_TYPE_SET:
         for (j = 0; j < g->num_setattr; j++) {
-          if (strcasecmp(config->attr_names[i], g->setattr_names[j]) == 0) {
+          if (strcasecmp(pconfig->attr_names[i], g->setattr_names[j]) == 0) {
             found = TRUE;
-            config->attr_indices[i] = j;
+            pconfig->attr_indices[i] = j;
             CONFIG_DEBUG_PRINT(("setattr %s(%s) index %u\n",
-                                config->attr_param_names[i],
-                                config->attr_names[i], j));
+                                pconfig->attr_param_names[i],
+                                pconfig->attr_names[i], j));
           }
         }
         if (!found) {
           fprintf(stderr, "ERROR: set attribute %s not found\n",
-                  config->attr_names[i]);
+                  pconfig->attr_names[i]);
           return 1;
         }
         break;
         
       default:
         fprintf(stderr, "ERROR (internal): unknown attribute type %u\n",
-                get_attr_param_type(config->attr_param_names[i]));
+                get_attr_param_type(pconfig->attr_param_names[i]));
         return 1;
         break;
     }
@@ -1065,7 +1067,7 @@ int build_attr_indices_from_names(config_t *config, const digraph_t *g)
  * error else 0.
  *
  */
-int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
+int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g)
 {
   uint_t i, j;
   bool   found;
@@ -1080,32 +1082,32 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
   char  *tmpGeoName, *tmpEuclideanName, *tmpGeoParamName, *tmpEuclideanParamName;
   dyadic_change_stats_func_t *tmpGeoFunc, *tmpEuclideanFunc;
   
-  config->dyadic_indices = safe_malloc(config->num_dyadic_change_stats_funcs *
+  pconfig->dyadic_indices = safe_malloc(pconfig->num_dyadic_change_stats_funcs *
                                      sizeof(uint_t));
-  config->dyadic_types = safe_malloc(config->num_dyadic_change_stats_funcs *
+  pconfig->dyadic_types = safe_malloc(pconfig->num_dyadic_change_stats_funcs *
                                      sizeof(uint_t));  
   
-  for (i = 0; i < config->num_dyadic_change_stats_funcs; i++) {
+  for (i = 0; i < pconfig->num_dyadic_change_stats_funcs; i++) {
     found = FALSE;
-    dyadicType = get_dyadic_param_type(config->dyadic_param_names[i]);
+    dyadicType = get_dyadic_param_type(pconfig->dyadic_param_names[i]);
     switch (dyadicType) {
 
       case DYADIC_TYPE_GEODISTANCE:
       case DYADIC_TYPE_EUCLIDEANDISTANCE:
 
         for (j = 0; j < g->num_contattr; j++) {
-          if (strcasecmp(config->dyadic_names[i], g->contattr_names[j]) == 0) {
+          if (strcasecmp(pconfig->dyadic_names[i], g->contattr_names[j]) == 0) {
             found = TRUE;
-            config->dyadic_indices[i] = j;
-            config->dyadic_types[i] = dyadicType;
+            pconfig->dyadic_indices[i] = j;
+            pconfig->dyadic_types[i] = dyadicType;
             CONFIG_DEBUG_PRINT(("dyadic covariate type %s "
                                 "contattr %s(%s) index %u\n",
                                 (dyadicType == DYADIC_TYPE_GEODISTANCE ?
                                  "GEODISTANCE" :
                                  (dyadicType == DYADIC_TYPE_EUCLIDEANDISTANCE ?
                                   "EUCLIDEANDISTANCE" : "*ERROR*")),
-                                config->dyadic_param_names[i],
-                                config->dyadic_names[i], j));
+                                pconfig->dyadic_param_names[i],
+                                pconfig->dyadic_names[i], j));
             if (dyadicType == DYADIC_TYPE_GEODISTANCE) {
               numGeoAttr++;
             } else if (dyadicType == DYADIC_TYPE_EUCLIDEANDISTANCE) {
@@ -1118,14 +1120,14 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
 
         if (!found) {
           fprintf(stderr, "ERROR: dyadic covariate continuous attribute %s not found\n",
-                  config->dyadic_names[i]);
+                  pconfig->dyadic_names[i]);
           return 1;
         }
         break;
 
       default:
         fprintf(stderr, "ERROR (internal): unknown dyadic covariate type %u\n",
-                get_dyadic_param_type(config->dyadic_param_names[i]));
+                get_dyadic_param_type(pconfig->dyadic_param_names[i]));
         return 1;
         break;
     }
@@ -1152,14 +1154,14 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
       return 1;
     }
     for (j = 0; j < numAttrs; j++) {
-      switch (config->dyadic_types[j]) {
+      switch (pconfig->dyadic_types[j]) {
         case DYADIC_TYPE_GEODISTANCE:
           switch (geoIndex) {
             case 0:
-              g->latitude_index = config->dyadic_indices[j];
+              g->latitude_index = pconfig->dyadic_indices[j];
               break;
             case 1:
-              g->longitude_index = config->dyadic_indices[j];
+              g->longitude_index = pconfig->dyadic_indices[j];
               break;
             default:
               fprintf(stderr, "ERROR (internal): geoIndex == %u\n",geoIndex);
@@ -1175,13 +1177,13 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
         case DYADIC_TYPE_EUCLIDEANDISTANCE:
           switch (euclideanIndex) {
             case 0:
-              g->x_index = config->dyadic_indices[j];
+              g->x_index = pconfig->dyadic_indices[j];
               break;
             case 1:
-              g->y_index = config->dyadic_indices[j];
+              g->y_index = pconfig->dyadic_indices[j];
               break;
             case 2:
-              g->z_index = config->dyadic_indices[j];
+              g->z_index = pconfig->dyadic_indices[j];
               break;
             default:
               fprintf(stderr, "ERROR (internal): euclideanIndex == %u\n",
@@ -1197,7 +1199,7 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
           
         default:
           fprintf(stderr, "ERROR (internal): unknown dyadic type %d\n",
-                  (int)config->dyadic_types[j]);
+                  (int)pconfig->dyadic_types[j]);
           return 1;
           break;
       }
@@ -1218,50 +1220,50 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
       assert(firstGeoIndex >= 0);
       assert(firstEuclideanIndex >= 0);
       assert(firstGeoIndex != firstEuclideanIndex);
-      assert(get_dyadic_param_type(config->dyadic_param_names[firstGeoIndex]) == DYADIC_TYPE_GEODISTANCE);
-      assert(get_dyadic_param_type(config->dyadic_param_names[firstEuclideanIndex]) == DYADIC_TYPE_EUCLIDEANDISTANCE);
-      assert(config->num_dyadic_change_stats_funcs == 5);
-      tmpGeoName = safe_strdup(config->dyadic_names[firstGeoIndex]);
-      tmpGeoParamName = safe_strdup(config->dyadic_param_names[firstGeoIndex]);
-      tmpGeoFunc = config->dyadic_change_stats_funcs[firstGeoIndex];
-      tmpEuclideanName = safe_strdup(config->dyadic_names[firstEuclideanIndex]);
-      tmpEuclideanParamName = safe_strdup(config->dyadic_param_names[firstEuclideanIndex]);
-      tmpEuclideanFunc = config->dyadic_change_stats_funcs[firstEuclideanIndex];
-      config->dyadic_names[0] = tmpGeoName;
-      config->dyadic_param_names[0] = tmpGeoParamName;
-      config->dyadic_change_stats_funcs[0] = tmpGeoFunc;
-      config->dyadic_types[0] = DYADIC_TYPE_GEODISTANCE;
-      config->dyadic_names[1] = tmpEuclideanName;
-      config->dyadic_param_names[1] = tmpEuclideanParamName;
-      config->dyadic_change_stats_funcs[1] = tmpEuclideanFunc;
-      config->dyadic_types[1] = DYADIC_TYPE_EUCLIDEANDISTANCE;
-      config->num_dyadic_change_stats_funcs = 2;      
-      free(config->dyadic_names[2]);
-      free(config->dyadic_names[3]);
-      free(config->dyadic_names[4]);
+      assert(get_dyadic_param_type(pconfig->dyadic_param_names[firstGeoIndex]) == DYADIC_TYPE_GEODISTANCE);
+      assert(get_dyadic_param_type(pconfig->dyadic_param_names[firstEuclideanIndex]) == DYADIC_TYPE_EUCLIDEANDISTANCE);
+      assert(pconfig->num_dyadic_change_stats_funcs == 5);
+      tmpGeoName = safe_strdup(pconfig->dyadic_names[firstGeoIndex]);
+      tmpGeoParamName = safe_strdup(pconfig->dyadic_param_names[firstGeoIndex]);
+      tmpGeoFunc = pconfig->dyadic_change_stats_funcs[firstGeoIndex];
+      tmpEuclideanName = safe_strdup(pconfig->dyadic_names[firstEuclideanIndex]);
+      tmpEuclideanParamName = safe_strdup(pconfig->dyadic_param_names[firstEuclideanIndex]);
+      tmpEuclideanFunc = pconfig->dyadic_change_stats_funcs[firstEuclideanIndex];
+      pconfig->dyadic_names[0] = tmpGeoName;
+      pconfig->dyadic_param_names[0] = tmpGeoParamName;
+      pconfig->dyadic_change_stats_funcs[0] = tmpGeoFunc;
+      pconfig->dyadic_types[0] = DYADIC_TYPE_GEODISTANCE;
+      pconfig->dyadic_names[1] = tmpEuclideanName;
+      pconfig->dyadic_param_names[1] = tmpEuclideanParamName;
+      pconfig->dyadic_change_stats_funcs[1] = tmpEuclideanFunc;
+      pconfig->dyadic_types[1] = DYADIC_TYPE_EUCLIDEANDISTANCE;
+      pconfig->num_dyadic_change_stats_funcs = 2;      
+      free(pconfig->dyadic_names[2]);
+      free(pconfig->dyadic_names[3]);
+      free(pconfig->dyadic_names[4]);
     } else if (numGeoAttr > 0) {
       /* only [log]GeoDistance */
       assert(firstGeoIndex >= 0);
-      assert(config->num_dyadic_change_stats_funcs == 2);
-      assert(get_dyadic_param_type(config->dyadic_param_names[0])
+      assert(pconfig->num_dyadic_change_stats_funcs == 2);
+      assert(get_dyadic_param_type(pconfig->dyadic_param_names[0])
              == DYADIC_TYPE_GEODISTANCE &&
-             get_dyadic_param_type(config->dyadic_param_names[1])
+             get_dyadic_param_type(pconfig->dyadic_param_names[1])
              == DYADIC_TYPE_GEODISTANCE);
-      config->num_dyadic_change_stats_funcs = 1;
-      free(config->dyadic_names[1]);
+      pconfig->num_dyadic_change_stats_funcs = 1;
+      free(pconfig->dyadic_names[1]);
     } else if (numEuclideanAttr > 0) {
       /* only EuclideanDistance */
       assert(firstEuclideanIndex >= 0);
-      assert(config->num_dyadic_change_stats_funcs == 3);
-      assert(get_dyadic_param_type(config->dyadic_param_names[0])
+      assert(pconfig->num_dyadic_change_stats_funcs == 3);
+      assert(get_dyadic_param_type(pconfig->dyadic_param_names[0])
              == DYADIC_TYPE_EUCLIDEANDISTANCE &&
-             get_dyadic_param_type(config->dyadic_param_names[1])
+             get_dyadic_param_type(pconfig->dyadic_param_names[1])
              == DYADIC_TYPE_EUCLIDEANDISTANCE &&
-             get_dyadic_param_type(config->dyadic_param_names[2])
+             get_dyadic_param_type(pconfig->dyadic_param_names[2])
              == DYADIC_TYPE_EUCLIDEANDISTANCE);
-      config->num_dyadic_change_stats_funcs = 1;
-      free(config->dyadic_names[1]);
-      free(config->dyadic_names[2]);
+      pconfig->num_dyadic_change_stats_funcs = 1;
+      free(pconfig->dyadic_names[1]);
+      free(pconfig->dyadic_names[2]);
     } else {
       assert(FALSE);
     }
@@ -1293,26 +1295,26 @@ int build_dyadic_indices_from_names(config_t *config,  digraph_t *g)
  * because each change statistics function is for one particular type,
  * it uses the index in the correct array without ambiguity.
  */
-int build_attr_interaction_pair_indices_from_names(config_t *config,
+int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
                                                    const digraph_t *g)
 {
   uint_t i, j, attrnum;
   bool   found;
   char  *attrname;
 
-  config->attr_interaction_pair_indices = safe_malloc(
-    config->num_attr_interaction_change_stats_funcs * sizeof(uint_pair_t));
+  pconfig->attr_interaction_pair_indices = safe_malloc(
+    pconfig->num_attr_interaction_change_stats_funcs * sizeof(uint_pair_t));
 
-  for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++) {
+  for (i = 0; i < pconfig->num_attr_interaction_change_stats_funcs; i++) {
     for (attrnum = 0; attrnum < 2 /* 0=first and 1=second */; attrnum++) {
       found = FALSE;
       if (attrnum == 0) {
-        attrname = config->attr_interaction_pair_names[i].first;
+        attrname = pconfig->attr_interaction_pair_names[i].first;
       } else {
-        attrname = config->attr_interaction_pair_names[i].second;
+        attrname = pconfig->attr_interaction_pair_names[i].second;
       }
       switch (get_attr_interaction_param_type(
-                config->attr_interaction_param_names[i])) {
+                pconfig->attr_interaction_param_names[i])) {
         case ATTR_TYPE_BINARY:
           assert(FALSE); /* TODO binary attribute interaction */
           break;
@@ -1322,13 +1324,13 @@ int build_attr_interaction_pair_indices_from_names(config_t *config,
             if (strcasecmp(attrname, g->catattr_names[j]) == 0) {
               found = TRUE;
               if (attrnum == 0) {
-                config->attr_interaction_pair_indices[i].first = j;
+                pconfig->attr_interaction_pair_indices[i].first = j;
               } else {
-                config->attr_interaction_pair_indices[i].second = j;         
+                pconfig->attr_interaction_pair_indices[i].second = j;         
               }
               CONFIG_DEBUG_PRINT(("catattr interaction [%s] %s(%s) index %u\n",
                                   attrnum == 0 ? "first" : "second",
-                                  config->attr_interaction_param_names[i],
+                                  pconfig->attr_interaction_param_names[i],
                                   attrname, j));
             }
           }
@@ -1359,6 +1361,36 @@ int build_attr_interaction_pair_indices_from_names(config_t *config,
 }
 
 
+/*
+ * Free the param config structure
+ *
+ * Parameters:
+ *     pconfig - pointer to param config struct
+ *
+ * Return value:
+ *     None
+ */
+void free_param_config_struct(param_config_t *pconfig)
+{
+  uint_t i;
+
+  free(pconfig->change_stats_funcs);
+  free(pconfig->param_names);
+  free(pconfig->attr_param_names);
+  for (i = 0; i < pconfig->num_attr_change_stats_funcs; i++) 
+    free(pconfig->attr_names[i]);
+  free(pconfig->attr_indices);
+  for (i = 0; i < pconfig->num_dyadic_change_stats_funcs; i++) 
+    free(pconfig->dyadic_names[i]);
+  free(pconfig->dyadic_indices);
+  free(pconfig->dyadic_types);
+  free(pconfig->attr_interaction_param_names);
+  for (i = 0; i < pconfig->num_attr_interaction_change_stats_funcs; i++)  {
+    free(pconfig->attr_interaction_pair_names[i].first);
+    free(pconfig->attr_interaction_pair_names[i].second);
+  }
+  free(pconfig->attr_interaction_pair_indices);
+}
 
 
 /*
@@ -1372,7 +1404,6 @@ int build_attr_interaction_pair_indices_from_names(config_t *config,
  */
 void free_config_struct(config_t *config)
 {
-  uint_t i;
   /* In fact parse_config_file() returns pointer to static CONFIG struct,
      so just free the pointers inside it */
   if (!config)
@@ -1387,22 +1418,7 @@ void free_config_struct(config_t *config)
   free(config->dzA_file_prefix);
   free(config->sim_net_file_prefix);
   free(config->zone_filename);
-  free(config->change_stats_funcs);
-  free(config->param_names);
-  free(config->attr_param_names);
-  for (i = 0; i < config->num_attr_change_stats_funcs; i++) 
-    free(config->attr_names[i]);
-  free(config->attr_indices);
-  for (i = 0; i < config->num_dyadic_change_stats_funcs; i++) 
-    free(config->dyadic_names[i]);
-  free(config->dyadic_indices);
-  free(config->dyadic_types);
-  free(config->attr_interaction_param_names);
-  for (i = 0; i < config->num_attr_interaction_change_stats_funcs; i++)  {
-    free(config->attr_interaction_pair_names[i].first);
-    free(config->attr_interaction_pair_names[i].second);
-  }
-  free(config->attr_interaction_pair_indices);
+  free_param_config_struct(&config->param_config);
 }
 
 
