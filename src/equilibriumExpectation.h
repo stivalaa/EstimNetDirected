@@ -93,7 +93,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 bool forbidReciprocity,
                 bool useBorisenkoUpdate, double learningRate, double minTheta);
 
-int do_estimation(config_t *config, uint_t tasknum);
+int do_estimation(estim_config_t *config, uint_t tasknum);
 
 
 #endif /* EQUILIBRIUMEXPECTATION_H */

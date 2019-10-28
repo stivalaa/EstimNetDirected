@@ -39,74 +39,74 @@
  * define what is parsed from the config file, and the help/error messages.
  * Configuration parameter names (keywords) are not case sensitive.
  */
-const config_param_t CONFIG_PARAMS[] = {
-  {"ACA_S",         PARAM_TYPE_DOUBLE,   offsetof(config_t, ACA_S),
+const config_param_t ESTIM_CONFIG_PARAMS[] = {
+  {"ACA_S",         PARAM_TYPE_DOUBLE,   offsetof(estim_config_t, ACA_S),
    "multiplier for step size in Algorithm S"},
 
-  {"ACA_EE",        PARAM_TYPE_DOUBLE,   offsetof(config_t, ACA_EE),
+  {"ACA_EE",        PARAM_TYPE_DOUBLE,   offsetof(estim_config_t, ACA_EE),
    "multiplier for step size in Algorithm EE"},
 
-  {"compC",         PARAM_TYPE_DOUBLE,   offsetof(config_t, compC),
+  {"compC",         PARAM_TYPE_DOUBLE,   offsetof(estim_config_t, compC),
    "multiplier of sd(theta)/mean(theta) to limit variance"},
 
-  {"samplerSteps",  PARAM_TYPE_UINT,     offsetof(config_t, samplerSteps),
+  {"samplerSteps",  PARAM_TYPE_UINT,     offsetof(estim_config_t, samplerSteps),
    "sampler iterations (per algorithm step)"},
 
-  {"Ssteps",        PARAM_TYPE_UINT,     offsetof(config_t, Ssteps),
+  {"Ssteps",        PARAM_TYPE_UINT,     offsetof(estim_config_t, Ssteps),
    "steps of Algorithm S"},
 
-  {"EEsteps",       PARAM_TYPE_UINT,     offsetof(config_t, EEsteps),
+  {"EEsteps",       PARAM_TYPE_UINT,     offsetof(estim_config_t, EEsteps),
    "steps of Algorithm EE"},
 
-  {"EEinnerSteps",  PARAM_TYPE_UINT,     offsetof(config_t, EEinnerSteps),
+  {"EEinnerSteps",  PARAM_TYPE_UINT,     offsetof(estim_config_t, EEinnerSteps),
    "inner iterations of Algorithm EE"},
 
-  {"outputAllSteps", PARAM_TYPE_BOOL,    offsetof(config_t, outputAllSteps),
+  {"outputAllSteps", PARAM_TYPE_BOOL,    offsetof(estim_config_t, outputAllSteps),
    "output theta and dzA values on every iteration of EE algorithm)"},
 
-  {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(config_t, useIFDsampler),
+  {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(estim_config_t, useIFDsampler),
    "use Improved Fixed Density sampler instead of basic sampler"},
 
-  {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(config_t, ifd_K),
+  {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(estim_config_t, ifd_K),
    "multiplier for auxiliary parameter step size in IFD sampler"},
 
   {"outputSimulatedNetwork", PARAM_TYPE_BOOL,
-   offsetof(config_t, outputSimulatedNetwork),
+   offsetof(estim_config_t, outputSimulatedNetwork),
    "output simulated network in Pajek format at end of MCMC simulation"},
 
-  {"arclistFile",   PARAM_TYPE_STRING,   offsetof(config_t, arclist_filename),
+  {"arclistFile",   PARAM_TYPE_STRING,   offsetof(estim_config_t, arclist_filename),
   "Network in Pajek arc list format"},
 
-  {"binattrFile",   PARAM_TYPE_STRING,   offsetof(config_t, binattr_filename),
+  {"binattrFile",   PARAM_TYPE_STRING,   offsetof(estim_config_t, binattr_filename),
   "binary attributes file"},
 
-  {"catattrFile",   PARAM_TYPE_STRING,   offsetof(config_t, catattr_filename),
+  {"catattrFile",   PARAM_TYPE_STRING,   offsetof(estim_config_t, catattr_filename),
   "categorical attributes file"},
 
-  {"contattrFile",  PARAM_TYPE_STRING,   offsetof(config_t, contattr_filename),
+  {"contattrFile",  PARAM_TYPE_STRING,   offsetof(estim_config_t, contattr_filename),
   "continuous attributes file"},
 
-  {"setattrFile",   PARAM_TYPE_STRING,   offsetof(config_t, setattr_filename),
+  {"setattrFile",   PARAM_TYPE_STRING,   offsetof(estim_config_t, setattr_filename),
   "set attributes file"},
 
-  {"thetaFilePrefix",PARAM_TYPE_STRING,  offsetof(config_t, theta_file_prefix),
+  {"thetaFilePrefix",PARAM_TYPE_STRING,  offsetof(estim_config_t, theta_file_prefix),
    "theta output file prefix"},
 
-  {"dzAFilePrefix",  PARAM_TYPE_STRING,  offsetof(config_t, dzA_file_prefix),
+  {"dzAFilePrefix",  PARAM_TYPE_STRING,  offsetof(estim_config_t, dzA_file_prefix),
    "dzA output file prefix"},
   
   {"simNetFilePrefix", PARAM_TYPE_STRING,
-   offsetof(config_t, sim_net_file_prefix),
+   offsetof(estim_config_t, sim_net_file_prefix),
    "simulated network output file prefix"},
 
-  {"zoneFile",      PARAM_TYPE_STRING,  offsetof(config_t, zone_filename),
+  {"zoneFile",      PARAM_TYPE_STRING,  offsetof(estim_config_t, zone_filename),
    "snowball sample zone file"},
 
   {"useConditionalEstimation", PARAM_TYPE_BOOL,
-   offsetof(config_t, useConditionalEstimation),
+   offsetof(estim_config_t, useConditionalEstimation),
    "do conditional estimation for snowball network sample"},
 
-  {"forbidReciprocity",PARAM_TYPE_BOOL, offsetof(config_t, forbidReciprocity),
+  {"forbidReciprocity",PARAM_TYPE_BOOL, offsetof(estim_config_t, forbidReciprocity),
    "constrain ERGM sampler to not allow reciprocated arcs"},
   /* This is useful for graphs that have no reciprocated arcs in the observed
      graph so cannot use Reciprocity parameter, and want to enforce 
@@ -115,13 +115,13 @@ const config_param_t CONFIG_PARAMS[] = {
      TODO should have some more general way of specifying constraints
      like ergm-constraints in statnet instead of this ad-hoc way */
 
-  {"useBorisenkoUpdate",PARAM_TYPE_BOOL, offsetof(config_t, useBorisenkoUpdate),
+  {"useBorisenkoUpdate",PARAM_TYPE_BOOL, offsetof(estim_config_t, useBorisenkoUpdate),
    "use Borisenko et al. (2019) parameter update algorithm in algorithm EE"},
 
-  {"learningRate",     PARAM_TYPE_DOUBLE,offsetof(config_t, learningRate),
+  {"learningRate",     PARAM_TYPE_DOUBLE,offsetof(estim_config_t, learningRate),
    "learning rate a in Borisenko update step of algorithm EE"},
 
-  {"minTheta",         PARAM_TYPE_DOUBLE,offsetof(config_t, minTheta),
+  {"minTheta",         PARAM_TYPE_DOUBLE,offsetof(estim_config_t, minTheta),
    "min abs value of theta to stop zero in Borisenko EE algorithm update step"},
 
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
@@ -136,8 +136,8 @@ const config_param_t CONFIG_PARAMS[] = {
   {ATTR_INTERACTION_PARAMS_STR,PARAM_TYPE_SET, 0,/*no offset, coded explicitly*/
    "attribute pair interaction parameters to estimate"}
 };
-const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
-  sizeof(CONFIG_PARAMS[0]);
+const uint_t NUM_ESTIM_CONFIG_PARAMS = sizeof(ESTIM_CONFIG_PARAMS) /
+  sizeof(ESTIM_CONFIG_PARAMS[0]);
 
 
 
@@ -154,7 +154,7 @@ const uint_t NUM_CONFIG_PARAMS = sizeof(CONFIG_PARAMS) /
  * be free()ed later (if a value is specified). The default values (if any) are 
  * therefore set in code with strdup() just like specified values.
  */
-config_t CONFIG = {
+estim_config_t ESTIM_CONFIG = {
   0.1,   /* ACA_S */       
   DEFAULT_ACA_EE, /* ACA_EE */      
   DEFAULT_COMPC, /* compC */       
@@ -223,7 +223,7 @@ config_t CONFIG = {
  * but simply check CONFIG.num_change_stats_funcs and 
  * CONFIG.num_attr_change_stats_funcs
  */
-static bool CONFIG_IS_SET[] = {
+static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* ACA_S */       
   FALSE, /* ACA_EE */      
   FALSE, /* compC */       
@@ -254,7 +254,7 @@ static bool CONFIG_IS_SET[] = {
   FALSE, /* (NOT USED) dyadicParams */
   FALSE  /* (NOT USED) attrInteractionParams */
 };
-static const uint_t NUM_CONFIG_IS_SET = sizeof(CONFIG_IS_SET)/sizeof(CONFIG_IS_SET[0]);
+static const uint_t NUM_ESTIM_CONFIG_IS_SET = sizeof(ESTIM_CONFIG_IS_SET)/sizeof(ESTIM_CONFIG_IS_SET[0]);
 
 
 
@@ -284,7 +284,7 @@ static const uint_t NUM_CONFIG_IS_SET = sizeof(CONFIG_IS_SET)/sizeof(CONFIG_IS_S
  * Return value:
  *   Pointer to structure with parsed confiugration values or NULL on error.
  */
-config_t *parse_config_file(const char *config_filename)
+estim_config_t *parse_config_file(const char *config_filename)
 {
   char        paramname[TOKSIZE];  /* parameter name buffer */
   char        value[TOKSIZE];      /* parameter value buffer */
@@ -299,9 +299,9 @@ config_t *parse_config_file(const char *config_filename)
   while (!feof(config_file) && !ferror(config_file)) {
     if ((rc = get_paramname_value(config_file, paramname, value)) == 0) {
       if (check_and_set_param_value(paramname, value, config_file,
-                                    &CONFIG, CONFIG_IS_SET,
-                                    &CONFIG.param_config,
-                                    CONFIG_PARAMS, NUM_CONFIG_PARAMS) != 0)
+                                    &ESTIM_CONFIG, ESTIM_CONFIG_IS_SET,
+                                    &ESTIM_CONFIG.param_config,
+                                    ESTIM_CONFIG_PARAMS, NUM_ESTIM_CONFIG_PARAMS) != 0)
         return NULL;
     } else if (rc < 0)
       return NULL;
@@ -312,7 +312,7 @@ config_t *parse_config_file(const char *config_filename)
     return NULL;
   }
   fclose(config_file);
-  return &CONFIG; /* return pointer to static CONFIG structure */
+  return &ESTIM_CONFIG; /* return pointer to static CONFIG structure */
 }
 
 
@@ -326,13 +326,13 @@ config_t *parse_config_file(const char *config_filename)
  * Return value:
  *     None
  */
-void free_config_struct(config_t *config)
+void free_config_struct(estim_config_t *config)
 {
   /* In fact parse_config_file() returns pointer to static CONFIG struct,
      so just free the pointers inside it */
   if (!config)
     return;
-  assert(config == &CONFIG);
+  assert(config == &ESTIM_CONFIG);
   free(config->arclist_filename);
   free(config->binattr_filename);
   free(config->catattr_filename);
@@ -353,10 +353,10 @@ void free_config_struct(config_t *config)
  */
 void init_config_parser(void)
 {
-  assert(NUM_CONFIG_IS_SET == NUM_CONFIG_PARAMS);
-  CONFIG.theta_file_prefix = safe_strdup("theta_values");
-  CONFIG.dzA_file_prefix = safe_strdup("dzA_values");
-  CONFIG.sim_net_file_prefix = safe_strdup("sim");
+  assert(NUM_ESTIM_CONFIG_IS_SET == NUM_ESTIM_CONFIG_PARAMS);
+  ESTIM_CONFIG.theta_file_prefix = safe_strdup("theta_values");
+  ESTIM_CONFIG.dzA_file_prefix = safe_strdup("dzA_values");
+  ESTIM_CONFIG.sim_net_file_prefix = safe_strdup("sim");
 }
 
 

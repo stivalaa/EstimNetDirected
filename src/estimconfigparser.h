@@ -34,7 +34,7 @@
  *
  ****************************************************************************/
 
-typedef struct config_s {
+typedef struct estim_config_s {
   /*
    * Parameters parsed directly from config file
    */
@@ -68,7 +68,7 @@ typedef struct config_s {
    * values built by confiparser.c functions from parsed config settings
    */
   param_config_t param_config;
-} config_t;
+} estim_config_t;
 
 
 /*****************************************************************************
@@ -77,8 +77,8 @@ typedef struct config_s {
  *
  ****************************************************************************/
 
-extern const config_param_t CONFIG_PARAMS[];
-extern const uint_t NUM_CONFIG_PARAMS;
+extern const config_param_t ESTIM_CONFIG_PARAMS[];
+extern const uint_t NUM_ESTIM_CONFIG_PARAMS;
 
 /*****************************************************************************
  *
@@ -86,7 +86,7 @@ extern const uint_t NUM_CONFIG_PARAMS;
  *
  ****************************************************************************/
 
-extern config_t CONFIG;
+extern estim_config_t ESTIM_CONFIG;
 
 /*****************************************************************************
  *
@@ -94,9 +94,9 @@ extern config_t CONFIG;
  *
  ****************************************************************************/
 
-config_t *parse_config_file(const char *config_filename);
+estim_config_t *parse_config_file(const char *config_filename);
 
-void free_config_struct(config_t *config);
+void free_config_struct(estim_config_t *config);
 
 void init_config_parser(void);
 

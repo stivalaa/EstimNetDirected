@@ -36,10 +36,10 @@ static void usage(const char *progname)
 
 int main(int argc, char *argv[])
 {
-  int        c;
-  char      *config_filename = NULL;
-  config_t  *config;
-  int        rc;
+  int              c;
+  char            *config_filename = NULL;
+  estim_config_t  *config;
+  int              rc;
 
   init_prng(0); /* initialize pseudorandom number generator */
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   while ((c = getopt(argc, argv, "h")) != -1)  {
     switch (c)   {
       case 'h':
-        dump_config_names(&CONFIG, (const config_param_t *)&CONFIG_PARAMS, NUM_CONFIG_PARAMS);
+        dump_config_names(&ESTIM_CONFIG, (const config_param_t *)&ESTIM_CONFIG_PARAMS, NUM_ESTIM_CONFIG_PARAMS);
         dump_parameter_names();
         exit(0);
         break;

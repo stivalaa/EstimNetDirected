@@ -638,7 +638,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  * Return value:
  *    0 if OK else -ve value for error.
  */
-int do_estimation(config_t * config, uint_t tasknum)
+int do_estimation(estim_config_t * config, uint_t tasknum)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
