@@ -68,11 +68,7 @@ typedef struct config_s {
  ****************************************************************************/
 
 config_t *parse_config_file(const char *config_filename);
-int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g);
-int build_dyadic_indices_from_names(param_config_t *pconfig, digraph_t *g);
-int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
-                                                   const digraph_t *g);
-void free_param_config_struct(param_config_t *pconfig);
+
 void free_config_struct(config_t *config);
 
 void init_config_parser(void);
