@@ -140,6 +140,509 @@ const uint_t NUM_ATTR_INTERACTION_PARAMS =
  ****************************************************************************/
 
 
+/* 
+ * Parse the structural parameters sructParams from (open read) file infile
+ * These are the set type, comma delimited names of structural parameters
+ * enclosed in braces, eg.:
+ * "{Arc, Reciprocity, AltInStars, AltOutStars, AltKTrianglesT}"
+ * The change_stats_funcs field in the CONFIG (file static) structure
+ * is set to corresponding list of change statistics function pointers.
+ * The STRUCT_PARAMS constant has the table of parameter names and
+ * corresponding change statistic functions.
+ * Return nonzero on error else zero.
+ */
+static int parse_struct_params(FILE *infile, param_config_t *pconfig)
+{
+  char        tokenbuf[TOKSIZE];
+  char       *token;
+  bool        found_paramname;
+  bool        last_token_was_paramname = FALSE;
+  uint_t      i;
+  
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for structParams\n");
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_struct_params token '%s'\n", token));
+    if (last_token_was_paramname) {
+      last_token_was_paramname = FALSE;
+      if (strcmp(token, ",") != 0) {
+        fprintf(stderr, "ERROR: structParams expecting parameter names separated by comma\n");
+        return 1;
+      }
+    } else {
+      found_paramname = FALSE;
+      for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
+        if (strcasecmp(token, STRUCT_PARAMS[i].name) == 0) {
+          found_paramname = TRUE;
+          break;
+        }
+      }
+      if (!found_paramname) {
+        fprintf(stderr, "ERROR: '%s' is not a valid structural parameter "
+                "name for structParams\n", token);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("structParam %s\n", token));
+      last_token_was_paramname = TRUE;
+      pconfig->param_names = (const char **)safe_realloc(pconfig->param_names,
+                                        (pconfig->num_change_stats_funcs + 1) *
+                                        sizeof(const char *));
+      pconfig->change_stats_funcs = (change_stats_func_t **)
+        safe_realloc(pconfig->change_stats_funcs,
+                  (pconfig->num_change_stats_funcs + 1) *
+                     sizeof(change_stats_func_t *));
+      pconfig->param_names[pconfig->num_change_stats_funcs] =
+        STRUCT_PARAMS[i].name;
+      pconfig->change_stats_funcs[pconfig->num_change_stats_funcs] =
+        STRUCT_PARAMS[i].change_stats_func;
+      pconfig->num_change_stats_funcs++;
+    }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+}
+
+
+/*
+ * Parse a single attribute parameter (paramName and corresponding
+ * attr_change_stats_func) in the attrParams set from infile.  These
+ * are comma-delmited attribute names inside parentheses e.g.
+ * "Matching(class1,class2)". See parse_attr_params() for note on note
+ * validating these names yet, just setting them in
+ * CONFIG.param_config.attr_names[].  Return nonzero on error else zero.
+ */
+static int parse_one_attr_param(const char *paramName,
+                                attr_change_stats_func_t *attr_change_stats_func,
+                                FILE *infile, param_config_t *pconfig)
+{
+  char      tokenbuf[TOKSIZE];
+  char     *token;
+  bool      last_token_was_attrname = FALSE;
+  bool      opening = TRUE; /* true for first iteration only to expect '(' */
+
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for attrParam %s\n", paramName);
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_PAREN_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));
+    if (opening) {
+      if (!(strlen(token) == 1 && token[0] == OPEN_PAREN_CHAR)) {
+        fprintf(stderr, "ERROR: expecting %c to open list of attribute "
+                "names after attrParam %s but got '%s'\n",
+                OPEN_PAREN_CHAR, paramName, token);
+        return 1;
+      }
+      opening = FALSE;
+    } else {
+      if (last_token_was_attrname) {
+        last_token_was_attrname = FALSE;
+        if (strcmp(token, ",") != 0) {
+          fprintf(stderr, "ERROR: attrParams %s expecting parameter names "
+                  "separated by comma\n", paramName);
+          return 1;
+        }
+      } else {
+        CONFIG_DEBUG_PRINT(("attrParam %s('%s')\n", paramName, token));
+        last_token_was_attrname = TRUE;
+        pconfig->attr_param_names = (const char **)
+          safe_realloc(pconfig->attr_param_names,
+                       (pconfig->num_attr_change_stats_funcs + 1) *
+                       sizeof(const char *));
+        pconfig->attr_change_stats_funcs = (attr_change_stats_func_t **)
+          safe_realloc(pconfig->attr_change_stats_funcs,
+                       (pconfig->num_attr_change_stats_funcs + 1) *
+                       sizeof(attr_change_stats_func_t *));
+        pconfig->attr_names = (char **)safe_realloc(pconfig->attr_names,
+              (pconfig->num_attr_change_stats_funcs + 1) * sizeof(const char *));
+        pconfig->attr_param_names[pconfig->num_attr_change_stats_funcs] = paramName;
+        pconfig->attr_change_stats_funcs[pconfig->num_attr_change_stats_funcs] =
+          attr_change_stats_func;
+        pconfig->attr_names[pconfig->num_attr_change_stats_funcs] = safe_strdup(token);
+        pconfig->num_attr_change_stats_funcs++;
+      }
+    }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+  
+}
+
+/* 
+ * Parse the attribute parameters attrParams from (open read) file infile.
+ * These are the set type, comma delimited names of structural parameters
+ * enclosed in braces, eg.:
+ * "{Sender(binaryAttribute), Matching(class1,class2)}"
+ *   
+ * The attr_change_stats_funcs and attr_names fields in the CONFIG
+ * (file static) structure is set to corresponding list of change
+ * statistics function pointers.  The ATTR_PARAMS constant has the
+ * table of parameter names and corresponding change statistic
+ * functions.  Return nonzero on error else zero.
+ *
+ * Where there are multiple attributes for one effect (as in the Matching
+ * example above), separate entries are created, with the same change
+ * statistics function but with a different attribute name (so there is
+ * always only one attribute name per change statistic function, but 
+ * there can be multiple entries for the same change statstic function).
+ *
+ * Note that we cannot validate the attribute names yet (while parsing
+ * the config file), as it requires the attributes to have been loaded
+ * from the files named in the config file. So the attr_names field
+ * is set, and the attr_indices are only built from the names later
+ * after the attributes values have been loaded, by calling
+ * build_attr_indices_from_names().
+ */
+static int parse_attr_params(FILE *infile, param_config_t *pconfig)
+{
+  char        tokenbuf[TOKSIZE];
+  char       *token;
+  bool        found_paramname;
+  bool        last_token_was_paramname = FALSE;
+  uint_t      i;
+  
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for attrParams\n");
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_attr_params token '%s'\n", token));
+    if (last_token_was_paramname) {
+      last_token_was_paramname = FALSE;
+      if (strcmp(token, ",") != 0) {
+        fprintf(stderr, "ERROR: attrParams expecting parameter names separated by comma\n");
+        return 1;
+      }
+    } else {
+      found_paramname = FALSE;
+      for (i = 0; i < NUM_ATTR_PARAMS; i++) {
+        if (strcasecmp(token, ATTR_PARAMS[i].name) == 0) {
+          found_paramname = TRUE;
+          break;
+        }
+      }
+      if (!found_paramname) {
+        fprintf(stderr, "ERROR: '%s' is not a valid attribute parameter "
+                "name for attrParams\n", token);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("attrParam %s\n", token));
+      last_token_was_paramname = TRUE;
+      if (parse_one_attr_param(ATTR_PARAMS[i].name,
+                               ATTR_PARAMS[i].attr_change_stats_func,
+                               infile, pconfig)) {
+        fprintf(stderr, "ERROR parsing attrParams %s\n", ATTR_PARAMS[i].name);
+        return 1;
+      }
+          }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+}
+
+
+
+
+/*
+ * Parse a single dyadic covariate parameter (paramName and corresponding
+ * attr_change_stats_func) in the dyadicParams set from infile.  These
+ * are comma-delmited attribute names inside parentheses e.g.
+ * Note that we cannot validate the attribute names yet (while parsing
+ * the config file), as it requires the attributes to have been loaded
+ * from the files named in the config file. So the attr_names field
+ * is set, and the attr_indices are only built from the names later
+ * after the attributes values have been loaded, by calling
+ * build_dyadic_indices_from_names().
+ * Return nonzero on error else zero.
+ */
+static int parse_one_dyadic_param(const char *paramName,
+                                dyadic_change_stats_func_t *dyadic_change_stats_func,
+                                  FILE *infile, param_config_t *pconfig)
+{
+  char      tokenbuf[TOKSIZE];
+  char     *token;
+  bool      last_token_was_attrname = FALSE;
+  bool      opening = TRUE; /* true for first iteration only to expect '(' */
+
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for dyadicParam %s\n", paramName);
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_PAREN_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_one_dyadic_param token '%s'\n", token));
+    if (opening) {
+      if (!(strlen(token) == 1 && token[0] == OPEN_PAREN_CHAR)) {
+        fprintf(stderr, "ERROR: expecting %c to open list of attribute "
+                "names after dyadicParam %s but got '%s'\n",
+                OPEN_PAREN_CHAR, paramName, token);
+        return 1;
+      }
+      opening = FALSE;
+    } else {
+      if (last_token_was_attrname) {
+        last_token_was_attrname = FALSE;
+        if (strcmp(token, ",") != 0) {
+          fprintf(stderr, "ERROR: dyadicParams %s expecting parameter names "
+                  "separated by comma\n", paramName);
+          return 1;
+        }
+      } else {
+        CONFIG_DEBUG_PRINT(("dyadicParam %s('%s')\n", paramName, token));
+        last_token_was_attrname = TRUE;
+        pconfig->dyadic_param_names = (const char **)
+          safe_realloc(pconfig->dyadic_param_names,
+                       (pconfig->num_dyadic_change_stats_funcs + 1) *
+                       sizeof(const char *));
+        pconfig->dyadic_change_stats_funcs = (dyadic_change_stats_func_t **)
+          safe_realloc(pconfig->dyadic_change_stats_funcs,
+                       (pconfig->num_dyadic_change_stats_funcs + 1) *
+                       sizeof(dyadic_change_stats_func_t *));
+        pconfig->dyadic_names = (char **)safe_realloc(pconfig->dyadic_names,
+              (pconfig->num_dyadic_change_stats_funcs + 1) * sizeof(char *));
+        pconfig->dyadic_param_names[pconfig->num_dyadic_change_stats_funcs] = paramName;
+        pconfig->dyadic_change_stats_funcs[pconfig->num_dyadic_change_stats_funcs] =
+          dyadic_change_stats_func;
+        pconfig->dyadic_names[pconfig->num_dyadic_change_stats_funcs] = safe_strdup(token);
+        pconfig->num_dyadic_change_stats_funcs++;
+      }
+    }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+  
+}
+
+/* 
+ * Parse the attribute parameters dyadicParams from (open read) file infile.
+ * These are the set type, comma delimited names of structural parameters
+ * enclosed in braces, eg.:
+ *   
+ * The dyadic_change_stats_funcs and dyadic_names fields in the CONFIG
+ * (file static) structure is set to corresponding list of change
+ * statistics function pointers.  The DYADIC_PARAMS constant has the
+ * table of parameter names and corresponding change statistic
+ * functions.  Return nonzero on error else zero.
+ *
+ */
+static int parse_dyadic_params(FILE *infile, param_config_t *pconfig)
+{
+  char        tokenbuf[TOKSIZE];
+  char       *token;
+  bool        found_paramname;
+  bool        last_token_was_paramname = FALSE;
+  uint_t      i;
+  
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for dyadicParams\n");
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_dyadic_params token '%s'\n", token));
+    if (last_token_was_paramname) {
+      last_token_was_paramname = FALSE;
+      if (strcmp(token, ",") != 0) {
+        fprintf(stderr, "ERROR: dyadicParams expecting parameter names separated by comma\n");
+        return 1;
+      }
+    } else {
+      found_paramname = FALSE;
+      for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
+        if (strcasecmp(token, DYADIC_PARAMS[i].name) == 0) {
+          found_paramname = TRUE;
+          break;
+        }
+      }
+      if (!found_paramname) {
+        fprintf(stderr, "ERROR: '%s' is not a valid attribute parameter "
+                "name for dyadicParams\n", token);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("dyadicParam %s\n", token));
+      last_token_was_paramname = TRUE;
+      if (parse_one_dyadic_param(DYADIC_PARAMS[i].name,
+                                 DYADIC_PARAMS[i].dyadic_change_stats_func,
+                                 infile, pconfig)) {
+        fprintf(stderr, "ERROR parsing dyadicParams %s\n", DYADIC_PARAMS[i].name);
+        return 1;
+      }
+          }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+}
+
+
+
+
+/*
+ * Parse a single attrInteractionParams attribute interaction
+ * parameter (paramName and corresponding attr_change_stats_func) in
+ * the attrParams set from infile.  These are a single comma-delmited
+ * paior of attribute names inside parentheses e.g.
+ * "MatchingInteraction(class1,class2)".  See
+ * parse_attr_interaction_params() for note on note validating these
+ * names yet, just setting them in
+ * CONFIG.param_config.attr_interaction_pair_names[].  Return nonzero on error else
+ * zero.
+ */
+static int parse_one_attr_interaction_param(const char *paramName,
+                  attr_interaction_change_stats_func_t *attr_interaction_change_stats_func,
+                  FILE *infile, param_config_t *pconfig)
+{
+  char      tokenbuf[TOKSIZE];
+  char     *token;
+  bool      last_token_was_attrname = FALSE;
+  bool      opening = TRUE; /* true for first iteration only to expect '(' */
+  uint_t    num_attr_names = 0;
+
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for attrInteractionParam %s\n",
+            paramName);
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_PAREN_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_one_attr_interaction_param token '%s'\n", token));
+    if (opening) {
+      if (!(strlen(token) == 1 && token[0] == OPEN_PAREN_CHAR)) {
+        fprintf(stderr, "ERROR: expecting %c to open list of attribute "
+                "names after attrParam %s but got '%s'\n",
+                OPEN_PAREN_CHAR, paramName, token);
+        return 1;
+      }
+      opening = FALSE;
+    } else {
+      if (last_token_was_attrname) {
+        last_token_was_attrname = FALSE;
+        if (strcmp(token, ",") != 0) {
+          fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
+                  "two parameter names "
+                  "separated by comma\n", paramName);
+          return 1;
+        }
+      } else {
+        CONFIG_DEBUG_PRINT(("attrInteractionParam %s('%s') [%u]\n",
+                            paramName, token, num_attr_names));
+        last_token_was_attrname = TRUE;
+        if (num_attr_names == 0) {
+          pconfig->attr_interaction_param_names = (const char **)
+            safe_realloc(pconfig->attr_interaction_param_names,
+                         (pconfig->num_attr_interaction_change_stats_funcs + 1) *
+                         sizeof(const char *));
+          pconfig->attr_interaction_change_stats_funcs =
+            (attr_interaction_change_stats_func_t **)
+            safe_realloc(pconfig->attr_interaction_change_stats_funcs,
+                         (pconfig->num_attr_interaction_change_stats_funcs + 1) *
+                         sizeof(attr_interaction_change_stats_func_t *));
+          pconfig->attr_interaction_pair_names = (string_pair_t *)safe_realloc(
+            pconfig->attr_interaction_pair_names,
+            (pconfig->num_attr_interaction_change_stats_funcs + 1) * sizeof(string_pair_t));
+          pconfig->attr_interaction_pair_names[
+            pconfig->num_attr_interaction_change_stats_funcs].first = safe_strdup(token);
+          pconfig->attr_interaction_pair_names[
+            pconfig->num_attr_interaction_change_stats_funcs].second = NULL;
+          pconfig->attr_interaction_param_names[pconfig->num_attr_interaction_change_stats_funcs] = paramName;
+          pconfig->attr_interaction_change_stats_funcs[pconfig->num_attr_interaction_change_stats_funcs] =
+            attr_interaction_change_stats_func;
+          num_attr_names++;
+        }  else if (num_attr_names == 1) {
+          pconfig->attr_interaction_pair_names[
+            pconfig->num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
+          num_attr_names++;
+          pconfig->num_attr_interaction_change_stats_funcs++;
+        } else {
+          fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
+                  "exactly two parameter names "
+                  "separated by comma\n", paramName);
+          return 1;
+        }
+      }
+    }
+    token = get_token(infile, tokenbuf);
+  }
+  if (num_attr_names != 2) {
+    fprintf(stderr, "ERROR: attrInteractionParams %s was expecting "
+            "exactly two parameter names separated by a comma\n", paramName);
+    return 1;
+  }
+  return 0;
+}
+
+
+/* 
+ * Parse the attribute parameters attrInteractionParams from (open
+ * read) file infile. These are the set type, comma delimited names
+ * of parameters enclosed in braces, eg.:
+ * "{MatchingInteraction(class1,class2)}"
+ *   
+ * The attr_interaction_change_stats_funcs and
+ * attr_intearction_pair_names fields in the CONFIG (file static)
+ * structure is set to corresponding list of change statistics
+ * function pointers.  The ATTR_INTERACTION_PARAMS constant has the
+ * table of parameter names and corresponding change statistic
+ * functions.  Return nonzero on error else zero.
+ *
+ * Note that we cannot validate the attribute names yet (while parsing
+ * the config file), as it requires the attributes to have been loaded
+ * from the files named in the config file. So the
+ * attr_interaction_pairnames field is set, and the attr_indices are
+ * only built from the names later after the attributes values have
+ * been loaded, by calling
+ * build_attr_interaction_indices_from_names().
+ */
+static int parse_attr_interaction_params(FILE *infile, param_config_t *pconfig)
+{
+  char        tokenbuf[TOKSIZE];
+  char       *token;
+  bool        found_paramname;
+  bool        last_token_was_paramname = FALSE;
+  uint_t      i;
+  
+  if (!(token = get_token(infile, tokenbuf))) {
+    fprintf(stderr, "ERROR: no tokens for attrInteractionParams\n");
+    return 1; 
+  }
+  while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
+    CONFIG_DEBUG_PRINT(("parse_attr_interaction_interaction_params "
+                        "token '%s'\n", token));
+    if (last_token_was_paramname) {
+      last_token_was_paramname = FALSE;
+      if (strcmp(token, ",") != 0) {
+        fprintf(stderr, "ERROR: attrIntearctionParams expecting "
+                "parameter names separated by comma\n");
+        return 1;
+      }
+    } else {
+      found_paramname = FALSE;
+      for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
+        if (strcasecmp(token, ATTR_INTERACTION_PARAMS[i].name) == 0) {
+          found_paramname = TRUE;
+          break;
+        }
+      }
+      if (!found_paramname) {
+        fprintf(stderr, "ERROR: '%s' is not a valid attribute parameter "
+                "name for attrInteractionParams\n", token);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("attrInteractionParam %s\n", token));
+      last_token_was_paramname = TRUE;
+      if (parse_one_attr_interaction_param(ATTR_INTERACTION_PARAMS[i].name,
+                               ATTR_INTERACTION_PARAMS[i].attr_interaction_change_stats_func,
+                                           infile, pconfig)) {
+        fprintf(stderr, "ERROR parsing attrInteractionParams %s\n",
+                ATTR_INTERACTION_PARAMS[i].name);
+        return 1;
+      }
+          }
+    token = get_token(infile, tokenbuf);
+  }
+  return 0;
+}
+
+
+
 
 /*****************************************************************************
  *
@@ -860,3 +1363,146 @@ void dump_config_names(const void *config,
     }
   }
 }
+
+
+/* 
+ * Given the parameter name and value parsed from the config file,
+ * check that they are valid, using the file config_params (constant
+ * input param), and set the corresponding fields in the config and
+ * pconfig (output param) structures, using hte config_is_set bool
+ * array (set to all FALSE initially, in/out parameter) to check for
+ * duplicates. Returns nonzero on error, else zero.  The infile (open
+ * read) from which they are parsed is also passed.  For set values,
+ * the valuestr is just '{' and more parsing is required, for which
+ * the infile is passed to the appropriate function.
+ */
+int check_and_set_param_value(const char *paramname,
+                              const char *valuestr,
+                              FILE *infile,
+                              void *config,
+                              bool *config_is_set,
+                              param_config_t *pconfig,
+                              const config_param_t *config_params,
+                              uint_t num_config_params)
+{
+  uint_t i;
+  bool   found_paramname = FALSE;
+  double valuedouble;
+  char  *endptr; /* for strtod() */
+  uint_t valueint;
+  bool   valuebool;
+
+  for (i = 0; i < num_config_params; i++) {
+    if (strcasecmp(paramname, config_params[i].name) == 0) {
+      found_paramname = TRUE;
+      break;
+    }
+  }
+  if (!found_paramname) {
+    fprintf(stderr, "ERROR: invalid parameter name '%s'\n", paramname);
+    return 1;
+  }
+
+  if (config_is_set[i]) {
+    fprintf(stderr, "ERROR: parameter %s is set more than once\n",
+            config_params[i].name);
+    return 1;
+  }
+  config_is_set[i] = TRUE;
+  
+  switch(config_params[i].type) {
+    case PARAM_TYPE_DOUBLE:  /* numeric (floating point) */
+      valuedouble = strtod(valuestr, &endptr);
+      if (*endptr != '\0') {
+        fprintf(stderr, "ERROR: expecting floating point value for parameter %s but got '%s'\n", paramname, valuestr);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("%s = %lg\n", paramname, valuedouble));
+      *(double *)((char *)config + config_params[i].offset) = valuedouble;
+      break;
+      
+    case PARAM_TYPE_UINT:    /* numeric (unsigned integer) */
+      if (sscanf(valuestr, "%u", &valueint) != 1) {
+        fprintf(stderr, "ERROR: expecting unsigned integer value for parameter %s but got '%s'\n", paramname, valuestr);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("%s = %u\n", paramname, valueint));
+      *(uint_t *)((char *)config + config_params[i].offset) = valueint;
+      break;
+
+    case PARAM_TYPE_BOOL:    /* Boolean */
+      if (strcasecmp(valuestr, TRUE_STR) == 0)
+        valuebool = TRUE;
+      else if (strcasecmp(valuestr, FALSE_STR) == 0)
+        valuebool = FALSE;
+      else {
+        fprintf(stderr, "ERROR: expecting Boolean value for parameter %s but got '%s'\n", paramname, valuestr);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("%s = %d\n", paramname, valuebool));
+      *(bool *)((char *)config + config_params[i].offset) = valuebool;
+      break;
+      
+    case PARAM_TYPE_STRING:  /* string (may be quoted, not necessarily) */
+      /* free default/previous value first (may be NULL, which is alright)*/
+      free(*(char **)((char *)config + config_params[i].offset));
+      *(char **)((char *)config + config_params[i].offset) =
+        safe_strdup(valuestr);
+      CONFIG_DEBUG_PRINT(("%s = %s\n", paramname, valuestr));
+      /* TODO handle quoted string */
+      break;
+      
+    case PARAM_TYPE_SET:
+      /* comma delimited set of other params enclosed in {}, so rather
+         than using valuestr here, which is just empty, parse the tokens
+         in the set
+      */
+      if (strcasecmp(paramname, STRUCT_PARAMS_STR) == 0) {
+        if (strlen(valuestr) != 1 || valuestr[0] != OPEN_SET_CHAR) {
+          fprintf(stderr,
+                  "ERROR: expecting %c for structParams but got '%s'\n",
+                  OPEN_SET_CHAR, valuestr);
+          return 1;
+        }
+        if (pconfig->num_change_stats_funcs > 0) {
+          fprintf(stderr, "ERROR: %s specified more than once\n",
+                  STRUCT_PARAMS_STR);
+          return 1;
+        } 
+        return parse_struct_params(infile, pconfig); 
+      } else if (strcasecmp(paramname, ATTR_PARAMS_STR) == 0) {
+        if (pconfig->num_attr_change_stats_funcs > 0) {
+          fprintf(stderr, "ERROR: %s specified more than once\n",
+                  ATTR_PARAMS_STR);
+          return 1;
+        }
+        return parse_attr_params(infile, pconfig);
+      } else if (strcasecmp(paramname, DYADIC_PARAMS_STR) == 0) {        
+        if (pconfig->num_dyadic_change_stats_funcs > 0) {
+          fprintf(stderr, "ERROR: %s specified more than once\n",
+                  DYADIC_PARAMS_STR);
+          return 1;
+        }
+        return parse_dyadic_params(infile, pconfig);
+      } else if (strcasecmp(paramname, ATTR_INTERACTION_PARAMS_STR) == 0) {
+        if (pconfig->num_attr_interaction_change_stats_funcs > 0) {
+          fprintf(stderr, "ERROR: %s specified more than once\n",
+                  ATTR_INTERACTION_PARAMS_STR);
+          return 1;
+        }
+        return parse_attr_interaction_params(infile, pconfig);
+      } else {
+        fprintf(stderr, "ERROR (internal): unknown parameter %s\n", paramname);
+        return 1;
+      }
+      break;
+        
+    default:
+      fprintf(stderr, "ERROR (internal): unknown parameter type %d\n",
+              config_params[i].type);
+      return 1;
+      break;
+  }
+  return 0;
+}
+

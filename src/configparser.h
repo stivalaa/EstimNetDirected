@@ -204,5 +204,15 @@ void dump_config_names(const void *config,
                        const config_param_t *config_params,
                        uint_t num_config_params);
 
+int check_and_set_param_value(const char *paramname,
+                              const char *valuestr,
+                              FILE *infile,
+                              void *config,
+                              bool *config_is_set,
+                              param_config_t *pconfig,
+                              const config_param_t *config_params,
+                              uint_t num_config_params);
+
+
 #endif /* CONFIGPARSER_H */
 
