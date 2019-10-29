@@ -1469,7 +1469,7 @@ int check_and_set_param_value(const char *paramname,
         fprintf(stderr, "ERROR: expecting floating point value for parameter %s but got '%s'\n", paramname, valuestr);
         return 1;
       }
-      CONFIG_DEBUG_PRINT(("%s = %lg\n", paramname, valuedouble));
+      CONFIG_DEBUG_PRINT(("%s = %g\n", paramname, valuedouble));
       *(double *)((char *)config + config_params[i].offset) = valuedouble;
       break;
       
