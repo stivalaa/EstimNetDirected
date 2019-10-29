@@ -101,6 +101,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *dzA = (double *)safe_calloc(n, sizeof(double));
   uint_t l;
   uint_t samplenum;
+  struct timeval start_timeval, end_timeval, elapsed_timeval;
+  int            etime;
 
   printf("sampleSize = %u, interval = %u burnin = %u\n",
          sample_size, interval, burnin);
@@ -112,6 +114,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("Simulation is conditional on no reciprocated arcs\n");
 
   if (burnin > 0) {
+    gettimeofday(&start_timeval, NULL);
     if (useIFDsampler) {
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                    change_stats_funcs, 
@@ -146,6 +149,10 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
       /* but during burn-in we do not output these values */
     }
+   gettimeofday(&end_timeval, NULL);
+   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+   printf("burnin %lu iterations took %.2f s\n", burnin, (double)etime/1000);
   }
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {

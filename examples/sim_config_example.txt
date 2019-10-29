@@ -5,7 +5,7 @@
 #   note parameter and attribute names are not case sensitive (but filenames are)
 #
 
-numNodes = 1000 # Number of nodes in directed graph
+numNodes = 2000 # Number of nodes in directed graph
 
 
 ################## Algorithm constants #######################################
@@ -14,7 +14,7 @@ sampleSize = 1000 #number of network samples to take from simulation
 
 interval = 100000 # interval (iterations) between samples
 
-burnin = 1000000 # number of iterations to throw away before first sample
+burnin = 100000000 # number of iterations to throw away before first sample
 
 
 useIFDsampler = False # use the IFD sampler
@@ -44,21 +44,22 @@ outputSimulatedNetwork = True  # write the simulated network to file
 # 1      2
 # 1      3
 
-binattrFile = ../pythonDemo/binaryAttributes_50_50_n1000.txt
+#binattrFile = 
 #catattrFile = 
+#conattrFile = 
 
 ################## Output filenames ##########################################
 
 # Filename of file to write statistics to
 
-statsFile = stats_sim_n1000_sample.txt
+statsFile = stats_sim_n2000_sample.txt
 
 # Pajek .net file prefix for simulatd networks
 # Output filenames are constructed from the prefix specified here,
 # with _<i>.txt added, where <i> is the iteration
 # So e.g. if simNetFilePrefix = sim then the output files are sim_10000.txt etc.
 
-simNetFilePrefix = sim_sim_n1000_sample
+simNetFilePrefix = simulation_sim_n2000_sample
 
 ################## Parameters to estimate ####################################
 
@@ -68,14 +69,18 @@ simNetFilePrefix = sim_sim_n1000_sample
 
 
 
-structParams =  {Arc = -1 ,  Reciprocity = 4.25 ,AltInStars = -2, AltOutStars=-1.5, AltKTrianglesT =0.6,                  AltTwoPathsTD=-0.15 }
+structParams =  {Arc = -4, 
+                 Reciprocity = 4.25,
+                 AltInStars = -1,
+                 AltOutStars=-0.5, 
+                 AltKTrianglesT =0.6}
 
 #
 # Attribute parameters
 #
 
-attrParams = {Sender(binaryAttribute),
-              Receiver(binaryAttribute), Interaction(binaryAttribute)}
+#attrParams = {Sender(binaryAttribute),
+#             Receiver(binaryAttribute), Interaction(binaryAttribute)}
 #attrParams = {Matching(class,class2,class3), MatchingReciprocity(class), MismatchingReciprocity(class), MismatchingReciprocity(class)}
 
 
