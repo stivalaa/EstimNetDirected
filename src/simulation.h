@@ -12,6 +12,22 @@
 #include "simconfigparser.h"
 #include "changeStatisticsDirected.h"
 
+int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+                  uint_t n_attr_interaction,
+                  change_stats_func_t *change_stats_funcs[],
+                  attr_change_stats_func_t *attr_change_stats_funcs[],
+                  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                  attr_interaction_change_stats_func_t
+                  *attr_interaction_change_stats_funcs[],
+                  uint_t attr_indices[],
+                  uint_pair_t attr_interaction_pair_indices[],
+                  uint_t sampler_m,
+                  double theta[],
+                  bool useIFDsampler, double ifd_K,
+                  bool useConditionalEstimation,
+                  bool forbidReciprocity,
+                  char *sim_net_file_prefix);
+
 int do_simulation(sim_config_t *config);
 
 
