@@ -26,7 +26,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalEstimation,
                   bool forbidReciprocity,
-                  char *sim_net_file_prefix);
+                  char *sim_net_file_prefix,
+                  FILE *dzA_outfile);
 
 int do_simulation(sim_config_t *config);
 

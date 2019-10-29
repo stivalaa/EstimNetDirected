@@ -67,7 +67,10 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
 
   {"setattrFile",   PARAM_TYPE_STRING,   offsetof(sim_config_t, setattr_filename),
   "set attributes file"},
-  
+
+  {"statsFile",  PARAM_TYPE_STRING,  offsetof(sim_config_t, stats_filename),
+   "statistics output filename"},
+
   {"simNetFilePrefix", PARAM_TYPE_STRING,
    offsetof(sim_config_t, sim_net_file_prefix),
    "simulated network output file prefix"},
@@ -129,6 +132,7 @@ sim_config_t SIM_CONFIG = {
   NULL,  /* catattr_filename */
   NULL,  /* contattr_filename */
   NULL,  /* setattr_filename */
+  NULL,  /* stats_filename */
   NULL,  /* sim_net_file_prefix */
   NULL,  /* zone_filename */
   FALSE, /* useConditionalEstimation */
@@ -186,6 +190,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* catattr_filename */
   FALSE, /* contattr_filename */
   FALSE, /* setattr_filename */
+  FALSE, /* stats_filename */
   FALSE, /* sim_net_file_prefix */
   FALSE, /* zone_filename */
   FALSE, /* useConditionalEstimation */
@@ -278,6 +283,7 @@ void free_sim_config_struct(sim_config_t *config)
   free(config->catattr_filename);
   free(config->contattr_filename);
   free(config->setattr_filename);
+  free(config->stats_filename);
   free(config->sim_net_file_prefix);
   free(config->zone_filename);
   free_param_config_struct(&config->param_config);

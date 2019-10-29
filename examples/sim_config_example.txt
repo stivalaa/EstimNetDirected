@@ -41,13 +41,14 @@ binattrFile = ../pythonDemo/binaryAttributes_50_50_n1000.txt
 
 ################## Output filenames ##########################################
 
-#
+# Filename of file to write statistics to
+
+statsFile = stats_sim_n1000_sample.txt
+
+# Pajek .net file prefix for simulatd networks
 # Output filenames are constructed from the prefix specified here,
 # with _<i>.txt added, where <i> is the iteration
 # So e.g. if simNetFilePrefix = sim then the output files are sim_10000.txt etc.
-#
-
-# Pajek .net file prefix for simulatd networks
 
 simNetFilePrefix = sim_sim_n1000_sample
 

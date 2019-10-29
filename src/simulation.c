@@ -65,6 +65,7 @@
  *                       is conditional on no reciprocated arcs, should have
  *                       none in input observed graph).
  *   sim_net_file_prefix -  simulated network output filename prefix 
+ *   dzA_outfile         - open (write) file to write dzA values to.
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -84,7 +85,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalEstimation,
                   bool forbidReciprocity,
-                  char *sim_net_file_prefix)
+                  char *sim_net_file_prefix,
+                  FILE *dzA_outfile)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -93,6 +95,10 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *delChangeStats = (double *)safe_malloc(n*sizeof(double));
   double dzArc; /* only used for IFD sampler */
   double ifd_aux_param = 0; /* auxiliary parameter for IFD sampler */
+  /* dzA is only zeroed here, and accumulates in the loop */
+  double *dzA = (double *)safe_calloc(n, sizeof(double));
+  uint_t l;
+
 
   printf("samplerSteps = %u\n", sampler_m);
   if (useIFDsampler)
@@ -101,7 +107,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("Doing conditional simulation of snowball sample\n");
   if (forbidReciprocity)
     printf("Simulation is conditional on no reciprocated arcs\n");
-
+  
   if (useIFDsampler) {
     acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                  change_stats_funcs, 
@@ -133,11 +139,19 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    forbidReciprocity);
   }
 
+  fprintf(dzA_outfile, "%u ", sampler_m); /* FIXME iterations */
+  for (l = 0; l < n; l++) {
+    dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
+    fprintf(dzA_outfile, "%g ", dzA[l]);
+  }
+  fprintf(dzA_outfile, "%g\n", acceptance_rate);
+  fprintf(dzA_outfile, "\n");
 
-  fprintf(stderr, "acceptance rate = %g\n", acceptance_rate);/*XXX*/
+  fprintf(stdout, "acceptance rate = %g\n", acceptance_rate);
   
   free(delChangeStats);
   free(addChangeStats);
+  free(dzA);
   
   return 0;
 }
@@ -161,6 +175,14 @@ int do_simulation(sim_config_t * config)
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
   uint_t         i, theta_i;
+  FILE          *dzA_outfile;
+#define HEADER_MAX 65536
+  char fileheader[HEADER_MAX];  
+
+  if (!config->stats_filename) {
+    fprintf(stderr, "ERROR: statistics output filename statsFile not set\n");
+    return -1;
+  }
   
   g = allocate_digraph(config->numNodes);
   if (load_attributes(g, config->binattr_filename,
@@ -253,8 +275,37 @@ int do_simulation(sim_config_t * config)
             config->param_config.attr_interaction_pair_names[i].first,
             config->param_config.attr_interaction_pair_names[i].second,
             theta[theta_i]);
-   
-   
+
+   /* Open the output file for writing */
+   if (!(dzA_outfile = fopen(config->stats_filename, "w"))) {
+     fprintf(stderr, "ERROR: could not open file %s for writing "
+             "(%s)\n", config->stats_filename, strerror(errno));
+     return -1;
+   }
+
+   /* write headers for statistics output file */
+  sprintf(fileheader, "t");
+  for (i = 0; i < config->param_config.num_change_stats_funcs; i++) 
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", config->param_config.param_names[i]);
+  
+  for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) 
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
+             config->param_config.attr_param_names[i],
+             config->param_config.attr_names[i]);
+  
+   for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs; i++)
+     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s",
+              config->param_config.dyadic_param_names[i]);
+
+   for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs; i++) 
+     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s_%s",
+              config->param_config.attr_interaction_param_names[i],
+              config->param_config.attr_interaction_pair_names[i].first,
+              config->param_config.attr_interaction_pair_names[i].second);
+
+   fprintf(dzA_outfile,  "%s AcceptanceRate\n", fileheader);
+
+
    printf("\nrunning simulation...\n");
    gettimeofday(&start_timeval, NULL);
    
@@ -270,13 +321,16 @@ int do_simulation(sim_config_t * config)
                  config->useIFDsampler, config->ifd_K,
                  config->useConditionalEstimation,
                  config->forbidReciprocity,
-                 config->sim_net_file_prefix);
+                 config->sim_net_file_prefix,
+                 dzA_outfile);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
    etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
    printf("simulation took %.2f s\n", (double)etime/1000);
 
+   fclose(dzA_outfile);
+   
    free(theta);
    free_digraph(g);
    

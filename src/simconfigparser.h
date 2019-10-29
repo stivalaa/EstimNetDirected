@@ -44,6 +44,7 @@ typedef struct sim_config_s {
   char *catattr_filename; /* filename of categorical attributes file or NULL */
   char *contattr_filename;/* filename of continuous attributes file or NULL */
   char *setattr_filename; /* filename of set attributes file or NULL */
+  char *stats_filename;   /* statistics output filename */
   char *sim_net_file_prefix; /* simulated network output filename prefix */
   char *zone_filename;    /* filename of snowball sampling zone file or NULL */
   bool  useConditionalEstimation; /*conditional estimation of snowball sample */  bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
