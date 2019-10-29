@@ -17,7 +17,7 @@ interval = 1000 # interval (iterations) between samples
 burnin = 1000 # number of iterations to throw away before first sample
 
 
-useIFDsampler = False  # use the IFD sampler
+useIFDsampler = False # use the IFD sampler
 
 ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
@@ -66,8 +66,9 @@ simNetFilePrefix = sim_sim_n1000_sample
 # Structural parameters
 #
 
-structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT, 
-                 AltTwoPathsTD }
+
+
+structParams =  {Arc = -1 ,  Reciprocity = 4.25 ,AltInStars = -2, AltOutStars=-1.5, AltKTrianglesT =0.6,                  AltTwoPathsTD=-0.15 }
 
 #
 # Attribute parameters

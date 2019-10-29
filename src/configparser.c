@@ -156,15 +156,22 @@ static const uint_t NUM_ATTR_INTERACTION_PARAMS =
  * is set to corresponding list of change statistics function pointers.
  * The STRUCT_PARAMS constant has the table of parameter names and
  * corresponding change statistic functions.
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
  * Return nonzero on error else zero.
  */
-static int parse_struct_params(FILE *infile, param_config_t *pconfig)
+static int parse_struct_params(FILE *infile, param_config_t *pconfig,
+                               bool requireErgmValue)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
   bool        found_paramname;
   bool        last_token_was_paramname = FALSE;
   uint_t      i;
+  char        *endptr; /* for strtod() */
+  char        paramname[TOKSIZE];  /* parameter name buffer */
+  double      value = 0;
   
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for structParams\n");
@@ -193,6 +200,34 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig)
       }
       CONFIG_DEBUG_PRINT(("structParam %s\n", token));
       last_token_was_paramname = TRUE;
+      strncpy(paramname, token, TOKSIZE);
+
+      if (requireErgmValue) {
+        if (!(token = get_token(infile, tokenbuf))) {
+          fprintf(stderr, "ERROR: structParams expecting 'name = value' pairs separated by comma (%s)\n", paramname);
+          return -1;
+        }
+        CONFIG_DEBUG_PRINT(("parse_struct_params token '%s'\n", token));        
+        if (strcmp(token, "=") != 0) {
+          fprintf(stderr, "ERROR: structParams expecting 'name = value' pairs separated by comma (%s)\n", paramname);
+          return 1;
+        }
+        if (!(token = get_token(infile, tokenbuf))) {
+          fprintf(stderr, "ERROR: Did not find value for structParams %s\n",
+                  paramname);
+          return -1;
+        }
+        CONFIG_DEBUG_PRINT(("parse_struct_params token '%s'\n", token));        
+        value = strtod(token, &endptr);
+        if (*endptr != '\0') {
+          fprintf(stderr, "ERROR: expecting floating point value for structParam %s but got '%s'\n", paramname, token);
+          return 1;
+        }
+        if (requireErgmValue) {
+          CONFIG_DEBUG_PRINT(("structParam value %g\n", value));
+        }
+      }
+      
       pconfig->param_names = (const char **)safe_realloc(pconfig->param_names,
                                         (pconfig->num_change_stats_funcs + 1) *
                                         sizeof(const char *));
@@ -204,6 +239,11 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig)
         STRUCT_PARAMS[i].name;
       pconfig->change_stats_funcs[pconfig->num_change_stats_funcs] =
         STRUCT_PARAMS[i].change_stats_func;
+      if (requireErgmValue) {
+        pconfig->param_values = (double *)safe_realloc(pconfig->param_values,
+                         (pconfig->num_change_stats_funcs + 1) * sizeof(double));
+        pconfig->param_values[pconfig->num_change_stats_funcs] = value;
+      }
       pconfig->num_change_stats_funcs++;
     }
     token = get_token(infile, tokenbuf);
@@ -1303,6 +1343,7 @@ void free_param_config_struct(param_config_t *pconfig)
 
   free(pconfig->change_stats_funcs);
   free(pconfig->param_names);
+  free(pconfig->param_values);
   free(pconfig->attr_param_names);
   for (i = 0; i < pconfig->num_attr_change_stats_funcs; i++) 
     free(pconfig->attr_names[i]);
@@ -1382,6 +1423,9 @@ void dump_config_names(const void *config,
  * read) from which they are parsed is also passed.  For set values,
  * the valuestr is just '{' and more parsing is required, for which
  * the infile is passed to the appropriate function.
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
  */
 int check_and_set_param_value(const char *paramname,
                               const char *valuestr,
@@ -1390,7 +1434,8 @@ int check_and_set_param_value(const char *paramname,
                               bool *config_is_set,
                               param_config_t *pconfig,
                               const config_param_t *config_params,
-                              uint_t num_config_params)
+                              uint_t num_config_params,
+                              bool requireErgmValue)
 {
   uint_t i;
   bool   found_paramname = FALSE;
@@ -1476,7 +1521,7 @@ int check_and_set_param_value(const char *paramname,
                   STRUCT_PARAMS_STR);
           return 1;
         } 
-        return parse_struct_params(infile, pconfig); 
+        return parse_struct_params(infile, pconfig, requireErgmValue); 
       } else if (strcasecmp(paramname, ATTR_PARAMS_STR) == 0) {
         if (pconfig->num_attr_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",

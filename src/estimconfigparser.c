@@ -301,7 +301,8 @@ estim_config_t *parse_estim_config_file(const char *config_filename)
       if (check_and_set_param_value(paramname, value, config_file,
                                     &ESTIM_CONFIG, ESTIM_CONFIG_IS_SET,
                                     &ESTIM_CONFIG.param_config,
-                                    ESTIM_CONFIG_PARAMS, NUM_ESTIM_CONFIG_PARAMS) != 0)
+                                    ESTIM_CONFIG_PARAMS,
+                                    NUM_ESTIM_CONFIG_PARAMS, FALSE) != 0)
         return NULL;
     } else if (rc < 0)
       return NULL;

@@ -121,6 +121,7 @@ typedef struct param_config_s {
   uint_t num_change_stats_funcs;           /* length of change_stats_funcs */
   change_stats_func_t **change_stats_funcs; /* structural parameter stats */
   const char          **param_names;        /* names corresponding to above */
+  double               *param_values;       /* initial values corr. to above */
   uint_t num_attr_change_stats_funcs;  /* length of attr_change_stats_funcs */
   attr_change_stats_func_t **attr_change_stats_funcs; /* attr param stats */
   char                     **attr_names; /* names of attributes for above */
@@ -182,7 +183,8 @@ int check_and_set_param_value(const char *paramname,
                               bool *config_is_set,
                               param_config_t *pconfig,
                               const config_param_t *config_params,
-                              uint_t num_config_params);
+                              uint_t num_config_params,
+                              bool requireErgmValue);
 
 
 #endif /* CONFIGPARSER_H */

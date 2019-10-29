@@ -257,7 +257,8 @@ sim_config_t *parse_sim_config_file(const char *config_filename)
       if (check_and_set_param_value(paramname, value, config_file,
                                     &SIM_CONFIG, SIM_CONFIG_IS_SET,
                                     &SIM_CONFIG.param_config,
-                                    SIM_CONFIG_PARAMS, NUM_SIM_CONFIG_PARAMS) != 0)
+                                    SIM_CONFIG_PARAMS, NUM_SIM_CONFIG_PARAMS,
+                                    TRUE) != 0)
         return NULL;
     } else if (rc < 0)
       return NULL;
