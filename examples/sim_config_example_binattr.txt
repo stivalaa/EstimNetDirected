@@ -1,0 +1,81 @@
+##############################################################################
+#
+# example setting file for SimulateERGM
+#
+#   note parameter and attribute names are not case sensitive (but filenames are)
+#
+
+numNodes = 1000 # Number of nodes in directed graph
+
+
+################## Algorithm constants #######################################
+
+sampleSize = 1000 #number of network samples to take from simulation
+
+interval = 100000 # interval (iterations) between samples
+
+burnin = 1000000 # number of iterations to throw away before first sample
+
+
+useIFDsampler = False # use the IFD sampler
+
+ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
+
+
+
+outputSimulatedNetwork = True  # write the simulated network to file
+
+################## Input filenames ###########################################
+
+
+# Attribute files
+# binattr_file for binary attributes (0 or 1 only)
+# catattr_file for categorical attributes (any integer)
+# The format of the file is a header line with whitespace
+# delimited attribute names, and each subsequent line
+# the attribute values for each attribute.
+# The first line (after the header) has the values for
+# node 0, then the next line node 1, and so on.
+# 
+# E.g.:
+#
+# gender class
+# 0      1
+# 1      2
+# 1      3
+
+binattrFile = ../pythonDemo/binaryAttributes_50_50_n1000.txt
+#catattrFile = 
+
+################## Output filenames ##########################################
+
+# Filename of file to write statistics to
+
+statsFile = stats_sim_n1000_binattr_sample.txt
+
+# Pajek .net file prefix for simulatd networks
+# Output filenames are constructed from the prefix specified here,
+# with _<i>.txt added, where <i> is the iteration
+# So e.g. if simNetFilePrefix = sim then the output files are sim_10000.txt etc.
+
+simNetFilePrefix = simulation_sim_n1000_binattr_sample
+
+################## Parameters to estimate ####################################
+
+#
+# Structural parameters
+#
+
+
+
+structParams =  {Arc = -1 ,  Reciprocity = 4.25 ,AltInStars = -2, AltOutStars=-1.5, AltKTrianglesT =0.6,                  AltTwoPathsTD=-0.15 }
+
+#
+# Attribute parameters
+#
+
+attrParams = {Sender(binaryAttribute),
+              Receiver(binaryAttribute), Interaction(binaryAttribute)}
+#attrParams = {Matching(class,class2,class3), MatchingReciprocity(class), MismatchingReciprocity(class), MismatchingReciprocity(class)}
+
+
