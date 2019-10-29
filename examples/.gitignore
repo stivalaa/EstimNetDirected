@@ -32,3 +32,4 @@ sim_sim_n1000_sample_*.net
 sim_polblogs_*.net
 Rplots.pdf
 stats_sim_n2000_sample.txt
+stats_sim_n2000_sample-plots.eps
