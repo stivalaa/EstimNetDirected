@@ -50,7 +50,9 @@
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
  *                          requires pairs of indices.
- *   sampler_m      - sampler iterations (per algorithm step)
+ *   sample_size    - number of samples to take from ERGM simulation
+ *   interval       - sampler iterations between each sample
+ *   burnin         - number of iterations to discard initially 
  *   theta          - array of n parameter values corresponding to
  *                    change stats funcs. Allocated by caller.
  *                    iteration, not just every outer iteration.
@@ -80,7 +82,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
                   uint_pair_t attr_interaction_pair_indices[],
-                  uint_t sampler_m,
+                  uint_t sample_size, uint_t interval, uint_t burnin,
                   double theta[],
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalEstimation,
@@ -98,33 +100,20 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   /* dzA is only zeroed here, and accumulates in the loop */
   double *dzA = (double *)safe_calloc(n, sizeof(double));
   uint_t l;
+  uint_t samplenum;
 
-
-  printf("samplerSteps = %u\n", sampler_m);
+  printf("sampleSize = %u, interval = %u burnin = %u\n",
+         sample_size, interval, burnin);
   if (useIFDsampler)
     printf("IFD sampler ifd_K = %g\n", ifd_K);
   if (useConditionalEstimation)
     printf("Doing conditional simulation of snowball sample\n");
   if (forbidReciprocity)
     printf("Simulation is conditional on no reciprocated arcs\n");
-  
-  if (useIFDsampler) {
-    acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
-                                 change_stats_funcs, 
-                                 attr_change_stats_funcs,
-                                 dyadic_change_stats_funcs,
-                                 attr_interaction_change_stats_funcs,
-                                 attr_indices,
-                                 attr_interaction_pair_indices,
-                                 theta,
-                                 addChangeStats, delChangeStats, sampler_m,
-                                 TRUE, /*actually do moves */
-                                 ifd_K, &dzArc, &ifd_aux_param,
-                                 useConditionalEstimation,
-                                 forbidReciprocity);
-  } else {
-    acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
-                                   n_attr_interaction,
+
+  if (burnin > 0) {
+    if (useIFDsampler) {
+      acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                    change_stats_funcs, 
                                    attr_change_stats_funcs,
                                    dyadic_change_stats_funcs,
@@ -132,21 +121,70 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    attr_indices,
                                    attr_interaction_pair_indices,
                                    theta,
-                                   addChangeStats, delChangeStats,
-                                   sampler_m,
-                                   TRUE,/*actually do moves*/
+                                   addChangeStats, delChangeStats, burnin,
+                                   TRUE, /*actually do moves */
+                                   ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalEstimation,
                                    forbidReciprocity);
+    } else {
+      acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
+                                     n_attr_interaction,
+                                     change_stats_funcs, 
+                                     attr_change_stats_funcs,
+                                     dyadic_change_stats_funcs,
+                                     attr_interaction_change_stats_funcs,
+                                     attr_indices,
+                                     attr_interaction_pair_indices,
+                                     theta,
+                                     addChangeStats, delChangeStats,
+                                     burnin,
+                                     TRUE,/*actually do moves*/
+                                     useConditionalEstimation,
+                                     forbidReciprocity);
+    }
   }
 
-  fprintf(dzA_outfile, "%u ", sampler_m); /* FIXME iterations */
-  for (l = 0; l < n; l++) {
-    dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
-    fprintf(dzA_outfile, "%g ", dzA[l]);
-  }
-  fprintf(dzA_outfile, "%g\n", acceptance_rate);
-  fprintf(dzA_outfile, "\n");
+  for (samplenum = 0; samplenum < sample_size; samplenum++) {
+    if (useIFDsampler) {
+      acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
+                                   change_stats_funcs, 
+                                   attr_change_stats_funcs,
+                                   dyadic_change_stats_funcs,
+                                   attr_interaction_change_stats_funcs,
+                                   attr_indices,
+                                   attr_interaction_pair_indices,
+                                   theta,
+                                   addChangeStats, delChangeStats, interval,
+                                   TRUE, /*actually do moves */
+                                   ifd_K, &dzArc, &ifd_aux_param,
+                                   useConditionalEstimation,
+                                   forbidReciprocity);
+    } else {
+      acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
+                                     n_attr_interaction,
+                                     change_stats_funcs, 
+                                     attr_change_stats_funcs,
+                                     dyadic_change_stats_funcs,
+                                     attr_interaction_change_stats_funcs,
+                                     attr_indices,
+                                     attr_interaction_pair_indices,
+                                     theta,
+                                     addChangeStats, delChangeStats,
+                                     interval,
+                                     TRUE,/*actually do moves*/
+                                     useConditionalEstimation,
+                                     forbidReciprocity);
+    }
 
+    fprintf(dzA_outfile, "%u ", burnin + interval * samplenum);
+    for (l = 0; l < n; l++) {
+      dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
+      fprintf(dzA_outfile, "%g ", dzA[l]);
+    }
+    fprintf(dzA_outfile, "%g\n", acceptance_rate);
+    fflush(dzA_outfile);
+  }
+  
   fprintf(stdout, "acceptance rate = %g\n", acceptance_rate);
   
   free(delChangeStats);
@@ -316,7 +354,7 @@ int do_simulation(sim_config_t * config)
                  config->param_config.attr_interaction_change_stats_funcs,
                  config->param_config.attr_indices,
                  config->param_config.attr_interaction_pair_indices,
-                 config->samplerSteps, 
+                 config->sampleSize, config->interval, config->burnin,
                  theta,
                  config->useIFDsampler, config->ifd_K,
                  config->useConditionalEstimation,

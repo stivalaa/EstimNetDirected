@@ -43,8 +43,14 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"numNodes",      PARAM_TYPE_UINT,     offsetof(sim_config_t, numNodes),
    "number of nodes in digraph"},
   
-  {"samplerSteps",  PARAM_TYPE_UINT,     offsetof(sim_config_t, samplerSteps),
-   "sampler iterations (per algorithm step)"},
+  {"sampleSize",  PARAM_TYPE_UINT,     offsetof(sim_config_t, sampleSize),
+   "number of network samples to take from simulation"},
+
+  {"interval",  PARAM_TYPE_UINT,     offsetof(sim_config_t, interval),
+   "interval (iterations) between samples"},
+
+  {"burnin",  PARAM_TYPE_UINT,     offsetof(sim_config_t, burnin),
+   "number of iterations to throw away before first sample"},
 
   {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(sim_config_t, useIFDsampler),
    "use Improved Fixed Density sampler instead of basic sampler"},
@@ -124,7 +130,9 @@ const uint_t NUM_SIM_CONFIG_PARAMS = sizeof(SIM_CONFIG_PARAMS) /
  */
 sim_config_t SIM_CONFIG = {
   0,     /* numNodes */
-  1000,  /* samplerSteps */
+  SIM_DEFAULT_SAMPLE_SIZE,/* sampleSize */
+  SIM_DEFAULT_INTERVAL,   /* interval */
+  SIM_DEFAULT_BURNIN,     /* burnin */
   FALSE, /* useIFDsampler */
   SIM_DEFAULT_IFD_K,   /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
@@ -182,7 +190,9 @@ sim_config_t SIM_CONFIG = {
  */
 static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* numNodes */ 
-  FALSE, /* samplerSteps */
+  FALSE, /* sampleSize */
+  FALSE, /* interval */
+  FALSE, /* burnin */
   FALSE, /* useIFDsampler */
   FALSE, /* ifd_K */
   FALSE, /* outputSimulatedNetwork */

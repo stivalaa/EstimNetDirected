@@ -22,7 +22,9 @@
 /* These must be macros not const to use in initializer  */
 
 #define SIM_DEFAULT_IFD_K         0.1     /* default value of ifd_K  */
-
+#define SIM_DEFAULT_SAMPLE_SIZE   1000    /* sampleSize */
+#define SIM_DEFAULT_INTERVAL      1000    /* interval */
+#define SIM_DEFAULT_BURNIN        1000    /* burnin */
 
 /*****************************************************************************
  *
@@ -36,7 +38,9 @@ typedef struct sim_config_s {
    */
 
   uint_t numNodes;        /* number of nodes in digraph */
-  uint_t samplerSteps;    /* sampler iterations per algorithm step */
+  uint_t sampleSize;      /* number of network samples */
+  uint_t interval;        /* interval (iterations) between samples */
+  uint_t burnin;          /* iterations to throw out before 1st sample */
   bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
   double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
   bool  outputSimulatedNetwork; /* output simulated network at end */
