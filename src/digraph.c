@@ -1332,7 +1332,7 @@ void print_data_summary(const digraph_t * g)
   uint_t i,j;
   uint_t num_na_values;
   
-  printf("Digraph with %u vertics and %u arcs (density %g)\n",
+  printf("Digraph with %u vertices and %u arcs (density %g)\n",
          g->num_nodes, g->num_arcs, density(g));
   printf("%u binary attributes\n", g->num_binattr);
   for (i = 0; i < g->num_binattr; i++) {

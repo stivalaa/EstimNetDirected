@@ -142,6 +142,10 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      useConditionalEstimation,
                                      forbidReciprocity);
     }
+    for (l = 0; l < n; l++) {
+      dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
+      /* but during burn-in we do not output these values */
+    }
   }
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {
@@ -379,6 +383,8 @@ int do_simulation(sim_config_t * config)
 
    fclose(dzA_outfile);
 
+   print_data_summary(g);
+     
    free(theta);
    free_digraph(g);
    
