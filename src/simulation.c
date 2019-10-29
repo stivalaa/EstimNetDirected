@@ -92,7 +92,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
-  double acceptance_rate;
+  double acceptance_rate = 0;
   double *addChangeStats = (double *)safe_malloc(n*sizeof(double));
   double *delChangeStats = (double *)safe_malloc(n*sizeof(double));
   double dzArc; /* only used for IFD sampler */
@@ -286,33 +286,43 @@ int do_simulation(sim_config_t * config)
      }
    }
 
-   /* TODO set theta values */
-   theta = (double *)safe_calloc(num_param, sizeof(double));
-   
 
-   /* write parameters and their values to stdout */
+   
+   /* 
+    *set parameter values from the configuration settings and write
+    *  parameters and their values to stdout 
+    */
+   theta = (double *)safe_calloc(num_param, sizeof(double));
    theta_i = 0;
    printf("\n");
-   for (i = 0; i < config->param_config.num_change_stats_funcs; i++, theta_i++) 
+   for (i = 0; i < config->param_config.num_change_stats_funcs; i++, theta_i++){
+     theta[theta_i] = config->param_config.param_values[i];
      printf("%s = %g\n", config->param_config.param_names[i], theta[theta_i]);
+   }
    
    for (i = 0; i < config->param_config.num_attr_change_stats_funcs;
-        i++, theta_i++) 
+        i++, theta_i++)  {
+     /* TODO: theta[theta_i] = config->param_config.attr_param_values[i]; */
      printf("%s_%s = %g\n", config->param_config.attr_param_names[i],
             config->param_config.attr_names[i], theta[theta_i]);
+   }
    
    for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs;
-        i++, theta_i++)
+        i++, theta_i++) {
+     /*TODO: theta[theta_i] = config->param_config.dyadic_param_values[i]; */
      printf("%s = %g\n", config->param_config.dyadic_param_names[i],
-       theta[theta_i]);
+            theta[theta_i]);
+   }
    
    for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs;
-        i++, theta_i++) 
+        i++, theta_i++)  {
+     /*TODO: theta_theta[i] = config->param_config.attr_interaction_param_values[i]; */
      printf("%s_%s_%s = %g\n",
             config->param_config.attr_interaction_param_names[i],
             config->param_config.attr_interaction_pair_names[i].first,
             config->param_config.attr_interaction_pair_names[i].second,
             theta[theta_i]);
+   }
 
    /* Open the output file for writing */
    if (!(dzA_outfile = fopen(config->stats_filename, "w"))) {
@@ -368,7 +378,7 @@ int do_simulation(sim_config_t * config)
    printf("simulation took %.2f s\n", (double)etime/1000);
 
    fclose(dzA_outfile);
-   
+
    free(theta);
    free_digraph(g);
    
