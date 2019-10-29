@@ -2,7 +2,7 @@
 
 #SBATCH --job-name="SimualateERGM"
 #SBATCH --ntasks=1
-#SBATCH --time=0-0:30:00
+#SBATCH --time=0-2:30:00
 
 echo -n "started at: "; date
 

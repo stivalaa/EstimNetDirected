@@ -10,11 +10,11 @@ numNodes = 2000 # Number of nodes in directed graph
 
 ################## Algorithm constants #######################################
 
-sampleSize = 1000 #number of network samples to take from simulation
+sampleSize = 100 #number of network samples to take from simulation
 
-interval = 100000 # interval (iterations) between samples
+interval = 500000 # interval (iterations) between samples
 
-burnin = 100000000 # number of iterations to throw away before first sample
+burnin = 500000000 # number of iterations to throw away before first sample
 
 
 useIFDsampler = False # use the IFD sampler
@@ -69,11 +69,11 @@ simNetFilePrefix = simulation_sim_n2000_sample
 
 
 
-structParams =  {Arc = -4, 
-                 Reciprocity = 4.25,
-                 AltInStars = -1,
-                 AltOutStars=-0.5, 
-                 AltKTrianglesT =0.6}
+structParams =  {Arc            = -4.00, 
+                 Reciprocity    =  4.25,
+                 AltInStars     = -1.00,
+                 AltOutStars    = -0.50, 
+                 AltKTrianglesT =  1.50}
 
 #
 # Attribute parameters
