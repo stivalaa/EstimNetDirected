@@ -68,14 +68,19 @@ simNetFilePrefix = simulation_sim_n1000_binattr_sample
 
 
 
-structParams =  {Arc = -1 ,  Reciprocity = 4.25 ,AltInStars = -2, AltOutStars=-1.5, AltKTrianglesT =0.6,                  AltTwoPathsTD=-0.15 }
+structParams =  {Arc =          -1.00,
+                 Reciprocity =   4.25,
+                 AltInStars =   -2.00,
+                 AltOutStars=   -1.50,
+                 AltKTrianglesT= 0.60,   
+                 AltTwoPathsTD= -0.15 }
 
 #
 # Attribute parameters
 #
 
-attrParams = {Sender(binaryAttribute),
-              Receiver(binaryAttribute), Interaction(binaryAttribute)}
-#attrParams = {Matching(class,class2,class3), MatchingReciprocity(class), MismatchingReciprocity(class), MismatchingReciprocity(class)}
+attrParams = {Sender(binaryAttribute       = 1.50),
+              Receiver(binaryAttribute     = 1.00),
+              Interaction(binaryAttribute  }#= 2.00)}
 
 

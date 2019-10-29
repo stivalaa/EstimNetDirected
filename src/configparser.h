@@ -127,6 +127,7 @@ typedef struct param_config_s {
   char                     **attr_names; /* names of attributes for above */
   uint_t *attr_indices;   /* idx into digraph binattr/cattr/contattr for above */
   const char **attr_param_names; /* names corresponding to above two */
+  double      *attr_param_values;     /* initial values corr. to above */
   uint_t num_dyadic_change_stats_funcs;  /* length of dyadic_change_stats_funcs */
   dyadic_change_stats_func_t **dyadic_change_stats_funcs;/* dyadic change stats*/
   char                       **dyadic_names; /* names corresponding to above */

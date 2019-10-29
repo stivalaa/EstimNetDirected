@@ -33,7 +33,7 @@
 
 /*****************************************************************************
  *
- * externally visibl constant definitions
+ * externally visible constant definitions
  *
  ****************************************************************************/
 
@@ -259,16 +259,25 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
  * "Matching(class1,class2)". See parse_attr_params() for note on note
  * validating these names yet, just setting them in
  * CONFIG.param_config.attr_names[].  Return nonzero on error else zero.
+ *
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
+ *
  */
 static int parse_one_attr_param(const char *paramName,
                                 attr_change_stats_func_t *attr_change_stats_func,
-                                FILE *infile, param_config_t *pconfig)
+                                FILE *infile, param_config_t *pconfig,
+                                bool requireErgmValue)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
   bool      last_token_was_attrname = FALSE;
   bool      opening = TRUE; /* true for first iteration only to expect '(' */
-
+  double    value   = 0;
+  char     *endptr; /* for strtod() */
+  char      attrname[TOKSIZE];  /* attribute name buffer */
+  
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for attrParam %s\n", paramName);
     return 1; 
@@ -294,6 +303,34 @@ static int parse_one_attr_param(const char *paramName,
       } else {
         CONFIG_DEBUG_PRINT(("attrParam %s('%s')\n", paramName, token));
         last_token_was_attrname = TRUE;
+        strncpy(attrname, token, TOKSIZE);
+
+        if (requireErgmValue) {
+          if (!(token = get_token(infile, tokenbuf))) {
+            fprintf(stderr, "ERROR: attrParams expecting 'name = value' pairs separated by comma (%s)\n", paramName);
+            return -1;
+          }
+          CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+          if (strcmp(token, "=") != 0) {
+            fprintf(stderr, "ERROR: attrParams expecting 'name = value' pairs separated by comma (%s)\n", paramName);
+            return 1;
+          }
+          if (!(token = get_token(infile, tokenbuf))) {
+            fprintf(stderr, "ERROR: Did not find value for attrParams %s\n",
+                    paramName);
+            return -1;
+          }
+          CONFIG_DEBUG_PRINT(("parse_attr_params token '%s'\n", token));        
+          value = strtod(token, &endptr);
+          if (*endptr != '\0') {
+            fprintf(stderr, "ERROR: expecting floating point value for attrParam %s but got '%s'\n", paramName, token);
+            return 1;
+          }
+          if (requireErgmValue) {
+            CONFIG_DEBUG_PRINT(("attrParam value %g\n", value));
+          }
+        }
+          
         pconfig->attr_param_names = (const char **)
           safe_realloc(pconfig->attr_param_names,
                        (pconfig->num_attr_change_stats_funcs + 1) *
@@ -307,7 +344,14 @@ static int parse_one_attr_param(const char *paramName,
         pconfig->attr_param_names[pconfig->num_attr_change_stats_funcs] = paramName;
         pconfig->attr_change_stats_funcs[pconfig->num_attr_change_stats_funcs] =
           attr_change_stats_func;
-        pconfig->attr_names[pconfig->num_attr_change_stats_funcs] = safe_strdup(token);
+        pconfig->attr_names[pconfig->num_attr_change_stats_funcs] = safe_strdup(attrname);
+        if (requireErgmValue) {
+          pconfig->attr_param_values =
+            (double *)safe_realloc(pconfig->attr_param_values,
+                  (pconfig->num_attr_change_stats_funcs + 1) * sizeof(double));
+          pconfig->attr_param_values[pconfig->num_attr_change_stats_funcs]
+            = value;
+        }
         pconfig->num_attr_change_stats_funcs++;
       }
     }
@@ -341,8 +385,14 @@ static int parse_one_attr_param(const char *paramName,
  * is set, and the attr_indices are only built from the names later
  * after the attributes values have been loaded, by calling
  * build_attr_indices_from_names().
+ *
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
+ *
  */
-static int parse_attr_params(FILE *infile, param_config_t *pconfig)
+static int parse_attr_params(FILE *infile, param_config_t *pconfig,
+                             bool requireErgmValue)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -379,7 +429,7 @@ static int parse_attr_params(FILE *infile, param_config_t *pconfig)
       last_token_was_paramname = TRUE;
       if (parse_one_attr_param(ATTR_PARAMS[i].name,
                                ATTR_PARAMS[i].attr_change_stats_func,
-                               infile, pconfig)) {
+                               infile, pconfig, requireErgmValue)) {
         fprintf(stderr, "ERROR parsing attrParams %s\n", ATTR_PARAMS[i].name);
         return 1;
       }
@@ -1528,7 +1578,7 @@ int check_and_set_param_value(const char *paramname,
                   ATTR_PARAMS_STR);
           return 1;
         }
-        return parse_attr_params(infile, pconfig);
+        return parse_attr_params(infile, pconfig, requireErgmValue);
       } else if (strcasecmp(paramname, DYADIC_PARAMS_STR) == 0) {        
         if (pconfig->num_dyadic_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",

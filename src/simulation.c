@@ -313,7 +313,7 @@ int do_simulation(sim_config_t * config)
    
    for (i = 0; i < config->param_config.num_attr_change_stats_funcs;
         i++, theta_i++)  {
-     /* TODO: theta[theta_i] = config->param_config.attr_param_values[i]; */
+     theta[theta_i] = config->param_config.attr_param_values[i];
      printf("%s_%s = %g\n", config->param_config.attr_param_names[i],
             config->param_config.attr_names[i], theta[theta_i]);
    }
