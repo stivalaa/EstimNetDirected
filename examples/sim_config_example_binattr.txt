@@ -8,7 +8,7 @@
 numNodes = 1000 # Number of nodes in directed graph
 
 
-################## Algorithm constants #######################################
+################## Simulation settings #######################################
 
 sampleSize = 100 #number of network samples to take from simulation
 
@@ -17,13 +17,12 @@ interval = 10000000 # interval (iterations) between samples
 burnin = 1000000000 # number of iterations to throw away before first sample
 
 
-useIFDsampler = False  # use the IFD sampler
+outputSimulatedNetworks = False  # write the simulated network to file
 
+useIFDsampler = False  # use the IFD sampler
 ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
 
-
-outputSimulatedNetworks = False  # write the simulated network to file
 
 ################## Input filenames ###########################################
 
