@@ -152,7 +152,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
    etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-   printf("burnin %lu iterations took %.2f s\n", burnin, (double)etime/1000);
+   printf("burnin %u iterations took %.2f s\n", burnin, (double)etime/1000);
   }
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {
@@ -320,6 +320,7 @@ int do_simulation(sim_config_t * config)
    
    for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs;
         i++, theta_i++) {
+     fprintf(stderr, "TODO: initial values not implemented for dyadic yet\n");assert(FALSE);
      /*TODO: theta[theta_i] = config->param_config.dyadic_param_values[i]; */
      printf("%s = %g\n", config->param_config.dyadic_param_names[i],
             theta[theta_i]);
@@ -327,6 +328,7 @@ int do_simulation(sim_config_t * config)
    
    for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs;
         i++, theta_i++)  {
+     fprintf(stderr, "TODO: initial values not implemented for interaction effects yet\n");assert(FALSE);     
      /*TODO: theta_theta[i] = config->param_config.attr_interaction_param_values[i]; */
      printf("%s_%s_%s = %g\n",
             config->param_config.attr_interaction_param_names[i],
@@ -364,6 +366,7 @@ int do_simulation(sim_config_t * config)
 
    fprintf(dzA_outfile,  "%s AcceptanceRate\n", fileheader);
 
+   if (config->useIFDsampler) { fprintf(stderr, "FIXME: not working with IFD sampler yet\n"); assert(FALSE);}
 
    printf("\nrunning simulation...\n");
    gettimeofday(&start_timeval, NULL);

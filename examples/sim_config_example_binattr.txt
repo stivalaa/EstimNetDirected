@@ -17,7 +17,7 @@ interval = 100000 # interval (iterations) between samples
 burnin = 1000000 # number of iterations to throw away before first sample
 
 
-useIFDsampler = False # use the IFD sampler
+useIFDsampler = False  # use the IFD sampler
 
 ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
