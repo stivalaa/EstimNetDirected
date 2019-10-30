@@ -81,6 +81,6 @@ structParams =  {Arc =          -1.00,
 
 attrParams = {Sender(binaryAttribute       = 1.50),
               Receiver(binaryAttribute     = 1.00),
-              Interaction(binaryAttribute  }#= 2.00)}
+              Interaction(binaryAttribute  = 2.00)}
 
 

@@ -307,23 +307,23 @@ static int parse_one_attr_param(const char *paramName,
 
         if (requireErgmValue) {
           if (!(token = get_token(infile, tokenbuf))) {
-            fprintf(stderr, "ERROR: attrParams expecting 'name = value' pairs separated by comma (%s)\n", paramName);
+            fprintf(stderr, "ERROR: attrParams expecting 'name = value' pairs separated by comma (%s(%s))\n", paramName, attrname);
             return -1;
           }
           CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
           if (strcmp(token, "=") != 0) {
-            fprintf(stderr, "ERROR: attrParams expecting 'name = value' pairs separated by comma (%s)\n", paramName);
+            fprintf(stderr, "ERROR: attrParams expecting 'name = value' pairs separated by comma (%s(%s))\n", paramName, attrname);
             return 1;
           }
           if (!(token = get_token(infile, tokenbuf))) {
-            fprintf(stderr, "ERROR: Did not find value for attrParams %s\n",
-                    paramName);
+            fprintf(stderr, "ERROR: Did not find value for attrParams %s(%s)\n",
+                    paramName, attrname);
             return -1;
           }
           CONFIG_DEBUG_PRINT(("parse_attr_params token '%s'\n", token));        
           value = strtod(token, &endptr);
           if (*endptr != '\0') {
-            fprintf(stderr, "ERROR: expecting floating point value for attrParam %s but got '%s'\n", paramName, token);
+            fprintf(stderr, "ERROR: expecting floating point value for attrParam %s(%s) but got '%s'\n", paramName, attrname, token);
             return 1;
           }
           if (requireErgmValue) {
