@@ -58,9 +58,9 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(sim_config_t, ifd_K),
    "multiplier for auxiliary parameter step size in IFD sampler"},
 
-  {"outputSimulatedNetwork", PARAM_TYPE_BOOL,
-   offsetof(sim_config_t, outputSimulatedNetwork),
-   "output simulated network in Pajek format at end of MCMC simulation"},
+  {"outputSimulatedNetworks", PARAM_TYPE_BOOL,
+   offsetof(sim_config_t, outputSimulatedNetworks),
+   "output simulated networks in Pajek format"},
 
   {"binattrFile",   PARAM_TYPE_STRING,   offsetof(sim_config_t, binattr_filename),
   "binary attributes file"},
@@ -135,7 +135,7 @@ sim_config_t SIM_CONFIG = {
   SIM_DEFAULT_BURNIN,     /* burnin */
   FALSE, /* useIFDsampler */
   SIM_DEFAULT_IFD_K,   /* ifd_K */
-  FALSE, /* outputSimulatedNetwork */
+  FALSE, /* outputSimulatedNetworks */
   NULL,  /* binattr_filename */
   NULL,  /* catattr_filename */
   NULL,  /* contattr_filename */
@@ -149,11 +149,13 @@ sim_config_t SIM_CONFIG = {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
     NULL,  /* param_names */
+    NULL,  /* param_values */
     0,     /* num_attr_change_stats_funcs */
     NULL,  /* attr_change_stats_funcs */
     NULL,  /* attr_names */
     NULL,  /* attr_indices */
     NULL,  /* attr_param_names */
+    NULL,  /* attr_param_values */
     0,     /* num_dyadic_change_stats_funcs */
     NULL,  /* dyadic_change_stats_funcs */
     NULL,  /* dyadic_names */
@@ -195,7 +197,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* burnin */
   FALSE, /* useIFDsampler */
   FALSE, /* ifd_K */
-  FALSE, /* outputSimulatedNetwork */
+  FALSE, /* outputSimulatedNetworks */
   FALSE, /* binattr_filename */
   FALSE, /* catattr_filename */
   FALSE, /* contattr_filename */

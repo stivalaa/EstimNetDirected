@@ -23,7 +23,7 @@ ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
 
 
-outputSimulatedNetwork = True  # write the simulated network to file
+outputSimulatedNetworks = True  # write the simulated networks to file
 
 ################## Input filenames ###########################################
 

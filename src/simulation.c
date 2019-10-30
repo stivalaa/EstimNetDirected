@@ -68,6 +68,7 @@
  *                       none in input observed graph).
  *   sim_net_file_prefix -  simulated network output filename prefix 
  *   dzA_outfile         - open (write) file to write dzA values to.
+ *   outputSimulatedNetworks - if True write simulated networks in Pajek format.
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -88,7 +89,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useConditionalEstimation,
                   bool forbidReciprocity,
                   char *sim_net_file_prefix,
-                  FILE *dzA_outfile)
+                  FILE *dzA_outfile,
+                  bool outputSimulatedNetworks)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -100,9 +102,12 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   /* dzA is only zeroed here, and accumulates in the loop */
   double *dzA = (double *)safe_calloc(n, sizeof(double));
   uint_t l;
-  uint_t samplenum;
+  uint_t samplenum, iternum;
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
+  char           suffix[16]; /* only has to be large enough for "_x.txt" 
+                                where fx is iteration number */
+
 
   printf("sampleSize = %u, interval = %u burnin = %u\n",
          sample_size, interval, burnin);
@@ -186,14 +191,25 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      useConditionalEstimation,
                                      forbidReciprocity);
     }
-
-    fprintf(dzA_outfile, "%u ", burnin + interval * samplenum);
+    iternum = burnin + interval*samplenum;
+    fprintf(dzA_outfile, "%u ", iternum);
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
       fprintf(dzA_outfile, "%g ", dzA[l]);
     }
     fprintf(dzA_outfile, "%g\n", acceptance_rate);
     fflush(dzA_outfile);
+
+    if (outputSimulatedNetworks) {
+      strncpy(sim_outfilename, sim_net_file_prefix,
+              sizeof(sim_outfilename)-1);
+      sprintf(suffix, "_%u.net", iternum);
+      strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
+              strlen(suffix));
+      sim_outfile = fopen(sim_outfilename, "w");
+      write_digraph_arclist_to_file(sim_outfile, g);
+      fclose(sim_outfile);
+    }
   }
   
   fprintf(stdout, "acceptance rate = %g\n", acceptance_rate);
@@ -384,7 +400,8 @@ int do_simulation(sim_config_t * config)
                  config->useConditionalEstimation,
                  config->forbidReciprocity,
                  config->sim_net_file_prefix,
-                 dzA_outfile);
+                 dzA_outfile,
+                 config->outputSimulatedNetworks);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
