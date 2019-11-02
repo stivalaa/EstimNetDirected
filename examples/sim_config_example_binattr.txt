@@ -54,8 +54,8 @@ statsFile = stats_sim_n1000_binattr_sample.txt
 
 # Pajek .net file prefix for simulatd networks
 # Output filenames are constructed from the prefix specified here,
-# with _<i>.txt added, where <i> is the iteration
-# So e.g. if simNetFilePrefix = sim then the output files are sim_10000.txt etc.
+# with _<i>.net added, where <i> is the iteration
+# So e.g. if simNetFilePrefix = sim then the output files are sim_10000.net etc.
 
 simNetFilePrefix = simulation_sim_n1000_binattr_sample
 

@@ -19,7 +19,7 @@ burnin = 500000000 # number of iterations to throw away before first sample
 outputSimulatedNetworks = True  # write the simulated networks to file
 
 
-useIFDsampler = False # use the IFD sampler
+useIFDsampler = True # use the IFD sampler
 ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
 
@@ -52,14 +52,14 @@ ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
 # Filename of file to write statistics to
 
-statsFile = stats_sim_n2000_sample.txt
+statsFile = stats_sim_n2000_sample_ifd.txt
 
 # Pajek .net file prefix for simulatd networks
 # Output filenames are constructed from the prefix specified here,
 # with _<i>.net added, where <i> is the iteration
 # So e.g. if simNetFilePrefix = sim then the output files are sim_10000.net etc.
 
-simNetFilePrefix = simulation_sim_n2000_sample
+simNetFilePrefix = simulation_sim_n2000_sample_ifd
 
 ################## Parameters to estimate ####################################
 
