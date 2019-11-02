@@ -269,9 +269,6 @@ int do_simulation(sim_config_t * config)
 #endif /* DEBUG_SNOWBALL */
   }
   
-  print_data_summary(g);
-  print_zone_summary(g);
-
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */
   if (build_attr_indices_from_names(&config->param_config, g) != 0)  {
@@ -352,6 +349,37 @@ int do_simulation(sim_config_t * config)
             config->param_config.attr_interaction_pair_names[i].second,
             theta[theta_i]);
    }
+   printf("\n");
+
+   /* Ensure that for the IFD sampler there is no Arc parameter included 
+      but that instead the numArcs parameter is included (fixed density) */
+   if (config->useIFDsampler) {
+     for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
+       if (strcasecmp(config->param_config.param_names[i], ARC_PARAM_STR) == 0) {
+         fprintf(stderr, 
+                 "ERROR: cannot include Arc parameter when using IFD sampler.\n"
+                 "Either unset useIFDsampler or remove Arc from %s.\n",
+                 STRUCT_PARAMS_STR);
+         return -1;
+       }
+     }
+     if (config->numArcs == 0) {
+       fprintf(stderr, "ERROR: must specify nonzero numArcs when "
+               "using IFD sampler\n");
+       return -1;
+     }
+   }
+
+   /* Give warnings if parameters set that are not used in selected
+      algorithm variation */
+   if (!config->useIFDsampler &&
+       !DOUBLE_APPROX_EQ(config->ifd_K, DEFAULT_IFD_K)) {
+     fprintf(stderr,
+             "WARNING: ifd_K is set to %g not default value"
+             " but IFD sampler not used\n", config->ifd_K);
+   }
+
+ 
 
    /* Open the output file for writing */
    if (!(dzA_outfile = fopen(config->stats_filename, "w"))) {
@@ -382,7 +410,8 @@ int do_simulation(sim_config_t * config)
 
    fprintf(dzA_outfile,  "%s AcceptanceRate\n", fileheader);
 
-   if (config->useIFDsampler) { fprintf(stderr, "FIXME: not working with IFD sampler yet\n"); assert(FALSE);}
+   print_data_summary(g);
+   print_zone_summary(g);
 
    printf("\nrunning simulation...\n");
    gettimeofday(&start_timeval, NULL);

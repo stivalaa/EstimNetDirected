@@ -32,6 +32,8 @@
 #define ATTR_INTERACTION_PARAMS_STR   "attrInteractionParams"
 
 
+#define DEFAULT_IFD_K                 0.1     /* default value of ifd_K  */
+
 
 /*****************************************************************************
  *
