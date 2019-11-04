@@ -37,3 +37,5 @@ stats_sim_n1000_binattr_sample.txt
 simulation_sim_n2000_sample_*.net
 simulation_sim_n1000_binattr_sample_*.net
 stats_sim_n1000_binattr_sample-plots.eps
+stats_sim_n2000_sample_ifd-plots.eps
+stats_sim_n2000_sample_ifd.txt
