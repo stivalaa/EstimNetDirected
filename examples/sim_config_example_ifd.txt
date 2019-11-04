@@ -16,7 +16,7 @@ sampleSize = 100 #number of network samples to take from simulation
 
 interval =500000 # interval (iterations) between samples
 
-burnin = 1000000 # number of iterations to throw away before first sample
+burnin = 2000000 # number of iterations to throw away before first sample
 
 outputSimulatedNetworks = False  # write the simulated networks to file
 
