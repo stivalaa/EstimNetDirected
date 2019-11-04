@@ -28,7 +28,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool forbidReciprocity,
                   char *sim_net_file_prefix,
                   FILE *dzA_outfile,
-                  bool outputSimulatedNetworks);
+                  bool outputSimulatedNetworks,
+                  uint_t arc_param_index);
 
 int do_simulation(sim_config_t *config);
 

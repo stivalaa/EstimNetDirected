@@ -51,7 +51,8 @@ typedef struct sim_config_s {
   char *stats_filename;   /* statistics output filename */
   char *sim_net_file_prefix; /* simulated network output filename prefix */
   char *zone_filename;    /* filename of snowball sampling zone file or NULL */
-  bool  useConditionalEstimation; /*conditional estimation of snowball sample */  bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
+  bool  useConditionalSimulation; /*conditional simulation of snowball sample */
+  bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
   uint_t numArcs;         /* number of arcs for IFD simulation (fixed density)*/
   
   /*

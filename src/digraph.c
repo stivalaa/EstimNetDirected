@@ -1806,3 +1806,66 @@ int load_attributes(digraph_t *g,
   return 0;
 }
 
+
+/*
+ * Make an Erdos-Renyi aka Bernoulli directed random graph G(n, m)
+ * with n nodes and m m edges. I.e. the m edges are placed between
+ * dyads chosen uniformly at random.
+ *
+ * Parameters:
+ *   g                        - digraph object. Modifed.
+ *   numArcs                  - number of arcs [m in G(n,m) notation]
+ *   useConditionalEstimation - if True preserve snowball sampling zone 
+ *                              structure.
+ *   forbidReciprocity        - if True do not allow reciprocated arcs.
+ *
+ * Return value:
+ *   None. The digraph parameter g is updated.
+ */
+void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
+                              bool useConditionalEstimation,
+                              bool forbidReciprocity)
+{
+  uint_t i, j, k;
+
+  for (k = 0; k < numArcs; k++) {
+    if (useConditionalEstimation) {
+      assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      /* Add move for conditional estimation. Find two nodes i, j in
+         inner waves without arc i->j uniformly at random. Because
+         graph is sparse, it is not too inefficient to just pick
+         random nodes until such a pair is found. For conditional
+         estimation we also have the extra constraint that the nodes
+         must be in the same wave or adjacent waves for the tie to
+         be added. */
+      do {
+        i = g->inner_nodes[int_urand(g->num_inner_nodes)];          
+        do {
+          j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
+        } while (i == j);
+        assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+      } while (isArc(g, i, j) ||
+               (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
+    } else {
+      /* not using conditional estimation */
+      /* Add move. Find two nodes i, j without arc i->j uniformly at
+         random. Because graph is sparse, it is not too inefficient
+         to just pick random nodes until such a pair is found */
+      do {
+        do {
+          i = int_urand(g->num_nodes);
+          do {
+            j = int_urand(g->num_nodes);
+          } while (i == j);
+        } while (isArc(g, i, j));
+      } while (forbidReciprocity && isArc(g, j, i));
+    }
+
+    /* actually do the move by adding the arc */
+    if (useConditionalEstimation) {
+      insertArc_allinnerarcs(g, i, j);
+    } else {
+      insertArc_allarcs(g, i, j);
+    }
+  }  
+}

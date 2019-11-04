@@ -21,6 +21,22 @@
 #include "ifdSampler.h"
 #include "simulation.h"
 
+
+/*****************************************************************************
+ *
+ * local functions
+ *
+ ****************************************************************************/
+
+
+
+/*****************************************************************************
+ *
+ * external functions
+ *
+ ****************************************************************************/
+
+
 /*
  * Generate digraphs from ERGM distribution with supplied parameters.
  *
@@ -60,15 +76,17 @@
  *                    sampler
  *   ifd_K          - consant for multiplying IFD auxiliary parameter
  *                    (only used if useIFDsampler is True).
- *   useConditionalEstimation - if True, do conditional estimation of 
+ *   useConditionalSimulation - if True, do conditional simulation of 
  *                              snowball network samples.
  *   forbidReciprocity - if True, constrain ERGM sampling so that reciprocated
- *                       arcs are not allowed to be created (so estimation
+ *                       arcs are not allowed to be created (so simulation
  *                       is conditional on no reciprocated arcs, should have
  *                       none in input observed graph).
  *   sim_net_file_prefix -  simulated network output filename prefix 
  *   dzA_outfile         - open (write) file to write dzA values to.
  *   outputSimulatedNetworks - if True write simulated networks in Pajek format.
+ *   arc_param_index     - index in theta[] parameter of Arc parameter value.
+ *                         Only used for useIFDsampler=TRUE
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -86,11 +104,12 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t sample_size, uint_t interval, uint_t burnin,
                   double theta[],
                   bool useIFDsampler, double ifd_K,
-                  bool useConditionalEstimation,
+                  bool useConditionalSimulation,
                   bool forbidReciprocity,
                   char *sim_net_file_prefix,
                   FILE *dzA_outfile,
-                  bool outputSimulatedNetworks)
+                  bool outputSimulatedNetworks,
+                  uint_t arc_param_index)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -98,7 +117,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *addChangeStats = (double *)safe_malloc(n*sizeof(double));
   double *delChangeStats = (double *)safe_malloc(n*sizeof(double));
   double dzArc; /* only used for IFD sampler */
-  double ifd_aux_param = 0; /* auxiliary parameter for IFD sampler */
+  double ifd_aux_param;  /* auxiliary parameter for IFD sampler */
   /* dzA is only zeroed here, and accumulates in the loop */
   double *dzA = (double *)safe_calloc(n, sizeof(double));
   uint_t l;
@@ -108,12 +127,16 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   char           suffix[16]; /* only has to be large enough for "_x.txt" 
                                 where fx is iteration number */
 
+  if (useIFDsampler)
+    ifd_aux_param = theta[arc_param_index] + arcCorrection(g);
+  
 
   printf("sampleSize = %u, interval = %u burnin = %u\n",
          sample_size, interval, burnin);
   if (useIFDsampler)
-    printf("IFD sampler ifd_K = %g\n", ifd_K);
-  if (useConditionalEstimation)
+    printf("IFD sampler ifd_K = %g initial auxiliary parameter V = %g\n",
+           ifd_K, ifd_aux_param);
+  if (useConditionalSimulation)
     printf("Doing conditional simulation of snowball sample\n");
   if (forbidReciprocity)
     printf("Simulation is conditional on no reciprocated arcs\n");
@@ -132,7 +155,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    addChangeStats, delChangeStats, burnin,
                                    TRUE, /*actually do moves */
                                    ifd_K, &dzArc, &ifd_aux_param,
-                                   useConditionalEstimation,
+                                   useConditionalSimulation,
                                    forbidReciprocity);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
@@ -147,7 +170,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      addChangeStats, delChangeStats,
                                      burnin,
                                      TRUE,/*actually do moves*/
-                                     useConditionalEstimation,
+                                     useConditionalSimulation,
                                      forbidReciprocity);
     }
     for (l = 0; l < n; l++) {
@@ -173,7 +196,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    addChangeStats, delChangeStats, interval,
                                    TRUE, /*actually do moves */
                                    ifd_K, &dzArc, &ifd_aux_param,
-                                   useConditionalEstimation,
+                                   useConditionalSimulation,
                                    forbidReciprocity);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
@@ -188,7 +211,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      addChangeStats, delChangeStats,
                                      interval,
                                      TRUE,/*actually do moves*/
-                                     useConditionalEstimation,
+                                     useConditionalSimulation,
                                      forbidReciprocity);
     }
     iternum = burnin + interval*samplenum;
@@ -242,7 +265,9 @@ int do_simulation(sim_config_t * config)
   uint_t         i, theta_i;
   FILE          *dzA_outfile;
 #define HEADER_MAX 65536
-  char fileheader[HEADER_MAX];  
+  char fileheader[HEADER_MAX];
+  bool   foundArc        = FALSE;
+  uint_t arc_param_index = 0;
 
   if (!config->stats_filename) {
     fprintf(stderr, "ERROR: statistics output filename statsFile not set\n");
@@ -295,17 +320,17 @@ int do_simulation(sim_config_t * config)
   n_attr_interaction = config->param_config.num_attr_interaction_change_stats_funcs;
   num_param =  n_struct + n_attr + n_dyadic + n_attr_interaction;
     
-   /* Ensure that if conditional estimation is to be used, the snowball
+   /* Ensure that if conditional simulation is to be used, the snowball
       sampling zone structure was specified */
-   if (config->useConditionalEstimation) {
+   if (config->useConditionalSimulation) {
      if (!config->zone_filename) {
        fprintf(stderr,
-           "ERROR: conditional estimation requested but no zones specified\n");
+           "ERROR: conditional simulation requested but no zones specified\n");
        return -1;
      }
      if (g->max_zone < 1) {
        fprintf(stderr,
-               "ERROR: conditional estimation requested but only one zone\n");
+               "ERROR: conditional simulation requested but only one zone\n");
        return -1;
      }
    }
@@ -351,17 +376,22 @@ int do_simulation(sim_config_t * config)
    }
    printf("\n");
 
-   /* Ensure that for the IFD sampler there is no Arc parameter included 
-      but that instead the numArcs parameter is included (fixed density) */
+   /* Ensure that for the IFD sampler the  Arc parameter included, and
+      get its index as it is needed to compute the initial value of the
+      IFD sampler auxilliary parameter,
+      and also instead the numArcs parameter is included (fixed density) */
    if (config->useIFDsampler) {
      for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
        if (strcasecmp(config->param_config.param_names[i], ARC_PARAM_STR) == 0) {
-         fprintf(stderr, 
-                 "ERROR: cannot include Arc parameter when using IFD sampler.\n"
-                 "Either unset useIFDsampler or remove Arc from %s.\n",
-                 STRUCT_PARAMS_STR);
-         return -1;
+         arc_param_index = i;
+         foundArc = TRUE;
        }
+     }
+     if (!foundArc) {
+       fprintf(stderr, 
+               "ERROR: must include %s parameter when using IFD sampler.\n",
+               ARC_PARAM_STR);
+       return -1;
      }
      if (config->numArcs == 0) {
        fprintf(stderr, "ERROR: must specify nonzero numArcs when "
@@ -379,7 +409,19 @@ int do_simulation(sim_config_t * config)
              " but IFD sampler not used\n", config->ifd_K);
    }
 
- 
+
+   if (config->useIFDsampler) {
+     /* Initialize the graph to random (E-R aka Bernoulli) graph with
+        specified number of arcs for fixed density simulation */
+     make_erdos_renyi_digraph(g, config->numArcs,
+                              config->useConditionalSimulation,
+                              config->forbidReciprocity);
+   } else if (config->numArcs != 0) {
+     fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
+             " so numArcs parameter is ignored\n", config->numArcs);
+   }
+   
+                              
 
    /* Open the output file for writing */
    if (!(dzA_outfile = fopen(config->stats_filename, "w"))) {
@@ -426,11 +468,11 @@ int do_simulation(sim_config_t * config)
                  config->sampleSize, config->interval, config->burnin,
                  theta,
                  config->useIFDsampler, config->ifd_K,
-                 config->useConditionalEstimation,
+                 config->useConditionalSimulation,
                  config->forbidReciprocity,
                  config->sim_net_file_prefix,
                  dzA_outfile,
-                 config->outputSimulatedNetworks);
+                 config->outputSimulatedNetworks, arc_param_index);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);

@@ -7,6 +7,8 @@
 
 numNodes = 2000 # Number of nodes in directed graph
 
+numArcs = 7243  # number of arcs in observed graph for IFD simulation
+
 
 ################## Simulation settings #######################################
 
@@ -72,7 +74,9 @@ simNetFilePrefix = simulation_sim_n2000_sample_ifd
 structParams =  {Reciprocity    =  4.25,
                  AltInStars     = -1.00,
                  AltOutStars    = -0.50, 
-                 AltKTrianglesT =  1.50}
+                 AltKTrianglesT =  1.50,
+
+                 Arc            = -4.00} 
 
 #
 # Attribute parameters

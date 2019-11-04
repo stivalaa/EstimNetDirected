@@ -174,5 +174,9 @@ int load_attributes(digraph_t *g,
                     const char *contattr_filename,
                     const char *setattr_filename);
 
+void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
+                              bool useConditionalEstimation,
+                              bool forbidReciprocity);
+
 #endif /* DIGRAPH_H */
 

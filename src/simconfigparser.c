@@ -84,9 +84,9 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"zoneFile",      PARAM_TYPE_STRING,  offsetof(sim_config_t, zone_filename),
    "snowball sample zone file"},
 
-  {"useConditionalEstimation", PARAM_TYPE_BOOL,
-   offsetof(sim_config_t, useConditionalEstimation),
-   "do conditional estimation for snowball network sample"},
+  {"useConditionalSimulation", PARAM_TYPE_BOOL,
+   offsetof(sim_config_t, useConditionalSimulation),
+   "do conditional simulation based on snowball network sample"},
 
   {"forbidReciprocity",PARAM_TYPE_BOOL, offsetof(sim_config_t, forbidReciprocity),
    "constrain ERGM sampler to not allow reciprocated arcs"},
@@ -145,7 +145,7 @@ sim_config_t SIM_CONFIG = {
   NULL,  /* stats_filename */
   NULL,  /* sim_net_file_prefix */
   NULL,  /* zone_filename */
-  FALSE, /* useConditionalEstimation */
+  FALSE, /* useConditionalSimulation */
   FALSE, /* forbidReciprocity */
   0,     /* numArcs */
   {
@@ -208,7 +208,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* stats_filename */
   FALSE, /* sim_net_file_prefix */
   FALSE, /* zone_filename */
-  FALSE, /* useConditionalEstimation */
+  FALSE, /* useConditionalSimulation */
   FALSE, /* forbidReciprocity */
   FALSE, /* numArcs */
   FALSE, /* (NOT USED) structParams */
