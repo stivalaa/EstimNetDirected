@@ -18,7 +18,7 @@ interval =500000 # interval (iterations) between samples
 
 burnin = 4000000 # number of iterations to throw away before first sample
 
-outputSimulatedNetworks = False  # write the simulated networks to file
+outputSimulatedNetworks = True  # write the simulated networks to file
 
 
 useIFDsampler = True # use the IFD sampler
