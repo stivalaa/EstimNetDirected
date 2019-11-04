@@ -29,6 +29,126 @@
  ****************************************************************************/
 
 
+/*
+ * Make an Erdos-Renyi aka Bernoulli directed random graph G(n, m)
+ * with n nodes and m m edges. I.e. the m edges are placed between
+ * dyads chosen uniformly at random.
+ *
+ * Parameters:
+ *   g                        - digraph object. Modifed.
+ *   numArcs                  - number of arcs [m in G(n,m) notation]
+ *   n      - number of parameters (length of theta vector and total
+ *            number of change statistic functions)
+ *   n_attr - number of attribute change stats functions
+ *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
+ *   change_stats_funcs - array of pointers to change statistics functions
+ *                        length is n-n_attr-n_dyadic-n_attr_interaction
+ *   attr_change_stats_funcs - array of pointers to change statistics functions
+ *                             length is n_attr
+ *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
+ *                             length is n_dyadic
+ *   attr_interaction_change_stats_funcs - array of pointers to attribute
+ *                           interaction (pair) change statistics functions.
+ *                           length is n_attr_interaction.
+ *   attr_indices   - array of n_attr attribute indices (index into g->binattr
+ *                    or g->catattr) corresponding to attr_change_stats_funcs
+ *                    E.g. for Sender effect on the first binary attribute,
+ *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
+ *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction pairs
+ *                          of attribute inidices similar to above but
+ *                          for attr_interaction_change_setats_funcs which
+ *                          requires pairs of indices.
+ *   useConditionalEstimation - if True preserve snowball sampling zone 
+ *                              structure.
+ *   forbidReciprocity        - if True do not allow reciprocated arcs.
+ *   addChangeStats           - (Out) vector of n change stats for add moves
+ *                              Allocated by caller. Assuming we start
+ *                              with the empty graph, this will then
+ *                              have the counts of statistics in the 
+ *                              graph at the end.
+ *  theta                     - parameter values (required by 
+ *                              calcChangeStats for total but value
+ *                              not used here)
+ *
+ * Return value:
+ *   None. The digraph parameter g is updated.
+ */
+static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
+                                     uint_t n, uint_t n_attr, uint_t n_dyadic,
+                                     uint_t n_attr_interaction,
+                                     change_stats_func_t *change_stats_funcs[],
+                                     attr_change_stats_func_t
+                                                    *attr_change_stats_funcs[],
+                                     dyadic_change_stats_func_t
+                                                 *dyadic_change_stats_funcs[],
+                                     attr_interaction_change_stats_func_t
+                                     *attr_interaction_change_stats_funcs[],
+                                     uint_t attr_indices[],
+                                     uint_pair_t attr_interaction_pair_indices[],                                     
+                                     bool useConditionalEstimation,
+                                     bool forbidReciprocity,
+                                     double addChangeStats[], double theta[])
+{
+  uint_t i, j, k, l;
+  double *changestats = (double *)safe_malloc(n*sizeof(double));
+  
+  for (k = 0; k < numArcs; k++) {
+    if (useConditionalEstimation) {
+      assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      /* Add move for conditional estimation. Find two nodes i, j in
+         inner waves without arc i->j uniformly at random. Because
+         graph is sparse, it is not too inefficient to just pick
+         random nodes until such a pair is found. For conditional
+         estimation we also have the extra constraint that the nodes
+         must be in the same wave or adjacent waves for the tie to
+         be added. */
+      do {
+        i = g->inner_nodes[int_urand(g->num_inner_nodes)];          
+        do {
+          j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
+        } while (i == j);
+        assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+      } while (isArc(g, i, j) ||
+               (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
+    } else {
+      /* not using conditional estimation */
+      /* Add move. Find two nodes i, j without arc i->j uniformly at
+         random. Because graph is sparse, it is not too inefficient
+         to just pick random nodes until such a pair is found */
+      do {
+        do {
+          i = int_urand(g->num_nodes);
+          do {
+            j = int_urand(g->num_nodes);
+          } while (i == j);
+        } while (isArc(g, i, j));
+      } while (forbidReciprocity && isArc(g, j, i));
+    }
+
+    /* add change statistics to addChangeStats array */
+    (void)calcChangeStats(g, i, j, n, n_attr, n_dyadic, n_attr_interaction,
+                          change_stats_funcs,
+                          attr_change_stats_funcs,
+                          dyadic_change_stats_funcs,
+                          attr_interaction_change_stats_funcs,
+                          attr_indices,
+                          attr_interaction_pair_indices,
+                          theta, FALSE, changestats);
+    for (l = 0; l < n; l++)
+      addChangeStats[l] += changestats[l];
+    
+    /* actually do the move by adding the arc */
+    if (useConditionalEstimation) {
+      insertArc_allinnerarcs(g, i, j);
+    } else {
+      insertArc_allarcs(g, i, j);
+    }
+  }
+  free(changestats);
+}
+
 
 /*****************************************************************************
  *
@@ -87,6 +207,8 @@
  *   outputSimulatedNetworks - if True write simulated networks in Pajek format.
  *   arc_param_index     - index in theta[] parameter of Arc parameter value.
  *                         Only used for useIFDsampler=TRUE
+ *   addChangeStats           - (Out) vector of n change stats for add moves
+ *                              Allocated by caller.
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -109,12 +231,12 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   char *sim_net_file_prefix,
                   FILE *dzA_outfile,
                   bool outputSimulatedNetworks,
-                  uint_t arc_param_index)
+                  uint_t arc_param_index,
+                  double addChangeStats[])
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
   double acceptance_rate = 0;
-  double *addChangeStats = (double *)safe_malloc(n*sizeof(double));
   double *delChangeStats = (double *)safe_malloc(n*sizeof(double));
   double dzArc; /* only used for IFD sampler */
   double ifd_aux_param;  /* auxiliary parameter for IFD sampler */
@@ -238,7 +360,6 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   fprintf(stdout, "acceptance rate = %g\n", acceptance_rate);
   
   free(delChangeStats);
-  free(addChangeStats);
   free(dzA);
   
   return 0;
@@ -268,6 +389,8 @@ int do_simulation(sim_config_t * config)
   char fileheader[HEADER_MAX];
   bool   foundArc        = FALSE;
   uint_t arc_param_index = 0;
+  double *addChangeStats = NULL;
+    
 
   if (!config->stats_filename) {
     fprintf(stderr, "ERROR: statistics output filename statsFile not set\n");
@@ -410,18 +533,28 @@ int do_simulation(sim_config_t * config)
    }
 
 
+   /* allocate add change statistics array and initialize to zero */
+   addChangeStats = (double *)safe_calloc(num_param, sizeof(double));
+   
    if (config->useIFDsampler) {
      /* Initialize the graph to random (E-R aka Bernoulli) graph with
         specified number of arcs for fixed density simulation */
      make_erdos_renyi_digraph(g, config->numArcs,
+                              num_param, n_attr, n_dyadic, n_attr_interaction,
+                              config->param_config.change_stats_funcs,
+                              config->param_config.attr_change_stats_funcs,
+                              config->param_config.dyadic_change_stats_funcs,
+                              config->param_config.attr_interaction_change_stats_funcs,
+                              config->param_config.attr_indices,
+                              config->param_config.attr_interaction_pair_indices,                              
                               config->useConditionalSimulation,
-                              config->forbidReciprocity);
+                              config->forbidReciprocity,
+                              addChangeStats, theta);
    } else if (config->numArcs != 0) {
      fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
              " so numArcs parameter is ignored\n", config->numArcs);
    }
    
-                              
 
    /* Open the output file for writing */
    if (!(dzA_outfile = fopen(config->stats_filename, "w"))) {
@@ -455,6 +588,15 @@ int do_simulation(sim_config_t * config)
    print_data_summary(g);
    print_zone_summary(g);
 
+#ifdef DEBUG_SIMULATE
+   printf("initial graph stats: ");   
+   for(i = 0; i < num_param; i++) {
+     printf("%g ", addChangeStats[i]);
+   }
+   printf("\n");
+#endif
+
+
    printf("\nrunning simulation...\n");
    gettimeofday(&start_timeval, NULL);
    
@@ -472,7 +614,8 @@ int do_simulation(sim_config_t * config)
                  config->forbidReciprocity,
                  config->sim_net_file_prefix,
                  dzA_outfile,
-                 config->outputSimulatedNetworks, arc_param_index);
+                 config->outputSimulatedNetworks, arc_param_index,
+                 addChangeStats);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -484,6 +627,7 @@ int do_simulation(sim_config_t * config)
    print_data_summary(g);
      
    free(theta);
+   free(addChangeStats);
    free_digraph(g);
    
   return 0;

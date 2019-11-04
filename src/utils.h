@@ -61,7 +61,13 @@ extern "C" {
 #else
 #define MEMUSAGE_DEBUG_PRINT(x) /* nothing */
 #endif 
- 
+
+#ifdef DEBUG_SIMULATE
+#define SIMULATE_DEBUG_PRINT(x) printf("DEBUG SIMULATE: "); printf x
+#else
+#define SIMULATE_DEBUG_PRINT(x) /* nothing */
+#endif 
+
 
 /*****************************************************************************
  *
