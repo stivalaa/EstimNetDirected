@@ -207,8 +207,8 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
  *   outputSimulatedNetworks - if True write simulated networks in Pajek format.
  *   arc_param_index     - index in theta[] parameter of Arc parameter value.
  *                         Only used for useIFDsampler=TRUE
- *   addChangeStats           - (Out) vector of n change stats for add moves
- *                              Allocated by caller.
+ *   dzA               - (in/Out) vector of n change stats
+ *                             Allocated by caller, set to initial graph values
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -232,16 +232,15 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   FILE *dzA_outfile,
                   bool outputSimulatedNetworks,
                   uint_t arc_param_index,
-                  double addChangeStats[])
+                  double dzA[])
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
   double acceptance_rate = 0;
+  double *addChangeStats = (double *)safe_malloc(n*sizeof(double));
   double *delChangeStats = (double *)safe_malloc(n*sizeof(double));
   double dzArc; /* only used for IFD sampler */
   double ifd_aux_param;  /* auxiliary parameter for IFD sampler */
-  /* dzA is only zeroed here, and accumulates in the loop */
-  double *dzA = (double *)safe_calloc(n, sizeof(double));
   uint_t l;
   uint_t samplenum, iternum;
   struct timeval start_timeval, end_timeval, elapsed_timeval;
@@ -358,9 +357,9 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   }
   
   fprintf(stdout, "acceptance rate = %g\n", acceptance_rate);
-  
+
+  free(addChangeStats);
   free(delChangeStats);
-  free(dzA);
   
   return 0;
 }
@@ -389,7 +388,7 @@ int do_simulation(sim_config_t * config)
   char fileheader[HEADER_MAX];
   bool   foundArc        = FALSE;
   uint_t arc_param_index = 0;
-  double *addChangeStats = NULL;
+  double *dzA = NULL;
     
 
   if (!config->stats_filename) {
@@ -533,8 +532,8 @@ int do_simulation(sim_config_t * config)
    }
 
 
-   /* allocate add change statistics array and initialize to zero */
-   addChangeStats = (double *)safe_calloc(num_param, sizeof(double));
+   /* allocate change statistics array and initialize to zero */
+   dzA = (double *)safe_calloc(num_param, sizeof(double));
    
    if (config->useIFDsampler) {
      /* Initialize the graph to random (E-R aka Bernoulli) graph with
@@ -549,7 +548,7 @@ int do_simulation(sim_config_t * config)
                               config->param_config.attr_interaction_pair_indices,                              
                               config->useConditionalSimulation,
                               config->forbidReciprocity,
-                              addChangeStats, theta);
+                              dzA, theta);
    } else if (config->numArcs != 0) {
      fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
              " so numArcs parameter is ignored\n", config->numArcs);
@@ -591,7 +590,7 @@ int do_simulation(sim_config_t * config)
 #ifdef DEBUG_SIMULATE
    printf("initial graph stats: ");   
    for(i = 0; i < num_param; i++) {
-     printf("%g ", addChangeStats[i]);
+     printf("%g ", dzA[i]);
    }
    printf("\n");
 #endif
@@ -615,7 +614,7 @@ int do_simulation(sim_config_t * config)
                  config->sim_net_file_prefix,
                  dzA_outfile,
                  config->outputSimulatedNetworks, arc_param_index,
-                 addChangeStats);
+                 dzA);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -627,7 +626,7 @@ int do_simulation(sim_config_t * config)
    print_data_summary(g);
      
    free(theta);
-   free(addChangeStats);
+   free(dzA);
    free_digraph(g);
    
   return 0;
