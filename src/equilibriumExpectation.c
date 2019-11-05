@@ -659,9 +659,11 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   FILE          *theta_outfile;
   FILE          *dzA_outfile;
   FILE          *sim_outfile;
+  FILE          *obs_stats_outfile;
   char           theta_outfilename[PATH_MAX+1];
   char           dzA_outfilename[PATH_MAX+1];
   char           sim_outfilename[PATH_MAX+1];
+  char           obs_stats_outfilename[PATH_MAX+1];
   char           suffix[16]; /* only has to be large enough for "_xx.txt" 
                                 where xx is tasknum */
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
@@ -669,6 +671,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   double        *graphStats = NULL;
 #define HEADER_MAX 65536
   char fileheader[HEADER_MAX];
+  /* only compute the observed sufficient statistics in task 0 */
+  bool          computeStats = config->computeStats && tasknum == 0;
 
   if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
@@ -716,7 +720,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     
   theta = (double *)safe_malloc(num_param*sizeof(double));
 
-  if (config->computeStats && tasknum == 0) {
+  if (computeStats) {
     /* allocate change statistics array and initialize to zero */
     graphStats = (double *)safe_calloc(num_param, sizeof(double));
   }
@@ -729,11 +733,11 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   gettimeofday(&start_timeval, NULL);
   printf("loading arc list from %s and building two-path matrices",
          config->arclist_filename);
-  if (config->computeStats && tasknum == 0)
+  if (computeStats)
     printf(" and computing observed statistics");
   printf("..\n");
   g = load_digraph_from_arclist_file(arclist_file, g,
-                                     config->computeStats && tasknum == 0,
+                                     computeStats,
                                      num_param,
                                      n_attr, n_dyadic, n_attr_interaction,
                                      config->param_config.change_stats_funcs,
@@ -762,6 +766,13 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
 #endif /* DEBUG_SNOWBALL */
   }
 
+  if (computeStats) {
+    printf("Observed statistics:");
+    for (i = 0; i < num_param; i++)
+      printf(" %g", graphStats[i]);
+    printf("\n");
+  }
+
   
   /* Open the output files (separate ones for each task), for writing */
   strncpy(theta_outfilename, config->theta_file_prefix,
@@ -778,13 +789,18 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
             "(%s)\n", tasknum, theta_outfilename, strerror(errno));
     return -1;
   }
-
-  if (config->computeStats && tasknum == 0) {
-    printf("Observed statistics:");
-      for (i = 0; i < num_param; i++)
-        printf(" %g", graphStats[i]);
-      printf("\n");
+  if (computeStats) {
+    strncpy(obs_stats_outfilename, config->obs_stats_file_prefix,
+            sizeof(obs_stats_outfilename)-1);
+    strncat(obs_stats_outfilename, suffix,
+            sizeof(obs_stats_outfilename) - 1 - strlen(suffix));
+    if (!(obs_stats_outfile = fopen(obs_stats_outfilename, "w"))) {
+      fprintf(stderr, "ERROR: task %d could not open file %s for writing "
+              "(%s)\n", tasknum, obs_stats_outfilename, strerror(errno));
+      return -1;
+    }
   }
+
    
    /* Ensure that for the IFD sampler there is no Arc parameter included 
       as the IFD sampler computes this itself from the auxiliary parameter */

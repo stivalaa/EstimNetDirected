@@ -127,6 +127,10 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
   {"computeStats",     PARAM_TYPE_BOOL,offsetof(estim_config_t, computeStats),
    "compute observed statistics corresponding to parameters being estimated"},
 
+  {"observedStatsFilePrefix", PARAM_TYPE_STRING,
+   offsetof(estim_config_t, obs_stats_file_prefix),
+   "observed sufficient statistics output filename prefix"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -184,6 +188,7 @@ estim_config_t ESTIM_CONFIG = {
   DEFAULT_LEARNING_RATE, /* learningRate */
   DEFAULT_MIN_THETA,     /* minTheta */
   FALSE, /* computeStats */
+  NULL,  /* obs_stats_file_prefix */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -256,6 +261,7 @@ static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* learningRate */
   FALSE, /* minTheta */
   FALSE, /* computeStats */
+  FALSE, /* obs_stats_file_prefix */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */
@@ -365,6 +371,7 @@ void init_estim_config_parser(void)
   ESTIM_CONFIG.theta_file_prefix = safe_strdup("theta_values");
   ESTIM_CONFIG.dzA_file_prefix = safe_strdup("dzA_values");
   ESTIM_CONFIG.sim_net_file_prefix = safe_strdup("sim");
+  ESTIM_CONFIG.obs_stats_file_prefix = safe_strdup("obs_stats");
 }
 
 

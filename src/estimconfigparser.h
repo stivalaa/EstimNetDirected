@@ -63,7 +63,7 @@ typedef struct estim_config_s {
   double learningRate;      /* learning rate (multiplier) in Borisenko update */
   double minTheta;          /* minimum abs theta value in Borisenko update */
   bool  computeStats;       /* compute observed statistics in digraph */
-  
+  char *obs_stats_file_prefix; /* observed stats output filename prefix */
   /*
    * values built by confiparser.c functions from parsed config settings
    */
