@@ -4,14 +4,15 @@
 ## Author:  Alex Stivala
 ## Created: November 2019
 ##
-## Derived from plotPNetSimulationDiagnostics.R  (ADS Feb. 2014).
+## Derived from plotPNetSimulationDiagnostics.R  (ADS Feb. 2014);
+## also plotPNetGofDiagnostics.R (ADS Feb. 2014)
 ##
 ## Similarly to the SPSS script genreated by PNet simulation or GoF, plot
 ## scatterplot to show autocorrelation in samples and histograms of network
 ## statisics, for use on UNIX version instead of the SPSS script.
 ##
 ## Loess smoothed line on scatterplot and mean on histogram are plotted
-## in blue dashed lines.
+## in blue dashed lines. On histogram 95% CI is ploted as dotted blue lines.
 ##
 ##
 ## Usage: Rscript plotSimulationDiagnostics.R simulation_stats_output.txt
@@ -33,6 +34,8 @@ library(grid)
 library(gridExtra)
 library(ggplot2)
 library(reshape)
+
+zSigma <- 1.96 # number of standard deviations for 95% confidence interval
 
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) < 1 || length(args) > 2) {
@@ -78,6 +81,12 @@ for (statname in statnames) {
     p <- p + geom_histogram()
     p <- p + geom_vline(aes(xintercept = mean(value)), color = "blue",
                         linetype = "dashed")
+    p <- p + geom_vline(aes(xintercept = mean(value) -
+                            zSigma*sd(value)), 
+                        colour='blue', linetype='dotted')
+    p <- p + geom_vline(aes(xintercept = mean(value) +
+                            zSigma*sd(value)), 
+                        colour='blue', linetype='dotted')
     if (do_obs && statname != "AcceptanceRate") {
       p <- p + geom_vline(xintercept = obsstats[1,statname],
                           color = "red")
