@@ -659,7 +659,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   FILE          *theta_outfile;
   FILE          *dzA_outfile;
   FILE          *sim_outfile;
-  FILE          *obs_stats_outfile;
+  FILE          *obs_stats_outfile = NULL;
   char           theta_outfilename[PATH_MAX+1];
   char           dzA_outfilename[PATH_MAX+1];
   char           sim_outfilename[PATH_MAX+1];
@@ -673,6 +673,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   char fileheader[HEADER_MAX];
   /* only compute the observed sufficient statistics in task 0 */
   bool          computeStats = config->computeStats && tasknum == 0;
+  bool          first_header_field = TRUE;
 
   if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
@@ -873,30 +874,60 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   }
 
   /* write headers for output files */
-  sprintf(fileheader, "t");
-  if (config->useIFDsampler) /* IFD sampler always computes an Arc parameter */
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", ARC_PARAM_STR);
-  for (i = 0; i < config->param_config.num_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", config->param_config.param_names[i]);
+  if (config->useIFDsampler){/* IFD sampler always computes an Arc parameter */
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s", ARC_PARAM_STR);
+    first_header_field = FALSE;
+  }
+  for (i = 0; i < config->param_config.num_change_stats_funcs; i++)  {
+    if (!first_header_field)
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX," ");
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s", config->param_config.param_names[i]);
+    first_header_field = FALSE;
+  }
   
-  for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
+  for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) {
+    if (!first_header_field)
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX," ");
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX, "%s_%s",
              config->param_config.attr_param_names[i],
              config->param_config.attr_names[i]);
+    first_header_field = FALSE;
+  }
   
-   for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs; i++)
-     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s",
-              config->param_config.dyadic_param_names[i]);
-
-   for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs; i++) 
-     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s_%s",
-              config->param_config.attr_interaction_param_names[i],
-              config->param_config.attr_interaction_pair_names[i].first,
-              config->param_config.attr_interaction_pair_names[i].second);
-
+  for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs; i++) {
+    if (!first_header_field)
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX," ");
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX, "%s",
+             config->param_config.dyadic_param_names[i]);
+    first_header_field = FALSE;
+  }
   
-  fprintf(theta_outfile,  "%s AcceptanceRate\n", fileheader);
-  fprintf(dzA_outfile, "%s\n", fileheader);
+  for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs; i++) {
+    if (!first_header_field)
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX," ");
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX, "%s_%s_%s",
+             config->param_config.attr_interaction_param_names[i],
+             config->param_config.attr_interaction_pair_names[i].first,
+             config->param_config.attr_interaction_pair_names[i].second);
+    first_header_field = FALSE;
+  }
+  
+  
+  fprintf(theta_outfile,  "t %s AcceptanceRate\n", fileheader);
+  fprintf(dzA_outfile, "t %s\n", fileheader);
+
+  /* output the observed sufficient statistics if selected */
+  if (computeStats) {
+    fprintf(obs_stats_outfile, "%s\n", fileheader);
+    for (i = 0; i < num_param; i++) {
+      fprintf(obs_stats_outfile, "%g", graphStats[i]);
+      if (i == num_param)
+        fprintf(obs_stats_outfile, "\n");
+      else
+        fprintf(obs_stats_outfile, " ");
+    }
+    fclose(obs_stats_outfile);
+  }
   
   ee_estimate(g, num_param, n_attr, n_dyadic, n_attr_interaction,
               config->param_config.change_stats_funcs,
