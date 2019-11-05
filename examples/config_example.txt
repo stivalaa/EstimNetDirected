@@ -80,6 +80,10 @@ dzAFilePrefix = dzA_sim_n1000_sample
 # Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
 simNetFilePrefix = sim_sim_n1000_sample
 
+# prefix for observed network statistics
+
+observedStatsFilePrefix = obs_stats
+
 ################## Parameters to estimate ####################################
 
 #
