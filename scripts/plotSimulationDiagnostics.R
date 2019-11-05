@@ -2,7 +2,7 @@
 #
 # File:    plotSimulationDiagnostics.R
 # Author:  Alex Stivala
-# Created: February 2014
+# Created: November 2019
 #
 # Derived from plotPNetSimulationDiagnostics.R  (ADS Feb. 2014).
 #
@@ -44,12 +44,16 @@ for (statname in statnames) {
 
     p <- ggplot(simstats_statname, aes(x=t, y=value))
     p <- p + geom_point()
+    p <- p + geom_smooth(method = loess, color = "blue", linetype = "dashed",
+                         se = FALSE)
     p <- p + xlab('t')
     p <- p + ylab(statname)
     plotlist <- c(plotlist, list(p))
 
     p <- ggplot(simstats_statname, aes(x=value))
     p <- p + geom_histogram()
+    p <- p + geom_vline(aes(xintercept = mean(value)), color = "blue",
+                        linetype = "dashed")
     p <- p + xlab(statname)
     plotlist <- c(plotlist, list(p))
 }
