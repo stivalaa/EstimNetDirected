@@ -82,7 +82,7 @@ simNetFilePrefix = sim_sim_n1000_sample
 
 # prefix for observed network statistics
 
-observedStatsFilePrefix = obs_stats
+observedStatsFilePrefix = obs_stats_n1000_sample
 
 ################## Parameters to estimate ####################################
 
