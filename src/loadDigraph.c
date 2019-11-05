@@ -120,7 +120,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
   const char *delims = " \t\r\n"; /* strtok_r() delimiters for header lines */
   int num_vertices = 0;
   uint_t l;
-  double *changestats = (double *)safe_malloc(n*sizeof(double));
+  double *changestats = NULL;
 #ifdef DEBUG_MEMUSAGE
   uint_t k, total_degree = 0;
 #ifdef TWOPATH_HASHTABLES
@@ -162,6 +162,10 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
     fclose(pajek_file);
     exit(1);
   }
+
+  if (computeStats)
+    changestats = (double *)safe_malloc(n*sizeof(double));
+  
 #ifdef TWOPATH_HASHTABLES
 #ifdef DEBUG_MEMUSAGE
   gettimeofday(&start_timeval, NULL);
@@ -284,6 +288,8 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
   MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->outTwoPathHashTab)/(1024*1024)));
 #endif /* TWOPATH_HASHTABLES */
 #endif /* DEBUG_MEMUSAGE */
+
+  free(changestats);
 
   return(g);
 }

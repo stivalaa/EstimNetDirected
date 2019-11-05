@@ -777,6 +777,13 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
             "(%s)\n", tasknum, theta_outfilename, strerror(errno));
     return -1;
   }
+
+  if (config->computeStats) {
+      printf("Observed statistics:");
+      for (i = 0; i < num_param; i++)
+        printf(" %g", graphStats[i]);
+      printf("\n");
+  }
    
    /* Ensure that for the IFD sampler there is no Arc parameter included 
       as the IFD sampler computes this itself from the auxiliary parameter */
@@ -906,6 +913,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   }
   free_digraph(g);
   free(theta);
+  free(graphStats);
   return 0;
 }
 

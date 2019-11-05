@@ -28,6 +28,8 @@ EEinnerSteps = 100 # inner iterations of Algorithm EE
 
 outputSimulatedNetwork = True  # write the simulated network to file
 
+computeStats = True # compute observed sufficient statistics
+
 ################## Input filenames ###########################################
 
 
