@@ -26,6 +26,8 @@
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
 #define CAT_NA  -1  /* value for catagorical missing data (otherwise >= 0) */
 
+
+
 /* set element type, each element in array is either present, absent, or NA */
 typedef enum set_elem_e {
   SET_ELEM_NA        = -1,
@@ -132,7 +134,6 @@ typedef struct digraph_s
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 #endif /*TWOPATH_HASHTABLES */
   
-digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g);
 
 double density(const digraph_t *g); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */

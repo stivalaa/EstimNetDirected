@@ -25,7 +25,7 @@ DEPENDFILE = .depend
 ESTIM_COMMON_C_OBJS =  utils.o digraph.o \
                  changeStatisticsDirected.o basicSampler.o \
                  equilibriumExpectation.o configparser.o estimconfigparser.o \
-                 ifdSampler.o
+                 ifdSampler.o loadDigraph.o
 
 SIM_COMMON_C_OBJS =  utils.o digraph.o \
                  changeStatisticsDirected.o basicSampler.o \

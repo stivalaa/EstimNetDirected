@@ -9,7 +9,7 @@ changeStatisticsDirected.o: changeStatisticsDirected.c \
 basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h \
  digraph.h basicSampler.h
 equilibriumExpectation.o: equilibriumExpectation.c utils.h digraph.h \
- basicSampler.h changeStatisticsDirected.h ifdSampler.h \
+ loadDigraph.h changeStatisticsDirected.h basicSampler.h ifdSampler.h \
  equilibriumExpectation.h estimconfigparser.h configparser.h
 configparser.o: configparser.c configparser.h utils.h \
  changeStatisticsDirected.h digraph.h
@@ -17,6 +17,8 @@ estimconfigparser.o: estimconfigparser.c estimconfigparser.h \
  configparser.h utils.h changeStatisticsDirected.h digraph.h
 ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h digraph.h \
  ifdSampler.h
+loadDigraph.o: loadDigraph.c utils.h loadDigraph.h digraph.h \
+ changeStatisticsDirected.h
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsDirected.h digraph.h \
  equilibriumExpectation.h
@@ -24,4 +26,4 @@ EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsDirected.h digraph.h \
  equilibriumExpectation.h
 SimulateERGMmain.o: SimulateERGMmain.c utils.h simconfigparser.h \
- configparser.h changeStatisticsDirected.h digraph.h
+ configparser.h changeStatisticsDirected.h digraph.h simulation.h

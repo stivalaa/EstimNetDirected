@@ -124,6 +124,9 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
   {"minTheta",         PARAM_TYPE_DOUBLE,offsetof(estim_config_t, minTheta),
    "min abs value of theta to stop zero in Borisenko EE algorithm update step"},
 
+  {"computeStats",     PARAM_TYPE_BOOL,offsetof(estim_config_t, computeStats),
+   "compute observed statistics corresponding to parameters being estimated"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -180,6 +183,7 @@ estim_config_t ESTIM_CONFIG = {
   FALSE, /* useBorisenkoUpdate */
   DEFAULT_LEARNING_RATE, /* learningRate */
   DEFAULT_MIN_THETA,     /* minTheta */
+  FALSE, /* computeStats */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -251,6 +255,7 @@ static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* useBorisenkoUpdate */
   FALSE, /* learningRate */
   FALSE, /* minTheta */
+  FALSE, /* computeStats */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */

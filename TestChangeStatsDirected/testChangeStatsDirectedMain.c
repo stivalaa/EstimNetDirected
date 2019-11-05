@@ -25,6 +25,7 @@
 #include <assert.h>
 #include "digraph.h"
 #include "changeStatisticsDirected.h"
+#include "loadDigraph.h"
 
 #define DEFAULT_NUM_TESTS 1000
 
@@ -158,7 +159,9 @@ int main(int argc, char *argv[])
             arclist_filename, strerror(errno));
     return -1;
   }
-  g = load_digraph_from_arclist_file(file, g);
+  g = load_digraph_from_arclist_file(file, g, FALSE,
+                                     0, 0, 0, 0, NULL, NULL, NULL, NULL,
+                                     NULL, NULL, NULL, NULL);
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;

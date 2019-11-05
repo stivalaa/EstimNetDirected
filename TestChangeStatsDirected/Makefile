@@ -5,7 +5,7 @@ CC = gcc
 
 CFLAGS += -I../src
 
-OBJS =  ../src/changeStatisticsDirected.o ../src/digraph.o ../src/utils.o ../src/changeStatisticsDirected.o
+OBJS =  ../src/changeStatisticsDirected.o ../src/digraph.o ../src/utils.o ../src/changeStatisticsDirected.o ../src/loadDigraph.o
 HASH_OBJS = $(OBJS:.o=_hash.o)
 
 all: testChangeStatsDirected testChangeStatsDirected_hash testSetFunctions
