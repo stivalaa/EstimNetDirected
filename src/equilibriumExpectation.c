@@ -921,7 +921,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     fprintf(obs_stats_outfile, "%s\n", fileheader);
     for (i = 0; i < num_param; i++) {
       fprintf(obs_stats_outfile, "%g", graphStats[i]);
-      if (i == num_param)
+      if (i == num_param-1)
         fprintf(obs_stats_outfile, "\n");
       else
         fprintf(obs_stats_outfile, " ");
