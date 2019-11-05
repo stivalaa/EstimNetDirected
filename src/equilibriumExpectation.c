@@ -716,7 +716,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     
   theta = (double *)safe_malloc(num_param*sizeof(double));
 
-  if (config->computeStats) {
+  if (config->computeStats && tasknum == 0) {
     /* allocate change statistics array and initialize to zero */
     graphStats = (double *)safe_calloc(num_param, sizeof(double));
   }
@@ -729,10 +729,11 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   gettimeofday(&start_timeval, NULL);
   printf("loading arc list from %s and building two-path matrices",
          config->arclist_filename);
-  if (config->computeStats)
+  if (config->computeStats && tasknum == 0)
     printf(" and computing observed statistics");
   printf("..\n");
-  g = load_digraph_from_arclist_file(arclist_file, g, config->computeStats,
+  g = load_digraph_from_arclist_file(arclist_file, g,
+                                     config->computeStats && tasknum == 0,
                                      num_param,
                                      n_attr, n_dyadic, n_attr_interaction,
                                      config->param_config.change_stats_funcs,
@@ -778,8 +779,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     return -1;
   }
 
-  if (config->computeStats) {
-      printf("Observed statistics:");
+  if (config->computeStats && tasknum == 0) {
+    printf("Observed statistics:");
       for (i = 0; i < num_param; i++)
         printf(" %g", graphStats[i]);
       printf("\n");
