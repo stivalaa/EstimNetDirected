@@ -17,8 +17,7 @@
 ## Usage: Rscript plotSimulationDiagnostics.R simulation_stats_output.txt
 ##                                            [obs_stats.txt]
 ##
-## e.g.: Rscript plotSimulationDiagnostics.R stats_sim_n2000_sample.txt
-##                                        ob_stats_n2000_sample_0.txt
+## e.g.: Rscript ../scripts/plotSimulationDiagnostics.R stats_sim_n1000_binattr_sample.txt  obs_stats_n1000_sample_0.txt
 ##
 ## If the optional observed stats filename is specified, then the
 ## observed stats of a single network are read from this and plotted
@@ -68,7 +67,7 @@ for (statname in statnames) {
     p <- p + geom_smooth(method = loess, color = "blue", linetype = "dashed",
                          se = FALSE)
     if (do_obs && statname != "AcceptanceRate") {
-      p <- p + geom_hline(yintercept = obststats[1,statname],
+      p <- p + geom_hline(yintercept = obsstats[1,statname],
                           color = "red")
     }
     p <- p + xlab('t')
@@ -79,6 +78,10 @@ for (statname in statnames) {
     p <- p + geom_histogram()
     p <- p + geom_vline(aes(xintercept = mean(value)), color = "blue",
                         linetype = "dashed")
+    if (do_obs && statname != "AcceptanceRate") {
+      p <- p + geom_vline(xintercept = obsstats[1,statname],
+                          color = "red")
+    }
     p <- p + xlab(statname)
     plotlist <- c(plotlist, list(p))
 }
