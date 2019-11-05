@@ -960,7 +960,7 @@ void dump_parameter_names(void)
 /*
  * build_attr_indices_from_names() is called after the config file
  * is parsed by parse_config_file() and also after the 
- * attributes are loaded by calling load_digraph_from_arclist_file()
+ * attributes are loaded by calling load_attributes()
  * since the relevant filenames have to be parsed from the config
  * file before their contents can be loaded. (Could enforce that
  * those filenames are earlier in the config file than the attribute
@@ -1071,7 +1071,7 @@ int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g)
 /*
  * build_dyadic_indices_from_names() is called after the config file
  * is parsed by parse_config_file() and also after the 
- * attributes are loaded by calling load_digraph_from_arclist_file()
+ * attributes are loaded by calling load_attributes()
  * since the relevant filenames have to be parsed from the config
  * file before their contents can be loaded. (Could enforce that
  * those filenames are earlier in the config file than the attribute
@@ -1293,7 +1293,7 @@ int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g)
 /*
  * build_attr_interaction_pair_indices_from_names() is called after the
  * config file is parsed by parse_config_file() and also after the
- * attributes are loaded by calling load_digraph_from_arclist_file()
+ * attributes are loaded by calling load_attributes()
  * since the relevant filenames have to be parsed from the config file
  * before their contents can be loaded. (Could enforce that those
  * filenames are earlier in the config file than the attribute

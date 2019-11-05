@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
   uint_t i,j;
   char *arclist_filename = NULL;
   FILE *file           = NULL;
+  uint_t     num_nodes = 0;
   digraph_t *g         = NULL;
   int    num_tests     = 0;
   int    readNodeNums  = FALSE;
@@ -150,7 +151,14 @@ int main(int argc, char *argv[])
   gettimeofday(&start_timeval, NULL);
   fprintf(stderr, "loading arc list from %s and building two-path tables...",
          arclist_filename);
-  g = load_digraph_from_arclist_file(file, NULL, NULL, NULL, NULL);
+  num_nodes = get_num_vertices_from_arclist_file(file); /* closes file */
+  g = allocate_digraph(num_nodes);
+  if (!(file = fopen(arclist_filename, "r"))) {
+    fprintf(stderr, "error opening file %s (%s)\n", 
+            arclist_filename, strerror(errno));
+    return -1;
+  }
+  g = load_digraph_from_arclist_file(file, g);
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;

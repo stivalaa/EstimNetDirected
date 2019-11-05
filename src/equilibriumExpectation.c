@@ -644,6 +644,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   int            etime;
   FILE          *arclist_file;
   digraph_t     *g;
+  uint_t         num_nodes;
   uint_t         i;
   FILE          *theta_outfile;
   FILE          *dzA_outfile;
@@ -656,45 +657,26 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
 #define HEADER_MAX 65536
-  char fileheader[HEADER_MAX];  
-  
+  char fileheader[HEADER_MAX];
+
   if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
             config->arclist_filename, strerror(errno));
     return -1;
   }
-  gettimeofday(&start_timeval, NULL);
-  printf("loading arc list from %s and building two-path matrices...",
-         config->arclist_filename);
-  g = load_digraph_from_arclist_file(arclist_file,
-                                     config->binattr_filename,
-                                     config->catattr_filename,
-                                     config->contattr_filename,
-                                     config->setattr_filename);
-  gettimeofday(&end_timeval, NULL);
-  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
-  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-  printf("%.2f s\n", (double)etime/1000);
-#ifdef DEBUG_DIGRAPH
-  dump_digraph_arclist(g);
-#endif /*DEBUG_DIGRAPH*/
+  num_nodes = get_num_vertices_from_arclist_file(arclist_file);/* closes file */
+  g = allocate_digraph(num_nodes);
 
-  if (config->zone_filename) {
-    if (add_snowball_zones_to_digraph(g, config->zone_filename)) {
-      fprintf(stderr, "ERROR: reading snowball sampling zones from %s failed\n",
-              config->zone_filename);
-      return -1;
-    }
-#ifdef DEBUG_SNOWBALL
-    dump_zone_info(g);
-#endif /* DEBUG_SNOWBALL */
+
+  if (load_attributes(g, config->binattr_filename,
+                      config->catattr_filename,
+                      config->contattr_filename,
+                      config->setattr_filename)) {
+    fprintf(stderr, "ERROR: loading node attributes failed\n");
+    return -1;
   }
+
   
-  if (tasknum == 0) {
-    print_data_summary(g);
-    print_zone_summary(g);
-  }
-
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */
   if (build_attr_indices_from_names(&config->param_config, g) != 0)  {
@@ -723,6 +705,36 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     
   theta = (double *)safe_malloc(num_param*sizeof(double));
 
+
+  if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
+    fprintf(stderr, "error opening file %s (%s)\n", 
+            config->arclist_filename, strerror(errno));
+    return -1;
+  }
+  gettimeofday(&start_timeval, NULL);
+  printf("loading arc list from %s and building two-path matrices...",
+         config->arclist_filename);
+  g = load_digraph_from_arclist_file(arclist_file, g);
+  gettimeofday(&end_timeval, NULL);
+  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+  printf("%.2f s\n", (double)etime/1000);
+#ifdef DEBUG_DIGRAPH
+  dump_digraph_arclist(g);
+#endif /*DEBUG_DIGRAPH*/
+
+  if (config->zone_filename) {
+    if (add_snowball_zones_to_digraph(g, config->zone_filename)) {
+      fprintf(stderr, "ERROR: reading snowball sampling zones from %s failed\n",
+              config->zone_filename);
+      return -1;
+    }
+#ifdef DEBUG_SNOWBALL
+    dump_zone_info(g);
+#endif /* DEBUG_SNOWBALL */
+  }
+
+  
   /* Open the output files (separate ones for each task), for writing */
   strncpy(theta_outfilename, config->theta_file_prefix,
           sizeof(theta_outfilename)-1);
@@ -798,6 +810,11 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
      }
    }
 
+   if (tasknum == 0) {
+    print_data_summary(g);
+    print_zone_summary(g);
+   }
+   
   if (!(dzA_outfile = fopen(dzA_outfilename, "w"))) {
     fprintf(stderr, "ERROR: task %d could not open file %s for writing "
             "(%s)\n", tasknum, dzA_outfilename, strerror(errno));

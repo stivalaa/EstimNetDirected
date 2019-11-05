@@ -132,11 +132,7 @@ typedef struct digraph_s
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 #endif /*TWOPATH_HASHTABLES */
   
-digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
-                                          const char *binattr_filename,
-                                          const char *catattr_filename,
-                                          const char *contattr_filename,
-                                          const char *setattr_filename);
+digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g);
 
 double density(const digraph_t *g); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
@@ -174,6 +170,7 @@ int load_attributes(digraph_t *g,
                     const char *contattr_filename,
                     const char *setattr_filename);
 
+uint_t get_num_vertices_from_arclist_file(FILE *pajek_file);
 
 #endif /* DIGRAPH_H */
 

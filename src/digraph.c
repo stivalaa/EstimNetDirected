@@ -1116,40 +1116,73 @@ void free_digraph(digraph_t *g)
 }
 
 
-
 /*
- * Build digraph from Pajek format arc list file,
- * with optional binary and categorical attributes files.
+ * Get number of nodes from Pajek network file.
  *
  * In the Pajek format *vertices at top, then followed by one line for each
  * vertex (just vertex number) then *arcs followed by arcs list one per
  * line. In this program the nodes must be numbered 1..N.
  *
- * The format of the attributes files is header line with whitespace-delimited
- * attribute names, followed by (whitespace delimited) attributes 
- * one line per node (corresponding to node number order).
- * If the attribute file handles are NULL then no attributes.
+ * Parameters:
+ *    pajek_file   - Pajek format arclist file handle (open read).
+ *                   Closed by this function at end.
+ *
+ * Return value:
+ *    number of vertices as read from Pajek file.
+ *
+ * Note this function calls exit() on error.
+ */
+uint_t get_num_vertices_from_arclist_file(FILE *pajek_file)
+{
+  char *p;
+  int num_vertices = 0;
+
+  char buf[BUFSIZE];
+  /* the first lines should be e.g.
+   * *vertices 36
+   * for Pajek format
+   */
+  fgets(buf, sizeof(buf)-1, pajek_file);
+  for (p = buf; *p !='\0'; p++) {
+    *p = tolower(*p);
+  }
+  if (sscanf(buf, "*vertices %d\n", &num_vertices) != 1) {
+    fprintf(stderr, "ERROR: expected *vertices n line but didn't find it\n");
+    exit(1);
+  }
+  if (num_vertices < 1) {
+    fprintf(stderr, "ERROR: number of vertices is %d\n", num_vertices);
+    exit(1);
+  }
+  fclose(pajek_file);
+  return (uint_t)num_vertices;
+}
+
+
+/*
+ * Build digraph from Pajek format arc list file.
+ * Note this builds the digraph structure only, not the node attributes.
+ * These are read and built separately by calling load_attributes().
+ * The graph g must be already allocated by allocate_digraph() with the
+ * correct number of nodes, which can be found by
+ * get_num_nodes(pajek_file).
+ *
+ * In the Pajek format *vertices at top, then followed by one line for each
+ * vertex (just vertex number) then *arcs followed by arcs list one per
+ * line. In this program the nodes must be numbered 1..N.
  *
  * Parameters:
  *    pajek_file   - Pajek format arclist file handle (open read).
  *                   Closed by this function at end.
- *    binattr_filename - binary attributes filebane or NULL
- *    catattr_filename - categorical attribute filename or NULL
- *    contattr_filename- continuous attribute filename or NULL
- *    setattr_filename - set attribute filename or NULL
+ *   g             - (in/out) digraph object already allocated as above.
  *
  * Return value:
- *    digraph object built from files.
+ *    digraph object built from files (same as parameter g)
  *
  * Note this function calls exit() on error.
  */
-digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
-                                          const char *binattr_filename,
-                                          const char *catattr_filename,
-                                          const char *contattr_filename,
-                                          const char *setattr_filename)
+digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g)
 {
-  digraph_t *g = NULL;
   int i, j;
   char *p;
   char *saveptr   = NULL; /* for strtok_r() */
@@ -1178,7 +1211,12 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
     fprintf(stderr, "ERROR: expected *vertices n line but didn't find it\n");
     exit(1);
   }
-  g = allocate_digraph(num_vertices);
+
+  if ((uint_t)num_vertices != g->num_nodes) {
+    fprintf(stderr, "ERROR: expected %u vertices but found %d\n",
+            g->num_nodes, num_vertices);
+    exit(1);
+  }
   
   do {
     fgets(buf, sizeof(buf)-1, pajek_file);
@@ -1299,13 +1337,6 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file,
 #endif /* TWOPATH_HASHTABLES */
 #endif /* DEBUG_MEMUSAGE */
 
-
-  if (load_attributes(g, binattr_filename, catattr_filename,
-                      contattr_filename, setattr_filename)) {
-    fprintf(stderr, "ERROR: loading nodal attributes failed\n");
-    exit(1);
-  }
-  
   return(g);
 }
 
