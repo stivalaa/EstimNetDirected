@@ -335,7 +335,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      useConditionalSimulation,
                                      forbidReciprocity);
     }
-    iternum = burnin + interval*(samplenum+1);
+    iternum = burnin + interval*(samplenum+1); /* FIXME overflows, need unsigned long long */
     fprintf(dzA_outfile, "%u ", iternum);
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
