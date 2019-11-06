@@ -26,6 +26,9 @@ EEsteps= 500 # steps of Algorithm EE.
               
 EEinnerSteps = 100 # inner iterations of Algorithm EE
 
+outputSimulatedNetwork = True  # write the simulated network to file
+
+computeStats = True # compute observed sufficient statistics
 
 ################## Input filenames ###########################################
 
@@ -74,6 +77,12 @@ thetaFilePrefix = theta_sim_n2000_cont_sample
 
 dzAFilePrefix = dzA_sim_n2000_cont_sample
 
+# Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
+simNetFilePrefix = sim_sim_n2000_cont_sample
+
+# prefix for observed network statistics
+
+observedStatsFilePrefix = obs_stats_n2000_cont_sample
 
 ################## Parameters to estimate ####################################
 

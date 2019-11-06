@@ -1,0 +1,85 @@
+##############################################################################
+#
+# example setting file for SimulateERGM
+#
+#   note parameter and attribute names are not case sensitive (but filenames are)
+#
+
+numNodes = 2000 # Number of nodes in directed graph
+
+
+################## Simulation settings #######################################
+
+sampleSize = 100 #number of network samples to take from simulation
+
+interval = 10000000 # interval (iterations) between samples
+
+burnin = 1000000000 # number of iterations to throw away before first sample
+
+
+outputSimulatedNetworks = True   # write the simulated network to file
+
+useIFDsampler = False  # use the IFD sampler
+ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
+
+
+
+################## Input filenames ###########################################
+
+
+# Attribute files
+# binattr_file for binary attributes (0 or 1 only)
+# catattr_file for categorical attributes (any integer)
+# The format of the file is a header line with whitespace
+# delimited attribute names, and each subsequent line
+# the attribute values for each attribute.
+# The first line (after the header) has the values for
+# node 0, then the next line node 1, and so on.
+# 
+# E.g.:
+#
+# gender class
+# 0      1
+# 1      2
+# 1      3
+
+#binattrFile = ../pythonDemo/binaryAttributes_50_50_n1000.txt
+#catattrFile = 
+contattrFile =  continuousAttributes_n2000.txt
+
+################## Output filenames ##########################################
+
+# Filename of file to write statistics to
+
+statsFile = stats_estimated_sim_n2000_cont_sample.txt
+
+# Pajek .net file prefix for simulatd networks
+# Output filenames are constructed from the prefix specified here,
+# with _<i>.net added, where <i> is the iteration
+# So e.g. if simNetFilePrefix = sim then the output files are sim_10000.net etc.
+
+simNetFilePrefix = simulation_estimated_sim_n2000_cont_sample
+
+################## Parameters to estimate ####################################
+
+#
+# Structural parameters
+#
+
+
+
+structParams =  {Arc =          -1.056889,
+                 Reciprocity =   4.239953,
+                 AltInStars =   -2.031012,
+                 AltOutStars=   -0.9752629,
+                 AltKTrianglesT= 1.240167, 
+                 AltTwoPathsTD= -0.1478043}
+
+#
+# Attribute parameters
+#
+
+attrParams = {Diff(continuousAttribute                = -0.08549053),
+              DiffReciprocity(continuousAttribute     = -0.2408325)}
+
+
