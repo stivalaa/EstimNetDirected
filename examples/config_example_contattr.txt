@@ -7,16 +7,13 @@
 
 ################## Algorithm constants #######################################
 
-ACA_S = 0.1     # multiplier for step size in Algorithm S
 
-ACA_EE    = 1e-09  # multiplier for step size in Algorithm EE
 
-compC =  1e-02   # multiplier of sd(theta)/mean(theta) to limit variance
-
+useBorisenkoUpdate = true # use the Borisenko et al. (2019) update algorithm
 
 samplerSteps= 1000 # sampler iterations (per algorithm step)
  
-Ssteps =50 # steps of Algorithm S (multiplied by density adjustment)
+Ssteps =50 # steps of Algorithm S 
 
 
 EEsteps= 500 # steps of Algorithm EE. 

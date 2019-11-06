@@ -68,18 +68,18 @@ simNetFilePrefix = simulation_estimated_sim_n2000_cont_sample
 
 
 
-structParams =  {Arc =          -1.056889,
-                 Reciprocity =   4.239953,
-                 AltInStars =   -2.031012,
-                 AltOutStars=   -0.9752629,
-                 AltKTrianglesT= 1.240167, 
-                 AltTwoPathsTD= -0.1478043}
+structParams =  {Arc =          -1.114097,
+                 Reciprocity =   4.244154,
+                 AltInStars =   -2.045013,
+                 AltOutStars=   -0.9637002,
+                 AltKTrianglesT= 1.492475,
+                 AltTwoPathsTD= -0.1507628}
 
 #
 # Attribute parameters
 #
 
-attrParams = {Diff(continuousAttribute                = -0.08549053),
-              DiffReciprocity(continuousAttribute     = -0.2408325)}
+attrParams = {Diff(continuousAttribute                = -0.07947493),
+              DiffReciprocity(continuousAttribute     = -0.3028252)}
 
 
