@@ -298,10 +298,10 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
       /* but during burn-in we do not output these values */
     }
-   gettimeofday(&end_timeval, NULL);
-   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
-   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-   printf("burnin %u iterations took %.2f s\n", burnin, (double)etime/1000);
+    gettimeofday(&end_timeval, NULL);
+    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+    etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+    printf("burnin %u iterations took %.2f s\n", burnin, (double)etime/1000);
   }
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {
