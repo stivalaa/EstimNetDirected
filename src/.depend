@@ -19,6 +19,8 @@ ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h digraph.h \
  ifdSampler.h
 loadDigraph.o: loadDigraph.c utils.h loadDigraph.h digraph.h \
  changeStatisticsDirected.h
+tntSampler.o: tntSampler.c utils.h changeStatisticsDirected.h digraph.h \
+ tntSampler.h
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsDirected.h digraph.h \
  equilibriumExpectation.h
