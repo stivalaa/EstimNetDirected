@@ -53,7 +53,10 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
    "number of iterations to throw away before first sample"},
 
   {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(sim_config_t, useIFDsampler),
-   "use Improved Fixed Density sampler instead of basic sampler"},
+   "use Improved Fixed Density sampler instead of basic of TNT sampler"},
+  
+  {"useTNTsampler", PARAM_TYPE_BOOL,    offsetof(sim_config_t, useTNTsampler),
+   "use Tie-No-Tie sampler instead of basic or IFD sampler"},
 
   {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(sim_config_t, ifd_K),
    "multiplier for auxiliary parameter step size in IFD sampler"},
@@ -136,6 +139,7 @@ sim_config_t SIM_CONFIG = {
   SIM_DEFAULT_INTERVAL,   /* interval */
   SIM_DEFAULT_BURNIN,     /* burnin */
   FALSE, /* useIFDsampler */
+  FALSE, /* useTNTsampler */
   SIM_DEFAULT_IFD_K,   /* ifd_K */
   FALSE, /* outputSimulatedNetworks */
   NULL,  /* binattr_filename */
@@ -199,6 +203,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* interval */
   FALSE, /* burnin */
   FALSE, /* useIFDsampler */
+  FALSE, /* useTNTsampler */
   FALSE, /* ifd_K */
   FALSE, /* outputSimulatedNetworks */
   FALSE, /* binattr_filename */

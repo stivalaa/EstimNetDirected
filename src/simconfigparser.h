@@ -42,6 +42,7 @@ typedef struct sim_config_s {
   uint_t interval;        /* interval (iterations) between samples */
   uint_t burnin;          /* iterations to throw out before 1st sample */
   bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
+  bool   useTNTsampler;   /* Use TNT sampler (not basic or IFD sampler) */
   double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
   bool  outputSimulatedNetworks; /* output simulated networks  */
   char *binattr_filename; /* filename of binary attributes file or NULL */
@@ -54,7 +55,7 @@ typedef struct sim_config_s {
   bool  useConditionalSimulation; /*conditional simulation of snowball sample */
   bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
   uint_t numArcs;         /* number of arcs for IFD simulation (fixed density)*/
-  
+
   /*
    * values built by confiparser.c functions from parsed config settings
    */

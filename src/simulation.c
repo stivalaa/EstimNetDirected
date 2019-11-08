@@ -209,9 +209,11 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
  *                         Only used for useIFDsampler=TRUE
  *   dzA               - (in/Out) vector of n change stats
  *                             Allocated by caller, set to initial graph values
+ *   useTNTsampler     - use TNT sampler not IFD or basic.
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
+
  *
  */
 int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
@@ -232,7 +234,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   FILE *dzA_outfile,
                   bool outputSimulatedNetworks,
                   uint_t arc_param_index,
-                  double dzA[])
+                  double dzA[],
+		  bool useTNTsampler)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -249,6 +252,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   char           suffix[16]; /* only has to be large enough for "_x.txt" 
                                 where fx is iteration number */
 
+  assert(!(useIFDsampler && useTNTsampler));
+  
   if (useIFDsampler)
     ifd_aux_param = theta[arc_param_index] + arcCorrection(g);
   
@@ -366,7 +371,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 }
 
 /*
- * Do simulation process using basic or IFD sampler to draw samples
+ * Do simulation process using basic or IFD or TNT sampler to draw samples
  * from ERGM digraph distribution.
  *
  * Parameters:
@@ -499,6 +504,14 @@ int do_simulation(sim_config_t * config)
    }
    printf("\n");
 
+   /* Only one sampler can be used (only binary attributes in config,
+      did not include multiple options (maybe should) */
+   if (config->useIFDsampler && config->useTNTsampler) {
+     fprintf(stderr, "ERROR: Only one of the useIFDsampler and"
+	     " use TNTsampler options may be used\n");
+     return -1;
+   }
+
    /* Ensure that for the IFD sampler the  Arc parameter included, and
       get its index as it is needed to compute the initial value of the
       IFD sampler auxilliary parameter,
@@ -615,7 +628,7 @@ int do_simulation(sim_config_t * config)
                  config->sim_net_file_prefix,
                  dzA_outfile,
                  config->outputSimulatedNetworks, arc_param_index,
-                 dzA);
+                 dzA, config->useTNTsampler);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
