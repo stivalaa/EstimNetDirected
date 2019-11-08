@@ -93,6 +93,8 @@ extern "C" {
  *
  ****************************************************************************/
 
+typedef unsigned long long ulonglong_t;
+typedef unsigned long      ulong_t;
 typedef unsigned int       uint32_t;
 typedef unsigned int       uint_t;
 typedef int                bool;

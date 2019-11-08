@@ -242,7 +242,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double dzArc; /* only used for IFD sampler */
   double ifd_aux_param;  /* auxiliary parameter for IFD sampler */
   uint_t l;
-  uint_t samplenum, iternum;
+  uint_t      samplenum;
+  ulonglong_t iternum;
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
   char           suffix[16]; /* only has to be large enough for "_x.txt" 
@@ -335,8 +336,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      useConditionalSimulation,
                                      forbidReciprocity);
     }
-    iternum = burnin + interval*(samplenum+1); /* FIXME overflows, need unsigned long long */
-    fprintf(dzA_outfile, "%u ", iternum);
+    iternum = burnin + interval*(samplenum+1);
+    fprintf(dzA_outfile, "%llu ", iternum);
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
       fprintf(dzA_outfile, "%g ", dzA[l]);
@@ -347,7 +348,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     if (outputSimulatedNetworks) {
       strncpy(sim_outfilename, sim_net_file_prefix,
               sizeof(sim_outfilename)-1);
-      sprintf(suffix, "_%u.net", iternum);
+      sprintf(suffix, "_%llu.net", iternum);
       strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
               strlen(suffix));
       sim_outfile = fopen(sim_outfilename, "w");
