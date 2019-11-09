@@ -137,9 +137,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double  total;        /* sum of theta*changestats */
   uint_t  accepted = 0; /* number of accepted moves */
-  /* Ndel and Nadd are int not uint_t as we do signed math with them */
-  int     Ndel = 0;     /* number of add moves */
-  int     Nadd = 0;     /* number of delete moves */
   double  acceptance_rate;
   uint_t  i,j,k,l;
   uint_t  arcidx = 0;
@@ -151,7 +148,10 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (k = 0; k < sampler_m; k++) {
 
-    isDelete = (urand() < 0.5); /* add or delete move with equal probability*/
+    if (g->num_arcs > 0)
+      isDelete = (urand() < 0.5); /*add or delete move with equal probability*/
+    else
+      isDelete = FALSE; /* force an add move on empty graph */
 
     if (useConditionalEstimation) {
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
@@ -226,9 +226,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       } else {
         removeArc_allarcs(g, i, j, arcidx);        
       }
-      Ndel++;
-    } else {
-      Nadd++;
     }
 
     total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, n_attr_interaction,
