@@ -136,7 +136,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   bool    isDelete;
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double  total;        /* sum of theta*changestats */
-  uint_t  accepted = 0; /* number of accepted moves */
+  ulong_t accepted = 0; /* number of accepted moves */
   double  acceptance_rate;
   uint_t  i,j,k,l;
   uint_t  arcidx = 0;
@@ -219,7 +219,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     /* The change statistics are all computed on the basis of adding arc i->j
        so for a delete move, we (perhaps temporarily) remove it to compute the
        change statistics, and negate them */
-    SAMPLER_DEBUG_PRINT(("%s %d -> %d\n",isDelete ? "del" : "add", i, j));
     if (isDelete) {
       if (useConditionalEstimation){
         removeArc_allinnerarcs(g, i, j, arcidx);
@@ -237,10 +236,16 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                             attr_interaction_pair_indices,
                             theta, isDelete, changestats);
 
+    SAMPLER_DEBUG_PRINT(("%s %d -> %d alpha = %g\n",
+			 isDelete ? "del" : "add", i, j, exp(total)));
+
     
     /* now exp(total) is the acceptance probability */
     if (urand() < exp(total)) {
       accepted++;
+      SAMPLER_DEBUG_PRINT(("[%s] accepted = %lu (%g) num_arcs = %u\n", 
+			   isDelete ? "del" :  "add",
+			   accepted, k>0?(double)accepted/k:-1, g->num_arcs));
       if (performMove) {
         /* actually do the move. If deleting, already done it. For add, add
            the arc now */
