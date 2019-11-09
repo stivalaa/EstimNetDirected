@@ -236,6 +236,12 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                             attr_interaction_pair_indices,
                             theta, isDelete, changestats);
 
+    /* TODO FIXME need to adjust the acceptance probability
+       as done in MHproposals.c MH_TNT() in statnet ergm code, similarly 
+       (but not identical) to how it is done using auxiliary variable
+       in IFD sampler (but does not seem to be described in detail in any
+       paper for TNT sampler, unlike for IFD sampler). */
+       
     SAMPLER_DEBUG_PRINT(("%s %d -> %d alpha = %g\n",
 			 isDelete ? "del" : "add", i, j, exp(total)));
 
