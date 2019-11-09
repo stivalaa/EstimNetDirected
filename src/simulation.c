@@ -566,6 +566,14 @@ int do_simulation(sim_config_t * config)
        return -1;
      }
    }
+   /* ensure number of arcs sepcified for TNT sampler also */
+   if (config->useTNTsampler)  {
+     if (config->numArcs == 0) {
+       fprintf(stderr, "ERROR: must specify nonzero numArcs when "
+               "using TNT sampler\n");
+       return -1;
+     }
+   }
 
    /* Give warnings if parameters set that are not used in selected
       algorithm variation */
@@ -580,9 +588,10 @@ int do_simulation(sim_config_t * config)
    /* allocate change statistics array and initialize to zero */
    dzA = (double *)safe_calloc(num_param, sizeof(double));
    
-   if (config->useIFDsampler) {
+   if (config->useIFDsampler || config->useTNTsampler) {
      /* Initialize the graph to random (E-R aka Bernoulli) graph with
-        specified number of arcs for fixed density simulation */
+        specified number of arcs for fixed density simulation (IFD sampler),
+	and also for TNT sampler since it does 50% add/delete moves */
      make_erdos_renyi_digraph(g, config->numArcs,
                               num_param, n_attr, n_dyadic, n_attr_interaction,
                               config->param_config.change_stats_funcs,

@@ -270,7 +270,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         for (l = 0; l < n; l++)
           addChangeStats[l] += changestats[l];
       }
-      isDelete = !isDelete;
     } else {
       /* move not acceptd, so reverse change for delete */
       if (isDelete) {
