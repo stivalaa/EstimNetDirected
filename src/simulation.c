@@ -19,6 +19,7 @@
 #include "digraph.h"
 #include "basicSampler.h"
 #include "ifdSampler.h"
+#include "tntSampler.h"
 #include "simulation.h"
 
 
@@ -284,6 +285,21 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
                                    forbidReciprocity);
+    } else if (useTNTsampler) {
+      acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
+				   n_attr_interaction,
+				   change_stats_funcs, 
+				   attr_change_stats_funcs,
+				   dyadic_change_stats_funcs,
+				   attr_interaction_change_stats_funcs,
+				   attr_indices,
+				   attr_interaction_pair_indices,
+				   theta,
+				   addChangeStats, delChangeStats,
+				   burnin,
+				   TRUE,/*actually do moves*/
+				   useConditionalSimulation,
+				   forbidReciprocity);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -325,6 +341,21 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
                                    forbidReciprocity);
+    } else if (useTNTsampler) {
+      acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
+				   n_attr_interaction,
+				   change_stats_funcs, 
+				   attr_change_stats_funcs,
+				   dyadic_change_stats_funcs,
+				   attr_interaction_change_stats_funcs,
+				   attr_indices,
+				   attr_interaction_pair_indices,
+				   theta,
+				   addChangeStats, delChangeStats,
+                                     interval,
+				   TRUE,/*actually do moves*/
+				   useConditionalSimulation,
+				   forbidReciprocity);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,

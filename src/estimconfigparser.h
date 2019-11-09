@@ -26,6 +26,7 @@
 #define DEFAULT_LEARNING_RATE 0.001   /* default value of learningRate */
 #define DEFAULT_MIN_THETA     0.01    /* default value of minTheta */
 
+//TODO: add useTNTsampler option
 
 /*****************************************************************************
  *

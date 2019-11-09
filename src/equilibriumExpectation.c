@@ -49,7 +49,7 @@
 #include "ifdSampler.h"
 #include "equilibriumExpectation.h"
 
-   
+//TODO: add useTNTsampler option   
 
 /*****************************************************************************
  *

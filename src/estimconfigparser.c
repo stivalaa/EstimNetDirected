@@ -33,6 +33,7 @@
  *
  ****************************************************************************/
 
+//TODO: add useTNTsampler option
 
 /* 
  * Configuration parameter names, types and descriptions. These 
