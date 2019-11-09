@@ -264,6 +264,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (useIFDsampler)
     printf("IFD sampler ifd_K = %g initial auxiliary parameter V = %g\n",
            ifd_K, ifd_aux_param);
+  else if (useTNTsampler)
+    printf("TNT sampler\n");
   if (useConditionalSimulation)
     printf("Doing conditional simulation of snowball sample\n");
   if (forbidReciprocity)
