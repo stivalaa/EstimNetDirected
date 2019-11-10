@@ -245,12 +245,11 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     /* adjust the acceptance probability as done in MHproposals.c
        MH_TNT() in statnet ergm code */
     if (isDelete) {
-      total += log( (g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
-		     g->num_arcs / (odds * num_dyads + g->num_arcs)) );
+      total += log( g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
+		    g->num_arcs / (odds * num_dyads + g->num_arcs) );
     } else {
-      /* FIXME different case for 0 outedges */
-      total += log( (g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
-		     g->num_arcs / (odds * num_dyads + g->num_arcs)) );
+      total += log( g->num_arcs == 0 ? prob * num_dyads + (1 - prob) :
+		    1 + (odds * num_dyads) / (g->num_arcs + 1) );
     }
 
     /* now exp(total) is the acceptance probability */
