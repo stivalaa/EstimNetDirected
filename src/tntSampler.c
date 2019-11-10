@@ -140,8 +140,13 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double  acceptance_rate;
   uint_t  i,j,k,l;
   uint_t  arcidx = 0;
-
-  
+  double  alpha;
+  const double prob      = 0.5; /* equal probability of add or delete */
+  const double odds      = prob / (1 - prob);
+  double       N         = g->num_nodes;
+  double       num_dyads = N*(N-1);/*directed so not div by 2*/
+    
+    
   for (i = 0; i < n; i++) {
     addChangeStats[i] = delChangeStats[i] = 0;
   }
@@ -149,7 +154,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (k = 0; k < sampler_m; k++) {
 
     if (g->num_arcs > 0)
-      isDelete = (urand() < 0.5); /*add or delete move with equal probability*/
+      isDelete = (urand() < prob); /*add or delete move with equal probability*/
     else
       isDelete = FALSE; /* force an add move on empty graph */
 
@@ -236,18 +241,25 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                             attr_interaction_pair_indices,
                             theta, isDelete, changestats);
 
-    /* TODO FIXME need to adjust the acceptance probability
-       as done in MHproposals.c MH_TNT() in statnet ergm code, similarly 
-       (but not identical) to how it is done using auxiliary variable
-       in IFD sampler (but does not seem to be described in detail in any
-       paper for TNT sampler, unlike for IFD sampler). */
-       
-    SAMPLER_DEBUG_PRINT(("%s %d -> %d alpha = %g\n",
-			 isDelete ? "del" : "add", i, j, exp(total)));
-
     
+    /* adjust the acceptance probability as done in MHproposals.c
+       MH_TNT() in statnet ergm code */
+    if (isDelete) {
+      total += log( (g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
+		     g->num_arcs / (odds * num_dyads + g->num_arcs)) );
+    } else {
+      /* FIXME different case for 0 outedges */
+      total += log( (g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
+		     g->num_arcs / (odds * num_dyads + g->num_arcs)) );
+    }
+
     /* now exp(total) is the acceptance probability */
-    if (urand() < exp(total)) {
+    alpha = exp(total);
+    
+    SAMPLER_DEBUG_PRINT(("%s %d -> %d alpha = %g\n",
+			 isDelete ? "del" : "add", i, j, alpha));
+
+    if (urand() < alpha) {
       accepted++;
       SAMPLER_DEBUG_PRINT(("[%s] accepted = %lu (%g) num_arcs = %u\n", 
 			   isDelete ? "del" :  "add",
