@@ -567,12 +567,9 @@ int do_simulation(sim_config_t * config)
                "using IFD sampler\n");
        return -1;
      }
-   }
-   /* ensure number of arcs sepcified for TNT sampler also */
-   if (config->useTNTsampler)  {
-     if (config->numArcs == 0) {
-       fprintf(stderr, "ERROR: must specify nonzero numArcs when "
-               "using TNT sampler\n");
+   } else  {
+     if (config->numArcs != 0) {
+       fprintf(stderr, "ERROR: numArcs only used for IFD sampler\n");
        return -1;
      }
    }
@@ -590,7 +587,7 @@ int do_simulation(sim_config_t * config)
    /* allocate change statistics array and initialize to zero */
    dzA = (double *)safe_calloc(num_param, sizeof(double));
    
-   if (config->useIFDsampler || config->useTNTsampler) {
+   if (config->useIFDsampler) {
      /* Initialize the graph to random (E-R aka Bernoulli) graph with
         specified number of arcs for fixed density simulation (IFD sampler),
 	and also for TNT sampler since it does 50% add/delete moves */
