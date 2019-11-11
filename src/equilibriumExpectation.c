@@ -579,6 +579,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (useIFDsampler)
     printf("task %u: IFD sampler ifd_K = %g, arcCorrection = %g\n",
            tasknum, ifd_K, arcCorrection(g));
+  else if (useTNTsampler)
+    printf("task %u: TNT sampler\n", tasknum);
 
   if (useConditionalEstimation)
     printf("task %u: Doing conditional estimation of snowball sample\n",
