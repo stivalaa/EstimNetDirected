@@ -32,6 +32,8 @@ EEsteps= 500 # steps of Algorithm EE.
 EEinnerSteps = 100 # inner iterations of Algorithm EE
 
 
+outputSimulatedNetwork = True  # write the simulated network to file
+
 ################## Input filenames ###########################################
 
 
@@ -78,6 +80,8 @@ thetaFilePrefix = theta_ifd_sim_n1000_sample
 
 dzAFilePrefix = dzA_ifd_sim_n1000_sample
 
+# Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
+simNetFilePrefix = sim_ifd_sim_n1000_sample
 
 ################## Parameters to estimate ####################################
 
