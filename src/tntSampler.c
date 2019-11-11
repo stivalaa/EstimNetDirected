@@ -158,6 +158,12 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     else
       isDelete = FALSE; /* force an add move on empty graph */
 
+    /* TODO with conditional estimation may still crash as
+       g->num_inner_arcs it the relevant count not g->num_arcs.  Also
+       (not conditional estimation) should handle case of graph
+       becoming full i.e. g->num_arcs == num_dyads in which case we
+       cannot do an add move */
+    
     if (useConditionalEstimation) {
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
       if (isDelete) {
@@ -244,6 +250,9 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     
     /* adjust the acceptance probability as done in MHproposals.c
        MH_TNT() in statnet ergm code */
+    /* FIXME this may not be correct if conditional estimation
+       is used as then g->num_inner_arcs is the relevant number
+       not g->num_arcs */
     if (isDelete) {
       total += log( g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
 		    g->num_arcs / (odds * num_dyads + g->num_arcs) );
