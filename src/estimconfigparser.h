@@ -26,7 +26,6 @@
 #define DEFAULT_LEARNING_RATE 0.001   /* default value of learningRate */
 #define DEFAULT_MIN_THETA     0.01    /* default value of minTheta */
 
-//TODO: add useTNTsampler option
 
 /*****************************************************************************
  *
@@ -47,6 +46,7 @@ typedef struct estim_config_s {
   uint_t EEinnerSteps;    /* inner iterations of Algorithm EE */
   bool   outputAllSteps;   /* write theta and dzA every iteration not just outer*/
   bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
+  bool   useTNTsampler;   /* Use TNT sampler (not basic or IFD sampler) */
   double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
   bool  outputSimulatedNetwork; /* output simulated network at end */
   char *arclist_filename; /* filename of Pajek file with digraph to estimate */

@@ -33,7 +33,6 @@
  *
  ****************************************************************************/
 
-//TODO: add useTNTsampler option
 
 /* 
  * Configuration parameter names, types and descriptions. These 
@@ -67,6 +66,9 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
 
   {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(estim_config_t, useIFDsampler),
    "use Improved Fixed Density sampler instead of basic sampler"},
+
+  {"useTNTsampler", PARAM_TYPE_BOOL,    offsetof(estim_config_t, useTNTsampler),
+   "use Tie-No-Tie sampler instead of basic or IFD sampler"},
 
   {"ifd_K",         PARAM_TYPE_DOUBLE,  offsetof(estim_config_t, ifd_K),
    "multiplier for auxiliary parameter step size in IFD sampler"},
@@ -172,6 +174,7 @@ estim_config_t ESTIM_CONFIG = {
   100,   /* EEinnerSteps */
   FALSE, /* outputAllSteps */
   FALSE, /* useIFDsampler */
+  FALSE, /* useTNTsampler */
   DEFAULT_IFD_K,   /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
   NULL,  /* arclist_filename */
@@ -245,6 +248,7 @@ static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* EEinnerSteps */
   FALSE, /* outputAllSteps */
   FALSE, /* useIFDsampler */
+  FALSE, /* useTNTsampler */
   FALSE, /* ifd_K */
   FALSE, /* outputSimulatedNetwork */
   FALSE, /* arclist_filename */

@@ -47,9 +47,8 @@
 #include "loadDigraph.h"
 #include "basicSampler.h"
 #include "ifdSampler.h"
+#include "tntSampler.h"
 #include "equilibriumExpectation.h"
-
-//TODO: add useTNTsampler option   
 
 /*****************************************************************************
  *
@@ -100,6 +99,7 @@
  *                   (only used if useIFDsampler is True).
  *   useConditionalEstimation - do conditional estimation of snowball sample
  *   forbidReciprocity - if True do not allow reciprocated arcs.
+ *   useTNTsampler     - use TNT sampler not IFD or basic.
  *
  * Return value:
  *   None.
@@ -126,7 +126,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  bool useIFDsampler,
                  double ifd_K,
                  bool useConditionalEstimation,
-                 bool forbidReciprocity)
+                 bool forbidReciprocity, bool useTNTsampler)
 {
   uint_t t, l;
   double acceptance_rate;
@@ -166,6 +166,20 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    forbidReciprocity);
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
+    } else if (useTNTsampler) {
+      acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
+				   n_attr_interaction,
+				   change_stats_funcs,
+				   attr_change_stats_funcs,
+				   dyadic_change_stats_funcs,
+				   attr_interaction_change_stats_funcs,
+				   attr_indices,
+				   attr_interaction_pair_indices,
+				   theta,
+				   addChangeStats, delChangeStats, sampler_m,
+                                     FALSE, useConditionalEstimation,
+				   forbidReciprocity);
+      
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -269,6 +283,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *  minTheta          - small positive constant c in Borisenko update step
  *                      to avoid zero step at zero parameter values if
  *                      useBorisenkoUpdate is true.
+ *   useTNTsampler     - use TNT sampler not IFD or basic.
  *
  * Return value:
  *   None.
@@ -294,7 +309,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalEstimation,
                   bool forbidReciprocity, bool useBorisenkoUpdate,
-                  double learningRate, double minTheta)
+                  double learningRate, double minTheta,
+		  bool useTNTsampler)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -361,6 +377,21 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
           /* Arc parameter for IFD sampler is auxiliary parameter adjusted */
           fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
         }
+      } else if (useTNTsampler) {
+        acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
+				     n_attr_interaction,
+				     change_stats_funcs, 
+				     attr_change_stats_funcs,
+				     dyadic_change_stats_funcs,
+				     attr_interaction_change_stats_funcs,
+				     attr_indices,
+				     attr_interaction_pair_indices,
+				     theta,
+				     addChangeStats, delChangeStats,
+				     sampler_m,
+				     TRUE,/*Algorithm EE actually does moves*/
+				     useConditionalEstimation,
+				     forbidReciprocity);
       } else {
         acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                        n_attr_interaction,
@@ -497,7 +528,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *  minTheta          - small positive constant c in Borisenko update step
  *                      to avoid zero step at zero parameter values if
  *                      useBorisenkoUpdate is true.
- *   
+ *  useTNTsampler     - use TNT sampler not IFD or basic.
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -521,7 +552,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 bool useIFDsampler, double ifd_K,
                 bool useConditionalEstimation,
                 bool forbidReciprocity, bool useBorisenkoUpdate,
-                double learningRate, double minTheta)
+                double learningRate, double minTheta,
+		bool useTNTsampler)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -531,6 +563,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   /*array of n derivative estimate values corresponding to theta. */  
   double *Dmean = (double *)safe_malloc(n*sizeof(double));
 
+  assert(!(useIFDsampler && useTNTsampler));
+    
   if (useBorisenkoUpdate) {
     printf("task %u:  ACA_S = %g, Borisenko update learningRate = %g, "
            "minTheta = %g, samplerSteps = %u, "
@@ -579,7 +613,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
               attr_interaction_change_stats_funcs,
               attr_indices, attr_interaction_pair_indices,
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
-              ifd_K, useConditionalEstimation, forbidReciprocity);
+              ifd_K, useConditionalEstimation, forbidReciprocity,
+	      useTNTsampler);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -625,7 +660,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
 		 useIFDsampler, ifd_K, useConditionalEstimation,
 		 forbidReciprocity, useBorisenkoUpdate, learningRate,
-                 minTheta);
+                 minTheta, useTNTsampler);
 
     gettimeofday(&end_timeval, NULL);
     timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -817,6 +852,14 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
      }
    }
 
+   /* Only one sampler can be used (only binary attributes in config,
+      did not include multiple options (maybe should) */
+   if (config->useIFDsampler && config->useTNTsampler) {
+     fprintf(stderr, "ERROR: Only one of the useIFDsampler and"
+	     " useTNTsampler options may be used\n");
+     return -1;
+   }
+   
    /* Give warnings if parameters set that are not used in selected
       algorithm variation */
    if (!config->useIFDsampler &&
@@ -945,7 +988,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
               config->useConditionalEstimation,
               config->forbidReciprocity,
               config->useBorisenkoUpdate, config->learningRate,
-              config->minTheta);
+              config->minTheta, config->useTNTsampler);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);

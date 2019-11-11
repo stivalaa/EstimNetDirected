@@ -541,7 +541,7 @@ int do_simulation(sim_config_t * config)
       did not include multiple options (maybe should) */
    if (config->useIFDsampler && config->useTNTsampler) {
      fprintf(stderr, "ERROR: Only one of the useIFDsampler and"
-	     " use TNTsampler options may be used\n");
+	     " useTNTsampler options may be used\n");
      return -1;
    }
 

@@ -51,7 +51,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  FILE *theta_outfile,
                  bool useIFDsampler, double ifd_K,
                  bool useConditionalEstimation,
-                 bool forbidReciprocity);
+                 bool forbidReciprocity,
+		 bool useTNTsampler);
 
 void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
@@ -72,7 +73,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useConditionalEstimation,
                   bool forbidReciprocity,
                   bool useBorisenkoUpdate,
-                  double learningRate, double minTheta);
+                  double learningRate, double minTheta,
+		  bool useTNTsampler);
 
 
 int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
@@ -91,7 +93,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 bool useIFDsampler, double ifd_K,
                 bool useConditionalEstimation,
                 bool forbidReciprocity,
-                bool useBorisenkoUpdate, double learningRate, double minTheta);
+                bool useBorisenkoUpdate, double learningRate, double minTheta,
+		bool useTNTsampler);
 
 int do_estimation(estim_config_t *config, uint_t tasknum);
 
