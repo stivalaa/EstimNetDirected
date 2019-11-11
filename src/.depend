@@ -10,7 +10,7 @@ basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h \
  digraph.h basicSampler.h
 equilibriumExpectation.o: equilibriumExpectation.c utils.h digraph.h \
  loadDigraph.h changeStatisticsDirected.h basicSampler.h ifdSampler.h \
- equilibriumExpectation.h estimconfigparser.h configparser.h
+ tntSampler.h equilibriumExpectation.h estimconfigparser.h configparser.h
 configparser.o: configparser.c configparser.h utils.h \
  changeStatisticsDirected.h digraph.h
 estimconfigparser.o: estimconfigparser.c estimconfigparser.h \
