@@ -22,6 +22,7 @@ outputSimulatedNetworks = True   # write the simulated network to file
 useIFDsampler = False  # use the IFD sampler
 ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 
+useTNTsampler = true # use the tie-no-tie sampler
 
 
 ################## Input filenames ###########################################
