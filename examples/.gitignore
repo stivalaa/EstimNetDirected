@@ -52,3 +52,9 @@ simulation_estimated_sim_n2000_cont_sample.pdf
 stats_estimated_sim_n2000_cont_sample-plots.eps
 stats_sim_n2000_sample_tnt.txt
 stats_sim_n2000_sample_tnt-plots.eps
+config_example_tnt.txt
+dzA_tnt_sim_n1000_sample_*.txt
+sim_tnt_sim_n1000_sample_*.net
+theta_tnt_sim_n1000_sample_*.txt
+dzA_tnt_sim_n1000_sample.pdf
+theta_tnt_sim_n1000_sample.pdf
