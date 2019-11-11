@@ -756,6 +756,14 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     
   theta = (double *)safe_malloc(num_param*sizeof(double));
 
+  /* Only one sampler can be used (only binary attributes in config,
+     did not include multiple options (maybe should) */
+  if (config->useIFDsampler && config->useTNTsampler) {
+    fprintf(stderr, "ERROR: Only one of the useIFDsampler and"
+	     " useTNTsampler options may be used\n");
+    return -1;
+  }
+  
   if (computeStats) {
     /* allocate change statistics array and initialize to zero */
     graphStats = (double *)safe_calloc(num_param, sizeof(double));
@@ -852,13 +860,6 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
      }
    }
 
-   /* Only one sampler can be used (only binary attributes in config,
-      did not include multiple options (maybe should) */
-   if (config->useIFDsampler && config->useTNTsampler) {
-     fprintf(stderr, "ERROR: Only one of the useIFDsampler and"
-	     " useTNTsampler options may be used\n");
-     return -1;
-   }
    
    /* Give warnings if parameters set that are not used in selected
       algorithm variation */
