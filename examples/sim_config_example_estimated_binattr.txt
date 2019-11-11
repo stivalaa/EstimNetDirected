@@ -24,6 +24,8 @@ useIFDsampler = True  # use the IFD sampler
 ifd_K = 0.1   # multiplier for step size of IFD auxiliary parameter
 numArcs = 4895 # required for IFD sampler
 
+#useTNTsampler = True # use the tie-no-tie sampler
+
 
 ################## Input filenames ###########################################
 
