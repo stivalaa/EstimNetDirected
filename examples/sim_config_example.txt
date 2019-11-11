@@ -70,7 +70,7 @@ simNetFilePrefix = simulation_sim_n2000_sample
 
 
 
-structParams =  {Arc            = -4.00, 
+structParams =  {Arc            = -4.00,
                  Reciprocity    =  4.25,
                  AltInStars     = -1.00,
                  AltOutStars    = -0.50, 
