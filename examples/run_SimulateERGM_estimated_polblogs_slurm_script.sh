@@ -10,6 +10,8 @@ ROOT=..
 
 module load R
 
+rm simulation_estimated_polblogs_*.net
+
 time ${ROOT}/src/SimulateERGM  sim_config_estimated_polblogs.txt
 
 time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R stats_sim_estimated_polblogs.txt  obs_stats_ifd_boriseko_polblogs_0.txt

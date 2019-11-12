@@ -13,14 +13,17 @@ numNodes = 1490 # Number of nodes in directed graph
 sampleSize = 100 #number of network samples to take from simulation
 
  
-interval = 500000 # interval (iterations) between samples
+interval = 100000 # interval (iterations) between samples
  
-burnin = 500000000 # number of iterations to throw away before first sample
+burnin = 1000000000 # number of iterations to throw away before first sample
 
 outputSimulatedNetworks = True  # write the simulated networks to file
 
 
 useTNTsampler = True # use the tie-no-tie sampler
+
+#useIFDsampler = True # use the IFD sampler
+#numArcs = 19022 # fixed density for IFD sampler
 
 
 ################## Input filenames ###########################################
