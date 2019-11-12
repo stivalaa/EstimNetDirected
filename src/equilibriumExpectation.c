@@ -965,6 +965,9 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   /* output the observed sufficient statistics if selected */
   if (computeStats) {
     fprintf(obs_stats_outfile, "%s\n", fileheader);
+    if (config->useIFDsampler) { /* Arc stat not in array, output separately */
+      fprintf(obs_stats_outfile, "%u ", g->num_arcs);
+    }
     for (i = 0; i < num_param; i++) {
       fprintf(obs_stats_outfile, "%g", graphStats[i]);
       if (i == num_param-1)
