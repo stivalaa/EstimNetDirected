@@ -33,6 +33,10 @@ EEsteps= 1500 # steps of Algorithm EE.
 EEinnerSteps = 100 # inner iterations of Algorithm EE 
 
 
+outputSimulatedNetwork = True  # write the simulated network to file
+
+computeStats = True # compute observed sufficient statistics
+
 ################## Input filenames ###########################################
 
 
@@ -78,6 +82,15 @@ thetaFilePrefix = theta_ifd_borisenko_polblogs
 # values output file prefix 
 
 dzAFilePrefix = dzA_ifd_borisenko_polblogs
+
+# Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
+
+simNetFilePrefix = sim_ifd_borisenko_polblogs
+
+
+# prefix for observed network statistics
+
+observedStatsFilePrefix = obs_stats_ifd_boriseko_polblogs
 
 
 ################## Parameters to estimate ####################################
