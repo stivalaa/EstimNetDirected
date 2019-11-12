@@ -61,3 +61,8 @@ theta_tnt_sim_n1000_sample.pdf
 sim_ifd_sim_n1000_sample_*.net
 obs_stats_ifd_boriseko_polblogs_0.txt
 sim_ifd_borisenko_polblogs_*.net
+simulation_estimated_polblogs_*.net
+simulation_estimated_polblogs.pdf
+stats_sim_estimated_polblogs.txt
+stats_sim_polblogs.txt
+
