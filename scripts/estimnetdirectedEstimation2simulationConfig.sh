@@ -13,10 +13,15 @@
 # file (for number of nodes), output file names (obseved network statistics)
 # etc.
 # 
-# Usage: estimnetdirectedEstimation2simulationConfig.sh estimation_config_file estimationoutputfile
+# Usage: estimnetdirectedEstimation2simulationConfig.sh estimation_config_file estimationoutputfile statsoutputfile
+#
+#  estmiation_config_file is the config file that generated the
+#      estimationoutputfile
+#  statsoutputfile is the file to write the simulated network stats to
+#    (this is written in the output config file)
 #
 # E.g.:
-#   estimnetdirectedEstimation2simulationConfig.sh config_example.txt estimation.out
+#   estimnetdirectedEstimation2simulationConfig.sh config_example.txt estimation.out stats_estimation.out
 #
 # Output is to stdout
 #
@@ -24,13 +29,14 @@
 
 
 
-if [ $# -ne 2 ]; then
-    echo "usage: $0 estimation_config.txt estimation.out" >&2
+if [ $# -ne 3 ]; then
+    echo "usage: $0 estimation_config.txt estimation.out statsoutputfilename" >&2
     exit 1
 fi
 
 estimationconfig=$1
 estimationresults=$2
+statsFile=$3
 
 estimnet_tmpfile=`mktemp`
 
@@ -53,7 +59,7 @@ useTNTsampler = True # use the tie-no-tie sampler
 sampleSize = 100 #number of network samples to take from simulation
 interval = 100000 # interval (iterations) between samples
 burnin = 100000000 # number of iterations to throw away before first sample
-outputSimulatedNetworks = True  # write the simulated networks to file
+outputSimulatedNetworks = False
 EOF
 
 # we need the attribute files, directly from the esetimation config file
@@ -61,6 +67,10 @@ grep -i binattrFile ${estimationconfig}
 grep -i catattrFile ${estimationconfig}
 grep -i contattrFile ${estimationconfig}
 grep -i setattrFile ${estimationconfig}
+
+
+echo "# Filename of file to write statistics to"
+echo "statsFile = ${statsFile}"
 
 
 # new version has results starting at line following "Pooled" at start
