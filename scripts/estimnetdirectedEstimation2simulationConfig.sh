@@ -52,7 +52,6 @@ effectlist=`cat ${estimnet_tmpfile} |  awk '{print $1}' | sort | uniq`
 
 for effect in ${effectlist}
 do
-  echo -n "${effect} " | tr '_' ' '
   estimnet_point=`grep -w ${effect} ${estimnet_tmpfile} | awk '{print $2}'`
   echo $effect $estimnet_point #XXX
 done
