@@ -107,8 +107,8 @@ echo
 echo
 echo 'attrParams = {'
 # convert e.g. "MatchingReciprocity_value = -1.712176"
-# to "MatchingReciprocity(value) = -1.712176"s
-cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9]*\) = \([0-9]*\)/\1(\2) = \3/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
+# to "MatchingReciprocity(value = -1.712176)"
+cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
 echo
 
 rm ${estimnet_tmpfile} ${estimnet_tmpfile2}
