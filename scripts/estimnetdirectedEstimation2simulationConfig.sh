@@ -102,7 +102,7 @@ done > ${estimnet_tmpfile2}
 # will break if any of hte attributes have an underscore in them... 
 
 echo 'structParams = {'
-cat ${estimnet_tmpfile2} | fgrep -v _ | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/\n/g'
+cat ${estimnet_tmpfile2} | fgrep -v _ | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
 echo
 echo
 echo 'attrParams = {'
