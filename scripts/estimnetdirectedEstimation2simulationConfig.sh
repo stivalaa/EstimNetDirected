@@ -56,7 +56,7 @@ numNodes=`cat ${arclistFile} | grep -i '^*Vertices'| awk '{print $2}'`
 
 echo "numNodes = ${numNodes}"
 
-echo <<EOF
+cat <<EOF
 useTNTsampler = True # use the tie-no-tie sampler
 sampleSize = 100 #number of network samples to take from simulation
 interval = 100000 # interval (iterations) between samples
