@@ -13,15 +13,17 @@
 # file (for number of nodes), output file names (obseved network statistics)
 # etc.
 # 
-# Usage: estimnetdirectedEstimation2simulationConfig.sh estimation_config_file estimationoutputfile statsoutputfile
+# Usage: estimnetdirectedEstimation2simulationConfig.sh estimation_config_file estimationoutputfile statsoutputfile simNetFilePrefix
 #
 #  estmiation_config_file is the config file that generated the
 #      estimationoutputfile
 #  statsoutputfile is the file to write the simulated network stats to
 #    (this is written in the output config file)
+#  simNetFilePrefix is prefix for simulated Pajek .net files
+#    (this is written in the output config file)
 #
 # E.g.:
-#   estimnetdirectedEstimation2simulationConfig.sh config_example.txt estimation.out stats_estimation.out
+#   estimnetdirectedEstimation2simulationConfig.sh config_example.txt estimation.out stats_estimation.out gof_estimation
 #
 # Output is to stdout
 #
@@ -29,14 +31,15 @@
 
 
 
-if [ $# -ne 3 ]; then
-    echo "usage: $0 estimation_config.txt estimation.out statsoutputfilename" >&2
+if [ $# -ne 4 ]; then
+    echo "usage: $0 estimation_config.txt estimation.out statsoutputfilename simNetFilePrefix" >&2
     exit 1
 fi
 
 estimationconfig=$1
 estimationresults=$2
 statsFile=$3
+simNetFilePrefix=$4
 
 estimnet_tmpfile=`mktemp`
 estimnet_tmpfile2=`mktemp`
@@ -73,7 +76,8 @@ grep -i setattrFile ${estimationconfig}
 
 echo "# Filename of file to write statistics to"
 echo "statsFile = ${statsFile}"
-
+echo "# Prefix of simulated networks in Pajek .net file format"
+echo "simNetFilePrefix = ${simNetFilePrefix}"
 
 # new version has results starting at line following "Pooled" at start
 # of line (pooling the individual run estimates values printed earlier) and

@@ -65,5 +65,12 @@ simulation_estimated_polblogs_*.net
 simulation_estimated_polblogs.pdf
 stats_sim_estimated_polblogs.txt
 stats_sim_polblogs.txt
-
 stats_sim_estimated_polblogs-plots.eps
+estimation_ifd_sim_n1000_sample.out
+obs_stats_ifd_n1000_sample_0.txt
+sim_config_estimated_ifd_sim_n1000_sample.txt
+stats_estimated_ifd_sim_n1000_sample-plots.eps
+stats_estimated_ifd_sim_n1000_sample.txt
+gof_estimated_ifd_sim_n1000_sample_*.net
+obs_sample_statistics_n1000_directed_binattr_sim620000000.txt
+gof_estimated_ifd_sim_n1000_sample.pdf
