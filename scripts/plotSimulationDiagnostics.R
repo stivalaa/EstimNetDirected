@@ -25,6 +25,7 @@
 ## in red on the plots for comparison to the simulated stats.
 ## These observed stats are from the output of EstimNetDirected with
 ## computeStats = TRUE in file specified by observedStatsFilePrefix.
+## The t-ratios of the statistics are also computed and written to stdout.
 ##
 ## Output is postscrpt file basename.eps where basename is from the input
 ## file e.g. stats_sim_n2000_sample-plots.eps
@@ -62,6 +63,9 @@ if (do_obs) {
 
 simstats <- melt(simstats, id=c('t'))
 plotlist <- list()
+if (do_obs) {
+  cat('effect','observed', 'mean', 'sd', 't_ratio', '\n')
+}
 for (statname in statnames) {
     simstats_statname <- simstats[which(simstats$variable == statname),]
 
@@ -93,6 +97,14 @@ for (statname in statnames) {
     }
     p <- p + xlab(statname)
     plotlist <- c(plotlist, list(p))
+
+    ## compute t-ratio
+    if (do_obs && statname != "AcceptanceRate") {
+      simstatvalues<- simstats[which(simstats$variable == statname),"value"]
+      t_ratio <- (mean(simstatvalues) - obsstats[1,statname])/sd(simstatvalues)
+      cat(statname, obsstats[1,statname], mean(simstatvalues),
+           sd(simstatvalues), t_ratio, '\n')
+    }
 }
 
 postscript(paste(basefilename, '-plots.eps', sep=''), onefile=FALSE,
