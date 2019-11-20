@@ -15,6 +15,8 @@ statsfile=stats_estimated_ifd_sim_n1000_sample.txt
 simfileprefix=gof_estimated_ifd_sim_n1000_sample
 
 
+rm ${simfileprefix}_*.net
+
 # generate SimulationERGM config file with parameter values from estimation
 ${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh  config_example_ifd.txt estimation_ifd_sim_n1000_sample.out ${statsfile} ${simfileprefix} > ${config_tmpfile}
 
