@@ -109,10 +109,14 @@ echo 'structParams = {'
 cat ${estimnet_tmpfile2} | fgrep -v _ | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
 echo
 echo
-echo 'attrParams = {'
-# convert e.g. "MatchingReciprocity_value = -1.712176"
-# to "MatchingReciprocity(value = -1.712176)"
-cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
-echo
+# only do attrParams if any in estimation
+fgrep -q _ ${estimnet_tmpfile2}
+if [ $? -eq 0 ]; then
+  echo 'attrParams = {'
+  # convert e.g. "MatchingReciprocity_value = -1.712176"
+  # to "MatchingReciprocity(value = -1.712176)"
+  cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
+  echo
+fi
 
 rm ${estimnet_tmpfile} ${estimnet_tmpfile2}
