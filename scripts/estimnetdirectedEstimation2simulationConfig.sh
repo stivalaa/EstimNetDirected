@@ -73,6 +73,8 @@ grep -i catattrFile ${estimationconfig}
 grep -i contattrFile ${estimationconfig}
 grep -i setattrFile ${estimationconfig}
 
+# options that need to be same in simulation as estimation
+grep -i forbidreciprocity ${estimationconfig}
 
 echo "# Filename of file to write statistics to"
 echo "statsFile = ${statsFile}"
