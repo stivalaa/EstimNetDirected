@@ -720,7 +720,7 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
  */
 double density(const digraph_t *g)
 {
-  return (double)g->num_arcs / (double)(g->num_nodes * (g->num_nodes - 1));
+  return (double)g->num_arcs / ((double)g->num_nodes * (g->num_nodes - 1));
 }
 
 /*
