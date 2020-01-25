@@ -16,6 +16,8 @@ is included. This network was downloaded from Mark Newman's network data page.
 
 If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below (specifically Stivala, Robins, & Lomi (2019) for the EstimNetDirected software, and Byshkin et al. (2018) for the EE algorithm) in any resulting publications.
 
+*Note that there is a peer-reviewed published version of Stivala, Robins, & Lomi (2019) with 2020 publication date in PLOS ONE; however the production process bizarrely introduced serious errors into the results tables (and possibly more, that was enough for me to give up when I saw the tables), which I was not given the chance to check or correct before publication, so please read and cite the arXiv preprint instead, this is the version the reviewers saw).*
+
 ## Funding
 
 Development of the EstimNetDirected software was funded by the Swiss National Science Foundation NRP 75 project number 167326.
