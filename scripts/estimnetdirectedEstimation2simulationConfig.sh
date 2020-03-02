@@ -105,7 +105,7 @@ done > ${estimnet_tmpfile2}
 # Note this separation of the structural from attribute effects
 # depends on assuming that only the attribute effects have an underscore
 # in the names  (separating the parameter from the attribute name) so
-# will break if any of hte attributes have an underscore in them... 
+# will break if any of the attributes have an underscore in them... 
 
 echo 'structParams = {'
 cat ${estimnet_tmpfile2} | fgrep -v _ | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
@@ -117,7 +117,7 @@ if [ $? -eq 0 ]; then
   echo 'attrParams = {'
   # convert e.g. "MatchingReciprocity_value = -1.712176"
   # to "MatchingReciprocity(value = -1.712176)"
-  cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
+  cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9_]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
   echo
 fi
 
