@@ -452,17 +452,28 @@ static int parse_attr_params(FILE *infile, param_config_t *pconfig,
  * is set, and the attr_indices are only built from the names later
  * after the attributes values have been loaded, by calling
  * build_dyadic_indices_from_names().
+ *
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
+ *
  * Return nonzero on error else zero.
  */
 static int parse_one_dyadic_param(const char *paramName,
                                 dyadic_change_stats_func_t *dyadic_change_stats_func,
-                                  FILE *infile, param_config_t *pconfig)
+                                  FILE *infile, param_config_t *pconfig,
+                                  bool requireErgmValue)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
   bool      last_token_was_attrname = FALSE;
   bool      opening = TRUE; /* true for first iteration only to expect '(' */
 
+  if (requireErgmValue) {
+    fprintf(stderr, "Value specification for dyadic parameter not implemented\n");
+    return -1;
+  }
+  
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for dyadicParam %s\n", paramName);
     return 1; 
@@ -522,8 +533,13 @@ static int parse_one_dyadic_param(const char *paramName,
  * table of parameter names and corresponding change statistic
  * functions.  Return nonzero on error else zero.
  *
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
+ *
  */
-static int parse_dyadic_params(FILE *infile, param_config_t *pconfig)
+static int parse_dyadic_params(FILE *infile, param_config_t *pconfig,
+                               bool requireErgmValue)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -560,7 +576,7 @@ static int parse_dyadic_params(FILE *infile, param_config_t *pconfig)
       last_token_was_paramname = TRUE;
       if (parse_one_dyadic_param(DYADIC_PARAMS[i].name,
                                  DYADIC_PARAMS[i].dyadic_change_stats_func,
-                                 infile, pconfig)) {
+                                 infile, pconfig, requireErgmValue)) {
         fprintf(stderr, "ERROR parsing dyadicParams %s\n", DYADIC_PARAMS[i].name);
         return 1;
       }
@@ -583,10 +599,14 @@ static int parse_dyadic_params(FILE *infile, param_config_t *pconfig)
  * names yet, just setting them in
  * CONFIG.param_config.attr_interaction_pair_names[].  Return nonzero on error else
  * zero.
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
  */
 static int parse_one_attr_interaction_param(const char *paramName,
                   attr_interaction_change_stats_func_t *attr_interaction_change_stats_func,
-                  FILE *infile, param_config_t *pconfig)
+                                            FILE *infile, param_config_t *pconfig,
+                                            bool requireErgmValue)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
@@ -594,6 +614,11 @@ static int parse_one_attr_interaction_param(const char *paramName,
   bool      opening = TRUE; /* true for first iteration only to expect '(' */
   uint_t    num_attr_names = 0;
 
+  if (requireErgmValue) {
+    fprintf(stderr, "Value specification for attr interaction parameter not implemented\n");
+    return -1;
+  }
+  
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for attrInteractionParam %s\n",
             paramName);
@@ -687,8 +712,13 @@ static int parse_one_attr_interaction_param(const char *paramName,
  * only built from the names later after the attributes values have
  * been loaded, by calling
  * build_attr_interaction_indices_from_names().
+ *
+ * If requireErgmValue is TRUE then ERGM parameters require a value
+ * (supplied with name = value format) for use in simulation (otherwise
+ * no value allowed, used for estimation).
  */
-static int parse_attr_interaction_params(FILE *infile, param_config_t *pconfig)
+static int parse_attr_interaction_params(FILE *infile, param_config_t *pconfig,
+                                         bool requireErgmValue)
 {
   char        tokenbuf[TOKSIZE];
   char       *token;
@@ -727,7 +757,7 @@ static int parse_attr_interaction_params(FILE *infile, param_config_t *pconfig)
       last_token_was_paramname = TRUE;
       if (parse_one_attr_interaction_param(ATTR_INTERACTION_PARAMS[i].name,
                                ATTR_INTERACTION_PARAMS[i].attr_interaction_change_stats_func,
-                                           infile, pconfig)) {
+                                           infile, pconfig, requireErgmValue)) {
         fprintf(stderr, "ERROR parsing attrInteractionParams %s\n",
                 ATTR_INTERACTION_PARAMS[i].name);
         return 1;
@@ -1585,14 +1615,14 @@ int check_and_set_param_value(const char *paramname,
                   DYADIC_PARAMS_STR);
           return 1;
         }
-        return parse_dyadic_params(infile, pconfig);
+        return parse_dyadic_params(infile, pconfig, requireErgmValue);
       } else if (strcasecmp(paramname, ATTR_INTERACTION_PARAMS_STR) == 0) {
         if (pconfig->num_attr_interaction_change_stats_funcs > 0) {
           fprintf(stderr, "ERROR: %s specified more than once\n",
                   ATTR_INTERACTION_PARAMS_STR);
           return 1;
         }
-        return parse_attr_interaction_params(infile, pconfig);
+        return parse_attr_interaction_params(infile, pconfig, requireErgmValue);
       } else {
         fprintf(stderr, "ERROR (internal): unknown parameter %s\n", paramname);
         return 1;
