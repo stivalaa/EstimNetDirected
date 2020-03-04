@@ -472,6 +472,8 @@ static int parse_one_dyadic_param(const char *paramName,
   bool      opening = TRUE; /* true for first iteration only to expect '(' */
   double    value   = 0;
   char     *endptr; /* for strtod() */
+  uint_t    old_num_dyadic = pconfig->num_dyadic_change_stats_funcs;
+  uint_t    i;
   
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for dyadicParam %s\n", paramName);
@@ -541,10 +543,22 @@ static int parse_one_dyadic_param(const char *paramName,
       return 1;
     }
     CONFIG_DEBUG_PRINT(("dyadicParam value %g\n", value));
-  }
 
+    /* Because is has multiple attribute names, we get multiple entries for the
+       change statistic - so put the a copy of the value for each one.
+       This will be fixed up later in build_dyadic_indices_from_names(). */
+    /* TODO this system of ad hoc handling of dyadic parameters was
+       alright when there was only one (or now two) types but it will
+       be a real mess for any more, should make it more general (and
+       hopefully simpler) */
+    for (i = old_num_dyadic; i < pconfig->num_dyadic_change_stats_funcs; i++) {
+      pconfig->dyadic_param_values =
+        (double *)safe_realloc(pconfig->dyadic_param_values,
+                               (i + 1) * sizeof(double));
+      pconfig->dyadic_param_values[i] = value;
+    }
+  }
   return 0;
-  
 }
 
 /* 

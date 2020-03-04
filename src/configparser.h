@@ -136,6 +136,7 @@ typedef struct param_config_s {
   uint_t *dyadic_indices;  /* idx into digraph binattr/cattr/contattr for above */
   dyadic_type_e *dyadic_types; /* dyadic paramter type corresponding to above */
   const char **dyadic_param_names; /* names corresponding to above two */
+  double      *dyadic_param_values;  /* initial values corr. to above */
   uint_t num_attr_interaction_change_stats_funcs;  /* length of attr_interaction_change_stats_funcs */
   attr_interaction_change_stats_func_t **attr_interaction_change_stats_funcs; /* attr interaction param stats */
   string_pair_t *attr_interaction_pair_names; /* names of pairs of attributes for above */

@@ -210,6 +210,7 @@ estim_config_t ESTIM_CONFIG = {
     NULL,  /* dyadic_indices */
     NULL,  /* dyadic_types */
     NULL,  /* dyadic_param_names */
+    NULL,  /* dyadic_param_values */
     0,     /* num_attr_interaction_change_stats_funcs */
     NULL,  /* attr_attr_interaction_change_stats_funcs */
     NULL,  /* attr_interaction_names */
