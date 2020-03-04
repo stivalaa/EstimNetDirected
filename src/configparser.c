@@ -223,9 +223,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
           fprintf(stderr, "ERROR: expecting floating point value for structParam %s but got '%s'\n", paramname, token);
           return 1;
         }
-        if (requireErgmValue) {
-          CONFIG_DEBUG_PRINT(("structParam value %g\n", value));
-        }
+        CONFIG_DEBUG_PRINT(("structParam value %g\n", value));
       }
       
       pconfig->param_names = (const char **)safe_realloc(pconfig->param_names,
@@ -320,15 +318,13 @@ static int parse_one_attr_param(const char *paramName,
                     paramName, attrname);
             return -1;
           }
-          CONFIG_DEBUG_PRINT(("parse_attr_params token '%s'\n", token));        
+          CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
           value = strtod(token, &endptr);
           if (*endptr != '\0') {
             fprintf(stderr, "ERROR: expecting floating point value for attrParam %s(%s) but got '%s'\n", paramName, attrname, token);
             return 1;
           }
-          if (requireErgmValue) {
-            CONFIG_DEBUG_PRINT(("attrParam value %g\n", value));
-          }
+          CONFIG_DEBUG_PRINT(("attrParam value %g\n", value));
         }
           
         pconfig->attr_param_names = (const char **)
@@ -454,8 +450,14 @@ static int parse_attr_params(FILE *infile, param_config_t *pconfig,
  * build_dyadic_indices_from_names().
  *
  * If requireErgmValue is TRUE then ERGM parameters require a value
- * (supplied with name = value format) for use in simulation (otherwise
- * no value allowed, used for estimation).
+ * for use in simulation (otherwise no value allowed, used for
+ * estimation). Note that this must be in a different format from that
+ * used for normal attribute paramters, as the dyadic parameter as a list
+ * (of two) attributes inside the parentheses, but just a single value, e.g.
+ * we have 
+ *         dyadicParams =  {logGeoDistance(lat,longi) = -0.9513526}
+ * rather than for example 
+ *         attrParams = {Receiver(teaching_hospital = 0.3689427)}
  *
  * Return nonzero on error else zero.
  */
@@ -468,11 +470,8 @@ static int parse_one_dyadic_param(const char *paramName,
   char     *token;
   bool      last_token_was_attrname = FALSE;
   bool      opening = TRUE; /* true for first iteration only to expect '(' */
-
-  if (requireErgmValue) {
-    fprintf(stderr, "Value specification for dyadic parameter not implemented\n");
-    return -1;
-  }
+  double    value   = 0;
+  char     *endptr; /* for strtod() */
   
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for dyadicParam %s\n", paramName);
@@ -498,6 +497,7 @@ static int parse_one_dyadic_param(const char *paramName,
         }
       } else {
         CONFIG_DEBUG_PRINT(("dyadicParam %s('%s')\n", paramName, token));
+
         last_token_was_attrname = TRUE;
         pconfig->dyadic_param_names = (const char **)
           safe_realloc(pconfig->dyadic_param_names,
@@ -518,6 +518,31 @@ static int parse_one_dyadic_param(const char *paramName,
     }
     token = get_token(infile, tokenbuf);
   }
+  
+  if (requireErgmValue) {
+    if (!(token = get_token(infile, tokenbuf))) {
+      fprintf(stderr, "ERROR: dyadicParams expecting 'dyadicparamname(attr,attr) = value' separated by comma (%s)\n", paramName);
+      return -1;
+    }
+    CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+    if (strcmp(token, "=") != 0) {
+      fprintf(stderr, "ERROR: dyadicParams expecting 'dyadicparamname(attr,attr) = value' separated by comma (%s)\n", paramName);
+      return 1;
+    }
+    if (!(token = get_token(infile, tokenbuf))) {
+      fprintf(stderr, "ERROR: Did not find value for dyadicParams %s)\n",
+              paramName);
+      return -1;
+    }
+    CONFIG_DEBUG_PRINT(("parse_one_dyadic_param token '%s'\n", token));        
+    value = strtod(token, &endptr);
+    if (*endptr != '\0') {
+      fprintf(stderr, "ERROR: expecting floating point value for dyadicParam %s but got '%s'\n", paramName, token);
+      return 1;
+    }
+    CONFIG_DEBUG_PRINT(("dyadicParam value %g\n", value));
+  }
+
   return 0;
   
 }
