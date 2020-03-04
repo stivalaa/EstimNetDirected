@@ -737,7 +737,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     return -1;
   }
   /* and similary for dyadic covariates */
-  if (build_dyadic_indices_from_names(&config->param_config, g) != 0)  {
+  if (build_dyadic_indices_from_names(&config->param_config, g, FALSE) != 0)  {
     fprintf(stderr, "ERROR in dyadic covariate parameters\n");
     return -1;
   }

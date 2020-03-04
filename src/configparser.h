@@ -167,7 +167,8 @@ attr_type_e get_attr_interaction_param_type(const char
                                             *attrInteractionParamName);
 
 int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g);
-int build_dyadic_indices_from_names(param_config_t *pconfig, digraph_t *g);
+int build_dyadic_indices_from_names(param_config_t *pconfig, digraph_t *g,
+                                    bool requireErgmValues);
 int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
                                                    const digraph_t *g);
 

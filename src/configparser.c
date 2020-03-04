@@ -1153,7 +1153,8 @@ int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g)
  * error else 0.
  *
  */
-int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g)
+int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g,
+                                    bool requireErgmValue)
 {
   uint_t i, j;
   bool   found;
@@ -1167,6 +1168,7 @@ int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g)
   int    firstEuclideanIndex   = -1;
   char  *tmpGeoName, *tmpEuclideanName, *tmpGeoParamName, *tmpEuclideanParamName;
   dyadic_change_stats_func_t *tmpGeoFunc, *tmpEuclideanFunc;
+  double tmpGeoValue, tmpEuclideanValue;
   
   pconfig->dyadic_indices = safe_malloc(pconfig->num_dyadic_change_stats_funcs *
                                      sizeof(uint_t));
@@ -1315,6 +1317,10 @@ int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g)
       tmpEuclideanName = safe_strdup(pconfig->dyadic_names[firstEuclideanIndex]);
       tmpEuclideanParamName = safe_strdup(pconfig->dyadic_param_names[firstEuclideanIndex]);
       tmpEuclideanFunc = pconfig->dyadic_change_stats_funcs[firstEuclideanIndex];
+      if (requireErgmValue) {
+        tmpGeoValue = pconfig->dyadic_param_values[firstGeoIndex];
+        tmpEuclideanValue = pconfig->dyadic_param_values[firstEuclideanIndex];
+      }
       pconfig->dyadic_names[0] = tmpGeoName;
       pconfig->dyadic_param_names[0] = tmpGeoParamName;
       pconfig->dyadic_change_stats_funcs[0] = tmpGeoFunc;
@@ -1327,6 +1333,10 @@ int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g)
       free(pconfig->dyadic_names[2]);
       free(pconfig->dyadic_names[3]);
       free(pconfig->dyadic_names[4]);
+      if (requireErgmValue) {
+        pconfig->dyadic_param_values[0] = tmpGeoValue;
+        pconfig->dyadic_param_values[1] = tmpEuclideanValue;
+      }
     } else if (numGeoAttr > 0) {
       /* only [log]GeoDistance */
       assert(firstGeoIndex >= 0);

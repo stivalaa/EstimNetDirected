@@ -462,7 +462,7 @@ int do_simulation(sim_config_t * config)
     return -1;
   }
   /* and similary for dyadic covariates */
-  if (build_dyadic_indices_from_names(&config->param_config, g) != 0)  {
+  if (build_dyadic_indices_from_names(&config->param_config, g, TRUE) != 0)  {
     fprintf(stderr, "ERROR in dyadic covariate parameters\n");
     return -1;
   }
@@ -519,8 +519,7 @@ int do_simulation(sim_config_t * config)
    
    for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs;
         i++, theta_i++) {
-     fprintf(stderr, "TODO: initial values not implemented for dyadic yet\n");assert(FALSE);
-     /*TODO: theta[theta_i] = config->param_config.dyadic_param_values[i]; */
+     theta[theta_i] = config->param_config.dyadic_param_values[i];
      printf("%s = %g\n", config->param_config.dyadic_param_names[i],
             theta[theta_i]);
    }
