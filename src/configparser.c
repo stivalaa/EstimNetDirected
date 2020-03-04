@@ -1481,6 +1481,7 @@ void free_param_config_struct(param_config_t *pconfig)
     free(pconfig->dyadic_names[i]);
   free(pconfig->dyadic_indices);
   free(pconfig->dyadic_types);
+  free(pconfig->dyadic_param_values);
   free(pconfig->attr_interaction_param_names);
   for (i = 0; i < pconfig->num_attr_interaction_change_stats_funcs; i++)  {
     free(pconfig->attr_interaction_pair_names[i].first);
