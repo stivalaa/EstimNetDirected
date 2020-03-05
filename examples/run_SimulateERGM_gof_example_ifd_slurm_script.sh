@@ -8,7 +8,7 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R
+module load R/3.2.5
 
 config_tmpfile=sim_config_estimated_ifd_sim_n1000_sample.txt
 statsfile=stats_estimated_ifd_sim_n1000_sample.txt

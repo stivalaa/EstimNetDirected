@@ -8,7 +8,7 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R
+module load R/3.2.5
 
 rm simulation_estimated_polblogs_*.net
 

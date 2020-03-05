@@ -8,7 +8,7 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R
+module load R/3.2.5
 
 time ${ROOT}/src/SimulateERGM  sim_config_example_estimated_binattr.txt
 

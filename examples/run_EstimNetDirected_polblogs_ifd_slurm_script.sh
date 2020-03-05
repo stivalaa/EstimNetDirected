@@ -9,7 +9,7 @@ echo -n "started at: "; date
 ROOT=..
 
 module load openmpi
-module load R
+module load R/3.2.5
 
 time mpirun ${ROOT}/src/EstimNetDirected_mpi config_polblogs_ifd.txt
 
