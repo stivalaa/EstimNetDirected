@@ -1001,7 +1001,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   if (config->outputSimulatedNetwork) {
     strncpy(sim_outfilename, config->sim_net_file_prefix,
             sizeof(sim_outfilename)-1);
-    sprintf(suffix, "_%d.net", tasknum);
+    sprintf(suffix, "_%d.net", config->outputFileSuffixBase + tasknum);
     strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
             strlen(suffix));
     sim_outfile = fopen(sim_outfilename, "w");

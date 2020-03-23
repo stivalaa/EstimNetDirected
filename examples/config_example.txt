@@ -7,6 +7,8 @@
 
 ################## Algorithm constants #######################################
 
+outputFileSuffixBase = 123
+
 ACA_S = 0.1     # multiplier for step size in Algorithm S
 
 ACA_EE    = 1e-09  # multiplier for step size in Algorithm EE
