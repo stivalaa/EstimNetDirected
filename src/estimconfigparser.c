@@ -134,6 +134,10 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
    offsetof(estim_config_t, obs_stats_file_prefix),
    "observed sufficient statistics output filename prefix"},
 
+  {"outputFileSuffixBase", PARAM_TYPE_UINT,
+   offsetof(estim_config_t, outputFileSuffixBase),
+   "number to add task number to for output file suffixes"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -193,6 +197,7 @@ estim_config_t ESTIM_CONFIG = {
   DEFAULT_MIN_THETA,     /* minTheta */
   FALSE, /* computeStats */
   NULL,  /* obs_stats_file_prefix */
+  0,     /* outputFileSuffixBase */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -268,6 +273,7 @@ static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* minTheta */
   FALSE, /* computeStats */
   FALSE, /* obs_stats_file_prefix */
+  FALSE, /* outputFileSuffixBase */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */
