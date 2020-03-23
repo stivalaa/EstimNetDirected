@@ -55,7 +55,6 @@ typedef struct sim_config_s {
   bool  useConditionalSimulation; /*conditional simulation of snowball sample */
   bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
   uint_t numArcs;         /* number of arcs for IFD simulation (fixed density)*/
-  uint_t outputFileSuffixBase;/* task number added to this for output suffixes*/
 
   /*
    * values built by confiparser.c functions from parsed config settings

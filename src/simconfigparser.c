@@ -103,10 +103,6 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"numArcs",        PARAM_TYPE_UINT,     offsetof(sim_config_t, numArcs),
    "number of arcs for Improved Fixed Density simulation (useIFDsampler=TRUE)"},
 
-  {"outputFileSuffixBase", PARAM_TYPE_UINT,
-   offsetof(sim_config_t, outputFileSuffixBase),
-   "number to add task number to for output file suffixes"},
-
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -156,7 +152,6 @@ sim_config_t SIM_CONFIG = {
   FALSE, /* useConditionalSimulation */
   FALSE, /* forbidReciprocity */
   0,     /* numArcs */
-  0,     /* outputFileSuffixBase */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -222,7 +217,6 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* useConditionalSimulation */
   FALSE, /* forbidReciprocity */
   FALSE, /* numArcs */
-  FALSE, /* outputFileSuffixBase */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */
