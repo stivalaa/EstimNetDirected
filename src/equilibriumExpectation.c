@@ -825,7 +825,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
           sizeof(theta_outfilename)-1);
   strncpy(dzA_outfilename, config->dzA_file_prefix,
           sizeof(dzA_outfilename)-1);
-  sprintf(suffix, "_%d.txt", tasknum);
+  sprintf(suffix, "_%d.txt", config->outputFileSuffixBase + tasknum);
   strncat(theta_outfilename, suffix, sizeof(theta_outfilename) - 1 -
           strlen(suffix));
   strncat(dzA_outfilename, suffix, sizeof(dzA_outfilename) - 1 -
