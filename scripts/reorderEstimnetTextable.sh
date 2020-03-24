@@ -52,9 +52,9 @@ if [ $nuniq != $nfields ]; then
 fi
 
 # assume format of input latex table from estimnetdirectedEstimation2textableMultiModels.sh
-# 7 header rows and 2 trailer rows
+# 7 header rows and 5 trailer rows
 headrows=7
-tailrows=2
+tailrows=5
 head -n${headrows} ${infile}
 cat ${infile} | tail -n+`expr ${headrows} + 1` |head -n-${tailrows} > ${tmpfile}
 nrows=`cat ${tmpfile} | wc -l`

@@ -76,6 +76,9 @@ effectlist=`cat ${estimnet_tmpfile} | fgrep -vw TotalRuns | fgrep -vw ConvergedR
 
 for effect in ${effectlist} ConvergedRuns TotalRuns
 do
+    if [ ${effect} = "ConvergedRuns" ]; then
+        echo '\hline'                
+    fi
     model=1
     echo -n "${effect} " | tr '_' ' '
     while [ $model -le $num_models ]; 
