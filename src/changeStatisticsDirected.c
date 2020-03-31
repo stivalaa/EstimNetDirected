@@ -155,6 +155,79 @@ double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
 }
 
 
+/*
+ * Boundary crossing ratio of a node and its out-neighbours with respect
+ * to a particular set attribute.
+ *
+ * Considering each arc as an arc between each of the clases
+ * in node i, and each of the classes in its out-neighbours,
+ * compute the ratio of 'boundary crossing' 
+ * (different categorical set elements [classes]) to total
+ * number of such virtual arcs between classes.
+ * E.g. if node X has set elements a,b,c and it cites node Y with set elements
+ * a,c,d and node Z with set element b only, then we consider the total of
+ *  3*3 + 3*1 = 12 virtual ties (a-a, a-c, a-d, b-a, b-c,... , c-b); 
+ * i.e. the Cartesian products of these sets. Of these 12 virtual ties 9
+ *  are 'boundary crossing' (a-c, a-d, b-a, ..., but not a-a, c-c, b-b...) 
+ * so we would give it a boundary crossing score of 9/12 = 0.75 
+ * In R or Python (with numpy) we can do this using the vector outer product.
+ * Note that this is like a kind of generalized
+ * or E-I index (although in [0,1] not [-1,+1] - to make it more like E-I index
+ * we would have the numerator as (mismatching - matching) not just mismatching)
+ * applicable to sets of categories on nodes, rather than
+ * just a simple nodal categorical variable.
+ *
+ * Note we ignore NA here. (It should be handled in caller).
+ *
+ * Parameters:
+ *      g - digraph
+ *      i - sender node
+ *      a - set attribute index
+ *
+ * Return value:
+ *    Boundary crossing ratio of node i (with its out-neighbours) on set attr a
+ *
+ * Has external linkage for use in unit tests.
+ */
+double boundary_crossing_ratio(const digraph_t *g, uint_t i, uint_t a)
+{
+  uint_t sender_setlen             = 0;
+  uint_t outneighbour_setlen_total = 0;
+  uint_t mismatching               = 0;
+  uint_t denominator;
+  uint_t v,k,l;
+
+  for (l = 0; l < g->setattr_lengths[a]; l++) {
+    if (g->setattr[a][i][l] == SET_ELEM_PRESENT){
+      sender_setlen++;
+    }
+    for (k = 0; k < g->outdegree[i]; k++) {
+      v = g->arclist[i][k];
+      if (g->setattr[a][v][l] == SET_ELEM_PRESENT) {
+        /* note we increment the count for repeated instances of the
+           same element in multiple out-neighbour nodes, not treated
+           like set union.
+        */
+        outneighbour_setlen_total++;
+        if (g->setattr[a][i][l] == SET_ELEM_ABSENT) {
+          /* set element index l is in this node v but not node i so 
+             mismatch (boundary crossing) */
+          mismatching++;
+        }
+      } else if (g->setattr[a][i][l] == SET_ELEM_PRESENT) {
+        /* set element index l is not in this node v but is in node i so
+           mismatch (boundary crossing) */
+        mismatching++;
+      }
+    }
+  }
+  denominator = sender_setlen * outneighbour_setlen_total;
+  return (double)mismatching / denominator;
+}
+
+
+
+
 
 /*****************************************************************************
  *

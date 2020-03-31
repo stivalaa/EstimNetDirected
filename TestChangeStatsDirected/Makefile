@@ -8,7 +8,8 @@ CFLAGS += -I../src
 OBJS =  ../src/changeStatisticsDirected.o ../src/digraph.o ../src/utils.o ../src/changeStatisticsDirected.o ../src/loadDigraph.o
 HASH_OBJS = $(OBJS:.o=_hash.o)
 
-all: testChangeStatsDirected testChangeStatsDirected_hash testSetFunctions
+all: testChangeStatsDirected testChangeStatsDirected_hash testSetFunctions \
+     testBoundaryCrossingRatio
 
 
 testChangeStatsDirected: testChangeStatsDirectedMain.o $(OBJS)
@@ -19,6 +20,9 @@ testChangeStatsDirected_hash: testChangeStatsDirectedMain_hash.o $(HASH_OBJS)
 
 
 testSetFunctions: testSetFunctions.o  $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testBoundaryCrossingRatio: testBoundaryCrossingRatio.o  $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 

@@ -12,4 +12,5 @@ polblogs_test_results.out
 set_test_input.txt
 set_test_results.out
 set_test_results_check.out
-
+testBoundaryCrossingRatio.exe
+testBoundaryCrossingRatio

@@ -147,6 +147,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
 
 
 double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n);
+double boundary_crossing_ratio(const digraph_t *g, uint_t i, uint_t a);
 
 #endif /* CHANGESTATISTICSDIRECTED_H */
 
