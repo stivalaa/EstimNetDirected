@@ -191,39 +191,19 @@ double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
  */
 double boundary_crossing_ratio(const digraph_t *g, uint_t i, uint_t a)
 {
-  uint_t sender_setlen             = 0;
-  uint_t outneighbour_setlen_total = 0;
-  uint_t mismatching               = 0;
-  uint_t denominator;
-  uint_t v,k,l;
+  /* XXX Decided not to implement this after all: would have to store/convert
+     sets in list (array of elements) format rather than array of flags
+     in order to compute the outer product, also would have to work out
+     and implement correpsonding change statistic. And it seems it doesn't
+     make that much sense anyway, when the outcome variable as in ERGM
+     is log-odds of tie formation- what does it mean for a node to 
+     have a propensity to form a tie based on change to its boundary
+     crossing ratio (diversity) of sets with other out-neighbour nodes? Makes
+     more sense in the conext I wanted to use it of patent citations in the
+     negative binomial regression where the dependent variable is the
+     number of citations of the patent (in-degree) and this is one of the
+     dependent variables. */
 
-  for (l = 0; l < g->setattr_lengths[a]; l++) {
-    if (g->setattr[a][i][l] == SET_ELEM_PRESENT){
-      sender_setlen++;
-    }
-    for (k = 0; k < g->outdegree[i]; k++) {
-      v = g->arclist[i][k];
-      if (g->setattr[a][v][l] == SET_ELEM_PRESENT) {
-        /* note we increment the count for repeated instances of the
-           same element in multiple out-neighbour nodes, not treated
-           like set union.
-        */
-        outneighbour_setlen_total++;
-        if (g->setattr[a][i][l] == SET_ELEM_ABSENT) {
-          /* set element index l is in this node v but not node i so 
-             mismatch (boundary crossing) */
-          mismatching++;
-        }
-      } else if (g->setattr[a][i][l] == SET_ELEM_PRESENT) {
-        /* set element index l is not in this node v but is in node i so
-           mismatch (boundary crossing) */
-        mismatching++;
-      }
-    }
-  }
-  denominator = sender_setlen * outneighbour_setlen_total;
-  fprintf(stderr, "XXX %u / %u\n", mismatching, denominator);
-  return (double)mismatching / denominator;
 }
 
 
