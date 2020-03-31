@@ -1,0 +1,4 @@
+*Vertices 3
+*Arcs
+1 2
+1 3

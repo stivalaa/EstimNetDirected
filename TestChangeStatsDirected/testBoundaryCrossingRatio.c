@@ -32,11 +32,12 @@
 
 int main(int argc, char *argv[]) 
 {
-  uint_t i;
+  uint_t i,j;
   char *arclist_filename = NULL;
   char *set_filename = NULL;
   FILE *file           = NULL;
   uint_t     num_nodes = 0;
+  uint_t num_na_values = 0;
   digraph_t *g         = NULL;
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int    etime;
@@ -81,6 +82,18 @@ int main(int argc, char *argv[])
     fprintf(stderr, "error loading set attributes file %s\n", set_filename);
     exit(1);
   }
+  fprintf(stderr, "%u set attributes\n", g->num_setattr);
+  for (i = 0; i < g->num_setattr; i++) {
+    fprintf(stderr, "  %s (size %u)", g->setattr_names[i], g->setattr_lengths[i]);
+    num_na_values = 0;
+    for (j = 0; j < g->num_nodes; j++) {
+      if (g->setattr[i][j][0] == SET_ELEM_NA) {
+        num_na_values++;
+      }
+    }
+    fprintf(stderr, " has %u NA values\n", num_na_values);
+  }
+
   
   for (i = 0; i < g->num_nodes; i++) {
     printf("%u %g\n", i, boundary_crossing_ratio(g, i, 0));

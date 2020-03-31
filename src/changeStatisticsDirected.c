@@ -222,6 +222,7 @@ double boundary_crossing_ratio(const digraph_t *g, uint_t i, uint_t a)
     }
   }
   denominator = sender_setlen * outneighbour_setlen_total;
+  fprintf(stderr, "XXX %u / %u\n", mismatching, denominator);
   return (double)mismatching / denominator;
 }
 
