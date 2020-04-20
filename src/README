@@ -4,21 +4,26 @@ There are multiple executables built:
 
 Estimation of ERGM parameters (optionally with MPI for parallel runs):
 
-EstimNetDirected                    - arrays for two-path tables
+EstimNetDirected                    - no two-path tables
+EstimNetDirected_arrays             - arrays for two-path tables
 EstimNetDirected_hashtables         - hash tables for two-path tables
-EstimNetDirected_mpi                - MPI with array for two-path tables
+EstimNetDirected_mpi                - MPI with no two-path tables
+EstimNetDirected_mpi_arrays         - MPI with array for two-path tables
 EstimNetDirected_mpi_hashtables     - MPI with hash tables for two-paths tables
 
 Generate networks from ERGM with specified parameters:
 
-SimulateErgm                        - arrays for two-path tables
-SimulateErgm_hashtables             - hash tables for two-path tables
+SimulateERGM                        - no two-path tables
+SimulateERGM_arrays                 - arrays for two-path tables
+SimulateERGM_hashtables             - hash tables for two-path tables
 
 
-The two-path tables are used for fast lookup of two-path counts to make
-change statistic computation faster. Array use a lot of memory and so are
-not scalable to large networks (although are faster when they can be used).
-Hash tables are more scalable (as the two-path arrays are very sparse).
+The two-path tables are used for fast lookup of two-path counts to
+make change statistic computation simpler and faster. Arrays use a lot
+of memory and so are not scalable to large networks (although are
+faster when they can be used). Hash tables are more scalable (as the
+two-path arrays are very sparse). The least memory (and so most scalable)
+method is to not use lookup tables at all.
 
 
 

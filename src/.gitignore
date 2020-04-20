@@ -14,3 +14,9 @@ SimulateERGM
 SimulateERGM_hashtables
 SimulateERGM.exe
 SimulateERGM_hashtables.exe
+EstimNetDirected_arrays.exe
+EstimNetDirected_mpi_arrays.exe
+SimulateERGM_arrays.exe
+EstimNetDirected_arrays
+EstimNetDirected_mpi_arrays
+SimulateERGM_arrays
