@@ -9,6 +9,11 @@
  * neighbours) and fast lookup hash tables for two-paths, and also
  * flat arcs list for fast selection of an arc uniformly at random.
  *
+ * Preprocessor defines used:
+ *
+ *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
+ *    TWOPATH_HASHTABLES  - use hash tables (only if TWOPATH_LOOKUP defined)
+ *
  *
  ****************************************************************************/
 
@@ -57,6 +62,7 @@ static const char *SET_NONE_STRING = "NONE"; /* string in set attribute file
  *
  ****************************************************************************/
 
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 /*
  * Update entry for (i, j) in hashtable.
@@ -168,7 +174,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
     update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
   }
 }
-#else
+#else /* using arrays not hash tables for two-path lookup */
 /*
  * Update the two-paths matrices used for fast computation of change
  * statistics for either adding or removing arc i->j
@@ -220,7 +226,9 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
   }
 }
 #endif /*TWOPATH_HASHTABLES*/
+#endif /*TWOPATH_LOOKUP */
 
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 /*
  * Delete all entries and entire hash table.
@@ -247,6 +255,7 @@ static void deleteAllHashTable(twopath_record_t *h)
 #endif /*DO_DELETE_HASH_ENTRIES*/
 }
 #endif /*TWOPATH_HASHTABLES*/
+#endif /*TWOPATH_LOOKUP*/
 
 /*
  * Load integer (binary or categorical) attributes from file.
@@ -685,6 +694,7 @@ static int load_set_attributes(const char   *attr_filename,
  *
  ****************************************************************************/
 
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 /*
  * Get entry for (i, j) in hashtable.
@@ -707,7 +717,7 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
   return (p ? p->value : 0);
 }
 #endif /*TWOPATH_HASHTABLES*/
-
+#endif /*TWOPATH_LOOKUP*/
 
 /* 
  * Return density of graph
@@ -995,6 +1005,7 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->revarclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
   g->allarcs = NULL;
 
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
   g->mixTwoPathHashTab = NULL;
   g->inTwoPathHashTab = NULL;
@@ -1027,6 +1038,7 @@ digraph_t *allocate_digraph(uint_t num_vertices)
                         (1024*1024)));
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
+#endif /* TWOPATH_LOOKUP */
   
   g->num_binattr = 0;
   g->binattr_names = NULL;
@@ -1098,15 +1110,17 @@ void free_digraph(digraph_t *g)
   free(g->revarclist);
   free(g->indegree);
   free(g->outdegree);
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
   deleteAllHashTable(g->mixTwoPathHashTab);
   deleteAllHashTable(g->inTwoPathHashTab);
   deleteAllHashTable(g->outTwoPathHashTab);
-#else
+#else /* using arrays not hash tables for two-path lookup */
   free(g->mixTwoPathMatrix);
   free(g->inTwoPathMatrix);
   free(g->outTwoPathMatrix);
 #endif /* TWOPATH_HASHTABLES */
+#endif /* TWOPATH_LOOKUP */
   free(g->zone);
   free(g->inner_nodes);
   free(g->prev_wave_degree);

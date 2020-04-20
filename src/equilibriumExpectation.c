@@ -33,6 +33,12 @@
  *   Borisenko, A., Byshkin, M., & Lomi, A. (2019). A Simple Algorithm
  *   for Scalable Monte Carlo Inference. arXiv preprint arXiv:1901.00533.
  *
+ * Preprocessor defines used:
+ *
+ *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
+ *    TWOPATH_HASHTABLES  - use hash tables (only if TWOPATH_LOOKUP defined)
+ *
+ *
  ****************************************************************************/
 
 #include <stdio.h>

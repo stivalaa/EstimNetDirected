@@ -7,6 +7,11 @@
  * Load digraph from Pajek format arc list file and optionally compute
  * statistics corresponding to ERGM parameters.
  *
+ * Preprocessor defines used:
+ *
+ *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
+ *    TWOPATH_HASHTABLES  - use hash tables (only if TWOPATH_LOOKUP defined)
+ *
  ****************************************************************************/
 
 #include <stdio.h>

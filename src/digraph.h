@@ -14,13 +14,20 @@
  * Nodes are numbered 0 .. n-1.
  *
  *
+ * Preprocessor defines used:
+ *
+ *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
+ *    TWOPATH_HASHTABLES  - use hash tables (only if TWOPATH_LOOKUP defined)
+ *
  ****************************************************************************/
 
 #include <stdio.h>
 #include "utils.h"
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 #include "uthash.h"
 #endif /* TWOPATH_HASHTABLES */
+#endif /* TWOPATH_LOOKUP */
 
 
 #define BIN_NA  -1  /* value for binary missing data (otherwise 0 or 1) */
@@ -41,7 +48,7 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
   uint_t  j;    /* to node */
 } nodepair_t;
 
-
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 /* uthash hash table entry has (i,j) as key and number of tw-paths as value */
 typedef struct {
@@ -49,9 +56,7 @@ typedef struct {
   uint32_t       value; /* count of two-paths between i and j in key */
   UT_hash_handle hh;    /* uthash hash handle */
 } twopath_record_t;
-#endif /* TWOPATH_HASHTABLES */
 
-#ifdef TWOPATH_HASHTABLES
 #define GET_MIX2PATH_ENTRY(g, i, j) get_twopath_entry((g)->mixTwoPathHashTab, (i), (j))
 #define GET_IN2PATH_ENTRY(g, i, j) get_twopath_entry((g)->inTwoPathHashTab, (i), (j))
 #define GET_OUT2PATH_ENTRY(g, i, j) get_twopath_entry((g)->outTwoPathHashTab, (i), (j))
@@ -60,6 +65,7 @@ typedef struct {
 #define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #endif /* TWOPATH_HASHTABLES */
+#endif /* TWOPATH_LOOKUP */
 
 typedef struct digraph_s
 {
@@ -73,16 +79,18 @@ typedef struct digraph_s
                           indegree[i] nodes that have an arc to it */
   nodepair_t *allarcs; /* list of all arcs specified as i->j for each. */
 
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
   /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
   twopath_record_t *mixTwoPathHashTab; /* hash table counting two-paths */
   twopath_record_t *inTwoPathHashTab;  /* hash table counting in-two-paths */
   twopath_record_t *outTwoPathHashTab; /* hash table counting out-two-paths */
-#else
+#else /* using array not hashtables for two-path lookup */
   uint_t *mixTwoPathMatrix; /* n x n contiguous matrix counting two-paths */
   uint_t *inTwoPathMatrix;  /* n x n contiguous matrix counting in-two-paths */
   uint_t *outTwoPathMatrix; /* n x n contiguous matrix counting out-two-paths */
 #endif /*TWOPATH_HASHTABLES*/
+#endif /* TWOPATH_LOOKUP */
   
   /* node attributes */
   uint_t   num_binattr;   /* number of binary attributes */
@@ -130,9 +138,11 @@ typedef struct digraph_s
                              * as i->j for each. */
 } digraph_t;
 
+#ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 #endif /*TWOPATH_HASHTABLES */
+#endif /*TWOPATH_LOOKUP */
   
 
 double density(const digraph_t *g); /* graph density of g */
