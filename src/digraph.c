@@ -796,7 +796,9 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
   g->revarclist[j] = (uint_t *)safe_realloc(g->revarclist[j],
                                             (g->indegree[j]+1) * sizeof(uint_t));
   g->revarclist[j][g->indegree[j]++] = i;
+#ifdef TWOPATH_LOOKUP
   updateTwoPathsMatrices(g, i, j, TRUE);
+#endif /* TWOPATH_LOOKUP */
   DIGRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
   /*removed as slows significantly: assert(isArc(g, i, j));*/
 
@@ -867,7 +869,9 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
   g->num_arcs--;
   g->outdegree[i]--;
   g->indegree[j]--;
+#ifdef TWOPATH_LOOKUP
   updateTwoPathsMatrices(g, i, j, FALSE);
+#endif /* TWOPATH_LOOKUP */
 
   /* update zone information for snowball conditional estimation */ 
   if (g->zone[i] > g->zone[j]) {

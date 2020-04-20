@@ -29,6 +29,7 @@
 
 #define DEFAULT_NUM_TESTS 1000
 
+#ifdef TWOPATH_LOOKUP
 /* get stats and dump mix-two-path hash table */
 static void dumpTwoPathTables(const digraph_t *g) {
   uint_t inSum,outSum,mixSum,inMax,outMax,mixMax;
@@ -108,6 +109,8 @@ static void dumpTwoPathTables(const digraph_t *g) {
   printf("out nnz = %u (%.4f%%)\n", outNnz,
          100*(double)outNnz/(g->num_nodes*g->num_nodes));
 }
+#endif /*TWOPATH_LOOKUP*/
+
 
 int main(int argc, char *argv[]) 
 {
@@ -170,8 +173,9 @@ int main(int argc, char *argv[])
   dump_digraph_arclist(g);
 #endif /*DEBUG_DIGRAPH*/
 
-  
+#ifdef TWOPATH_LOOKUP
   dumpTwoPathTables(g);
+#endif /*TWOPATH_LOOKUP*/
 
   /* just change stats (no changes to graph) */
   printf("testing change stats\n");
@@ -271,7 +275,9 @@ int main(int argc, char *argv[])
     insertArc(g, i, j);
     /* insertArc() called updateTwoPathsMatrices() itself */
     printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
+#ifdef TWOPATH_LOOKUP
     dumpTwoPathTables(g);
+#endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
@@ -322,7 +328,9 @@ int main(int argc, char *argv[])
     removeArc(g, i, j);
     /* removeArc() calles updateTwoPathsMatrices() itself */
     printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
+#ifdef TWOPATH_LOOKUP
     dumpTwoPathTables(g);
+#endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;

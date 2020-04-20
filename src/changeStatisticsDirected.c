@@ -328,6 +328,7 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double  delta = 0;
   assert(lambda > 1);
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)
@@ -346,8 +347,12 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
   }
   delta += lambda * (1 - pow(1-1/lambda,
                              GET_MIX2PATH_ENTRY(g, i, j)));
+#else
+  /*FIXME*/
+#endif /* TWOPATH_LOOKUP */
   return delta;
 }
+
 
 /*
  * Change statistic for alternating k-triangles AT-C (cyclic closure)
@@ -357,6 +362,8 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double delta =0;
   assert(lambda > 1);
+
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     /*removed as slows significantly: assert(isArc(g, v, i));*/
@@ -371,6 +378,9 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
   delta +=
     lambda * (1 - pow(1-1/lambda, 
                       GET_MIX2PATH_ENTRY(g, j, i)));
+#else
+  /*FIXME*/
+#endif /* TWOPATH_LOOKUP */
   return delta;
 }
 
@@ -382,6 +392,8 @@ double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)
@@ -398,6 +410,9 @@ double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j)
   delta +=
     lambda * (1 - pow(1-1/lambda, 
                       GET_OUT2PATH_ENTRY(g, i, j)));
+#else
+  /*FIXME*/
+#endif /* TWOPATH_LOOKUP */
   return delta;
 }
 
@@ -409,6 +424,8 @@ double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->indegree[j]; k++) {
     v = g->revarclist[j][k];
     if (v == i || v == j)
@@ -425,6 +442,9 @@ double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j)
   delta +=
     lambda * (1 - pow(1-1/lambda, 
                       GET_IN2PATH_ENTRY(g, i, j)));
+#else
+  /*FIXME*/
+#endif /* TWOPATH_LOOKUP */
   return delta;
 }
 
@@ -436,6 +456,8 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
     if (v == i || v == j)
@@ -448,6 +470,9 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
       continue;
     delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
   }
+#else
+  /*FIXME*/
+#endif /* TWOPATH_LOOKUP */
   return delta;
 }
 
@@ -459,12 +484,17 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j) 
       continue;
     delta += pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
   }
+#else
+  /*FIXME*/
+#endif
   return delta;
 }
 
@@ -476,12 +506,17 @@ double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+#ifdef TWOPATH_LOOKUP
   for (k = 0; k < g->indegree[j]; k++) {
     v = g->revarclist[j][k];
     if (v == i || v == j) 
       continue;
     delta += pow(1-1/lambda, GET_IN2PATH_ENTRY(g, i, v));
   }
+#else
+  /*FIXME*/
+#endif /* TWOPATH_LOOKUP */
   return delta;
 }
 
