@@ -153,8 +153,13 @@ int main(int argc, char *argv[])
   }
   
   gettimeofday(&start_timeval, NULL);
+#ifdef TWOPATH_LOOKUP
   fprintf(stderr, "loading arc list from %s and building two-path tables...",
          arclist_filename);
+#else
+    fprintf(stderr, "loading arc list from %s...",
+         arclist_filename);
+#endif
   num_nodes = get_num_vertices_from_arclist_file(file); /* closes file */
   g = allocate_digraph(num_nodes);
   if (!(file = fopen(arclist_filename, "r"))) {
@@ -274,9 +279,11 @@ int main(int argc, char *argv[])
     }
     insertArc(g, i, j);
     /* insertArc() called updateTwoPathsMatrices() itself */
-    printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
 #ifdef TWOPATH_LOOKUP
+    printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
     dumpTwoPathTables(g);
+#else
+    printf("i = %d, j = %d, num_arcs = %d\n", i, j, g->num_arcs);
 #endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
@@ -327,9 +334,11 @@ int main(int argc, char *argv[])
     }
     removeArc(g, i, j);
     /* removeArc() calles updateTwoPathsMatrices() itself */
-    printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
 #ifdef TWOPATH_LOOKUP
+    printf("i = %d, j = %d, num_arcs = %d, ", i, j, g->num_arcs);
     dumpTwoPathTables(g);
+    #else
+    printf("i = %d, j = %d, num_arcs = %d\n", i, j, g->num_arcs);
 #endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {

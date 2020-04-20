@@ -14,7 +14,9 @@ echo "1. no two-path lookup"
 
 time ./testChangeStatsDirected ../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
 
-diff ${BASELINE} ${OUTPUT} > ${DIFFILE}
+BASELINE_NO2PATHTABLES=polblogs_test_results_baseline_no2pathtables.txt
+cat ${BASELINE} | sed '/^[a-z]*2p sum = .*/d;s/, [a-z]*2p sum = .*$//'  > ${BASELINE_NO2PATHTABLES}
+diff ${BASELINE_NO2PATHTABLES} ${OUTPUT} > ${DIFFILE}
 
 if [ $? -eq 0 ]; then
   echo
