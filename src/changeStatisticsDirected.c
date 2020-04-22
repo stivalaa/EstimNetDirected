@@ -478,6 +478,8 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
   }
 #else
 
+  /* FIXME */
+
 #endif /* TWOPATH_LOOKUP */
   return delta;
 }
