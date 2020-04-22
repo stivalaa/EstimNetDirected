@@ -17,19 +17,6 @@
  *
  ****************************************************************************/
 
-/*
- * TODO: may be better to use e.g. CSR sparse matrix format for
- * two-path fast lookup instead of hash table as we often iterate over
- * neighbours of a node i.e. along a row in computing change
- * statistics. (The same applies to the actual graph itself, currently
- * stored in adjacency lists). However then it is
- * difficult/inefficient to update when adding/deleting an arc which
- * is at the core of the MCMC algorithm so no good for that. (Note
- * also that if we stored the actual graph adjacency matrix in sparse
- * matrix format (CSR for example) then the numbers of two-paths can
- * be very efficiently computed my multiplying the matrix by itself
- * with sparse BLAS routine DCSRMM.)
- */
 
 #include <assert.h>
 #include <stdio.h>
