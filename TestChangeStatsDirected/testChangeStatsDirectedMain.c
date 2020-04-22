@@ -184,6 +184,7 @@ int main(int argc, char *argv[])
 
   /* just change stats (no changes to graph) */
   printf("testing change stats\n");
+  gettimeofday(&start_timeval, NULL);
   num_tests = 0;
   while (TRUE) {
     if (readNodeNums) {
@@ -243,7 +244,11 @@ int main(int argc, char *argv[])
       exit(1);
     }
   }
-
+  gettimeofday(&end_timeval, NULL);
+  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+  fprintf(stderr, "Change stats computations took %.2f s\n", (double)etime/1000);
+  
 
   /* add arcs and update graph and 2-path hash tables */
   printf("testing add arcs\n");
