@@ -18,12 +18,14 @@ SimulateERGM_arrays                 - arrays for two-path tables
 SimulateERGM_hashtables             - hash tables for two-path tables
 
 
-The two-path tables are used for fast lookup of two-path counts to
+The two-path tables are used for lookup of two-path counts to try to
 make change statistic computation simpler and faster. Arrays use a lot
 of memory and so are not scalable to large networks (although are
 faster when they can be used). Hash tables are more scalable (as the
-two-path arrays are very sparse). The least memory (and so most scalable)
-method is to not use lookup tables at all.
+two-path arrays are very sparse). The least memory (and so most
+scalable) method is to not use lookup tables at all -which may even be
+faster, depending on size and structure of network, and so is the
+default executable (no suffix) now.
 
 
 
