@@ -65,6 +65,10 @@ typedef struct {
 #define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #endif /* TWOPATH_HASHTABLES */
+#else /* not using two-path lookup tables (either arrays or hashtables) */
+#define GET_MIX2PATH_ENTRY(g, i, j) mixTwoPaths((g), (i), (j))
+#define GET_OUT2PATH_ENTRY(g, i, j) outTwoPaths((g), (i), (j))
+
 #endif /* TWOPATH_LOOKUP */
 
 typedef struct digraph_s
@@ -142,6 +146,9 @@ typedef struct digraph_s
 #ifdef TWOPATH_HASHTABLES
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 #endif /*TWOPATH_HASHTABLES */
+#else /* not using two-path lookup tables (either arrays or hashtables) */
+uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j);
+uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j);
 #endif /*TWOPATH_LOOKUP */
   
 

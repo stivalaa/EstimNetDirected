@@ -717,6 +717,50 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
   return (p ? p->value : 0);
 }
 #endif /*TWOPATH_HASHTABLES*/
+#else /* not using two-path lookup tables (either arrays or hashtables) */
+/* 
+ * Count two-paths for (i, j): paths  i -> v -> j for some v
+ */
+uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k,l;
+  uint_t count = 0;
+
+  for (k = 0; k < g->outdegree[i]; k++)  {
+    v = g->arclist[i][k];   /* i -> v */
+    if (v == i || v == j)
+      continue;
+    for (l = 0; l < g->indegree[j]; l++) {
+      if (g->revarclist[j][l] == v) {   /* v -> j */
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+/* 
+ * Count out-two-paths for (i, j): paths  i <- v -> j for some v
+ */
+
+uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k,l;
+  uint_t count = 0;
+
+  for (k = 0; k < g->indegree[i]; k++)  {
+    v = g->revarclist[i][k];   /* i <- v */
+    if (v == i || v == j)
+      continue;
+    for (l = 0; l < g->indegree[j]; l++) {
+      if (g->revarclist[j][l] == v) {   /* v -> j */
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
 #endif /*TWOPATH_LOOKUP*/
 
 /* 
