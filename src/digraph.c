@@ -742,7 +742,6 @@ uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
 /* 
  * Count out-two-paths for (i, j): paths  i <- v -> j for some v
  */
-
 uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
 {
   uint_t v,k,l;
@@ -754,6 +753,27 @@ uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
       continue;
     for (l = 0; l < g->indegree[j]; l++) {
       if (g->revarclist[j][l] == v) {   /* v -> j */
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+/* 
+ * Count in-two-paths for (i, j): paths  i -> v <- j for some v
+ */
+uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k,l;
+  uint_t count = 0;
+
+  for (k = 0; k < g->outdegree[i]; k++)  {
+    v = g->arclist[i][k];   /* i -> v */
+    if (v == i || v == j)
+      continue;
+    for (l = 0; l < g->outdegree[j]; l++) {
+      if (g->arclist[j][l] == v) {   /* v <- j */
         count++;
       }
     }
