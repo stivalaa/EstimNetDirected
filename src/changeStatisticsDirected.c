@@ -42,6 +42,12 @@
  *   Theory, methods, and applications." (pp. 49-76). New York, NY:
  *   Cambridge University Press.
  *
+ *
+ * Preprocessor defines used:
+ *
+ *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
+ *    TWOPATH_HASHTABLES  - use hash tables (only if TWOPATH_LOOKUP defined)
+ *
  ****************************************************************************/
 
 #include <math.h>
@@ -457,7 +463,7 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
   double delta = 0;
   assert(lambda > 1);
 
-#ifdef TWOPATH_LOOKUP
+#ifdef TWOPATH_LOOKUP_XXX /* FIXME temp test */
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
     if (v == i || v == j)
@@ -471,7 +477,7 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
     delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
   }
 #else
-  /*FIXME*/
+
 #endif /* TWOPATH_LOOKUP */
   return delta;
 }
@@ -493,7 +499,9 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
     delta += pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
   }
 #else
-  /*FIXME*/
+
+  /*XXX FIXME  */
+  
 #endif
   return delta;
 }
