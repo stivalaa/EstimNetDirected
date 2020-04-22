@@ -161,6 +161,29 @@ double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
 }
 
 
+#ifndef TWOPATH_LOOKUP_XXX /*FIXME testing, remove _XXX*/
+/* 
+ * Count two-paths for (i, j): paths  i -> v -> j for some v
+ */
+static uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k,l;
+  uint_t count = 0;
+
+  for (k = 0; k < g->outdegree[i]; k++)  {
+    v = g->arclist[i][k];   /* i -> v */
+    if (v == i || v == j)
+      continue;
+    for (l = 0; l < g->indegree[j]; l++) {
+      if (g->revarclist[j][l] == v) {   /* v -> j */
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+#endif /*!TWOPATH_LOOKUP*/
 
 /*****************************************************************************
  *
@@ -477,8 +500,19 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
     delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
   }
 #else
+  for (k = 0; k < g->outdegree[j]; k++) {
+    v = g->arclist[j][k];
+    if (v == i || v == j)
+      continue;
+    delta += pow(1-1/lambda, mixTwoPaths(g, i, v));
+  }
+  for (k = 0; k < g->indegree[i]; k++) {
+    v = g->revarclist[i][k];
+    if (v == i || v == j)
+      continue;
+    delta += pow(1-1/lambda, mixTwoPaths(g, v, j));
+  }
 
-  /* FIXME */
 
 #endif /* TWOPATH_LOOKUP */
   return delta;
