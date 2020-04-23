@@ -74,3 +74,11 @@ stats_estimated_ifd_sim_n1000_sample.txt
 gof_estimated_ifd_sim_n1000_sample_*.net
 obs_sample_statistics_n1000_directed_binattr_sim620000000.txt
 gof_estimated_ifd_sim_n1000_sample.pdf
+EstimNetDirected_arrays_contattr_example-*.err
+EstimNetDirected_arrays_contattr_example-*.out
+EstimNetDirected_hashtables_contattr_example-*.err
+EstimNetDirected_hashtables_contattr_example-*.out
+EstimNetDirected_notables_contattr_example-*.err
+EstimNetDirected_notables_contattr_example-*.out
+R_contattr_example_EstimNetDirected_estim_simfit-*.err
+R_contattr_example_EstimNetDirected_estim_simfit-*.out
