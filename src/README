@@ -24,9 +24,9 @@ of memory and so are not scalable to large networks (although are
 faster when they can be used). Hash tables are more scalable (as the
 two-path arrays are very sparse). The least memory (and so most
 scalable) method is to not use lookup tables at all -which may even be
-comparable in speed to using lookup tables, depending on size and
-structure of network, and so is the default executable (no suffix)
-now.
+comparable in speed to using lookup tables, depending on sampler
+algorithm, parameters, model, size and structure of network, and so is the
+default executable (no suffix) now.
 
 
 
