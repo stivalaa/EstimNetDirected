@@ -2,7 +2,7 @@
 
 #SBATCH --job-name="ifd_b_EstimNetDirected_mpi"
 #SBATCH --ntasks=8
-#SBATCH --time=0-1:30:00
+#SBATCH --time=0-6:00:00
 
 echo -n "started at: "; date
 
