@@ -783,8 +783,12 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     return -1;
   }
   gettimeofday(&start_timeval, NULL);
+#ifdef TWOPATH_LOOKUP
   printf("loading arc list from %s and building two-path matrices",
          config->arclist_filename);
+#else
+  printf("loading arc list from %s", config->arclist_filename);
+#endif /*TWOPATH_LOOKUP*/
   if (computeStats)
     printf(" and computing observed statistics");
   printf("..\n");
