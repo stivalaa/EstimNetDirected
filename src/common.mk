@@ -39,6 +39,9 @@ CFLAGS     = $(OPTFLAGS) $(WARNFLAGS)
 # Use the Random123 library
 CPPFLAGS =  -DUSE_RANDOM123 -IRandom123-1.09/include
 
+## Use lookup table for pow()
+#CPPFLAGS += -DUSE_POW_LOOKUP
+
 # Using the uthash hash table 
 # See https://troydhanson.github.io/uthash/userguide.html
 # and https://github.com/troydhanson/uthash
