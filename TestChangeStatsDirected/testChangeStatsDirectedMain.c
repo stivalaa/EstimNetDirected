@@ -308,6 +308,7 @@ int main(int argc, char *argv[])
   
   /* delete arcs and update graph and 2-path hash tables */
   printf("testing delete arcs\n");
+  num_tests = 0;
   while (TRUE) {
     if (readNodeNums) {
       if (feof(nodenumfile)) {
