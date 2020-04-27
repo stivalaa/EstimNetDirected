@@ -8,6 +8,9 @@
  *
  * Miscellaneous utilty functions
  *
+ * Preprocessor defines used:
+ *
+ *    USE_POW_LOOKUP      - use lookup table for pow()
  *
  ****************************************************************************/
 
@@ -87,11 +90,15 @@ extern "C" {
 /* Approximate double floating point equality */
 #define DOUBLE_APPROX_EQ(a, b) ( fabs((a) - (b)) <= DBL_EPSILON )
 
-/* Integer power y of double x, faster than pow(x, y) x set in
+#ifdef USE_POW_LOOKUP
+/* Integer power y of double x, may be faster than pow(x, y). x set in
    init_powtable(). Note CANNOT compile with -ffast-math on gcc as we
    depend on IEEE handling of NaN in changeStatisticsDirected.c */
 #define POWTABLE_SIZE 1000 /* number of entries in POW_TABLE */
 #define POW_LOOKUP(x, y) ((y) < POWTABLE_SIZE ? POWTABLE[(y)] : pow((x), (y)))
+#else
+#define POW_LOOKUP(x, y) (pow((x), (y)))
+#endif
   
 /*****************************************************************************
  *

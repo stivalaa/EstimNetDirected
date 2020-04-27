@@ -7,6 +7,11 @@
  * Miscellaneous utilty functions
  *
  *
+ * Preprocessor defines used:
+ *
+ *    USE_POW_LOOKUP      - use lookup table for pow()
+ *
+ *
  ****************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,10 +36,11 @@
  *
  ****************************************************************************/
 
+#ifdef USE_POW_LOOKUP
 /* Lookup table of integer power y of double x, faster than pow(x, y)
    intialized by init_powtable() */
 double POWTABLE[POWTABLE_SIZE];
-
+#endif
 
 /*****************************************************************************
  *
@@ -281,11 +287,13 @@ double euclidean_distance(double x1, double y1, double z1,
  */
 void init_powtable(double x)
 {
+#ifdef USE_POW_LOOKUP
   uint_t y;
 
   for (y = 0; y < POWTABLE_SIZE; y++) {
     POWTABLE[y] = pow(x, y);
   }
+#endif
 }
 
 
