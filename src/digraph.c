@@ -741,8 +741,8 @@ uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
       v = g->revarclist[j][k];  /* v -> j */
       if (v == i || v == j)
 	continue;
-      for (l = 0; l < g->indegree[v]; l++) {
-	if (g->revarclist[v][l] == i) { /* i -> v */
+      for (l = 0; l < g->outdegree[i]; l++) {
+	if (g->arclist[i][l] == v) { /* i -> v */
 	  count++;
 	}
       }
