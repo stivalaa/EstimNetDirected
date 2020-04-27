@@ -705,21 +705,6 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
 }
 #endif /*TWOPATH_HASHTABLES*/
 #else /* not using two-path lookup tables (either arrays or hashtables) */
-
-/* In this functions we need to find all nodes so that there is arc 
-   v -- j (for different directions of the arc in different functions,
-   i.e. -- could be <- or ->) so we could do this by iterating over
-   the neighbours of v, or the neighbours of j (for appropriate in- or
-   out- neighbours). The result is the same, but if there is a very
-   skewed degree distribution, choosing the order so that the loop has
-   fewest iterations could make a difference in speed. So we choose
-   the order so that the loop is over node with lowest relevant
-   degree */
-/* TODO storing the arc lists as hash tables instead (as in Python
-   implementation) could be a better solution for this - but may
-   be slower overall? */
-
-
 /* 
  * Count two-paths for (i, j): paths  i -> v -> j for some v
  */
@@ -732,17 +717,9 @@ uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[i][k];   /* i -> v */
     if (v == i || v == j)
       continue;
-    if (g->indegree[j] == g->outdegree[v]) { 
-      for (l = 0; l < g->indegree[j]; l++) {
-        if (g->revarclist[j][l] == v) {   /* v -> j */
-          count++;
-        }
-      }
-    } else {
-      for (l = 0; l < g->outdegree[v]; l++) {
-        if (g->arclist[v][l] == j) { /* v -> j */
-          count++;
-        }
+    for (l = 0; l < g->indegree[j]; l++) {
+      if (g->revarclist[j][l] == v) {   /* v -> j */
+        count++;
       }
     }
   }
@@ -761,17 +738,9 @@ uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
     v = g->revarclist[i][k];   /* i <- v */
     if (v == i || v == j)
       continue;
-    if (g->indegree[j] < g->outdegree[v]) {
-      for (l = 0; l < g->indegree[j]; l++) {
-        if (g->revarclist[j][l] == v) {   /* v -> j */
-          count++;
-        }
-      }
-    } else {
-      for (l = 0; l < g->outdegree[v]; l++) {
-        if (g->arclist[v][l] == j) { /* v-> j */
-          count++;
-        }
+    for (l = 0; l < g->indegree[j]; l++) {
+      if (g->revarclist[j][l] == v) {   /* v -> j */
+        count++;
       }
     }
   }
@@ -790,16 +759,9 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[i][k];   /* i -> v */
     if (v == i || v == j)
       continue;
-    if (g->outdegree[k] < g->indegree[v]) {
-      for (l = 0; l < g->outdegree[j]; l++) {
-        if (g->arclist[j][l] == v) {   /* v <- j */
-          count++;
-        }
-      }
-    } else {
-      for (l = 0; l < g->indegree[v]; l++) {
-        if (g->revarclist[v][l] == j) /* v <- j */
-          count++;
+    for (l = 0; l < g->outdegree[j]; l++) {
+      if (g->arclist[j][l] == v) {   /* v <- j */
+        count++;
       }
     }
   }
