@@ -129,6 +129,8 @@ int main(int argc, char *argv[])
  
   srand(time(NULL));
 
+  init_powtable(1-1/lambda); /* intialize pow(1-1/lambda, y) lookup table */
+
   if (argc < 2 || argc > 3) {
     fprintf(stderr, "Usage: %s <inedgelist_file> [nodenumsfile]\n", argv[0]);
     exit(1);

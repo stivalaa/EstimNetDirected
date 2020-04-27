@@ -18,7 +18,7 @@
 #include "utils.h"
 #include "estimconfigparser.h"
 #include "equilibriumExpectation.h"
-
+#include "changeStatisticsDirected.h"
 
 /*****************************************************************************
  *
@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
   int              rc;
 
   init_prng(0); /* initialize pseudorandom number generator */
+  init_powtable(1-1/lambda); /* intialize pow(1-1/lambda, y) lookup table */
 
   init_estim_config_parser();
   

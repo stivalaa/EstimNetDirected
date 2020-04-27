@@ -27,6 +27,17 @@
 
 /*****************************************************************************
  *
+ * externally visible variables
+ *
+ ****************************************************************************/
+
+/* Lookup table of integer power y of double x, faster than pow(x, y)
+   intialized by init_powtable() */
+double POWTABLE[POWTABLE_SIZE];
+
+
+/*****************************************************************************
+ *
  * pseudorandom numbers
  *
  ****************************************************************************/
@@ -263,7 +274,19 @@ double euclidean_distance(double x1, double y1, double z1,
 {
   return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
 }
-  
+
+
+/*
+ * Initialize the integer power y of double x lookup table
+ */
+void init_powtable(double x)
+{
+  uint_t y;
+
+  for (y = 0; y < POWTABLE_SIZE; y++) {
+    POWTABLE[y] = pow(x, y);
+  }
+}
 
 
 /*****************************************************************************

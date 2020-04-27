@@ -61,6 +61,7 @@
  */
 const double lambda = 2.0; /* TODO make it a configuration setting */
 
+
 /*****************************************************************************
  *
  * local functions
@@ -307,7 +308,7 @@ double changeAltInStars(const digraph_t *g, uint_t i, uint_t j)
   uint_t jindegree = g->indegree[j];
   (void)i; /*unused parameter*/
   assert(lambda > 1);
-  return lambda * (1 - pow(1-1/lambda, jindegree));
+  return lambda * (1 - POW_LOOKUP(1-1/lambda, jindegree));
 }
 
 /*
@@ -318,7 +319,7 @@ double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j)
   uint_t ioutdegree = g->outdegree[i];
   (void)j;/*unused parameter*/
   assert(lambda > 1);
-  return lambda * (1 - pow(1-1/lambda, ioutdegree));
+  return lambda * (1 - POW_LOOKUP(1-1/lambda, ioutdegree));
 }
 
 /*
@@ -335,7 +336,7 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
     if (v == i || v == j)
       continue;
     if (isArc(g, j, v))
-      delta += pow(1-1/lambda,
+      delta += POW_LOOKUP(1-1/lambda,
                    GET_MIX2PATH_ENTRY(g, i, v));
   }
   for (k = 0; k < g->indegree[i]; k++) {
@@ -343,10 +344,10 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
     if (v == i || v == j)
       continue;
     if (isArc(g, v, j))
-      delta += pow(1-1/lambda,
+      delta += POW_LOOKUP(1-1/lambda,
                    GET_MIX2PATH_ENTRY(g, v, j));
   }
-  delta += lambda * (1 - pow(1-1/lambda,
+  delta += lambda * (1 - POW_LOOKUP(1-1/lambda,
                              GET_MIX2PATH_ENTRY(g, i, j)));
   return delta;
 }
@@ -368,12 +369,12 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, j, v)) {
       delta +=
-        pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, i, v)) +
-        pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
+        POW_LOOKUP(1-1/lambda, GET_MIX2PATH_ENTRY(g, i, v)) +
+        POW_LOOKUP(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
     }
   }
   delta +=
-    lambda * (1 - pow(1-1/lambda, 
+    lambda * (1 - POW_LOOKUP(1-1/lambda, 
                       GET_MIX2PATH_ENTRY(g, j, i)));
   return delta;
 }
@@ -393,15 +394,15 @@ double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, j, v)) {
       delta +=
-        pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
+        POW_LOOKUP(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
     }
     if (isArc(g, v, j)) {
       delta += 
-        pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, v, j));
+        POW_LOOKUP(1-1/lambda, GET_OUT2PATH_ENTRY(g, v, j));
     }
   }
   delta +=
-    lambda * (1 - pow(1-1/lambda, 
+    lambda * (1 - POW_LOOKUP(1-1/lambda, 
                       GET_OUT2PATH_ENTRY(g, i, j)));
 
   return delta;
@@ -422,15 +423,15 @@ double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j)
       continue;
     if (isArc(g, i, v)) {
       delta +=
-        pow(1-1/lambda, GET_IN2PATH_ENTRY(g, i, v));
+        POW_LOOKUP(1-1/lambda, GET_IN2PATH_ENTRY(g, i, v));
     }
     if (isArc(g, v, i)) {
       delta += 
-        pow(1-1/lambda, GET_IN2PATH_ENTRY(g, v, i));
+        POW_LOOKUP(1-1/lambda, GET_IN2PATH_ENTRY(g, v, i));
     }
   }
   delta +=
-    lambda * (1 - pow(1-1/lambda, 
+    lambda * (1 - POW_LOOKUP(1-1/lambda, 
                       GET_IN2PATH_ENTRY(g, i, j)));
   return delta;
 }
@@ -448,13 +449,13 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[j][k];
     if (v == i || v == j)
       continue;
-    delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, i, v));
+    delta += POW_LOOKUP(1-1/lambda, GET_MIX2PATH_ENTRY(g, i, v));
   }
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     if (v == i || v == j)
       continue;
-    delta += pow(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
+    delta += POW_LOOKUP(1-1/lambda, GET_MIX2PATH_ENTRY(g, v, j));
   }
 
   return delta;
@@ -473,7 +474,7 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
     v = g->arclist[i][k];
     if (v == i || v == j) 
       continue;
-    delta += pow(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
+    delta += POW_LOOKUP(1-1/lambda, GET_OUT2PATH_ENTRY(g, j, v));
   }
   return delta;
 }
@@ -491,7 +492,7 @@ double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j)
     v = g->revarclist[j][k];
     if (v == i || v == j) 
       continue;
-    delta += pow(1-1/lambda, GET_IN2PATH_ENTRY(g, i, v));
+    delta += POW_LOOKUP(1-1/lambda, GET_IN2PATH_ENTRY(g, i, v));
   }
 
   return delta;

@@ -49,6 +49,23 @@
 #include "utils.h"
 #include "digraph.h"
 
+/*****************************************************************************
+ *
+ * constant declarations
+ *
+ ****************************************************************************/
+
+/* 
+ * lambda decay parameter for alternating statistics 
+ */
+extern const double lambda; /* TODO make it a configuration setting */
+
+
+/*****************************************************************************
+ *
+ * typedefs
+ *
+ ****************************************************************************/
 
 /* typedef for change statistics function  */
 typedef double (change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j);

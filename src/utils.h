@@ -86,6 +86,10 @@ extern "C" {
   
 /* Approximate double floating point equality */
 #define DOUBLE_APPROX_EQ(a, b) ( fabs((a) - (b)) <= DBL_EPSILON )
+
+/* Integer power y of double x, faster than pow(x, y) x set in init_powtable */
+#define POWTABLE_SIZE 1000 /* number of entries in POW_TABLE */
+#define POW_LOOKUP(x, y) ((y) < POWTABLE_SIZE ? POWTABLE[(y)] : pow((x), (y)))
   
 /*****************************************************************************
  *
@@ -111,6 +115,13 @@ typedef struct uint_pair_s /* pair (tuple) of unsigned integers */
   uint_t second;
 } uint_pair_t;
 
+/*****************************************************************************
+ *
+ * externally visible variable declarations
+ *
+ ****************************************************************************/
+
+extern double POWTABLE[];
   
 /*****************************************************************************
  *
@@ -153,7 +164,9 @@ int get_num_cores(void);
 int timeval_subtract (struct timeval *result, struct timeval *x, 
                        struct timeval *y);
 char *rstrip(char *s);
-  
+
+void init_powtable(double x);
+
 #ifdef __cplusplus
 }
 #endif
