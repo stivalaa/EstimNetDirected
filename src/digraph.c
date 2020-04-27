@@ -705,6 +705,18 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
 }
 #endif /*TWOPATH_HASHTABLES*/
 #else /* not using two-path lookup tables (either arrays or hashtables) */
+
+/* In these functions we have to count paths i -- v -- j for different
+   directions (i.e -- can be <- or ->) depending on the function. So we
+   can iterate over neighbours of i or of j in the outermost loop. The 
+   result is the same but it can be faster if the outermost loop is over
+   the node with smallest degree. Note that in the inner loop we could also
+   iterate neighbours of v or of i or j, but in practice I found it far
+   faster to always just use j or i rather than v for large network with very
+   high maximum degree and very skewed degree distribution (physician referral
+   network). On most networks (smaller, less skewed, lower max degree) it
+   makes no real difference */
+
 /* 
  * Count two-paths for (i, j): paths  i -> v -> j for some v
  */
