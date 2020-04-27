@@ -43,6 +43,8 @@
  *   Cambridge University Press.
  *
  *
+ * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
+ *
  ****************************************************************************/
 
 #include <math.h>
