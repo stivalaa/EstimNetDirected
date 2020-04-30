@@ -13,6 +13,7 @@
  *
  *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
  *    TWOPATH_HASHTABLES  - use hash tables (only if TWOPATH_LOOKUP defined)
+ *    ORDERED_ARCLIST     - keep arclists sorted (not completely implemented)
  *
  *
  ****************************************************************************/
@@ -851,9 +852,17 @@ bool isArc(const digraph_t *g, uint_t i, uint_t j)
   uint_t k;
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
-  for (k = 0; k < g->outdegree[i]; k++)  {
-    if (g->arclist[i][k] == j) {
-      return TRUE;
+  if (g->outdegree[i] < g->indegree[j]) {
+    for (k = 0; k < g->outdegree[i]; k++)  {
+      if (g->arclist[i][k] == j) {
+        return TRUE;
+      }
+    }
+  } else {
+    for (k = 0; k < g->indegree[j]; k++) {
+      if (g->revarclist[j][k] == i) {
+        return TRUE;
+      }
     }
   }
   return FALSE;
