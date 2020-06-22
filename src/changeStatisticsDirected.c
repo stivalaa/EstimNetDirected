@@ -830,7 +830,7 @@ double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
  *                             length is n_dyadic
- *   add_interaction_change_stats_funcs - array of points to attribute 
+ *   attr_interaction_change_stats_funcs - array of points to attribute 
  *                                        interaction change statstistics
  *                                        functinons. Length is
  *                                        n_attr_interaction.
@@ -896,4 +896,96 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
     param_i++;
   }
   return total;
+}
+
+
+/*
+ *
+ * Compute the observed statistics for the empty graph (no arcs; all nodes
+ * are isolates). [The number of nodes is always fixed here].
+ * 
+ * This is zero for all of the statistics except Isolates, where it is
+ * the number of nodes. (Any statistics added in the future where the value
+ * for the empty graph is not zero will have to be added here).
+ * 
+ * Parameters:
+ *   g      - digraph object.
+ *   n      - number of parameters (length of theta vector and total
+ *            number of change statistic functions)
+ *   n_attr - number of attribute change stats functions
+ *   n_dyadic -number of dyadic covariate change stats funcs
+ *   n_attr_interaction - number of attribute interaction change stats funcs
+ *   change_stats_funcs - array of pointers to change statistics functions
+ *                        length is n-n_attr-n_dyadic-n_attr_interaction
+ *   attr_change_stats_funcs - array of pointers to change statistics functions
+ *                             length is n_attr
+ *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
+ *                             length is n_dyadic
+ *   attr_interaction_change_stats_funcs - array of points to attribute 
+ *                                        interaction change statstistics
+ *                                        functinons. Length is
+ *                                        n_attr_interaction.
+ *   attr_indices   - array of n_attr attribute indices (index into g->binattr
+ *                    or g->catattr) corresponding to attr_change_stats_funcs
+ *                    E.g. for Sender effect on the first binary attribute,
+ *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
+ *                    changeSender
+ *   attr_interaction_pair_indices - array of n_attr_interaction attribute pair
+ *                                   indices (as above, but each element is
+ *                                   a pair of such indices) for attribute
+ *                                   interaction effects.
+ *   emptystats - (OUT) array of n observed statistics values corresponding to
+ *                 change stats funcs. Allocated by caller.
+ *
+ * Return value:
+ *   Pointer to emptystats array (parameter)
+ */
+double *empty_graph_stats(const digraph_t *g,
+			  uint_t n, uint_t n_attr, uint_t n_dyadic,
+			  uint_t n_attr_interaction,
+			  change_stats_func_t *change_stats_funcs[],
+			  attr_change_stats_func_t *attr_change_stats_funcs[],
+			  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+			  attr_interaction_change_stats_func_t 
+			  *attr_interaction_change_stats_funcs[],
+			  uint_t attr_indices[],
+			  uint_pair_t attr_interaction_pair_indices[],
+			  double emptystats[])
+{
+  uint_t l, param_i = 0;
+  
+  (void)attr_change_stats_funcs; /* unused parameter */
+  (void)dyadic_change_stats_funcs; /* unused parameter */
+  (void)attr_interaction_change_stats_funcs; /* unused parameter */
+  (void)attr_indices; /* unused parameter */
+  (void)attr_interaction_pair_indices; /* unused parameter */
+
+  /* structural effects */
+  for (l = 0; l < n - n_attr - n_dyadic - n_attr_interaction; l++) { 
+    /* It is valid to compare function pointer this way in C */
+    /* https://stackoverflow.com/questions/14985423/function-pointer-equality-in-c */
+    if (change_stats_funcs[l] == changeIsolates) {
+      /* The Isolates statistic is the number of nodes for empty graph */
+      emptystats[param_i] = g->num_nodes;
+    } else {
+      emptystats[param_i] = 0;
+    }
+    param_i++;
+  }
+  /* nodal attribute effects */
+  for (l = 0; l < n_attr; l++) {
+    emptystats[param_i] = 0;
+    param_i++;
+  }
+  /* dyadic covariate effects */
+  for (l = 0; l < n_dyadic; l++) {
+    emptystats[param_i] = 0;
+    param_i++;
+  }
+  /* attribute pair interaction effects */
+  for (l = 0; l < n_attr_interaction; l++) {
+    emptystats[param_i] = 0;
+    param_i++;
+  }
+  return emptystats;
 }

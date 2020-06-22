@@ -102,7 +102,7 @@ observedStatsFilePrefix = obs_stats_ifd_boriseko_polblogs
 structParams =  { Reciprocity, AltInStars, AltOutStars, 
                  AltTwoPathsT, AltTwoPathsD, AltTwoPathsU,
                  AltKTrianglesT, AltKTrianglesC,
-                 AltKTrianglesD, AltKTrianglesU }
+                 AltKTrianglesD, AltKTrianglesU, Isolates }
 
 #
 # Attribute parameters

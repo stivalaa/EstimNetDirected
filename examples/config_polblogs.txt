@@ -29,6 +29,8 @@ EEinnerSteps = 100 # inner iterations of Algorithm EE
 
 outputSimulatedNetwork = True    # write the simulated network to file
 
+computeStats = True # compute values of sufficient statistics in obseved net
+
 ################## Input filenames ###########################################
 
 
@@ -78,6 +80,11 @@ dzAFilePrefix = dzA_polblogs
 # Pajek .net file prefix for simulatd network at the end of the EE MCMC process.
 
 simNetFilePrefix = sim_polblogs
+
+
+# Prefix of file for observed network statistics
+observedStatsFilePrefix = obs_stats_polblogs
+
 
 ################## Parameters to estimate ####################################
 

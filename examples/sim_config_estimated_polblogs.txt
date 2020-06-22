@@ -79,7 +79,8 @@ structParams =  { Arc                 = -9.339708,
 		  AltKTrianglesT      = 1.510584, 
 		  AltKTrianglesC      = -0.2287727,
                   AltKTrianglesD      = 0.02813545, 
-		  AltKTrianglesU      = 0.005572217}
+		  AltKTrianglesU      = 0.005572217,
+                  Isolates            = 0}
 
 #
 # Attribute parameters

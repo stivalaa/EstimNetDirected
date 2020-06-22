@@ -82,3 +82,4 @@ EstimNetDirected_notables_contattr_example-*.err
 EstimNetDirected_notables_contattr_example-*.out
 R_contattr_example_EstimNetDirected_estim_simfit-*.err
 R_contattr_example_EstimNetDirected_estim_simfit-*.out
+obs_stats_polblogs_0.txt

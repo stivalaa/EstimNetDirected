@@ -773,8 +773,18 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   }
   
   if (computeStats) {
-    /* allocate change statistics array and initialize to zero */
-    graphStats = (double *)safe_calloc(num_param, sizeof(double));
+    /* allocate change statistics array */
+    graphStats = (double *)safe_malloc(num_param * sizeof(double));
+    /* set values of graph stats for empty graph; most (but not all) are zero */
+    empty_graph_stats(g, num_param, n_attr, n_dyadic,
+                      n_attr_interaction,
+                      config->param_config.change_stats_funcs,
+                      config->param_config.attr_change_stats_funcs,
+                      config->param_config.dyadic_change_stats_funcs,
+                      config->param_config.attr_interaction_change_stats_funcs,
+                      config->param_config.attr_indices,
+                      config->param_config.attr_interaction_pair_indices,
+                      graphStats);
   }
   
   if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
