@@ -106,9 +106,6 @@ source_local('snowballSample.R')
 ## Return value:
 ##    ggplot2 object to add to plot list
 ##
-## TODO work out how to make x axis labels better; if max degree is high
-## it is just a mess, need to work out how to label every 10th or 100th
-## tick mark or something.
 ##
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     start = Sys.time()
@@ -164,6 +161,8 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     p <- p + xlab(paste(mode, '-degree', sep='')) + ylab('fraction of nodes')
     if (maxdeg > 200) {
         p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 200))
+    } else if (maxdeg > 50) {
+        p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 10))
     }
     end = Sys.time()
     cat(mode, "-degree plotting took",
