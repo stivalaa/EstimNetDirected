@@ -110,7 +110,7 @@ source_local('snowballSample.R')
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     start = Sys.time()
     maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
-                  degree(g_obs, mode='in'))
+                  degree(g_obs, mode=mode))
     cat("Max ", mode, " degree is ", maxdeg, "\n")
     deg_df <- data.frame(sim = rep(1:num_sim, each=(maxdeg+1)),
                            degree = rep(0:maxdeg, num_sim),
