@@ -163,6 +163,8 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
         p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 200))
     } else if (maxdeg > 50) {
         p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 10))
+    } else if (maxdeg > 20) {
+        p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 5))
     }
     end = Sys.time()
     cat(mode, "-degree plotting took",
