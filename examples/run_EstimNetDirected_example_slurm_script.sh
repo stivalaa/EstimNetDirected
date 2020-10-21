@@ -9,9 +9,12 @@ echo -n "started at: "; date
 ROOT=..
 
 module load openmpi
-module load R/3.2.5
+
+#cannot do this here on upgraded system as loding R module causes many things (and specifically anything using MPI) to fail: module load r
 
 time mpirun ${ROOT}/src/EstimNetDirected_mpi config_example.txt
+
+module load r # have to do this AFTER running MPI progams on 'upgraded' cluster (also not 'r' not 'R')
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_sim_n1000_sample dzA_sim_n1000_sample
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_sim_n1000_sample dzA_sim_n1000_sample
