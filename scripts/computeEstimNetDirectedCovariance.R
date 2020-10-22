@@ -232,7 +232,7 @@ if (keptcount > 0 ) {
       ## to get the "vanilla" estimator so it should behave as it did
       ## before the new version.
       ## See https://cran.r-project.org/web/packages/mcmcse/vignettes/mcmcse_vignette.pdf (January 29, 2020)
-      mcerror <- mcse.multi(x = this_theta, r=1, method="bm")
+      mcerror <- mcse.multi(x = this_theta, r=1, method="bm", size="sqroot")
       est_theta <- mcerror$est    # point estimate (mean)
       Nmcmc <- nrow(this_theta) # number of MCMC samples
       ## mcse.multi returns asymptotic covariance matrix so need to divide
@@ -242,7 +242,7 @@ if (keptcount > 0 ) {
       mcmc_cov <- mcerror$cov / Nmcmc  # covariance matrix
   
       ## covariance matrix for ERGM MLE error
-      mcerror_dz <- mcse.multi(x = this_dzA, r=1, method="bm")
+      mcerror_dz <- mcse.multi(x = this_dzA, r=1, method="bm", size="sqroot")
       stopifnot(mcerror_dz$nsim == Nmcmc)
       acov <- mcerror_dz$cov / Nmcmc
       mle_cov = solve(acov) # solve(A) is matrix inverse of A
