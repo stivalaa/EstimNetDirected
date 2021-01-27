@@ -521,6 +521,10 @@ p <- p + scale_y_log10() + ylab("frac. triads (log)")
 plotlist <- c(plotlist, list(p))  # log scale on y axis
 
 ### write separate file for triad census (log) plot
+### add points for separate plot only (too large and messy on combined plots)
+p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
+                                                  colour = obscolour,
+                                                  group = 1))
 ### FIXME make this option and do for other plots also
 triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
 cat("writing triad census (log) plot to EPS file ", triad_outfilename, "\n")
