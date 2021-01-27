@@ -520,6 +520,16 @@ plotlist <- c(plotlist, list(p))  # no logarithm
 p <- p + scale_y_log10() + ylab("frac. triads (log)")
 plotlist <- c(plotlist, list(p))  # log scale on y axis
 
+### write separate file for triad census (log) plot
+### FIXME make this option and do for other plots also
+triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
+cat("writing triad census (log) plot to EPS file ", triad_outfilename, "\n")
+postscript(triad_outfilename, horizontal=FALSE, onefile=FALSE, paper="special", width=9, height=6)
+##pdf(triad_outfilename,onefile=FALSE, paper="special")
+print(p)
+dev.off()
+
+
 ## log-odds version
 obs_triadcensus_df$logodds <- log(obs_triadcensus_df$triadfraction / (1 - obs_triadcensus_df$triadfraction))
 sim_triadcensus_df$logodds <- log(sim_triadcensus_df$triadfraction / (1 - sim_triadcensus_df$triadfraction))
