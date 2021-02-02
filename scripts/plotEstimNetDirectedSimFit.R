@@ -538,7 +538,22 @@ plotlist <- c(plotlist, list(p))  # log scale on y axis
 if (do_subplots) {
   ## write separate file for triad census (log) plot
   ## add points for separate plot only (too large and messy on combined plots)
-  p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
+  ## also use raw number of triads rather than normalizing
+  p <- ggplot(sim_triadcensus_df, aes(x = triad, y = count))
+  p <- p + geom_boxplot()
+  p <- p + ptheme +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  xlab('Triad census')
+  ## who knows why the hjust and vjust are needed, or what they should
+  ## be, but they do seem to be, otherwise labels are not positioned right
+  ## (note depends on which versoin of R/ggplot2 being used, but this worked
+  ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
+  ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  p <- p + scale_y_log10() + ylab("number of triads (log scale)")
+  p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = count,
+                                                  colour = obscolour,
+                                                  group = 1))
+  p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = count,
                                                     colour = obscolour,
                                                     group = 1))
   triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
