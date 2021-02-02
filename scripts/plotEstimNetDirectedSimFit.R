@@ -99,6 +99,16 @@ source_local <- function(fname){
 
 source_local('snowballSample.R')
 
+# http://stackoverflow.com/questions/10762287/how-can-i-format-axis-labels-with-exponents-with-ggplot2-and-scales
+orig_scientific_10 <- function(x) {
+  parse(text=gsub("e", " %*% 10^", scientific_format()(x)))
+}
+my_scientific_10 <- function(x) {
+# also remove + and leading 0 in exponennt
+  parse( text=gsub("e", " %*% 10^", gsub("e[+]0", "e", scientific_format()(x))) )
+   
+}
+
 
 ##
 ## Return plot of degree distribution, for in or out degree
@@ -549,7 +559,8 @@ if (do_subplots) {
   ## (note depends on which versoin of R/ggplot2 being used, but this worked
   ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
   ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
-  p <- p + scale_y_log10() + ylab("number of triads (log scale)")
+  p <- p + scale_y_log10(labels = my_scientific_10) 
+  p <- p + ylab("number of triads (log scale)")
   p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = count,
                                                   colour = obscolour,
                                                   group = 1))
