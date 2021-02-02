@@ -534,23 +534,23 @@ print(p)
 dev.off()
 
 
-## log-odds version
-obs_triadcensus_df$logodds <- log(obs_triadcensus_df$triadfraction / (1 - obs_triadcensus_df$triadfraction))
-sim_triadcensus_df$logodds <- log(sim_triadcensus_df$triadfraction / (1 - sim_triadcensus_df$triadfraction))
-p <- ggplot(sim_triadcensus_df, aes(x = triad, y = logodds))
-p <- p + geom_boxplot()
-p <- p + ylab('log-odds') + ptheme +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-  xlab('Triad census')
-## who knows why the hjust and vjust are needed, or what they should
-## be, but they do seem to be, otherwise labels are not positioned right
-## (note depends on which versoin of R/ggplot2 being used, but this worked
-## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
-## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
-p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = logodds,
-                                                  colour = obscolour,
-                                                  group = 1))
-plotlist <- c(plotlist, list(p))  # no logarithm
+### ## log-odds version
+### obs_triadcensus_df$logodds <- log(obs_triadcensus_df$triadfraction / (1 - obs_triadcensus_df$triadfraction))
+### sim_triadcensus_df$logodds <- log(sim_triadcensus_df$triadfraction / (1 - sim_triadcensus_df$triadfraction))
+### p <- ggplot(sim_triadcensus_df, aes(x = triad, y = logodds))
+### p <- p + geom_boxplot()
+### p <- p + ylab('log-odds') + ptheme +
+###   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+###   xlab('Triad census')
+### ## who knows why the hjust and vjust are needed, or what they should
+### ## be, but they do seem to be, otherwise labels are not positioned right
+### ## (note depends on which versoin of R/ggplot2 being used, but this worked
+### ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
+### ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+### p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = logodds,
+###                                                   colour = obscolour,
+###                                                   group = 1))
+### plotlist <- c(plotlist, list(p))  # no logarithm
 
 
 ##
