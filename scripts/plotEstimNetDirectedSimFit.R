@@ -19,12 +19,17 @@
 ## should also not be significantly different from those of the observed
 ## network being modeled.
 ##
-## Usage: Rscript plotEsimtNetDirectedSimFit.R netfilename simNetFilePrefix
+## Usage: Rscript plotEsimtNetDirectedSimFit.R [-s] netfilename simNetFilePrefix
 ##  netfilename is the Pajek format observed graph (the input arclistFile
 ##     for EstimNetDirected)
 ##  simNetFilePreifx is the prefix of the simulated network filenames
-##    this files have _x.net appended by EstimNetDirected, where x
+##    this files have _x.net appended by EstimNetDirected, where 
 ##    is taks number.
+##
+##  -s : do subplots separately. As well as pdf file, .eps file for certain
+##       of the subplots e.g. triad census (log scale) is also done as 
+##       separte files, with name of subplot appeneded e.g. as
+##       <simNetFilePrefix>_triadcensus.eps
 ##
 ## Output file is simfitPrefix.pdf (where Prefix is the simNetFilePrefix).
 ## WARNING: output file is overwritten
@@ -224,12 +229,22 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
 ###
 
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) != 2) {
-  cat("Usage: Rscript plotEstimNetDirectedSimFit.R netfilename simNetFilePrefix\n")
+basearg <- 0
+do_subplots <- FALSE
+if (length(args) > 3) {
+  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] netfilename simNetFilePrefix\n")
   quit(save="no")
+} else if (length(args) == 3) {
+  if (args[1] == "-s") {
+    do_subplots <- TRUE
+  } else {
+  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] netfilename simNetFilePrefix\n")
+  quit(save="no")
+  }
+  basearg <- basearg + 1
 }
-netfilename <- args[1]
-simnetfileprefix <- args[2]
+netfilename <- args[basearg+1]
+simnetfileprefix <- args[basearg+2]
 
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
@@ -520,18 +535,19 @@ plotlist <- c(plotlist, list(p))  # no logarithm
 p <- p + scale_y_log10() + ylab("frac. triads (log)")
 plotlist <- c(plotlist, list(p))  # log scale on y axis
 
-### write separate file for triad census (log) plot
-### add points for separate plot only (too large and messy on combined plots)
-p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
-                                                  colour = obscolour,
-                                                  group = 1))
-### FIXME make this option and do for other plots also
-triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
-cat("writing triad census (log) plot to EPS file ", triad_outfilename, "\n")
-postscript(triad_outfilename, horizontal=FALSE, onefile=FALSE, paper="special", width=9, height=6)
-##pdf(triad_outfilename,onefile=FALSE, paper="special")
-print(p)
-dev.off()
+if (do_subplots) {
+  ## write separate file for triad census (log) plot
+  ## add points for separate plot only (too large and messy on combined plots)
+  p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
+                                                    colour = obscolour,
+                                                    group = 1))
+  triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
+  cat("writing triad census (log) plot to EPS file ", triad_outfilename, "\n")
+  postscript(triad_outfilename, horizontal=FALSE, onefile=FALSE, paper="special", width=9, height=6)
+  ##pdf(triad_outfilename,onefile=FALSE, paper="special")
+  print(p)
+  dev.off()
+}
 
 
 ### ## log-odds version
