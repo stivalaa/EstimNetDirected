@@ -532,7 +532,7 @@ p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
                                                   colour = obscolour,
                                                   group = 1))
 plotlist <- c(plotlist, list(p))  # no logarithm
-p <- p + scale_y_log10() + ylab("frac. triads (log)")
+p <- p + scale_y_log10() + ylab("frac. triads (log scale)")
 plotlist <- c(plotlist, list(p))  # log scale on y axis
 
 if (do_subplots) {
@@ -680,6 +680,10 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
     p <- p + ptheme + xlab("edgewise shared partners") +
         ylab("fraction of edges")
     plotlist <- c(plotlist, list(p))
+
+    ## add log scale version
+    p <- p + scale_y_log10() + ylab("frac. edges (log scale)")
+    plotlist <- c(plotlist, list(p))
 }
 
 
@@ -727,6 +731,9 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
                                               colour = obscolour, group = 1))
     p <- p + ptheme + xlab("dyadwise shared partners") +
         ylab("fraction of dyads")
+    plotlist <- c(plotlist, list(p))
+    ## add log scale version
+    p <- p + scale_y_log10() + ylab("frac. dyads (log scale)")
     plotlist <- c(plotlist, list(p))
 }
 
