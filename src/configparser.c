@@ -290,10 +290,13 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
         safe_realloc(pconfig->change_stats_funcs,
                   (pconfig->num_change_stats_funcs + 1) *
                      sizeof(change_stats_func_t *));
+      pconfig->param_lambdas = (double *)safe_realloc(pconfig->param_lambdas,
+                       (pconfig->num_change_stats_funcs + 1) * sizeof(double));
       pconfig->param_names[pconfig->num_change_stats_funcs] =
         STRUCT_PARAMS[i].name;
       pconfig->change_stats_funcs[pconfig->num_change_stats_funcs] =
         STRUCT_PARAMS[i].change_stats_func;
+      pconfig->param_lambdas[pconfig->num_change_stats_funcs] = lambda_value;
       if (requireErgmValue) {
         pconfig->param_values = (double *)safe_realloc(pconfig->param_values,
                          (pconfig->num_change_stats_funcs + 1) * sizeof(double));
