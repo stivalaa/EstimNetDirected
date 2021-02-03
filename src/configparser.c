@@ -262,9 +262,9 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
             fprintf(stderr, "ERROR: structParams expecting 'name = value' pairs separated by comma (%s)\n", paramname);
             return -1;
           }
-          got_token_after_paramname = FALSE;
           CONFIG_DEBUG_PRINT(("parse_struct_params [5] token '%s'\n", token));
         }
+        got_token_after_paramname = FALSE;
         if (strcmp(token, "=") != 0) {
           fprintf(stderr, "ERROR: structParams expecting 'name = value' pairs separated by comma (%s)\n", paramname);
           return 1;
