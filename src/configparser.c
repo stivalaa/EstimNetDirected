@@ -187,7 +187,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
     return 1; 
   }
   while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
-    CONFIG_DEBUG_PRINT(("parse_struct_params token '%s'\n", token));
+    CONFIG_DEBUG_PRINT(("parse_struct_params [1] token '%s'\n", token));
     if (last_token_was_paramname) {
       last_token_was_paramname = FALSE;
       if (strcmp(token, ",") != 0) {
@@ -209,7 +209,6 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
       }
       CONFIG_DEBUG_PRINT(("structParam %s\n", token));
       last_token_was_paramname = TRUE;
-      got_token_after_paramname = FALSE;
       strncpy(paramname, token, TOKSIZE);
 
       if (STRUCT_PARAMS[i].struct_param_type == STRUCT_PARAM_TYPE_LAMBDA) {
@@ -249,6 +248,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
           lambda_value = DEFAULT_LAMBDA; /* so use default value */
           CONFIG_DEBUG_PRINT(("%s default lambda = %g\n", paramname,
                               lambda_value));
+          assert(got_token_after_paramname);
         }
       } else {
         lambda_value = 0; /* use 0 as placeholder if no lambda for this param*/
@@ -261,7 +261,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
             return -1;
           }
           got_token_after_paramname = FALSE;
-          CONFIG_DEBUG_PRINT(("parse_struct_params token '%s'\n", token));
+          CONFIG_DEBUG_PRINT(("parse_struct_params [2] token '%s'\n", token));
         }
         if (strcmp(token, "=") != 0) {
           fprintf(stderr, "ERROR: structParams expecting 'name = value' pairs separated by comma (%s)\n", paramname);
@@ -272,7 +272,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
                   paramname);
           return -1;
         }
-        CONFIG_DEBUG_PRINT(("parse_struct_params token '%s'\n", token));        
+        CONFIG_DEBUG_PRINT(("parse_struct_params [3] token '%s'\n", token));        
         value = strtod(token, &endptr);
         if (*endptr != '\0') {
           fprintf(stderr, "ERROR: expecting floating point value for structParam %s but got '%s'\n", paramname, token);
@@ -299,9 +299,10 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
       }
       pconfig->num_change_stats_funcs++;
     }
+    CONFIG_DEBUG_PRINT(("got_token_after_paramname = %d\n",
+                        got_token_after_paramname));
     if (!got_token_after_paramname) {
       token = get_token(infile, tokenbuf);
-      got_token_after_paramname = FALSE;
     }
   }
   return 0;
