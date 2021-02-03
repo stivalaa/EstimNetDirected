@@ -52,17 +52,6 @@
 #include "changeStatisticsDirected.h"
 
    
-/*****************************************************************************
- *
- * constants
- *
- ****************************************************************************/
-
-/* 
- * lambda decay parameter for alternating statistics 
- */
-const double lambda = 2.0; /* TODO make it a configuration setting */
-
 
 /*****************************************************************************
  *
@@ -173,26 +162,28 @@ double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n)
 /* 
  * Change statistic for Ac
  */
-double changeArc(const digraph_t *g, uint_t i, uint_t j)
+double changeArc(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
-  (void)g; (void)i; (void)j; /* unused parameters */
+  (void)g; (void)i; (void)j; (void)lambda; /* unused parameters */
   return 1;
 }
 
 /*
  * Change statistic for Reciprocity
  */
-double changeReciprocity(const digraph_t *g, uint_t i, uint_t j)
+double changeReciprocity(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
+  (void)lambda; /* unused parameter */
   return isArc(g, j, i);
 }
 
 /*
  * Change statistic for Sink 
  */
-double changeSink(const digraph_t *g, uint_t i, uint_t j)
+double changeSink(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
+  (void)lambda; /* unused parameter */
   if (g->outdegree[i] == 0 && g->indegree[i] != 0) {
     delta--;
   }
@@ -205,9 +196,10 @@ double changeSink(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for Source
  */
-double changeSource(const digraph_t *g, uint_t i, uint_t j)
+double changeSource(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
+  (void)lambda; /* unused parameter */
   if (g->outdegree[i] == 0 && g->indegree[i] == 0) {
     delta++;
   }
@@ -220,9 +212,10 @@ double changeSource(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for Isolates
  */
-double changeIsolates(const digraph_t *g, uint_t i, uint_t j)
+double changeIsolates(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
+  (void)lambda; /* unused parameter */
   if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
     delta--;
   }
@@ -236,16 +229,18 @@ double changeIsolates(const digraph_t *g, uint_t i, uint_t j)
  * Change statistic for two-path (triad census 021C)
  * also known as TwoMixStar
  */
-double changeTwoPath(const digraph_t *g, uint_t i, uint_t j)
+double changeTwoPath(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
+  (void)lambda; /* unused parameter */
   return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
 }
 
 /*
  * Change statistic for in-2-star (triad census 021U)
  */
-double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j)
+double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
+  (void)lambda; /* unused parameter */
   (void)i; /* unused parameter */
   return g->indegree[j];
 }
@@ -253,8 +248,9 @@ double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for out-2-star (triad census 021D)
  */
-double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j)
+double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
+  (void)lambda; /* unused parameter */
   (void)j; /* unused parameter */
   return g->outdegree[i];
 }
@@ -262,10 +258,11 @@ double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for transitive triangle (triad census 030T)
  */
-double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
+double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k,l,w;
   uint_t  delta = 0;
+  (void)lambda; /* unused parameter */
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)
@@ -288,10 +285,11 @@ double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for cyclic triangle (triad census 030C)
  */
-double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
+double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   uint_t  delta = 0;
+  (void)lambda; /* unused parameter */
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     if (v == i || v == j)
@@ -305,7 +303,7 @@ double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating k-in-stars (popularity spread, AinS)
  */
-double changeAltInStars(const digraph_t *g, uint_t i, uint_t j)
+double changeAltInStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t jindegree = g->indegree[j];
   (void)i; /*unused parameter*/
@@ -316,7 +314,7 @@ double changeAltInStars(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating k-out-stars (activity spread, AoutS)
  */
-double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j)
+double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t ioutdegree = g->outdegree[i];
   (void)j;/*unused parameter*/
@@ -327,7 +325,7 @@ double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating k-triangles AT-T (path closure)
  */
-double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
+double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double  delta = 0;
@@ -358,7 +356,7 @@ double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating k-triangles AT-C (cyclic closure)
  */
-double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
+double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double delta =0;
@@ -384,7 +382,7 @@ double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating k-triangles AT-D (popularity closure)
  */
-double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j)
+double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double delta = 0;
@@ -413,7 +411,7 @@ double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating k-triangles AT-U (activity closure)
  */
-double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j)
+double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double delta = 0;
@@ -441,7 +439,7 @@ double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistics for alternating two-path A2P-T (multiple 2-paths)
  */
-double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
+double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double delta = 0;
@@ -466,7 +464,7 @@ double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating two-paths A2P-D (shared popularity) 
  */
-double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
+double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double delta = 0;
@@ -484,7 +482,7 @@ double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j)
 /*
  * Change statistic for alternating two-paths A2P-U (shared activity) 
  */
-double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j)
+double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k;
   double delta = 0;
@@ -504,9 +502,10 @@ double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j)
  * Change statisic for alternating two-paths A2P-TD (shared popularity +
  * multiple two-paths), adjusting for multiple counting
  */
-double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j)
+double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
-  return 0.5 * (changeAltTwoPathsT(g, i, j) + changeAltTwoPathsD(g, i, j));
+  return 0.5 * (changeAltTwoPathsT(g, i, j, lambda) +
+                changeAltTwoPathsD(g, i, j, lambda));
 }
 
 
@@ -826,6 +825,7 @@ double changeMatchingInteraction(const digraph_t *g, uint_t i, uint_t j,
  *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
  *                        length is n-n_attr-n_dyadic-n_attr_interaction
+ *   lambda_values      - array of lambda values for change stats funcs
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
@@ -855,6 +855,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
                        uint_t n, uint_t n_attr, uint_t n_dyadic,
                        uint_t n_attr_interaction,
                        change_stats_func_t *change_stats_funcs[],
+                       double               lambda_values[],
                        attr_change_stats_func_t *attr_change_stats_funcs[],
                        dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
                        attr_interaction_change_stats_func_t 
@@ -870,7 +871,8 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
   
   /* structural effects */
   for (l = 0; l < n - n_attr - n_dyadic - n_attr_interaction; l++) { 
-    changestats[param_i] = (*change_stats_funcs[l])(g, i, j);
+    changestats[param_i] = (*change_stats_funcs[l])(g, i, j,
+                                                    lambda_values[param_i]);
     total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
     param_i++;
   }

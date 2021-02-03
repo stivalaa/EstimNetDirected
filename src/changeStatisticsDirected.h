@@ -11,6 +11,9 @@
  * i and j and returns the value of the change statistic for adding
  * the arc i -> j.
  *
+ * Also takes lambda (decay) parameter which is only used for
+ * some statistics ("alternating" statistics).
+ *
  * For change statistics dependent on a nodal attribute, there is
  * an additional parameter a which is the index of the attribute
  * to use.
@@ -49,16 +52,6 @@
 #include "utils.h"
 #include "digraph.h"
 
-/*****************************************************************************
- *
- * constant declarations
- *
- ****************************************************************************/
-
-/* 
- * lambda decay parameter for alternating statistics 
- */
-extern const double lambda; /* TODO make it a configuration setting */
 
 
 /*****************************************************************************
@@ -68,7 +61,7 @@ extern const double lambda; /* TODO make it a configuration setting */
  ****************************************************************************/
 
 /* typedef for change statistics function  */
-typedef double (change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j);
+typedef double (change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, double lambda);
 
 /* version for change statistics with nodal attribute */
 typedef double (attr_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, uint_t a);
@@ -83,26 +76,26 @@ typedef double (attr_interaction_change_stats_func_t)(const digraph_t *g, uint_t
 
 /************************* Structural ****************************************/
 
-double changeArc(const digraph_t *g, uint_t i, uint_t j);
-double changeReciprocity(const digraph_t *g, uint_t i, uint_t j);
-double changeSink(const digraph_t *g, uint_t i, uint_t j);
-double changeSource(const digraph_t *g, uint_t i, uint_t j);
-double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j);
-double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j);
-double changeIsolates(const digraph_t *g, uint_t i, uint_t j);
-double changeTwoPath(const digraph_t *g, uint_t i, uint_t j);
-double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j);
-double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j);
-double changeAltInStars(const digraph_t *g, uint_t i, uint_t j);
-double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j);
-double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j);
-double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j);
-double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j);
-double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j);
-double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j);
-double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j);
-double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j);
-double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j);
+double changeArc(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeReciprocity(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeSink(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeSource(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeIsolates(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeTwoPath(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeCyclicTriad(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltInStars(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltOutStars(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesT(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesC(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesD(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesU(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsT(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsD(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsU(const digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
@@ -152,6 +145,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
                        uint_t n, uint_t n_attr, uint_t n_dyadic,
                        uint_t n_attr_interaction,
                        change_stats_func_t *change_stats_funcs[],
+                       double               lambda_values[],
                        attr_change_stats_func_t *attr_change_stats_funcs[],
                        dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
                        attr_interaction_change_stats_func_t 
