@@ -61,6 +61,14 @@ typedef enum param_type_e {
   PARAM_TYPE_SET       /* comma delimited set of other params enclosed in {} */
 } param_type_e;
 
+
+/* ERGM structural parameter type */
+typedef enum struct_param_type_e {
+  STRUCT_PARAM_TYPE_INVALID,  /* invalid type, used as error return value */
+  STRUCT_PARAM_TYPE_NONE,     /* no parameter for this change statistic */
+  STRUCT_PARAM_TYPE_LAMBDA    /* this change statistic has lambda parameter */
+} struct_param_type_e;
+
 /* ERGM attribute parameter type */
 typedef enum attr_type_e {
   ATTR_TYPE_INVALID,        /* invalid type, used as error return value */
@@ -90,6 +98,7 @@ typedef struct config_param_s {
 /* ERGM structural parameter */
 typedef struct struct_param_s {
   const char          *name;                 /* structural parameter name */
+  struct_param_type_e  struct_param_type;    /* does it have lambda parameter */
   change_stats_func_t *change_stats_func;    /* corresponding change stat */
 } struct_param_t;
 

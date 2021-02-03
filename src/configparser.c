@@ -64,26 +64,26 @@ static const char *FALSE_STR = "false";
  */
 static const struct_param_t STRUCT_PARAMS[] =
 {
-  {ARC_PARAM_STR,       changeArc},
-  {"Reciprocity",       changeReciprocity},
-  {"Sink",              changeSink},
-  {"Source",            changeSource},
-  {"Isolates",          changeIsolates},
-  {"TwoPaths",          changeTwoPath},
-  {"InTwoStars",        changeInTwoStars},
-  {"OutTwoStars",       changeOutTwoStars},
-  {"TransitiveTriangles",changeTransitiveTriad},
-  {"CyclicTriangles",   changeCyclicTriad},
-  {"AltInStars",        changeAltInStars},
-  {"AltOutStars",       changeAltOutStars},
-  {"AltKTrianglesT",    changeAltKTrianglesT},
-  {"AltKTrianglesC",    changeAltKTrianglesC},
-  {"AltKTrianglesD",    changeAltKTrianglesD},
-  {"AltKTrianglesU",    changeAltKTrianglesU},  
-  {"AltTwoPathsT",      changeAltTwoPathsT},
-  {"AltTwoPathsD",      changeAltTwoPathsD},
-  {"AltTwoPathsU",      changeAltTwoPathsU},
-  {"AltTwoPathsTD",     changeAltTwoPathsTD}
+  {ARC_PARAM_STR,       STRUCT_PARAM_TYPE_NONE,   changeArc},
+  {"Reciprocity",       STRUCT_PARAM_TYPE_NONE,   changeReciprocity},
+  {"Sink",              STRUCT_PARAM_TYPE_NONE,   changeSink},
+  {"Source",            STRUCT_PARAM_TYPE_NONE,   changeSource},
+  {"Isolates",          STRUCT_PARAM_TYPE_NONE,   changeIsolates},
+  {"TwoPaths",          STRUCT_PARAM_TYPE_NONE,   changeTwoPath},
+  {"InTwoStars",        STRUCT_PARAM_TYPE_NONE,   changeInTwoStars},
+  {"OutTwoStars",       STRUCT_PARAM_TYPE_NONE,   changeOutTwoStars},
+  {"TransitiveTriangles",STRUCT_PARAM_TYPE_NONE,  changeTransitiveTriad},
+  {"CyclicTriangles",   STRUCT_PARAM_TYPE_NONE,   changeCyclicTriad},
+  {"AltInStars",        STRUCT_PARAM_TYPE_LAMBDA, changeAltInStars},
+  {"AltOutStars",       STRUCT_PARAM_TYPE_LAMBDA, changeAltOutStars},
+  {"AltKTrianglesT",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesT},
+  {"AltKTrianglesC",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesC},
+  {"AltKTrianglesD",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesD},
+  {"AltKTrianglesU",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesU},
+  {"AltTwoPathsT",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsT},
+  {"AltTwoPathsD",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsD},
+  {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsU},
+  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsTD}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
