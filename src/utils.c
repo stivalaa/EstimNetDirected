@@ -37,6 +37,7 @@
  ****************************************************************************/
 
 #ifdef USE_POW_LOOKUP
+#error "No longer in use as lambda is runtime parameter, and pow() is actually faster anyway"
 /* Lookup table of integer power y of double x, faster than pow(x, y)
    intialized by init_powtable() */
 double POWTABLE[POWTABLE_SIZE];
