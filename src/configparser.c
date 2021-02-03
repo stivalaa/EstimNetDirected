@@ -307,6 +307,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
       token = get_token(infile, tokenbuf);
       CONFIG_DEBUG_PRINT(("parse_struct_params [7] token '%s'\n", token));
     }
+    got_token_after_paramname = FALSE;
   }
   return 0;
 }
