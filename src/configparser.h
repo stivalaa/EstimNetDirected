@@ -34,6 +34,8 @@
 
 #define DEFAULT_IFD_K                 0.1     /* default value of ifd_K  */
 
+/* default value of lambda (decay) parameter for struct params that use it */
+#define DEFAULT_LAMBDA                2.0  
 
 /*****************************************************************************
  *
