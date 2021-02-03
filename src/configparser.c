@@ -186,8 +186,8 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
     fprintf(stderr, "ERROR: no tokens for structParams\n");
     return 1; 
   }
+  CONFIG_DEBUG_PRINT(("parse_struct_params [1] token '%s'\n", token));  
   while (token && !(strlen(token) == 1 && token[0] == CLOSE_SET_CHAR)) {
-    CONFIG_DEBUG_PRINT(("parse_struct_params [1] token '%s'\n", token));
     if (last_token_was_paramname) {
       last_token_was_paramname = FALSE;
       if (strcmp(token, ",") != 0) {
@@ -219,6 +219,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
           fprintf(stderr, "ERROR: no tokens after structParam %s\n", paramname);
           return 1; 
         }
+        CONFIG_DEBUG_PRINT(("parse_struct_params [2] token '%s'\n", token));
         got_token_after_paramname = TRUE;
         if (strlen(token) == 1 && token[0] == OPEN_PAREN_CHAR) {
           if (!(token = get_token(infile, tokenbuf))) {
@@ -227,6 +228,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
                     OPEN_PAREN_CHAR, CLOSE_PAREN_CHAR, paramname);
             return 1;
           }
+          CONFIG_DEBUG_PRINT(("parse_struct_params [3] token '%s'\n", token));
           got_token_after_paramname = FALSE;
           lambda_value = strtod(token, &endptr);
           if (*endptr != '\0') {
@@ -242,13 +244,13 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
                     CLOSE_PAREN_CHAR, lambda_value, paramname);
             return 1; 
           }
+          CONFIG_DEBUG_PRINT(("parse_struct_params [4] token '%s'\n", token));
           CONFIG_DEBUG_PRINT(("%s lambda = %g\n", paramname, lambda_value));
         } else {
           /* no open paren char found so lambda not specified */
           lambda_value = DEFAULT_LAMBDA; /* so use default value */
           CONFIG_DEBUG_PRINT(("%s default lambda = %g\n", paramname,
                               lambda_value));
-          assert(got_token_after_paramname);
         }
       } else {
         lambda_value = 0; /* use 0 as placeholder if no lambda for this param*/
@@ -261,7 +263,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
             return -1;
           }
           got_token_after_paramname = FALSE;
-          CONFIG_DEBUG_PRINT(("parse_struct_params [2] token '%s'\n", token));
+          CONFIG_DEBUG_PRINT(("parse_struct_params [5] token '%s'\n", token));
         }
         if (strcmp(token, "=") != 0) {
           fprintf(stderr, "ERROR: structParams expecting 'name = value' pairs separated by comma (%s)\n", paramname);
@@ -272,7 +274,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
                   paramname);
           return -1;
         }
-        CONFIG_DEBUG_PRINT(("parse_struct_params [3] token '%s'\n", token));        
+        CONFIG_DEBUG_PRINT(("parse_struct_params [6] token '%s'\n", token));        
         value = strtod(token, &endptr);
         if (*endptr != '\0') {
           fprintf(stderr, "ERROR: expecting floating point value for structParam %s but got '%s'\n", paramname, token);
@@ -303,6 +305,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
                         got_token_after_paramname));
     if (!got_token_after_paramname) {
       token = get_token(infile, tokenbuf);
+      CONFIG_DEBUG_PRINT(("parse_struct_params [7] token '%s'\n", token));
     }
   }
   return 0;
