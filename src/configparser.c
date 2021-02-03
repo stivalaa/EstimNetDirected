@@ -156,6 +156,13 @@ static const uint_t NUM_ATTR_INTERACTION_PARAMS =
  * is set to corresponding list of change statistics function pointers.
  * The STRUCT_PARAMS constant has the table of parameter names and
  * corresponding change statistic functions.
+ * If struct_param_type for the name parsed is
+ *  STRUCT_PARAM_TYPE_LAMBDA then the parameter
+ * can optionally take a lambda (decay parameter) value in parentheses e.g.
+ * AltKTrianglesT(2.0). This lambda values are set in the
+ * config struct in the param_lambda list. If not specified then set to
+ * the default value. For these with no lambda it is just set to 0
+ * and not used (but placeholder so lists line up).
  * If requireErgmValue is TRUE then ERGM parameters require a value
  * (supplied with name = value format) for use in simulation (otherwise
  * no value allowed, used for estimation).
@@ -201,6 +208,12 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
       CONFIG_DEBUG_PRINT(("structParam %s\n", token));
       last_token_was_paramname = TRUE;
       strncpy(paramname, token, TOKSIZE);
+
+      if (STRUCT_PARAMS[i].struct_param_type == STRUCT_PARAM_TYPE_LAMBDA) {
+        /* The paramter can optionally take a decay (lambda) value in
+           parentheses, e.g.  AltKTrianglesT(2.0) */
+        CONFIG_DEBUG_PRINT(("  [may take lambda]\n"));
+      }
 
       if (requireErgmValue) {
         if (!(token = get_token(infile, tokenbuf))) {

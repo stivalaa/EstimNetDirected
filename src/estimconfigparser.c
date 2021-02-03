@@ -202,6 +202,7 @@ estim_config_t ESTIM_CONFIG = {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
     NULL,  /* param_names */
+    NULL,  /* param_lambdas */
     NULL,  /* param_values */
     0,     /* num_attr_change_stats_funcs */
     NULL,  /* attr_change_stats_funcs */

@@ -132,6 +132,7 @@ typedef struct param_config_s {
   uint_t num_change_stats_funcs;           /* length of change_stats_funcs */
   change_stats_func_t **change_stats_funcs; /* structural parameter stats */
   const char          **param_names;        /* names corresponding to above */
+  double               *param_lambdas;      /* lambda params corr. to above */
   double               *param_values;       /* initial values corr. to above */
   uint_t num_attr_change_stats_funcs;  /* length of attr_change_stats_funcs */
   attr_change_stats_func_t **attr_change_stats_funcs; /* attr param stats */
