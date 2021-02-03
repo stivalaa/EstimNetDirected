@@ -316,7 +316,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     *ifd_aux_param += ifd_aux_param_step;
   }
   SAMPLER_DEBUG_PRINT(("ifd_aux_param = %g\n", *ifd_aux_param));
-  if (fabs(Ndel - Nadd) / (Ndel + Nadd) > 0.8) {
+  if ((double)abs(Ndel - Nadd) / (double)(Ndel + Nadd) > 0.8) {
     fprintf(stderr,
             "WARNING: IFD sampler Ndel = %d Nadd = %d ifd_aux_param = %g increase ifd_K = %f\n",
             Ndel, Nadd, *ifd_aux_param, ifd_K);
