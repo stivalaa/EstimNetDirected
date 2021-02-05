@@ -520,7 +520,12 @@ int do_simulation(sim_config_t * config)
    printf("\n");
    for (i = 0; i < config->param_config.num_change_stats_funcs; i++, theta_i++){
      theta[theta_i] = config->param_config.param_values[i];
-     printf("%s = %g\n", config->param_config.param_names[i], theta[theta_i]);
+     if (config->param_config.param_lambdas[i] > 0.0) {
+       printf("%s(%g) = %g\n", config->param_config.param_names[i],
+              config->param_config.param_lambdas[i],
+              theta[theta_i]);
+     } else {
+       printf("%s = %g\n", config->param_config.param_names[i], theta[theta_i]);     }
    }
    
    for (i = 0; i < config->param_config.num_attr_change_stats_funcs;
@@ -642,8 +647,20 @@ int do_simulation(sim_config_t * config)
 
    /* write headers for statistics output file */
   sprintf(fileheader, "t");
-  for (i = 0; i < config->param_config.num_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s", config->param_config.param_names[i]);
+  /* Print the lambda (decay) [hyper-]parameter value for parameters which
+     use it (i.e. for the "alternating" statistics); it is 0 for those
+     for which it is not applicable.
+     Format is to put it in parens after the name e.g. AltTwoPathsTD(2.5) */
+  for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
+    if (config->param_config.param_lambdas[i] > 0.0) {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s(%g)",
+               config->param_config.param_names[i],
+               config->param_config.param_lambdas[i]);
+    } else {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s",
+               config->param_config.param_names[i]);      
+    }
+  }
   
   for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) 
     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",

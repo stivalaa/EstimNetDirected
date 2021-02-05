@@ -969,7 +969,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
        use it (i.e. for the "alternating" statistics); it is 0 for those
        for which it is not applicable.
        Format is to put it in parens after the name e.g. AltTwoPathsTD(2.5) */
-    if (config->param_config.param_lambdas[i] != 0.0) {
+    if (config->param_config.param_lambdas[i] > 0.0) {
       snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s(%g)",
                config->param_config.param_names[i],
                config->param_config.param_lambdas[i]);
