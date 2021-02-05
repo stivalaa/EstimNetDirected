@@ -965,7 +965,18 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   for (i = 0; i < config->param_config.num_change_stats_funcs; i++)  {
     if (!first_header_field)
       snprintf(fileheader+strlen(fileheader), HEADER_MAX," ");
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s", config->param_config.param_names[i]);
+    /* Print the lambda (decay) [hyper-]parameter value for parameters which
+       use it (i.e. for the "alternating" statistics); it is 0 for those
+       for which it is not applicable.
+       Format is to put it in parens after the name e.g. AltTwoPathsTD(2.5) */
+    if (config->param_config.param_lambdas[i] != 0.0) {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s(%g)",
+               config->param_config.param_names[i],
+               config->param_config.param_lambdas[i]);
+    } else {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s",
+               config->param_config.param_names[i]);      
+    }
     first_header_field = FALSE;
   }
   

@@ -90,7 +90,7 @@ observedStatsFilePrefix = obs_stats_n1000_sample
 # Structural parameters
 #
 
-structParams =  {Arc ,  Reciprocity,AltInStars(99), AltOutStars(4), AltKTrianglesT, 
+structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT,
                  AltTwoPathsTD}
 
 #
