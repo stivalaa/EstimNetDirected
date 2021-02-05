@@ -76,6 +76,8 @@
  *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
  *                        length is n - n_attr - n_dyadic - n_attr_interacion
+ *   lambda_values      - array of lambda values for change stats funcs
+ *                        same length as change_stats_funcs
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
@@ -117,6 +119,7 @@
 void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  uint_t n_attr_interaction,
                  change_stats_func_t *change_stats_funcs[],
+                 double lambda_values[],
                  attr_change_stats_func_t *attr_change_stats_funcs[],
                  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
                  attr_interaction_change_stats_func_t
@@ -159,6 +162,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
                                    change_stats_funcs,
+                                   lambda_values,
                                    attr_change_stats_funcs,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
@@ -176,6 +180,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
+                                   lambda_values,
 				   attr_change_stats_funcs,
 				   dyadic_change_stats_funcs,
 				   attr_interaction_change_stats_funcs,
@@ -190,6 +195,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
                                      change_stats_funcs,
+                                     lambda_values,
                                      attr_change_stats_funcs,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
@@ -242,6 +248,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
  *                        length is n - n_attr - n_dyadic - n_attr_interaction
+ *   lambda_values      - array of lambda values for change stats funcs
+ *                        same length as change_stats_funcs
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                              length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
@@ -300,6 +308,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
+                  double lambda_values[],
                   attr_change_stats_func_t *attr_change_stats_funcs[],
                   dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
                   attr_interaction_change_stats_func_t
@@ -365,7 +374,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       }
       if (useIFDsampler) {
         acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
-                                     change_stats_funcs, 
+                                     change_stats_funcs,
+                                     lambda_values,
                                      attr_change_stats_funcs,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
@@ -386,7 +396,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       } else if (useTNTsampler) {
         acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				     n_attr_interaction,
-				     change_stats_funcs, 
+				     change_stats_funcs,
+                                     lambda_values,
 				     attr_change_stats_funcs,
 				     dyadic_change_stats_funcs,
 				     attr_interaction_change_stats_funcs,
@@ -401,7 +412,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       } else {
         acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                        n_attr_interaction,
-                                       change_stats_funcs, 
+                                       change_stats_funcs,
+                                       lambda_values,
                                        attr_change_stats_funcs,
                                        dyadic_change_stats_funcs,
                                        attr_interaction_change_stats_funcs,
@@ -487,6 +499,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
  *                        length is n - n_attr - n_dyadic - n_attr_interaction
+ *   lambda_values      - array of lambda values for change stats funcs
+ *                        same length as change_stats_funcs
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
@@ -545,6 +559,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 uint_t n_attr_interaction,
                 change_stats_func_t *change_stats_funcs[],
+                double lambda_values[],
                 attr_change_stats_func_t *attr_change_stats_funcs[],
                 dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
                 attr_interaction_change_stats_func_t
@@ -617,6 +632,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   gettimeofday(&start_timeval, NULL);
 
   algorithm_S(g, n, n_attr, n_dyadic, n_attr_interaction, change_stats_funcs,
+              lambda_values,
               attr_change_stats_funcs, dyadic_change_stats_funcs,
               attr_interaction_change_stats_funcs,
               attr_indices, attr_interaction_pair_indices,
@@ -660,7 +676,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     gettimeofday(&start_timeval, NULL);
 
     algorithm_EE(g, n, n_attr, n_dyadic, n_attr_interaction,
-                 change_stats_funcs, 
+                 change_stats_funcs, lambda_values,
 		 attr_change_stats_funcs, dyadic_change_stats_funcs,
                  attr_interaction_change_stats_funcs,
                  attr_indices, attr_interaction_pair_indices,
@@ -779,6 +795,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     empty_graph_stats(g, num_param, n_attr, n_dyadic,
                       n_attr_interaction,
                       config->param_config.change_stats_funcs,
+                      config->param_config.param_lambdas,
                       config->param_config.attr_change_stats_funcs,
                       config->param_config.dyadic_change_stats_funcs,
                       config->param_config.attr_interaction_change_stats_funcs,
@@ -807,6 +824,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
                                      num_param,
                                      n_attr, n_dyadic, n_attr_interaction,
                                      config->param_config.change_stats_funcs,
+                                     config->param_config.param_lambdas,
                                      config->param_config.attr_change_stats_funcs,
                                      config->param_config.dyadic_change_stats_funcs,
                                      config->param_config.attr_interaction_change_stats_funcs,
@@ -1000,6 +1018,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   
   ee_estimate(g, num_param, n_attr, n_dyadic, n_attr_interaction,
               config->param_config.change_stats_funcs,
+              config->param_config.param_lambdas,
               config->param_config.attr_change_stats_funcs,
               config->param_config.dyadic_change_stats_funcs,
               config->param_config.attr_interaction_change_stats_funcs,

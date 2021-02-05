@@ -919,6 +919,8 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
  *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
  *                        length is n-n_attr-n_dyadic-n_attr_interaction
+ *   lambda_values      - array of lambda values for change stats funcs
+ *                        same length as change_stats_funcs
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
@@ -946,6 +948,7 @@ double *empty_graph_stats(const digraph_t *g,
 			  uint_t n, uint_t n_attr, uint_t n_dyadic,
 			  uint_t n_attr_interaction,
 			  change_stats_func_t *change_stats_funcs[],
+                          double lambda_values[],
 			  attr_change_stats_func_t *attr_change_stats_funcs[],
 			  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
 			  attr_interaction_change_stats_func_t 
@@ -957,6 +960,7 @@ double *empty_graph_stats(const digraph_t *g,
   uint_t l, param_i = 0;
   
   (void)attr_change_stats_funcs; /* unused parameter */
+  (void)lambda_values;           /* unused parameter */
   (void)dyadic_change_stats_funcs; /* unused parameter */
   (void)attr_interaction_change_stats_funcs; /* unused parameter */
   (void)attr_indices; /* unused parameter */

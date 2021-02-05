@@ -114,6 +114,7 @@ static void dumpTwoPathTables(const digraph_t *g) {
 
 int main(int argc, char *argv[]) 
 {
+  const double lambda = 2.0;  /* always use decay lambda = 2.0 on tests */
   char buf[1024];
   uint_t i,j;
   char *arclist_filename = NULL;
@@ -128,8 +129,6 @@ int main(int argc, char *argv[])
   int    etime;
  
   srand(time(NULL));
-
-  init_powtable(1-1/lambda); /* intialize pow(1-1/lambda, y) lookup table */
 
   if (argc < 2 || argc > 3) {
     fprintf(stderr, "Usage: %s <inedgelist_file> [nodenumsfile]\n", argv[0]);
@@ -171,7 +170,7 @@ int main(int argc, char *argv[])
   }
   g = load_digraph_from_arclist_file(file, g, FALSE,
                                      0, 0, 0, 0, NULL, NULL, NULL, NULL,
-                                     NULL, NULL, NULL, NULL);
+                                     NULL, NULL, NULL, NULL, NULL);
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
@@ -216,22 +215,22 @@ int main(int argc, char *argv[])
       continue;
     }
     printf("i = %d, j = %d, changeOutKStars = %g, changeInKStars = %g, changeDiTKTriangles = %g, changeA2pTD = %g, changeDiCKTriangles = %g, changeDiUKTriangles = %g, changeDiDKTriangles = %g, changeDiUAltTwoPaths = %g, changeSource = %g, changeSink = %g, changeDiIso = %g, changeTwoMixStar = %g, change030c = %g, change030t = %g, changeIn2star = %g, changeOut2star = %g\n", i, j,
-           changeAltOutStars(g, i, j),
-           changeAltInStars(g, i, j),
-           changeAltKTrianglesT(g, i, j),
-           changeAltTwoPathsTD(g, i, j),
-           changeAltKTrianglesC(g, i, j),
-           changeAltKTrianglesU(g, i, j),
-           changeAltKTrianglesD(g, i, j),
-           changeAltTwoPathsU(g, i, j),
-           changeSource(g, i, j),
-           changeSink(g, i, j),
-           changeIsolates(g, i, j),
-	   changeTwoPath(g, i, j),
-	   changeCyclicTriad(g, i, j),
-	   changeTransitiveTriad(g, i, j),
-	   changeInTwoStars(g, i, j),
-	   changeOutTwoStars(g, i, j)
+           changeAltOutStars(g, i, j, lambda),
+           changeAltInStars(g, i, j, lambda),
+           changeAltKTrianglesT(g, i, j, lambda),
+           changeAltTwoPathsTD(g, i, j, lambda),
+           changeAltKTrianglesC(g, i, j, lambda),
+           changeAltKTrianglesU(g, i, j, lambda),
+           changeAltKTrianglesD(g, i, j, lambda),
+           changeAltTwoPathsU(g, i, j, lambda),
+           changeSource(g, i, j, lambda),
+           changeSink(g, i, j, lambda),
+           changeIsolates(g, i, j, lambda),
+	   changeTwoPath(g, i, j, lambda),
+	   changeCyclicTriad(g, i, j, lambda),
+	   changeTransitiveTriad(g, i, j, lambda),
+	   changeInTwoStars(g, i, j, lambda),
+	   changeOutTwoStars(g, i, j, lambda)
       );
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {

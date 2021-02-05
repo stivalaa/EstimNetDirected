@@ -20,6 +20,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
                                           uint_t n_attr_interaction,
                                           change_stats_func_t
                                                      *change_stats_funcs[],
+                                          double lambda_values[],
                                           attr_change_stats_func_t
                                           *attr_change_stats_funcs[],
                                           dyadic_change_stats_func_t

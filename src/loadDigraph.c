@@ -69,6 +69,8 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
  *   n_attr_interaction - number of attribute interaction change stats funcs
  *   change_stats_funcs - array of pointers to change statistics functions
  *                        length is n-n_attr-n_dyadic-n_attr_interaction
+ *   lambda_values      - array of lambda values for change stats funcs
+ *                        same length as change_stats_funcs
  *   attr_change_stats_funcs - array of pointers to change statistics functions
  *                             length is n_attr
  *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
@@ -106,6 +108,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
                                           uint_t n_attr_interaction,
                                           change_stats_func_t
                                                      *change_stats_funcs[],
+                                          double lambda_values[],
                                           attr_change_stats_func_t
                                           *attr_change_stats_funcs[],
                                           dyadic_change_stats_func_t
@@ -210,6 +213,7 @@ digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
       /* accumulate change statistics in addChangeStats array */
       (void)calcChangeStats(g, i, j, n, n_attr, n_dyadic, n_attr_interaction,
                             change_stats_funcs,
+                            lambda_values,
                             attr_change_stats_funcs,
                             dyadic_change_stats_funcs,
                             attr_interaction_change_stats_funcs,
