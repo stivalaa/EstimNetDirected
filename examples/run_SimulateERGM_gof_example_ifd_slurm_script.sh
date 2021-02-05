@@ -8,7 +8,6 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R/3.2.5
 
 config_tmpfile=sim_config_estimated_ifd_sim_n1000_sample.txt
 statsfile=stats_estimated_ifd_sim_n1000_sample.txt
@@ -22,6 +21,8 @@ ${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh  config_example_i
 
 # simulate networks from the estimated parameters
 time ${ROOT}/src/SimulateERGM ${config_tmpfile}
+
+module load r
 
 # plot simulation diagnostics with observed sufficient statistics 
 time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R ${statsfile} obs_stats_ifd_n1000_sample_0.txt

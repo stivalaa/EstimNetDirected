@@ -8,9 +8,9 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R/3.2.5
-
 time ${ROOT}/src/SimulateERGM  sim_config_example.txt
+
+module load r
 
 time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R stats_sim_n2000_sample.txt
 
