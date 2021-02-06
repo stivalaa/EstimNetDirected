@@ -74,7 +74,7 @@ structParams =  {Arc            = -4.00,
                  Reciprocity    =  4.25,
                  AltInStars     = -1.00,
                  AltOutStars    = -0.50, 
-                 AltKTrianglesT =  1.50}
+                 AltKTrianglesT(1.1) =  1.50}
 
 #
 # Attribute parameters
