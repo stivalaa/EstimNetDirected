@@ -62,8 +62,8 @@ echo "numNodes = ${numNodes}"
 cat <<EOF
 useTNTsampler = True # use the tie-no-tie sampler
 sampleSize = 100 #number of network samples to take from simulation
-interval = 10000000 # interval (iterations) between samples
-burnin = 100000000 # number of iterations to throw away before first sample
+interval = 100000 # interval (iterations) between samples
+burnin = 1000000 # number of iterations to throw away before first sample
 outputSimulatedNetworks = True
 EOF
 
