@@ -179,7 +179,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
   char        *endptr; /* for strtod() */
   char        paramname[TOKSIZE];  /* parameter name buffer */
   double      value = 0;
-  double      lambda_value = 0; /* valid values are >= 1.0 */
+  double      lambda_value = 0; /* valid values are > 1.0 */
   bool        got_token_after_paramname = FALSE;
   
   if (!(token = get_token(infile, tokenbuf))) {
@@ -238,8 +238,8 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
                     OPEN_PAREN_CHAR, CLOSE_PAREN_CHAR, paramname, token);
             return 1;
           }
-          if (lambda_value < 1.0) {
-            fprintf(stderr, "ERROR: lambda value must be >= 1.0 but got value "
+          if (lambda_value <= 1.0) {
+            fprintf(stderr, "ERROR: lambda value must be > 1.0 but got value "
                             "%g for structParam %s\n", lambda_value, paramname);
             return 1;
           }
@@ -256,7 +256,7 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
           lambda_value = DEFAULT_LAMBDA; /* so use default value */
           CONFIG_DEBUG_PRINT(("%s default lambda = %g\n", paramname,
                               lambda_value));
-          assert(lambda_value >= 1.0); /* default value must be valid */
+          assert(lambda_value > 1.0); /* default value must be valid */
         }
       } else {
         lambda_value = 0; /* use 0 as placeholder if no lambda for this param*/
