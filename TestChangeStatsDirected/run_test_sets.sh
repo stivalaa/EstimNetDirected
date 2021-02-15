@@ -23,7 +23,7 @@ cat ${INPUT} | cut -d' ' -f1 > ${TMP_INPUT}
 echo "Running tests on set parsing and set similarity functions..."
 
 time ./testSetFunctions ${TMP_INPUT} > ${OUTPUT}
-python ./checkSetFunctions.py ${TMP_INPUT} ${OUTPUT} > ${CHECK_OUTPUT}
+python2 ./checkSetFunctions.py ${TMP_INPUT} ${OUTPUT} > ${CHECK_OUTPUT}
 
 if [ $? -eq 0 ]; then
     echo
