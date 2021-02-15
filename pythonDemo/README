@@ -7,6 +7,8 @@ The only module (other than default pythone
 ones) it needs is numpy https://www.scipy.org/scipylib/download.html
 just for simple and efficient vector and matrix data types.
 
+Note python scripts all require Python 2 (and NOT Python 3,
+which is not backward compatibile with Python 2).
 
 sample_statistics_n500_directed_binattr_sim420000000.txt and
 binaryAttributes_50_50_n500.txt is a simulated 500 node network 
