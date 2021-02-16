@@ -93,10 +93,17 @@ do
             if [ "${estimnet_point}" == "" ];  then
                 echo -n " & ---"
             else 
-                # put statistically significant results in normal text, others
-                # in "\light" which must be defined as e.g.
+                # put statistically significant results in "\heavy",
+                # which might be defined as e.g.
+                # \newcommand{\heavy}[1]{\mathbf{#1}} 
+                # and others
+                # in "\light" which might be defined as e.g.
                 # \newcommand{\light}[1]{\textcolor{gray}{#1}}
                 # which requires \usepackage{xcolor} (NB color package does not have gray)
+                # (note usually
+                # one of \heavy or \light could just be defined as e.g.
+                # \newcommand{\light}[1]{#1}
+                # so that (in this case) light is normal, heavy is bold).
                 
                 # bc cannot handle scientific notation so use sed to convert it 
                 estimnet_lower=`echo "${estimnet_point} - ${zSigma} * ${estimnet_stderr}" | sed -e 's/[eE]+*/*10^/' | bc -l`
@@ -115,7 +122,7 @@ do
                 if [ ${signif} -eq 0 ]; then
                     printf ' & $\\light{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
                 else
-                    printf ' & $\\underset{(%.3f, %.3f)}{%.3f}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
+                    printf ' & $\\heavy{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
                 fi
             fi
         fi
