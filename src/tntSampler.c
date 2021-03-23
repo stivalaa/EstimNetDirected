@@ -148,6 +148,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   const double odds      = prob / (1 - prob);
   double       N         = g->num_nodes;
   double       num_dyads = N*(N-1);/*directed so not div by 2*/
+  double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
     
     
   for (i = 0; i < n; i++) {
@@ -161,9 +162,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     else
       isDelete = FALSE; /* force an add move on empty graph */
 
-    /* TODO with conditional estimation may still crash as
-       g->num_inner_arcs it the relevant count not g->num_arcs.  Also
-       (not conditional estimation) should handle case of graph
+    /* TODO should handle case of graph
        becoming full i.e. g->num_arcs == num_dyads in which case we
        cannot do an add move */
     
@@ -257,14 +256,24 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     /* FIXME this may not be correct if conditional estimation
        is used as then g->num_inner_arcs is the relevant number
        not g->num_arcs */
-    if (isDelete) {
-      total += log( g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
-		    g->num_arcs / (odds * num_dyads + g->num_arcs) );
+    if (useConditionalEstimation) {
+      if (isDelete) {
+        total += log( g->num_inner_arcs == 1 ? 1.0 / (prob * num_inner_dyads + (1 - prob)) :
+  		    g->num_inner_arcs / (odds * num_inner_dyads + g->num_inner_arcs) );
+      } else {
+        total += log( g->num_inner_arcs == 0 ? prob * num_inner_dyads + (1 - prob) :
+  		    1 + (odds * num_inner_dyads) / (g->num_inner_arcs + 1) );
+      }
     } else {
-      total += log( g->num_arcs == 0 ? prob * num_dyads + (1 - prob) :
-		    1 + (odds * num_dyads) / (g->num_arcs + 1) );
+      if (isDelete) {
+        total += log( g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
+  		    g->num_arcs / (odds * num_dyads + g->num_arcs) );
+      } else {
+        total += log( g->num_arcs == 0 ? prob * num_dyads + (1 - prob) :
+  		    1 + (odds * num_dyads) / (g->num_arcs + 1) );
+      }
     }
-
+  
     /* now exp(total) is the acceptance probability */
     alpha = exp(total);
     

@@ -9,9 +9,10 @@ echo -n "started at: "; date
 ROOT=..
 
 module load openmpi
-module load R/3.2.5
 
 time mpirun ${ROOT}/src/EstimNetDirected_mpi config_example_tnt.txt
+
+module load r
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_tnt_sim_n1000_sample dzA_tnt_sim_n1000_sample
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_tnt_sim_n1000_sample dzA_tnt_sim_n1000_sample
