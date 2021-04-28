@@ -64,9 +64,9 @@
 ## Snijders (2002) "Markov chain Monte Carlo estimation of exponential
 ## random graph models" J. Social Structure 3(2):1-40).
 ##
-## Vats, D., Flegal, J. M., & Jones, G. L. (2017). Multivariate output
-## analysis for Markov chain Monte Carlo. arXiv preprint
-## arXiv:1512.07713.
+## Vats, D., Flegal, J. M., & Jones, G. L. (2019). Multivariate output
+## analysis for Markov chain Monte Carlo. Biometrika, 106(2), 321-337.
+## [Preprint available as arXiv:1512.07713]
 ##
 ## Vats, D., Flegal, J. M., & Jones, G. L. (2018). Strong consistency
 ## of multivariate spectral variance estimators in Markov chain Monte
