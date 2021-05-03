@@ -253,9 +253,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     
     /* adjust the acceptance probability as done in MHproposals.c
        MH_TNT() in statnet ergm code */
-    /* FIXME this may not be correct if conditional estimation
-       is used as then g->num_inner_arcs is the relevant number
-       not g->num_arcs */
     if (useConditionalEstimation) {
       if (isDelete) {
         total += log( g->num_inner_arcs == 1 ? 1.0 / (prob * num_inner_dyads + (1 - prob)) :
