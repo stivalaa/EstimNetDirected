@@ -10,13 +10,17 @@
 # from EstimNetDirected_mpi output files
 #
 #
-# Usage: Rscript plotEstimNetDirectedResults.R thetaPrefix dzAprefix
+# Usage: Rscript plotEstimNetDirectedResults.R [-p] thetaPrefix dzAprefix
 #    thetaPrefix is prefix of filenames for theta values 
 #    dzAprefix is prefix of filenames for dzA values 
 #      these files have _x.txt appended by EstimNetDirected, where
 #      x is task number
+#     -p : use PNG not PDF (for very large plots PDF can be huge or even
+#          not work correctly with "did not complete the page properly" error
+#          when trying to open or convert with ghostscript or PDF viewers)
 #
 # Output files are thetaPrefix.pdf and dzAprefix.pdf
+# (or .png if -p option is specified)
 # WARNING: output files are overwritten
 #
 # Example:
@@ -48,17 +52,32 @@ my_scientific_10 <- function(x) {
 
 
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) != 2) {
-  cat("Usage: Rscript plotEstimNetDirectedResults.R thetaPrefix dzAprefix\n")
+basearg <- 0
+use_png <- FALSE
+if (length(args) > 3) {
+  cat("Usage: Rscript plotEstimNetDirectedResults.R [-p] thetaPrefix dzAprefix\n")
   quit(save="no")
+} else if (length(args) == 3) {
+  if (args[1] == "-p") {
+    use_png <- TRUE
+  } else {
+  cat("Usage: Rscript plotEstimNetDirectedResults.R [-p] thetaPrefix dzAprefix\n")
+  quit(save="no")
+  }
+  basearg <- basearg + 1
 }
-theta_prefix <- args[1]
-dzA_prefix <- args[2]
+theta_prefix <- args[basearg+1]
+dzA_prefix <- args[basearg+2]
 
 idvars <- c('run', 't')
 
-theta_outfilename <- paste(theta_prefix, "pdf", sep='.')
-dzA_outfilename <- paste(dzA_prefix, "pdf", sep='.')
+if (use_png) {
+  theta_outfilename <- paste(theta_prefix, "png", sep='.')
+  dzA_outfilename <- paste(dzA_prefix, "png", sep='.')
+} else {
+  theta_outfilename <- paste(theta_prefix, "pdf", sep='.')
+  dzA_outfilename <- paste(dzA_prefix, "pdf", sep='.')
+}
 
 theta <- NULL
 for (thetafile in Sys.glob(paste(theta_prefix, "_[0-9]*[.]txt", sep=''))) {
@@ -99,9 +118,14 @@ for (paramname in paramnames) {
     plotlist <- c(plotlist, list(p))
 }
 
-# use PDF for transparancy (alpha) not supported by postscript
-pdf(theta_outfilename, onefile=FALSE,
-           paper="special", width=9, height=6)
+print(theta_outfilename)#XXX
+if (use_png)  {
+  png(theta_outfilename)
+} else {
+  # use PDF for transparancy (alpha) not supported by postscript
+  pdf(theta_outfilename, onefile=FALSE,
+             paper="special", width=9, height=6)
+}
 do.call(grid.arrange, plotlist)
 dev.off()
 
@@ -146,9 +170,14 @@ for (paramname in paramnames) {
     plotlist <- c(plotlist, list(p))
 }
 
-# use PDF for transparancy (alpha) not supported by postscript
-pdf(dzA_outfilename, onefile=FALSE,
-           paper="special", width=9, height=6)
+print(dzA_outfilename)#XXX
+if (use_png) {
+  png(dzA_outfilename)
+} else {
+  # use PDF for transparancy (alpha) not supported by postscript
+  pdf(dzA_outfilename, onefile=FALSE,
+             paper="special", width=9, height=6)
+}
 do.call(grid.arrange, plotlist)
 dev.off()
 
