@@ -18,6 +18,9 @@
 #     -p : use PNG not PDF (for very large plots PDF can be huge or even
 #          not work correctly with "did not complete the page properly" error
 #          when trying to open or convert with ghostscript or PDF viewers)
+#          Note uses bitmap() not png() as png() does not work on the Linux
+#          cluster I use. See:
+#          https://stackoverflow.com/questions/24999983/r-unable-to-start-device-png-capabilities-has-true-for-png
 #
 # Output files are thetaPrefix.pdf and dzAprefix.pdf
 # (or .png if -p option is specified)
@@ -120,7 +123,7 @@ for (paramname in paramnames) {
 
 print(theta_outfilename)#XXX
 if (use_png)  {
-  png(theta_outfilename)
+  bitmap(theta_outfilename, type='pngalpha', width=9, height=6)
 } else {
   # use PDF for transparancy (alpha) not supported by postscript
   pdf(theta_outfilename, onefile=FALSE,
@@ -172,7 +175,7 @@ for (paramname in paramnames) {
 
 print(dzA_outfilename)#XXX
 if (use_png) {
-  png(dzA_outfilename)
+  bitmap(dzA_outfilename, type='pngalpha', width=9, height=6)
 } else {
   # use PDF for transparancy (alpha) not supported by postscript
   pdf(dzA_outfilename, onefile=FALSE,
