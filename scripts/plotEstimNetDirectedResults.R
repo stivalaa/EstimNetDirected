@@ -105,7 +105,11 @@ for (paramname in paramnames) {
 
     cat(paramname, thetasum$value.mean, thetasum$value.sd, '\n')
     
-    p <- p + geom_point(alpha=1/4)
+    if (!use_png) { # despite what documentation says, alpha does not work in pngalpha device ("semi-transparency is not supported on this device:")
+      p <- p + geom_point(alpha=1/4)
+    } else {
+      p <- p + geom_point()
+    }
     p <- p + geom_hline(yintercept=thetasum$value.mean)
     p <- p + geom_hline(yintercept=thetasum$value.mean + zSigma*thetasum$value.sd, linetype='longdash')
     p <- p + geom_hline(yintercept=thetasum$value.mean - zSigma*thetasum$value.sd, linetype='longdash')
@@ -157,7 +161,11 @@ for (paramname in paramnames) {
                         data=dzAv[which(dzAv$t > firstiter), ],
                         FUN=c(mean, sd))
 
-    p <- p + geom_point(alpha=1/4)
+    if (!use_png) { # despite what documentation says, alpha does not work in pngalpha device ("semi-transparency is not supported on this device:")
+      p <- p + geom_point(alpha=1/4)
+    } else {
+      p <- p + geom_point()
+    }
     p <- p + geom_hline(yintercept=dzAsum$value.mean)
     p <- p + geom_hline(yintercept=dzAsum$value.mean + zSigma*dzAsum$value.sd, linetype='longdash')
     p <- p + geom_hline(yintercept=dzAsum$value.mean - zSigma*dzAsum$value.sd, linetype='longdash')
