@@ -127,7 +127,7 @@ for (paramname in paramnames) {
 
 print(theta_outfilename)#XXX
 if (use_png)  {
-  bitmap(theta_outfilename, type='pngalpha', width=9, height=6)
+  bitmap(theta_outfilename, type='pngalpha', width=9, height=6, res=300)
 } else {
   # use PDF for transparancy (alpha) not supported by postscript
   pdf(theta_outfilename, onefile=FALSE,
@@ -183,7 +183,7 @@ for (paramname in paramnames) {
 
 print(dzA_outfilename)#XXX
 if (use_png) {
-  bitmap(dzA_outfilename, type='pngalpha', width=9, height=6)
+  bitmap(dzA_outfilename, type='pngalpha', width=9, height=6, res=300)
 } else {
   # use PDF for transparancy (alpha) not supported by postscript
   pdf(dzA_outfilename, onefile=FALSE,
