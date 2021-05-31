@@ -141,6 +141,14 @@ typedef struct digraph_s
                              allinnerarcs list */
   nodepair_t *allinnerarcs; /* list of all inner wave arcs specified
                              * as i->j for each. */
+
+  /* term (time period) information, only used for citation ERGM (cERGM) */
+  uint_t *term;    /* for each node, the sequential time period (term) */
+  uint_t max_term;  /* highest term number (time period) 0 ... max_term */
+  uint_t num_maxterm_nodes; /* number of nodes in last (latest) term */
+  uint_t *maxterm_nodes; /* id of each of the num_maxterm_nodes in the
+			    latest term i.e. with term == max_term */
+  
 } digraph_t;
 
 #ifdef TWOPATH_LOOKUP
@@ -191,6 +199,10 @@ int load_attributes(digraph_t *g,
                     const char *setattr_filename);
 
 uint_t get_num_vertices_from_arclist_file(FILE *pajek_file);
+
+int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename);
+void dump_term_info(const digraph_t *g);
+void print_term_summary(const digraph_t *g);
 
 #endif /* DIGRAPH_H */
 

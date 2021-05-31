@@ -71,6 +71,12 @@ extern "C" {
 #define SIMULATE_DEBUG_PRINT(x) /* nothing */
 #endif 
 
+#ifdef DEBUG_CERGM
+#define CERGM_DEBUG_PRINT(x) printf("DEBUG CERGM: "); printf x
+#else
+#define CERGM_DEBUG_PRINT(x) /* nothing */
+#endif
+
 
 /*****************************************************************************
  *

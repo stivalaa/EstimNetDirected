@@ -16,6 +16,12 @@ is included. This network was downloaded from Mark Newman's network data page.
 
 If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below (specifically Stivala, Robins, & Lomi (2020) for the EstimNetDirected software, and Byshkin et al. (2018) for the EE algorithm) in any resulting publications.
 
+The "citation ERGM" (cERGM) model variant, which can also be estimated with this software, is described by:
+
+Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021). Generative Dynamics of Supreme Court Citations: Analysis with a New Statistical Network Model. arXiv preprint arXiv:2101.07197.
+
+The original statnet (http://statnet.org/) R implementation of cERGM is available from https://github.com/schmid86/cERGM/.
+
 
 ## Funding
 
@@ -28,6 +34,7 @@ Borisenko, A., Byshkin, M., & Lomi, A. (2019). A Simple Algorithm for Scalable M
 Byshkin, M., Stivala, A., Mira, A., Krause, R., Robins, G., & Lomi, A. (2016). Auxiliary parameter MCMC for exponential random graph models. *Journal of Statistical Physics*, 165(4), 740-754. https://doi.org/10.1007/s10955-016-1650-5
 
 Byshkin, M., Stivala, A., Mira, A., Robins, G., & Lomi, A. (2018). [Fast Maximum Likelihood Estimation via Equilibrium Expectation for Large Network Data](https://www.nature.com/articles/s41598-018-29725-8). *Scientific Reports* 8:11509. https://doi.org/10.1038/s41598-018-29725-8
+
 
 Stivala, A., Robins, G., & Lomi, A. (2020). Exponential random graph model parameter estimation for very large directed networks. *PloS ONE*, 15(1), e0227804. https://arxiv.org/abs/1904.08063
 

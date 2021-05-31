@@ -1176,6 +1176,10 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->prev_wave_degree  = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
   g->num_inner_arcs = 0;
   g->allinnerarcs = NULL;
+  g->term  = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));  
+  g->max_term = 0;
+  g->num_maxterm_nodes = 0;
+  g->maxterm_nodes = NULL;
   return g;
 }
 
@@ -1786,3 +1790,180 @@ int load_attributes(digraph_t *g,
 }
 
 
+/*
+ * Read citation ERGM (cERGM) term file and put term information in digraph g
+ *
+ * Parameters:
+ *    g             - (in/out) digraph to put zone information in
+ *    term_filename - filename of term (time period) file to read.
+ *
+ * Return value:
+ *    0 if OK else nonzero for error.
+ *
+ * The term, max_term, num_maxterm_nodes, maxterm_nodes
+ * fields of g are set here.
+ *
+ * The format of the file is the same as that for categorical
+ * attributes (and the same function is used to parse it), however
+ * the integers here are interpreted as ordinal, rather than categorical.
+ *
+ * A header line which must have just the name "term", and each
+ * subsequent line the term (time period) for each node.  The first
+ * line (after the header) has the term for node 0, then the next line
+ * node 1, and so on. The terms are numbered from 0 for the first term
+ * (time period):
+ *
+ * E.g.:
+ *
+ * term
+ * 0
+ * 1
+ * 1
+ * 2
+ */
+int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
+{
+  int      num_attr, j;
+  char   **attr_names;
+  int    **terms;
+  uint_t   i, u;
+  uint_t  *term_sizes; /* number of nodes in each term */
+  uint_t   num_terms;
+
+
+  if ((num_attr = load_integer_attributes(term_filename, g->num_nodes,
+                                          FALSE, &attr_names,
+                                          &terms)) < 0){
+    fprintf(stderr, "ERROR: loading cERGM terms from file %s failed\n",
+            term_filename);
+    return -1;
+  }
+  if (num_attr != 1) {
+    fprintf(stderr, "ERROR: expecting only term attribute in term file %s "
+            "but found %d attributes\n", term_filename, num_attr);
+    return -1;
+  }
+  if (strcasecmp(attr_names[0], "term") != 0) {
+    fprintf(stderr, "ERROR: expecting only term attribute in term file %s "
+            " but found %s\n", term_filename, attr_names[0]);
+    return -1;
+  }
+  for (i = 0; i < g->num_nodes; i++) {
+    g->term[i] = terms[0][i];
+    if (g->term[i] > g->max_term) {
+      g->max_term = g->term[i];
+    }
+  }
+
+  num_terms = g->max_term + 1;
+
+  /* check that the terms are not invalid, no skipped terms */
+  term_sizes = (uint_t *)safe_calloc(num_terms, sizeof(uint_t));
+  for (i = 0; i < g->num_nodes; i++) {
+    assert(g->term[i] < num_terms);
+    term_sizes[g->term[i]]++;
+  }
+  for (i = 0; i < num_terms; i++) {
+    if (term_sizes[i] == 0) {
+      fprintf(stderr,
+              "ERROR: Max term is %u but there are no nodes in term %u\n",
+              g->max_term, i);
+      return -1;
+    }
+  }
+
+  /*
+   * For conditional estimation of the citation ERGM (cERGM) model,
+   * the term of each node is fixed, as well as all the ties sent from
+   * nodes in terms (time periods) earlier than the last (latest, most
+   * recent). Only ties sent from nodes in the last (term == max_term)
+   * time period can be added or deleted.
+   *
+   * So to do all this efficiently we build the maxterm_nodes array
+   * which is an array of size num_maxterm_nodes (the number of nodes
+   * in the last term) of each node id in an the last term. Then in
+   * the MCMC procedure, ties can only be added or deleted if they are
+   * directed from a node in this list (to any other node, in the list
+   * or not).
+   */
+  for (i = 0; i < g->max_term; i++) {
+    g->num_maxterm_nodes += term_sizes[i];
+  }
+  g->maxterm_nodes = (uint_t *)safe_calloc(g->num_maxterm_nodes, sizeof(uint_t));
+  for (u = 0, i = 0; u < g->num_nodes; u++) {
+    if (g->term[u] < g->max_term) {
+      assert(i < g->num_maxterm_nodes);
+      g->maxterm_nodes[i++] = u;
+    }
+  }
+
+  for (j = 0; j < num_attr; j++) {
+    free(attr_names[j]);
+    free(terms[j]);
+  }
+  free(attr_names);
+  free(terms);
+  free(term_sizes);
+  return 0;
+}
+
+
+/*
+ * Write cERGM term (time period)information (used for cERGM
+ * conditional estimation) to stdout for debugging.
+ *
+ * Parmaters:
+ *   g - digraph object to dump term info from
+ *
+ * Return value:
+ *  None
+ */
+void dump_term_info(const digraph_t *g)
+{
+  uint_t   i;
+  uint_t   num_terms = g->max_term + 1;
+
+  if (num_terms == 1) {
+    printf("No cERGM term information (all nodes in term 0)\n");
+    return;
+  }
+  printf("Number of cERGM terms: %u (max term %u) \n", num_terms, g->max_term);
+  printf("Number of nodes in last term: %u\n", g->num_maxterm_nodes);
+  printf("Nodes in last term:");
+  for (i = 0; i < g->num_maxterm_nodes; i++) {
+    printf(" %u", g->maxterm_nodes[i]);
+  }
+  printf("\n");
+  printf("Term of each node:");
+  for (i = 0; i < g->num_nodes; i++) {
+    printf(" %u", g->term[i]);
+  }
+  printf("\n");
+}
+
+/*
+ * Write some statistics about the cERGM time periods (terms) to stdout.
+ */
+void print_term_summary(const digraph_t *g)
+{
+  uint_t   i;
+  uint_t  *term_sizes; /* number of nodes in each term */
+  uint_t   num_terms = g->max_term + 1;
+
+  if (num_terms == 1) {
+    printf("No cERGM term information (all nodes in term 0)\n");
+    return;
+  }
+  term_sizes = (uint_t *)safe_calloc(num_terms, sizeof(uint_t));
+  for (i = 0; i < g->num_nodes; i++) {
+    assert(g->term[i] < num_terms);
+    term_sizes[g->term[i]]++;
+  }
+  printf("Number of cERGM terms: %u (max term %u)\n", num_terms, num_terms-1);
+  printf("Number of nodes in last term: %u\n", g->num_maxterm_nodes);
+  printf("Number of nodes in each term:\n");
+  for (i = 0; i < num_terms; i++) {
+    printf(" %u: %u\n", i, term_sizes[i]);
+  }
+  free(term_sizes);
+}

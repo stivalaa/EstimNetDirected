@@ -66,6 +66,7 @@ typedef struct estim_config_s {
   bool  computeStats;       /* compute observed statistics in digraph */
   char *obs_stats_file_prefix; /* observed stats output filename prefix */
   uint_t outputFileSuffixBase;/* task number added to this for output suffixes*/
+  char *term_filename;     /* filename of citation ERGM term file or NULL */
   /*
    * values built by confiparser.c functions from parsed config settings
    */

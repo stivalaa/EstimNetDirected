@@ -850,6 +850,17 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
 #endif /* DEBUG_SNOWBALL */
   }
 
+  if (config->term_filename) {
+    if (add_cergm_terms_to_digraph(g, config->term_filename)) {
+      fprintf(stderr, "ERROR: reading cERGM terms from %s failed\n",
+              config->term_filename);
+      return -1;
+    }
+#ifdef DEBUG_CERGM
+    dump_term_info(g);
+#endif /* DEBUG_CERGM */
+  }
+
   if (computeStats) {
     printf("Observed statistics:");
     for (i = 0; i < num_param; i++)
@@ -949,6 +960,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    if (tasknum == 0) {
     print_data_summary(g);
     print_zone_summary(g);
+    print_term_summary(g);
    }
    
   if (!(dzA_outfile = fopen(dzA_outfilename, "w"))) {

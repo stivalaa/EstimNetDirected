@@ -31,7 +31,7 @@ WARNFLAGS  += -Wextra -Wfloat-equal  \
               -Wwrite-strings \
               -Wmissing-declarations -Wunreachable-code
 
-CDEBUG = -g -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBUG_SNOWBALL -DDEBUG_MEMUSAGE -DDEBUG_SIMULATE
+CDEBUG = -g -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBUG_SNOWBALL -DDEBUG_MEMUSAGE -DDEBUG_SIMULATE -DDEBUG_CERGM
 # Do NOT use -ffast-math as we depend on IEEE handling of NaN
 OPTFLAGS = -O3  #-pg
 CFLAGS     = $(OPTFLAGS) $(WARNFLAGS)
