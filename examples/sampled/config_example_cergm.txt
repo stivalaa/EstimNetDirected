@@ -30,9 +30,11 @@ EEinnerSteps = 100 # inner iterations of Algorithm EE
 ################## Algorithm choices #######################################
 
 
-#useIFDsampler = True            # use the IFD sampler
+#useTNTsampler = True
 
 outputSimulatedNetwork = True   # write the simulated network to file
+
+citationERGM = True
 
 ################## Input filenames ###########################################
 
@@ -66,6 +68,7 @@ arclistFile = subgraph0.txt
 # citation ERGM (cERGM) terms (time periods) in same format as categorical 
 # attributes, but only the term attribute is allowed. 
 termFile = cergmterms.txt
+
 
 ################## Output filenames ##########################################
 

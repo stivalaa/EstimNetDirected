@@ -43,6 +43,17 @@
  * random graph models for large directed networks with snowball
  * sampling. Unpublished manuscript.
  *
+ * Also can optionally do citation ERGM (cERGM) estimation, which is 
+ * conditional on the term (time period) of the node. All ties
+ * except those from a node in the last time period are fixed.
+ * 
+ * Reference for citation ERGM (cERGM) estimation is:
+ *
+ *   Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021). 
+ *   Generative Dynamics of Supreme Court Citations:
+ *   Analysis with a New Statistical Network Model. arXiv preprint
+ *   arXiv:2101.07197.
+ *
  ****************************************************************************/
 
 #include <assert.h>
@@ -93,6 +104,8 @@
  *   useConditionalEstimation - if True do conditional estimation of snowball
  *                              network sample.
  *   forbidReciprocity - if True do not allow reciprocated arcs.
+ *   citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                       on term (time period)
  *
  * Return value:
  *   Acceptance rate.
@@ -122,7 +135,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_t sampler_m,
                     bool performMove,
                     bool useConditionalEstimation,
-                    bool forbidReciprocity)
+                    bool forbidReciprocity, bool citationERGM)
 {
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
@@ -131,6 +144,8 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */
 
+  assert(!(citationERGM && useConditionalEstimation)); /* cannot do both */
+  
   for (i = 0; i < n; i++)
     addChangeStats[i] = delChangeStats[i] = 0;
 
@@ -159,6 +174,18 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                (isArcIgnoreDirection(g, i, j) &&
                 ((g->zone[i] > g->zone[j] && g->prev_wave_degree[i] == 1) ||
                  (g->zone[j] > g->zone[i] && g->prev_wave_degree[j] == 1))));
+    } else if (citationERGM) {
+      /* cERGM: select random node i in last time period (term) and random
+       * node j (in any term) and toggle arc between them. In this way
+       * we have all arcs (citations) in terms earlier than the last fixed,
+       * and we only create citations from nodes in the last term. */
+      do {
+	i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
+	do {
+	  j = int_urand(g->num_nodes);
+	} while (i == j);
+	isDelete = isArc(g, i, j);
+      } while (forbidReciprocity && !isDelete && isArc(g, j, i));
     } else {
       /* Basic sampler (no conditional estimation): select two
          nodes i and j uniformly at random and toggle arc between
@@ -169,8 +196,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
           j = int_urand(g->num_nodes);
         } while (i == j);
         isDelete = isArc(g, i ,j);
-      }
-      while (forbidReciprocity && !isDelete && isArc(g, j, i));
+      } while (forbidReciprocity && !isDelete && isArc(g, j, i));
     }
     
     /* The change statistics are all computed on the basis of adding arc i->j

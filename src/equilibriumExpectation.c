@@ -33,6 +33,14 @@
  *   Borisenko, A., Byshkin, M., & Lomi, A. (2019). A Simple Algorithm
  *   for Scalable Monte Carlo Inference. arXiv preprint arXiv:1901.00533.
  *
+ * Reference for citation ERGM (cERGM) estimation is:
+ *
+ *   Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021). 
+ *   Generative Dynamics of Supreme Court Citations:
+ *   Analysis with a New Statistical Network Model. arXiv preprint
+ *   arXiv:2101.07197.
+ *
+ *
  * Preprocessor defines used:
  *
  *    TWOPATH_LOOKUP      - use two-path lookup tables (arrays by default)
@@ -108,6 +116,8 @@
  *   useConditionalEstimation - do conditional estimation of snowball sample
  *   forbidReciprocity - if True do not allow reciprocated arcs.
  *   useTNTsampler     - use TNT sampler not IFD or basic.
+ *   citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                       on term (time period)
  *
  * Return value:
  *   None.
@@ -135,7 +145,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  bool useIFDsampler,
                  double ifd_K,
                  bool useConditionalEstimation,
-                 bool forbidReciprocity, bool useTNTsampler)
+                 bool forbidReciprocity, bool useTNTsampler, bool citationERGM)
 {
   uint_t t, l;
   double acceptance_rate;
@@ -159,6 +169,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (t = 0; t < M1; t++) {
     fprintf(theta_outfile, "%d ", t-M1);
     if (useIFDsampler) {
+      assert (!citationERGM); /* TODO implement cERGM in IFD sampler */
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
                                    change_stats_funcs,
@@ -177,6 +188,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else if (useTNTsampler) {
+      assert(!citationERGM); /* TODO implement cERGM in TNT sampler */
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
@@ -204,7 +216,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      theta,
                                      addChangeStats, delChangeStats, sampler_m,
                                      FALSE, useConditionalEstimation,
-                                     forbidReciprocity);
+                                     forbidReciprocity, citationERGM);
     }
     for (l = 0; l < n; l++) {
       dzA[l] = delChangeStats[l] - addChangeStats[l];
@@ -297,8 +309,11 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *  minTheta          - small positive constant c in Borisenko update step
  *                      to avoid zero step at zero parameter values if
  *                      useBorisenkoUpdate is true.
- *   useTNTsampler     - use TNT sampler not IFD or basic.
+ *  useTNTsampler     - use TNT sampler not IFD or basic.
  *
+ *  citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                       on term (time period)
+
  * Return value:
  *   None.
  *
@@ -325,7 +340,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useConditionalEstimation,
                   bool forbidReciprocity, bool useBorisenkoUpdate,
                   double learningRate, double minTheta,
-		  bool useTNTsampler)
+		  bool useTNTsampler, bool citationERGM)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -373,6 +388,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 #endif /* DEBUG_MEMUSAGE */
       }
       if (useIFDsampler) {
+	assert(!citationERGM); /* TODO implement cERGM for IFD sampler */
         acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                      change_stats_funcs,
                                      lambda_values,
@@ -394,6 +410,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
           fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
         }
       } else if (useTNTsampler) {
+	assert(!citationERGM); /* TODO implement cERGM for TNT sampler */
         acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				     n_attr_interaction,
 				     change_stats_funcs,
@@ -424,7 +441,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                        sampler_m,
                                        TRUE,/*Algorithm EE actually does moves*/
                                        useConditionalEstimation,
-                                       forbidReciprocity);
+                                       forbidReciprocity, citationERGM);
       }
       for (l = 0; l < n; l++) {
         dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -549,6 +566,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                      to avoid zero step at zero parameter values if
  *                      useBorisenkoUpdate is true.
  *  useTNTsampler     - use TNT sampler not IFD or basic.
+ *  citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                      on term (time period)
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -574,7 +593,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 bool useConditionalEstimation,
                 bool forbidReciprocity, bool useBorisenkoUpdate,
                 double learningRate, double minTheta,
-		bool useTNTsampler)
+		bool useTNTsampler, bool citationERGM)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -585,6 +604,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *Dmean = (double *)safe_malloc(n*sizeof(double));
 
   assert(!(useIFDsampler && useTNTsampler));
+  assert(!(citationERGM && useConditionalEstimation));
     
   if (useBorisenkoUpdate) {
     printf("task %u:  ACA_S = %g, Borisenko update learningRate = %g, "
@@ -610,6 +630,10 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (forbidReciprocity)
     printf("task %u: estimation is conditional on no reciprocated arcs\n",
       tasknum);
+
+  if (citationERGM)
+    printf("task %u: citation ERGM (cERGM) estimation conditional on term\n",
+	   tasknum);
 
   /* steps of algorithm S (M1_steps */
   /*uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);*/
@@ -638,7 +662,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
               attr_indices, attr_interaction_pair_indices,
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
               ifd_K, useConditionalEstimation, forbidReciprocity,
-	      useTNTsampler);
+	      useTNTsampler, citationERGM);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -684,7 +708,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
 		 useIFDsampler, ifd_K, useConditionalEstimation,
 		 forbidReciprocity, useBorisenkoUpdate, learningRate,
-                 minTheta, useTNTsampler);
+                 minTheta, useTNTsampler, citationERGM);
 
     gettimeofday(&end_timeval, NULL);
     timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -955,8 +979,33 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
                "ERROR: conditional estimation requested but only one zone\n");
        return -1;
      }
+   }  else {
+     if (config->zone_filename)
+       fprintf(stderr, "WARNING: snowball sampling zones are specified"
+	       " but conditional estimation is not being used\n");
    }
 
+   /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
+      values were specified */
+   if (config->citationERGM) {
+     if (config->useConditionalEstimation) {
+       fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
+	       " estimation and citation ERGM\n");
+	 return -1;
+     }
+     if (!config->term_filename) {
+       fprintf(stderr,
+           "ERROR: citation ERGM estimation requested but no term file\n");
+       return -1;
+     }
+     if (g->max_term < 1) {
+       fprintf(stderr,
+               "ERROR: citation ERGM estimation requested but only one time period\n");
+       return -1;
+     }
+   }
+
+   
    if (tasknum == 0) {
     print_data_summary(g);
     print_zone_summary(g);
@@ -1056,7 +1105,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
               config->useConditionalEstimation,
               config->forbidReciprocity,
               config->useBorisenkoUpdate, config->learningRate,
-              config->minTheta, config->useTNTsampler);
+              config->minTheta, config->useTNTsampler,
+	      config->citationERGM);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);

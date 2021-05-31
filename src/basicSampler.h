@@ -45,6 +45,18 @@
  * random graph models for large directed networks with snowball
  * sampling. Unpublished manuscript.
  *
+ *
+ * Also can optionally do citation ERGM (cERGM) estimation, which is 
+ * conditional on the term (time period) of the node. All ties
+ * except those from a node in the last time period are fixed.
+ * 
+ * Reference for citation ERGM (cERGM) estimation is:
+ *
+ *   Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021). 
+ *   Generative Dynamics of Supreme Court Citations:
+ *   Analysis with a New Statistical Network Model. arXiv preprint
+ *   arXiv:2101.07197.
+ *
  ****************************************************************************/
 
 #include "changeStatisticsDirected.h"
@@ -64,7 +76,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_t sampler_m,
                     bool performMove,
                     bool useConditionalEstimation,
-                    bool forbidReciprocity);
+                    bool forbidReciprocity, bool citationERGM);
 
 #endif /* BASICSAMPLER_H */
 
