@@ -721,7 +721,7 @@ int do_simulation(sim_config_t * config)
 	 assert(isArc(g, i, j));
 	 removeArc(g, i, j);
 	 /* Update the statistics for removing this arc */
-	 calcChangeStats(g, i, j,
+	 (void)calcChangeStats(g, i, j,
 			 num_param, n_attr, n_dyadic,
 			 n_attr_interaction,
 			 config->param_config.change_stats_funcs,
