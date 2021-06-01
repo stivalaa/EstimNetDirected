@@ -21,7 +21,7 @@
 #include "ifdSampler.h"
 #include "tntSampler.h"
 #include "simulation.h"
-
+#include "loadDigraph.h"
 
 /*****************************************************************************
  *
@@ -449,10 +449,12 @@ int do_simulation(sim_config_t * config)
   uint_t         i, theta_i;
   FILE          *dzA_outfile;
 #define HEADER_MAX 65536
-  char fileheader[HEADER_MAX];
-  bool   foundArc        = FALSE;
-  uint_t arc_param_index = 0;
-  double *dzA = NULL;
+  char           fileheader[HEADER_MAX];
+  bool           foundArc        = FALSE;
+  uint_t         arc_param_index = 0;
+  double        *dzA             = NULL;
+  FILE          *arclist_file;
+  uint_t         num_nodes       = 0;
     
 
   if (!config->stats_filename) {
@@ -537,7 +539,9 @@ int do_simulation(sim_config_t * config)
 
 
    /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
-      values were specified */
+      values were specified, and also a digraph to read for the initial
+      network (from which arcs sent from nodes not in the last term (time
+      period) are fixed */
    if (config->citationERGM) {
      if (config->useConditionalSimulation) {
        fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
@@ -650,39 +654,80 @@ int do_simulation(sim_config_t * config)
    /* allocate change statistics array  */
    dzA = (double *)safe_calloc(num_param, sizeof(double));
    /* set values of graph stats for empty graph; most (but not all) are zero */
-    empty_graph_stats(g, num_param, n_attr, n_dyadic,
-                      n_attr_interaction,
-                      config->param_config.change_stats_funcs,
-                      config->param_config.param_lambdas,
-                      config->param_config.attr_change_stats_funcs,
-                      config->param_config.dyadic_change_stats_funcs,
-                      config->param_config.attr_interaction_change_stats_funcs,
-                      config->param_config.attr_indices,
-                      config->param_config.attr_interaction_pair_indices,
-                      dzA);
-
-   
-   if (config->useIFDsampler) {
-     /* Initialize the graph to random (E-R aka Bernoulli) graph with
-        specified number of arcs for fixed density simulation (IFD sampler),
-	and also for TNT sampler since it does 50% add/delete moves */
-     make_erdos_renyi_digraph(g, config->numArcs,
-                              num_param, n_attr, n_dyadic, n_attr_interaction,
-                              config->param_config.change_stats_funcs,
-                              config->param_config.param_lambdas,
-                              config->param_config.attr_change_stats_funcs,
-                              config->param_config.dyadic_change_stats_funcs,
-                              config->param_config.attr_interaction_change_stats_funcs,
-                              config->param_config.attr_indices,
-                              config->param_config.attr_interaction_pair_indices,                              
-                              config->useConditionalSimulation,
-                              config->forbidReciprocity,
-                              dzA, theta);
-   } else if (config->numArcs != 0) {
-     fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
-             " so numArcs parameter is ignored\n", config->numArcs);
+   empty_graph_stats(g, num_param, n_attr, n_dyadic,
+		     n_attr_interaction,
+		     config->param_config.change_stats_funcs,
+		     config->param_config.param_lambdas,
+		     config->param_config.attr_change_stats_funcs,
+		     config->param_config.dyadic_change_stats_funcs,
+		     config->param_config.attr_interaction_change_stats_funcs,
+		     config->param_config.attr_indices,
+		     config->param_config.attr_interaction_pair_indices,
+		     dzA);
+   if (config->citationERGM) {
+     /* For citation ERGM, initialize the graph from the observed graph
+	specified in the Pajek format arclist file. All arcs sent from
+	nodes in time periods other than the last will be fixed;
+	arcs from the last time period will be delete in the initialization,
+	and can be added and deleted in the simulation */
+     if (!config->arclist_filename) {
+       fprintf(stderr, "ERROR: ctiation ERGM simulation requested but no arclistFile specified.\n");
+       return -1;
+     }
+     if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
+       fprintf(stderr, "error opening file %s (%s)\n", 
+	       config->arclist_filename, strerror(errno));
+       return -1;
+     }
+     if (config->numArcs != 0) {
+       fprintf(stderr, "WARNING: numArcs is set to %u but using citationERGM"
+	       " so numArcs parameter is ignored\n", config->numArcs);
+     }
+     num_nodes = get_num_vertices_from_arclist_file(arclist_file);/* closes file */
+     if (num_nodes != config->numNodes) {
+       fprintf(stderr, "ERROR: number of nodes specified in config file (%u) does not match number in Pajek file %s (%u)\n", config->numNodes, config->arclist_filename, num_nodes);
+       return 1;
+     }
+     if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
+       fprintf(stderr, "error opening file %s (%s)\n", 
+	       config->arclist_filename, strerror(errno));
+       return -1;
+     }
+     g = load_digraph_from_arclist_file(arclist_file, g,
+					TRUE /*computeStats*/,
+					num_param,
+					n_attr, n_dyadic, n_attr_interaction,
+					config->param_config.change_stats_funcs,
+					config->param_config.param_lambdas,
+					config->param_config.attr_change_stats_funcs,
+					config->param_config.dyadic_change_stats_funcs,
+					config->param_config.attr_interaction_change_stats_funcs,
+					config->param_config.attr_indices,
+					config->param_config.attr_interaction_pair_indices,
+					dzA, theta);
+     
+   } else {
+     if (config->useIFDsampler) {
+       /* Initialize the graph to random (E-R aka Bernoulli) graph with
+	  specified number of arcs for fixed density simulation (IFD sampler),
+	  and also for TNT sampler since it does 50% add/delete moves */
+       make_erdos_renyi_digraph(g, config->numArcs,
+				num_param, n_attr, n_dyadic, n_attr_interaction,
+				config->param_config.change_stats_funcs,
+				config->param_config.param_lambdas,
+				config->param_config.attr_change_stats_funcs,
+				config->param_config.dyadic_change_stats_funcs,
+				config->param_config.attr_interaction_change_stats_funcs,
+				config->param_config.attr_indices,
+				config->param_config.attr_interaction_pair_indices,                              
+				config->useConditionalSimulation,
+				config->forbidReciprocity,
+				dzA, theta);
+     } else if (config->numArcs != 0) {
+       fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
+	       " so numArcs parameter is ignored\n", config->numArcs);
+     }
    }
-   
 
    /* Open the output file for writing */
    if (!(dzA_outfile = fopen(config->stats_filename, "w"))) {

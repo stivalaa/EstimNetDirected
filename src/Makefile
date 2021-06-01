@@ -30,7 +30,7 @@ ESTIM_COMMON_C_OBJS =  utils.o digraph.o \
 SIM_COMMON_C_OBJS =  utils.o digraph.o \
                  changeStatisticsDirected.o basicSampler.o \
                  configparser.o simconfigparser.o ifdSampler.o simulation.o \
-                 tntSampler.o
+                 tntSampler.o loadDigraph.o
 
 ESTIM_MPI_C_OBJS    = EstimNetDirectedMPImain.o
 ESTIM_NONMPI_C_OBJS = EstimNetDirectedMain.o

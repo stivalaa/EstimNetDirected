@@ -32,7 +32,7 @@ citationERGM = True
 # [note this part is optional for EstimeNetDirected] then *arcs
 # followed by arcs list one per line.
 
-#arclistFile = subgraph0.txt
+arclistFile = subgraph0.txt
 
 # Attribute files
 # binattr_file for binary attributes (0 or 1 only)

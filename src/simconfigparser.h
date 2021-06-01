@@ -57,6 +57,7 @@ typedef struct sim_config_s {
   uint_t numArcs;         /* number of arcs for IFD simulation (fixed density)*/
   char *term_filename;     /* filename of citation ERGM term file or NULL */
   bool  citationERGM;      /* use cERGM conditional estimation on terms */
+  char *arclist_filename;  /* filename of Pajek file for citationERGM */  
 
   /*
    * values built by confiparser.c functions from parsed config settings

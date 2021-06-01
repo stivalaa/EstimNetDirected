@@ -110,6 +110,9 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
    offsetof(sim_config_t, citationERGM),
    "do citation ERGM (cERGM) conditional simulation on terms (time periods)"},
 
+  {"arclistFile",   PARAM_TYPE_STRING,   offsetof(sim_config_t, arclist_filename),
+  "Network in Pajek arc list format for initial state of simulation; used for citationERGM to get fixed arcs from terms other than the last"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to to simulate from"},
 
@@ -161,6 +164,7 @@ sim_config_t SIM_CONFIG = {
   0,     /* numArcs */
   NULL,  /* term_filename */
   FALSE, /* citationERGM */
+  NULL,  /* arclist_filename */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -228,7 +232,8 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* forbidReciprocity */
   FALSE, /* numArcs */
   FALSE, /* term_filename */
-  FALSE, /* citationERGM */  
+  FALSE, /* citationERGM */
+  FALSE, /* arclist_filename */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */
@@ -321,7 +326,8 @@ void free_sim_config_struct(sim_config_t *config)
   free(config->stats_filename);
   free(config->sim_net_file_prefix);
   free(config->zone_filename);
-  free(config->term_filename);  
+  free(config->term_filename);
+  free(config->arclist_filename);
   free_param_config_struct(&config->param_config);
 }
 
