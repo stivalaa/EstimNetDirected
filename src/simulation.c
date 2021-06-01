@@ -326,7 +326,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      burnin,
                                      TRUE,/*actually do moves*/
                                      useConditionalSimulation,
-                                     forbidReciprocity);
+                                     forbidReciprocity,
+				     FALSE /* TODO citationERGM */);
     }
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -385,7 +386,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      interval,
                                      TRUE,/*actually do moves*/
                                      useConditionalSimulation,
-                                     forbidReciprocity);
+                                     forbidReciprocity,
+				     FALSE /* TODO citationERGM */);
     }
     iternum = burnin + interval*(samplenum+1);
     fprintf(dzA_outfile, "%llu ", iternum);
