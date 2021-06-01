@@ -477,6 +477,16 @@ int do_simulation(sim_config_t * config)
     dump_zone_info(g);
 #endif /* DEBUG_SNOWBALL */
   }
+  if (config->term_filename) {
+    if (add_cergm_terms_to_digraph(g, config->term_filename)) {
+      fprintf(stderr, "ERROR: reading cERGM terms from %s failed\n",
+              config->term_filename);
+      return -1;
+    }
+#ifdef DEBUG_CERGM
+    dump_term_info(g);
+#endif /* DEBUG_CERGM */
+  }
   
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */
@@ -715,6 +725,7 @@ int do_simulation(sim_config_t * config)
 
    print_data_summary(g);
    print_zone_summary(g);
+   print_term_summary(g);
 
 #ifdef DEBUG_SIMULATE
    printf("initial graph stats: ");   
