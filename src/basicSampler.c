@@ -186,10 +186,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 	} while (i == j);
 	isDelete = isArc(g, i, j);
       } while (forbidReciprocity && !isDelete && isArc(g, j, i));
-#ifdef DEBUG_CERGM
-      CERGM_DEBUG_PRINT(("%s %d -> %d\n",isDelete ? "del" : "add", i, j));
       assert(g->term[i] == g->max_term);
-#endif
     } else {
       /* Basic sampler (no conditional estimation): select two
          nodes i and j uniformly at random and toggle arc between
