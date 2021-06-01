@@ -55,6 +55,8 @@ typedef struct sim_config_s {
   bool  useConditionalSimulation; /*conditional simulation of snowball sample */
   bool  forbidReciprocity; /* do not allow reciprocated arcs in sampler */
   uint_t numArcs;         /* number of arcs for IFD simulation (fixed density)*/
+  char *term_filename;     /* filename of citation ERGM term file or NULL */
+  bool  citationERGM;      /* use cERGM conditional estimation on terms */
 
   /*
    * values built by confiparser.c functions from parsed config settings

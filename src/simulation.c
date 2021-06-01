@@ -217,6 +217,8 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
  *   dzA               - (in/Out) vector of n change stats
  *                             Allocated by caller, set to initial graph values
  *   useTNTsampler     - use TNT sampler not IFD or basic.
+ *   citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                       on term (time period)
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -243,7 +245,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool outputSimulatedNetworks,
                   uint_t arc_param_index,
                   double dzA[],
-		  bool useTNTsampler)
+		  bool useTNTsampler,
+		  bool citationERGM)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -261,6 +264,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                 where fx is iteration number */
 
   assert(!(useIFDsampler && useTNTsampler));
+  assert(!(citationERGM && useConditionalSimulation));  
   
   if (useIFDsampler)
     ifd_aux_param = theta[arc_param_index] + arcCorrection(g);
@@ -277,10 +281,13 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("Doing conditional simulation of snowball sample\n");
   if (forbidReciprocity)
     printf("Simulation is conditional on no reciprocated arcs\n");
+  if (citationERGM)
+    printf("citation ERGM (cERGM) simulation conditional on term\n");
 
   if (burnin > 0) {
     gettimeofday(&start_timeval, NULL);
     if (useIFDsampler) {
+      assert(!citationERGM); /* TODO implement cERGM in IFD sampler */
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                    change_stats_funcs,
                                    lambda_values,
@@ -296,6 +303,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    useConditionalSimulation,
                                    forbidReciprocity);
     } else if (useTNTsampler) {
+      assert(!citationERGM); /* TODO implement cERGM in TNT sampler */
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
@@ -327,7 +335,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      TRUE,/*actually do moves*/
                                      useConditionalSimulation,
                                      forbidReciprocity,
-				     FALSE /* TODO citationERGM */);
+				     citationERGM);
     }
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -509,9 +517,33 @@ int do_simulation(sim_config_t * config)
                "ERROR: conditional simulation requested but only one zone\n");
        return -1;
      }
+   }  else {
+     if (config->zone_filename)
+       fprintf(stderr, "WARNING: snowball sampling zones are specified"
+	       " but conditional simuilation is not being used\n");
    }
 
 
+   /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
+      values were specified */
+   if (config->citationERGM) {
+     if (config->useConditionalSimulation) {
+       fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
+	       " simulation and citation ERGM\n");
+	 return -1;
+     }
+     if (!config->term_filename) {
+       fprintf(stderr,
+           "ERROR: citation ERGM simulation requested but no term file\n");
+       return -1;
+     }
+     if (g->max_term < 1) {
+       fprintf(stderr,
+               "ERROR: citation ERGM simulation requested but only one time period\n");
+       return -1;
+     }
+   }
+   
    
    /* 
     *set parameter values from the configuration settings and write
@@ -712,7 +744,7 @@ int do_simulation(sim_config_t * config)
                  config->sim_net_file_prefix,
                  dzA_outfile,
                  config->outputSimulatedNetworks, arc_param_index,
-                 dzA, config->useTNTsampler);
+                 dzA, config->useTNTsampler, config->citationERGM);
 
    gettimeofday(&end_timeval, NULL);
    timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);

@@ -103,17 +103,24 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"numArcs",        PARAM_TYPE_UINT,     offsetof(sim_config_t, numArcs),
    "number of arcs for Improved Fixed Density simulation (useIFDsampler=TRUE)"},
 
+  {"termFile",      PARAM_TYPE_STRING,  offsetof(sim_config_t, term_filename),
+   "citation ERGM (cERGM) term (time period) filename"},
+
+  {"citationERGM", PARAM_TYPE_BOOL,
+   offsetof(sim_config_t, citationERGM),
+   "do citation ERGM (cERGM) conditional simulation on terms (time periods)"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
-  "structural parameters to estimate"},
+  "structural parameters to to simulate from"},
 
   {ATTR_PARAMS_STR, PARAM_TYPE_SET,         0, /*no offset, coded explicitly*/
-  "binary/categorical/continuous/set attribute parameters to estimate"},
+  "binary/categorical/continuous/set attribute parameters to simulate from"},
 
   {DYADIC_PARAMS_STR, PARAM_TYPE_SET,       0, /*no offset, coded explicitly*/
-  "dyadic covariate parameters to estimate"},
+  "dyadic covariate parameters to simulate from"},
 
   {ATTR_INTERACTION_PARAMS_STR,PARAM_TYPE_SET, 0,/*no offset, coded explicitly*/
-   "attribute pair interaction parameters to estimate"}
+   "attribute pair interaction parameters to simulate from"}
 };
 const uint_t NUM_SIM_CONFIG_PARAMS = sizeof(SIM_CONFIG_PARAMS) /
   sizeof(SIM_CONFIG_PARAMS[0]);
@@ -152,6 +159,8 @@ sim_config_t SIM_CONFIG = {
   FALSE, /* useConditionalSimulation */
   FALSE, /* forbidReciprocity */
   0,     /* numArcs */
+  NULL,  /* term_filename */
+  FALSE, /* citationERGM */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -218,6 +227,8 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* useConditionalSimulation */
   FALSE, /* forbidReciprocity */
   FALSE, /* numArcs */
+  FALSE, /* term_filename */
+  FALSE, /* citationERGM */  
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */
@@ -310,6 +321,7 @@ void free_sim_config_struct(sim_config_t *config)
   free(config->stats_filename);
   free(config->sim_net_file_prefix);
   free(config->zone_filename);
+  free(config->term_filename);  
   free_param_config_struct(&config->param_config);
 }
 

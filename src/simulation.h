@@ -31,7 +31,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   FILE *dzA_outfile,
                   bool outputSimulatedNetworks,
                   uint_t arc_param_index,
-                  double addChangeStats[], bool useTNTsampler);
+                  double addChangeStats[], bool useTNTsampler,
+		  bool citationERGM);
 
 int do_simulation(sim_config_t *config);
 
