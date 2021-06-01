@@ -758,6 +758,10 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   bool          computeStats = config->computeStats && tasknum == 0;
   bool          first_header_field = TRUE;
 
+  if (!config->arclist_filename) {
+    fprintf(stderr, "ERROR: no arclistFile specified.\n");
+    return -1;
+  }
   if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
             config->arclist_filename, strerror(errno));
