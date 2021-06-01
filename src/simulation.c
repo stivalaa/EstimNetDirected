@@ -446,7 +446,7 @@ int do_simulation(sim_config_t * config)
   digraph_t     *g;
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
-  uint_t         i, theta_i;
+  uint_t         i, theta_i, j, k, l, m;
   FILE          *dzA_outfile;
 #define HEADER_MAX 65536
   char           fileheader[HEADER_MAX];
@@ -455,6 +455,8 @@ int do_simulation(sim_config_t * config)
   double        *dzA             = NULL;
   FILE          *arclist_file;
   uint_t         num_nodes       = 0;
+  double        *changeStats     = NULL;
+  
     
 
   if (!config->stats_filename) {
@@ -665,11 +667,12 @@ int do_simulation(sim_config_t * config)
 		     config->param_config.attr_interaction_pair_indices,
 		     dzA);
    if (config->citationERGM) {
-     /* For citation ERGM, initialize the graph from the observed graph
-	specified in the Pajek format arclist file. All arcs sent from
-	nodes in time periods other than the last will be fixed;
-	arcs from the last time period will be delete in the initialization,
-	and can be added and deleted in the simulation */
+     /* For citation ERGM, initialize the graph from the observed
+	graph specified in the Pajek format arclist file. All arcs
+	sent from nodes in time periods other than the last will be
+	fixed; arcs from the last time period will be deleted in the
+	initialization here, and can be added and deleted in the
+	simulation */
      if (!config->arclist_filename) {
        fprintf(stderr, "ERROR: ctiation ERGM simulation requested but no arclistFile specified.\n");
        return -1;
@@ -705,7 +708,37 @@ int do_simulation(sim_config_t * config)
 					config->param_config.attr_indices,
 					config->param_config.attr_interaction_pair_indices,
 					dzA, theta);
-     
+     /* Now delete all arcs sent from nodes in the last time period
+	(term) so that we start the simulation with an empty set of
+	these non-fixed potential arcs (all the other arcs and
+	non-arcs, from nodes in previous terms, are fixed). */
+     changeStats = (double *)safe_calloc(num_param, sizeof(double));     
+     for (k = 0; k < g->num_maxterm_nodes; k++) {
+       i = g->maxterm_nodes[k];
+       assert(g->term[i] == g->max_term);
+       for (l = 0; l < g->outdegree[i]; l++) {
+	 j = g->arclist[i][l];
+	 assert(isArc(g, i, j));
+	 removeArc(g, i, j);
+	 /* Update the statistics for removing this arc */
+	 calcChangeStats(g, i, j,
+			 num_param, n_attr, n_dyadic,
+			 n_attr_interaction,
+			 config->param_config.change_stats_funcs,
+			 config->param_config.param_lambdas,
+			 config->param_config.attr_change_stats_funcs,
+			 config->param_config.dyadic_change_stats_funcs,
+			 config->param_config.attr_interaction_change_stats_funcs,
+			 config->param_config.attr_indices,
+			 config->param_config.attr_interaction_pair_indices,
+			 theta,
+			 TRUE, /*isDelete*/
+			 changeStats);
+	 for (m = 0; m < num_param; m++) {
+	   dzA[m] += changeStats[m]; /* isDelete=TRUE above makes change -ve */
+	 }
+       }
+     }
    } else {
      if (config->useIFDsampler) {
        /* Initialize the graph to random (E-R aka Bernoulli) graph with
