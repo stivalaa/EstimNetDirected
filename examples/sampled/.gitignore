@@ -4,3 +4,5 @@ subgraph*.txt
 subzone*.txt
 sampledesc.txt
 sim_*sim_n2000_sample_*.net
+simulation_sim_cergm_*.net
+stats_sim_cergm.txt

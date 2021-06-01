@@ -349,6 +349,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {
     if (useIFDsampler) {
+      assert(!citationERGM); /* TODO implement cERGM in IFD sampler */
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                    change_stats_funcs,
                                    lambda_values,
@@ -364,6 +365,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    useConditionalSimulation,
                                    forbidReciprocity);
     } else if (useTNTsampler) {
+      assert(!citationERGM); /* TODO implement cERGM in TNT sampler */
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
@@ -395,7 +397,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      TRUE,/*actually do moves*/
                                      useConditionalSimulation,
                                      forbidReciprocity,
-				     FALSE /* TODO citationERGM */);
+				     citationERGM);
     }
     iternum = burnin + interval*(samplenum+1);
     fprintf(dzA_outfile, "%llu ", iternum);
