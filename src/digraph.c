@@ -1886,12 +1886,11 @@ int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
    * directed from a node in this list (to any other node, in the list
    * or not).
    */
-  for (i = 0; i < g->max_term; i++) {
-    g->num_maxterm_nodes += term_sizes[i];
-  }
+  g->num_maxterm_nodes = term_sizes[g->max_term];
   g->maxterm_nodes = (uint_t *)safe_calloc(g->num_maxterm_nodes, sizeof(uint_t));
   for (u = 0, i = 0; u < g->num_nodes; u++) {
-    if (g->term[u] < g->max_term) {
+    assert(g->term[u] <= g->max_term);
+    if (g->term[u] == g->max_term) {
       assert(i < g->num_maxterm_nodes);
       g->maxterm_nodes[i++] = u;
     }
