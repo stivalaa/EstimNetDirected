@@ -719,8 +719,9 @@ int do_simulation(sim_config_t * config)
        for (l = 0; l < g->outdegree[i]; l++) {
 	 j = g->arclist[i][l];
 	 assert(isArc(g, i, j));
-	 removeArc(g, i, j);
 	 /* Update the statistics for removing this arc */
+	 /* Note must do the computation after actually removing the arc */
+	 removeArc(g, i, j);
 	 (void)calcChangeStats(g, i, j,
 			 num_param, n_attr, n_dyadic,
 			 n_attr_interaction,
@@ -735,10 +736,16 @@ int do_simulation(sim_config_t * config)
 			 TRUE, /*isDelete*/
 			 changeStats);
 	 for (m = 0; m < num_param; m++) {
-	   dzA[m] += changeStats[m]; /* isDelete=TRUE above makes change -ve */
+	   dzA[m] -= changeStats[m]; /* isDelete=TRUE above only
+					changes return value total
+					(not used here)not
+					changestats, so need to
+					subtract change stats here for
+					delete */
 	 }
        }
      }
+     free(changeStats);
    } else {
      if (config->useIFDsampler) {
        /* Initialize the graph to random (E-R aka Bernoulli) graph with
