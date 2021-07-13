@@ -623,8 +623,8 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
       continue;
     if (isArc(g, w, j) && g->catattr[a][i] != CAT_NA &&
 	g->catattr[a][j] != CAT_NA && g->catattr[a][w] != CAT_NA &&
-	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][w])
+	g->catattr[a][w] != g->catattr[a][i] &&
+	g->catattr[a][w] != g->catattr[a][j])
       delta++;
   }
   return (double)delta;
