@@ -591,9 +591,10 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
  *   Analysis with a New Statistical Network Model. arXiv preprint
  *   arXiv:2101.07197
  *
- * where it is described as the "different term transitivity" statistic,
- * in the context of the citation ERGM (cERGM) where the categorical
- * attribute is the term (time period).
+ * where it is described as the "different term transitivity"
+ * statistic ("difftransties" in cERGM), in the context of the
+ * citation ERGM (cERGM) where the categorical attribute is the term
+ * (time period).
  *
  */
 double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
