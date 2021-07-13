@@ -578,6 +578,57 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
          g->catattr[a][i] != g->catattr[a][j] && isArc(g, j, i);
 }
 
+
+/*
+ * Change statistic for difference category transitive triangle:
+ * transitive triangle i -> k, k -> j, i -> j where
+ * i has a different value of the categorical attribute than that of j
+ * and of k.
+ *
+ * Defined in:
+ *   Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021).
+ *   Generative Dynamics of Supreme Court Citations:
+ *   Analysis with a New Statistical Network Model. arXiv preprint
+ *   arXiv:2101.07197
+ *
+ * where it is described as the "different term transitivity" statistic,
+ * in the context of the citation ERGM (cERGM) where the categorical
+ * attribute is the term (time period).
+ *
+ */
+double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+{
+  uint_t v,k,l,w;
+  uint_t  delta = 0;
+
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, v) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+	g->catattr[a][i] != g->catattr[a][j] &&
+	g->catattr[a][i] != g->catattr[a][v])
+      delta++;
+    if (isArc(g, v, j) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+	g->catattr[a][i] != g->catattr[a][j] &&
+	g->catattr[a][i] != g->catattr[a][v])
+      delta++;
+  }
+  for (l = 0; l < g->indegree[i]; l++) {
+    w = g->revarclist[i][l];
+    if (w == i || w == j)
+      continue;
+    if (isArc(g, w, j) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][w] != CAT_NA &&
+	g->catattr[a][i] != g->catattr[a][j] &&
+	g->catattr[a][i] != g->catattr[a][w])
+      delta++;
+  }
+  return (double)delta;
+}
+
 /********************* Actor attribute (continuous) *************************/
 
 

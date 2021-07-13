@@ -109,6 +109,7 @@ double changeMatching(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeMatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeMismatching(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a);
 
 /********************* Actor attribute (continuous) *************************/
 
