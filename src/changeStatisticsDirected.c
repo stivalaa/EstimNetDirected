@@ -596,6 +596,16 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
  * citation ERGM (cERGM) where the categorical attribute is the term
  * (time period).
  *
+ * From the R manpage for difftransties in cERGM R package:
+ * (https://github.com/desmarais-lab/Supreme_Court_Citation_Network)
+ *
+ *   'difftransties(attrname)' (directed) _Transitive ties with
+ *        different sender attribute:_ This term adds one statistic,
+ *        equal to the number of ties i-->j such that there exists a
+ *        two-path from i to j, if for the nodal attribute 'attrname',
+ *        the sending node i is different from j and the node on the
+ *        two-path.
+ *
  */
 double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 {
