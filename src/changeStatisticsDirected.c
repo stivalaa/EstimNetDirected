@@ -688,7 +688,7 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
   uint_t u, v,k,l;
   uint_t L2th, L2tu, L2uh;
   uint_t  delta = 0;
-  int ochange = 0;
+  int ochange = isDelete ? -1 : 0;
 
   L2th = 0;
   for (k = 0; k < g->outdegree[j]; k++) {
