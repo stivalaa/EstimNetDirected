@@ -230,7 +230,7 @@ double changeIsolates(const digraph_t *g, uint_t i, uint_t j, double lambda)
  * these statistics, unlike motifs, are not induced subgraphs, this also
  * counts, in some cases multiple times, 111D, 111U, 030T, 030C, 201,
  * 120D, 120U, 120C, 210, 300)
- * also known as TwoMixStar
+ * also known as TwoMixStar (or m2star)
  */
 double changeTwoPath(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -240,7 +240,7 @@ double changeTwoPath(const digraph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for in-2-star (triad census 021U; but note that since
- * these staistics, unlike motifds, are not induced subgraphs, this also
+ * these staistics, unlike motifs, are not induced subgraphs, this also
  * counts, in some cases multiple times, 111D, 030T, 201, 120D, 120U,
  * 120C, 210, 300)
  */
@@ -591,12 +591,50 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
 
 
 /*
- * Change statistic for difference category transitive triangle:
+ * Change statistic for different category transitive triangle:
  * transitive triangle i -> k, k -> j, i -> j where
  * i has a different value of the categorical attribute than that of j
  * and of k.
  *
- * Defined in:
+ */
+double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+{
+  uint_t v,k,l,w;
+  uint_t  delta = 0;
+
+  for (k = 0; k < g->outdegree[i]; k++) {
+    v = g->arclist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, j, v) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+	g->catattr[a][i] != g->catattr[a][j] &&
+	g->catattr[a][i] != g->catattr[a][v])
+      delta++;
+    if (isArc(g, v, j) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+	g->catattr[a][i] != g->catattr[a][j] &&
+	g->catattr[a][i] != g->catattr[a][v])
+      delta++;
+  }
+  for (l = 0; l < g->indegree[i]; l++) {
+    w = g->revarclist[i][l];
+    if (w == i || w == j)
+      continue;
+    if (isArc(g, w, j) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][w] != CAT_NA &&
+	g->catattr[a][w] != g->catattr[a][i] &&
+	g->catattr[a][w] != g->catattr[a][j])
+      delta++;
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for different category transitive ties
+ * as defined in:
+ *
  *   Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021).
  *   Generative Dynamics of Supreme Court Citations:
  *   Analysis with a New Statistical Network Model. arXiv preprint
@@ -623,7 +661,8 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
  * the node that has two outgoing ties must have a different value from
  * the two nodes to which it sends those ties)
  */
-double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+
+double changeMismatchingTransitivesTies(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 {
   uint_t v,k,l,w;
   uint_t  delta = 0;
