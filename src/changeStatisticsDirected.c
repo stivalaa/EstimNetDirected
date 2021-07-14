@@ -226,7 +226,10 @@ double changeIsolates(const digraph_t *g, uint_t i, uint_t j, double lambda)
 }
 
 /*
- * Change statistic for two-path (triad census 021C)
+ * Change statistic for two-path (triad census 021C; but note that since
+ * these statistics, unlike motifs, are not induced subgraphs, this also
+ * counts, in some cases multiple times, 111D, 111U, 030T, 030C, 201,
+ * 120D, 120U, 120C, 210, 300)
  * also known as TwoMixStar
  */
 double changeTwoPath(const digraph_t *g, uint_t i, uint_t j, double lambda)
@@ -236,7 +239,10 @@ double changeTwoPath(const digraph_t *g, uint_t i, uint_t j, double lambda)
 }
 
 /*
- * Change statistic for in-2-star (triad census 021U)
+ * Change statistic for in-2-star (triad census 021U; but note that since
+ * these staistics, unlike motifds, are not induced subgraphs, this also
+ * counts, in some cases multiple times, 111D, 030T, 201, 120D, 120U,
+ * 120C, 210, 300)
  */
 double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -246,7 +252,10 @@ double changeInTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 }
 
 /*
- * Change statistic for out-2-star (triad census 021D)
+ * Change statistic for out-2-star (triad census 021D; but not that since
+ * these statistics, unlike motifs, are not induced subgraphs, this also counts,
+ * in some cases multiple times,  111D, 111U, 030T, 201, 120D, 120U, 120C, 
+ * 210, 300)
  */
 double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -256,7 +265,9 @@ double changeOutTwoStars(const digraph_t *g, uint_t i, uint_t j, double lambda)
 }
 
 /*
- * Change statistic for transitive triangle (triad census 030T)
+ * Change statistic for transitive triangle (triad census 030T; but note
+ * that since these statistics, unlike motifs, are not induced subgraphs,
+ * this also coutns 120D, 120U, and 300).
  */
 double changeTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, double lambda)
 {
