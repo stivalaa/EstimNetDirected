@@ -660,38 +660,55 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
  * have the same value of an attribute to be counted; here instead
  * the node that has two outgoing ties must have a different value from
  * the two nodes to which it sends those ties)
+ *
+ * See d_difftransties in changestats.scc.c from cERGM (and c_transitivities
+ * in changestats.c in ergm).
  */
 
-double changeMismatchingTransitivesTies(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 {
-  uint_t v,k,l,w;
+  uint_t u, v,k,l,w;
+  uint_t L2th, L2tu, L2uh;
   uint_t  delta = 0;
 
-  for (k = 0; k < g->outdegree[i]; k++) {
-    v = g->arclist[i][k];
-    if (v == i || v == j)
-      continue;
-    if (isArc(g, j, v) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+  L2th = 0;
+  for (k = 0; k < g->outdegree[j]; k++) {
+    u = g->arclist[j][k];
+    if (isArc(g, i, u) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
 	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][v])
-      delta++;
-    if (isArc(g, v, j) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+	g->catattr[a][i] != g->catattr[a][u]) {
+      L2tu = 1;
+      for (l = 0; l < g->indegree[u]; l++) {
+	v = g->revarclist[u][l];
+	if (isArc(g, i, v) && g->catattr[a][i] != g->catattr[a][v]) {
+	  L2tu++;
+	  if (L2tu >0)
+	    break;
+	}
+      }
+      delta += (L2tu == 0);
+    }
+  }
+  for (k = 0; k < g->indegree[j]; k++) {
+    u = g->revarclist[j][k];
+    if (isArc(g, i, u) && g->catattr[a][i] != CAT_NA &&
+	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
 	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][v])
-      delta++;
+	g->catattr[a][i] != g->catattr[a][u]) {
+      L2uh = 1;
+      for (l = 0; l < g->outdegree[u]; l++) {
+	v = g->arclist[u][l];
+	if (isArc(g, v, j) && g->catattr[a][v] != g->catattr[a][u]) {
+	  L2uh++;
+	  if (L2uh > 0)
+	    break;
+	}
+      }
+      delta += (L2uh == 0);
+    }
   }
-  for (l = 0; l < g->indegree[i]; l++) {
-    w = g->revarclist[i][l];
-    if (w == i || w == j)
-      continue;
-    if (isArc(g, w, j) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][w] != CAT_NA &&
-	g->catattr[a][w] != g->catattr[a][i] &&
-	g->catattr[a][w] != g->catattr[a][j])
-      delta++;
-  }
+  delta += (L2th > 0);
   return (double)delta;
 }
 
