@@ -670,6 +670,7 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
   uint_t u, v,k,l,w;
   uint_t L2th, L2tu, L2uh;
   uint_t  delta = 0;
+  int ochange = 0;
 
   L2th = 0;
   for (k = 0; k < g->outdegree[j]; k++) {
@@ -678,7 +679,7 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
 	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
 	g->catattr[a][i] != g->catattr[a][j] &&
 	g->catattr[a][i] != g->catattr[a][u]) {
-      L2tu = 1;
+      L2tu = ochange;
       for (l = 0; l < g->indegree[u]; l++) {
 	v = g->revarclist[u][l];
 	if (isArc(g, i, v) && g->catattr[a][i] != g->catattr[a][v]) {
@@ -696,7 +697,7 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
 	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
 	g->catattr[a][i] != g->catattr[a][j] &&
 	g->catattr[a][i] != g->catattr[a][u]) {
-      L2uh = 1;
+      L2uh = ochange;
       for (l = 0; l < g->outdegree[u]; l++) {
 	v = g->arclist[u][l];
 	if (isArc(g, v, j) && g->catattr[a][v] != g->catattr[a][u]) {
