@@ -13,7 +13,16 @@
  * an additional parameter a which is the index of the attribute
  * to use.
  *
- * These functions are adapted from the original PNet code by Peng Wang:
+ * On some functions there is additionally a parameter indicating when
+ * the change statistic is being computed as part of a delete (rather
+ * than add) move, which can be used for some implementations that can
+ * be more easily implemented with this information. However in
+ * general it is more elegant and simpler to compute the statistic for
+ * adding the arc (for delete moves the value returned is just
+ * negated, and the change statistic function does not depend on or
+ * need to use this information at all).
+ *
+ * Some of these functions are adapted from the original PNet code by Peng Wang:
  *
  *   Wang P, Robins G, Pattison P. PNet: A program for the simulation and
  *   estimation of exponential random graph models. University of
@@ -41,6 +50,9 @@
  *   fundamentals. In "Exponential random graph models for social networks:
  *   Theory, methods, and applications." (pp. 49-76). New York, NY:
  *   Cambridge University Press.
+ *
+ * As well as the statnet ergm terms, and references for specific
+ * change statistics where indicated.
  *
  *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
@@ -526,26 +538,27 @@ double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j, double lambda
 /*
  * Change statistic for Sender
  */
-double changeSender(const digraph_t *g, uint_t i, uint_t j, uint_t a) 
+double changeSender(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete) 
 {
-  (void)j;/*unused parameter*/
+  (void)j; (void)isDelete; /*unused parameters*/
   return g->binattr[a][i] != BIN_NA && g->binattr[a][i];
 }
 
 /*
  * Change statistic for receiver
  */
-double changeReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
-  (void)i;/*unused parameter*/
+  (void)i; (void)isDelete; /*unused parameters*/
   return g->binattr[a][j] != BIN_NA && g->binattr[a][j];
 }
 
 /*
  * Change statistic for Interaction
  */
-double changeInteraction(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeInteraction(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */
   return g->binattr[a][i] != BIN_NA && g->binattr[a][j] != BIN_NA &&
          g->binattr[a][i] && g->binattr[a][j];
 }
@@ -556,8 +569,9 @@ double changeInteraction(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 /*
  * Change statistic for categorical matching
  */
-double changeMatching(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMatching(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] == g->catattr[a][j];
 }
@@ -565,8 +579,9 @@ double changeMatching(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 /*
  * Change statistic for categorical matching reciprocity
  */
-double changeMatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter*/
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] == g->catattr[a][j] && isArc(g, j, i);
 }
@@ -574,8 +589,9 @@ double changeMatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t 
 /*
  * Change statistic for categorical mismatching
  */
-double changeMismatching(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMismatching(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] != g->catattr[a][j];
 }
@@ -583,8 +599,9 @@ double changeMismatching(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 /*
  * Change statistic for categorical mismatching reciprocity
  */
-double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] != g->catattr[a][j] && isArc(g, j, i);
 }
@@ -597,10 +614,11 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
  * and of k.
  *
  */
-double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t v,k,l,w;
   uint_t  delta = 0;
+  (void)isDelete; /* unused parameter */
 
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
@@ -665,7 +683,7 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
  * in changestats.c in ergm).
  */
 /* FIXME this works for adding ties, so observed stats are right, but probably does not for deleting (ochange should be -1 for delete i->j) so change statistics in mcmc are wrong for delete moves*/
-double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t u, v,k,l;
   uint_t L2th, L2tu, L2uh;
@@ -719,9 +737,9 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
 /*
  * Change statistic for continuous Sender
  */
-double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
-  (void)j;/*unused parameter*/
+  (void)j; (void)isDelete; /*unused parameters*/
   if (isnan(g->contattr[a][i]))
     return 0;
   else
@@ -731,9 +749,9 @@ double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 /*
  * Change statistic for continuous Receiver
  */
-double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
-  (void)i;/*unused parameter*/
+  (void)i; (void)isDelete; /*unused parameters*/
   if (isnan(g->contattr[a][j]))
     return 0;
   else
@@ -744,8 +762,9 @@ double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a
 /*
  * Change statistic for continuous diff (absolute difference of attribute)
  */
-double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else
@@ -757,8 +776,9 @@ double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a)
  * Change statistic for continuous diff (absolute difference of attribute)
  * reciprocity
  */
-double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */  
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else  
@@ -771,8 +791,9 @@ double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
  * for attr_i - attr_j (so +1 when sending node has higher attribute value and -1
  * when receiving node has higher attribute value).
  */
-double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */  
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else
@@ -788,8 +809,9 @@ double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a)
  * Like diff(dir="t-h", sign.action="posonly") in statnet.
  * ("tail" is sender, "head" is receiver)
  */
-double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */    
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
   {
     return 0;
@@ -811,8 +833,9 @@ double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a)
  * Like diff(dir="h-t", sign.action="posonly") in statnet.
  * ("tail" is sender, "head" is receiver)
  */
-double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */    
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
   {
     return 0;
@@ -834,8 +857,9 @@ double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 /*
  * Change statistic for set Jaccard similarity
  */
-double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a)
+double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+  (void)isDelete; /* unused parameter */    
   /* For NA values all elements of set are set to NA so just check first */
   if (g->setattr[a][i][0] == SET_ELEM_NA || g->setattr[a][j][0] == SET_ELEM_NA)
     return 0;
@@ -1014,7 +1038,7 @@ double calcChangeStats(const digraph_t *g, uint_t i, uint_t j,
   /* nodal attribute effects */
   for (l = 0; l < n_attr; l++) {
     changestats[param_i] = (*attr_change_stats_funcs[l])
-      (g, i, j, attr_indices[l]);
+      (g, i, j, attr_indices[l], isDelete);
     total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
     param_i++;
   }

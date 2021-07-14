@@ -18,7 +18,16 @@
  * an additional parameter a which is the index of the attribute
  * to use.
  *
- * These functions are adapted from the original PNet code by Peng Wang:
+ * On some functions there is additionally a parameter indicating when
+ * the change statistic is being computed as part of a delete (rather
+ * than add) move, which can be used for some implementations that can
+ * be more easily implemented with this information. However in
+ * general it is more elegant and simpler to compute the statistic for
+ * adding the arc (for delete moves the value returned is just
+ * negated, and the change statistic function does not depend on or
+ * need to use this information at all).
+ *
+ * Some of these functions are adapted from the original PNet code by Peng Wang:
  *
  *   Wang P, Robins G, Pattison P. PNet: A program for the simulation and
  *   estimation of exponential random graph models. University of
@@ -47,6 +56,9 @@
  *   Theory, methods, and applications." (pp. 49-76). New York, NY:
  *   Cambridge University Press.
  *
+ * As well as the statnet ergm terms, and references for specific
+ * change statistics where indicated.
+ *
  ****************************************************************************/
 
 #include "utils.h"
@@ -64,12 +76,12 @@
 typedef double (change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, double lambda);
 
 /* version for change statistics with nodal attribute */
-typedef double (attr_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+typedef double (attr_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /* version for change statistics with dyadic covariate */
 /* for the moment just hte same as change_stats_func_t as treated specially,
    only used for GeoDistance for now */
-typedef double (dyadic_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t );
+typedef double (dyadic_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t a);
 
 /* change statistics with pairs of nodal attributes (attribute interactions) */
 typedef double (attr_interaction_change_stats_func_t)(const digraph_t *g, uint_t i, uint_t j, uint_t a, uint_t b);
@@ -99,33 +111,33 @@ double changeAltTwoPathsTD(const digraph_t *g, uint_t i, uint_t j, double lambda
 
 /************************* Actor attribute (binary) **************************/
 
-double changeSender(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeInteraction(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeSender(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeInteraction(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /********************* Actor attribute (categorical) *************************/
 
-double changeMatching(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeMatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeMismatching(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeMatching(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatching(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /********************* Actor attribute (continuous) *************************/
 
-double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a);
-double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeContinuousSender(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeContinuousReceiver(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiff(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffReciprocity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffSign(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffDirSR(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffDirRS(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 
 /********************* Actor attribute (set of categorical) *******************/
 
-double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a);
+double changeJaccardSimilarity(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 
 /********************* Dyadic covariate (continuous) *************************/
