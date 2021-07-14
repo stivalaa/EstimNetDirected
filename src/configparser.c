@@ -102,6 +102,7 @@ static const attr_param_t ATTR_PARAMS[] =
   {"Mismatching",            ATTR_TYPE_CATEGORICAL, changeMismatching},
   {"MismatchingReciprocity", ATTR_TYPE_CATEGORICAL, changeMismatchingReciprocity},
   {"MismatchingTransitiveTriad", ATTR_TYPE_CATEGORICAL, changeMismatchingTransitiveTriad},
+  {"MismatchingTransitiveTies", ATTR_TYPE_CATEGORICAL, changeMismatchingTransitiveTies},
   {"ContinuousSender",       ATTR_TYPE_CONTINUOUS, changeContinuousSender},
   {"ContinuousReceiver",     ATTR_TYPE_CONTINUOUS, changeContinuousReceiver},
   {"Diff",                   ATTR_TYPE_CONTINUOUS, changeDiff},
