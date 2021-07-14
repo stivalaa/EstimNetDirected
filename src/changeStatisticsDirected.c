@@ -685,8 +685,8 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
 double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t u, v,k,l;
-  uint_t L2th, L2tu, L2uh;
-  uint_t  delta = 0;
+  int L2th, L2tu, L2uh;
+  int delta = 0;
   int ochange = isDelete ? -1 : 0;
 
   L2th = 0;
