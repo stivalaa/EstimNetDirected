@@ -9,6 +9,9 @@
  * i and j and returns the value of the change statistic for adding
  * the arc i -> j.
  *
+ * Also takes lambda (decay) parameter which is only used for
+ * some statistics ("alternating" statistics).
+ *
  * For change statistics dependent on a nodal attribute, there is
  * an additional parameter a which is the index of the attribute
  * to use.
