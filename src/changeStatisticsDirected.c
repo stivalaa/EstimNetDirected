@@ -684,6 +684,7 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
  */
 double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
+/* FIXME not working, now getting wrong obs value again, so even not right on just adding ties now*/
   uint_t u, v,k,l;
   int L2th, L2tu, L2uh;
   int delta = 0;
