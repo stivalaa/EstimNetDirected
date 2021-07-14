@@ -677,18 +677,31 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
  * statnet, which allows a version where all three nodes involved must
  * have the same value of an attribute to be counted; here instead
  * the node that has two outgoing ties must have a different value from
- * the two nodes to which it sends those ties)
+ * the two nodes to which it sends those ties.)
  *
  * See d_difftransties in changestats.scc.c from cERGM (and c_transitivities
  * in changestats.c in ergm).
+ *
+ * This change statistic function is (so far) the only one whih uses
+ * the isDelete parameter: instead of always computing the change statistic
+ * for the arc i->j being added (the return value being negated by
+ * the caller, calcChangeStats()), this function will temporarily
+ * insert the arc i->j if isDelete is true, so that code similar to
+ * the original implementation d_difftransties in cERGM can be used).
+ * Note that unlike statnet change statistic functions however we don't
+ * negate the value for deleting a tie here, since it is always done
+ * in calcChangeStats().
  */
 double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
-/* FIXME not working, now getting wrong obs value again, so even not right on just adding ties now*/
   uint_t u, v,k,l;
   int L2th, L2tu, L2uh;
   int delta = 0;
   int ochange = isDelete ? -1 : 0;
+
+  if (isDelete) {
+    insertArc(g, i, j); /* temporarily put arc i->j in for delete */
+  }
 
   L2th = 0;
   for (k = 0; k < g->outdegree[j]; k++) {
@@ -734,6 +747,11 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
     }
   }
   delta += (L2th > 0);
+
+  if (isDelete) {
+    removeArc(g, i, j); /* remove temporary i->j arc added at start */
+  }
+
   return (double)delta;
 }
 
