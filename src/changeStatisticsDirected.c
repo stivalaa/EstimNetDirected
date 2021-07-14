@@ -717,7 +717,7 @@ double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, u
 	g->catattr[a][i] != g->catattr[a][u]) {
       L2th++;
     }
-    if (isArc(g, u, j) && g->catattr[a][i] != CAT_NA &&
+    if (isArc(g, u, i) && g->catattr[a][i] != CAT_NA &&
 	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
 	g->catattr[a][i] != g->catattr[a][u] &&
 	g->catattr[a][j] != g->catattr[a][u]) {
