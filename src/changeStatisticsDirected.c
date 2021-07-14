@@ -617,6 +617,11 @@ double changeMismatchingReciprocity(const digraph_t *g, uint_t i, uint_t j, uint
  *        the sending node i is different from j and the node on the
  *        two-path.
  *
+ * (Note that this is a variation on the "transitiveties" statistic in
+ * statnet, which allows a version where all three nodes involved must
+ * have the same value of an attribute to be counted; here instead
+ * the node that has two outgoing ties must have a different value from
+ * the two nodes to which it sends those ties)
  */
 double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, uint_t a)
 {
