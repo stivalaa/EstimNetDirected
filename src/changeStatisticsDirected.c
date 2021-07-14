@@ -682,7 +682,6 @@ double changeMismatchingTransitiveTriad(const digraph_t *g, uint_t i, uint_t j, 
  * See d_difftransties in changestats.scc.c from cERGM (and c_transitivities
  * in changestats.c in ergm).
  */
-/* FIXME this works for adding ties, so observed stats are right, but probably does not for deleting (ochange should be -1 for delete i->j) so change statistics in mcmc are wrong for delete moves*/
 double changeMismatchingTransitiveTies(const digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t u, v,k,l;
