@@ -176,7 +176,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                  (g->zone[j] > g->zone[i] && g->prev_wave_degree[j] == 1))));
     } else if (citationERGM) {
       /* cERGM: select random node i in last time period (term) and random
-       * node j (in any term) and toggle arc between them. In this way
+       * node j (in any term) and toggle arc i->j between them. In this way
        * we have all arcs (citations) in terms earlier than the last fixed,
        * and we only create citations from nodes in the last term. */
       do {

@@ -148,6 +148,12 @@ typedef struct digraph_s
   uint_t num_maxterm_nodes; /* number of nodes in last (latest) term */
   uint_t *maxterm_nodes; /* id of each of the num_maxterm_nodes in the
 			    latest term i.e. with term == max_term */
+  uint_t num_maxtermsender_arcs;  /* number of arcs with sender in max. term,
+				     length of all_maxtermsender_arcs list */
+  nodepair_t *all_maxtermsender_arcs; /* list of all arcs where i->j where
+					 i has maximum term value max_term,
+					 specified as i->j for each. */
+  
   
 } digraph_t;
 
@@ -177,6 +183,11 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* dele
 /* this two versions update the allinnerarcs flat arclist also */
 void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+
+/* this two versions update the all_maxtermsender_arcs flat arclist also */
+void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+
 
 digraph_t *allocate_digraph(uint_t num_vertices);
 void free_digraph(digraph_t *g);

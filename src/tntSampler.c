@@ -46,6 +46,18 @@
  * random graph models for large directed networks with snowball
  * sampling. Unpublished manuscript.
  *
+ *
+ * Also can optionally do citation ERGM (cERGM) estimation, which is 
+ * conditional on the term (time period) of the node. All ties
+ * except those from a node in the last time period are fixed.
+ * 
+ * Reference for citation ERGM (cERGM) estimation is:
+ *
+ *   Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021). 
+ *   Generative Dynamics of Supreme Court Citations:
+ *   Analysis with a New Statistical Network Model. arXiv preprint
+ *   arXiv:2101.07197.
+ *
  ****************************************************************************/
 
 #include <assert.h>
@@ -110,6 +122,8 @@
  *   useConditionalEstimation - if True do conditional estimation of snowball
  *                              network sample.
  *   forbidReciprocity - if True do not allow reciprocated arcs.
+ *   citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                       on term (time period)
  *
  * Return value:
  *   Acceptance rate.
@@ -134,7 +148,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t sampler_m,
                   bool performMove,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity)
+                  bool forbidReciprocity, bool citationERGM)
 {
   bool    isDelete;
   double *changestats = (double *)safe_malloc(n*sizeof(double));
@@ -205,8 +219,10 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         } while (isArc(g, i, j) ||
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
+    } else if (citationERGM) {
+      
     } else {
-      /* not using conditional estimation */
+      /* not using snowball or citation ERGM conditional estimation */
       if (isDelete) {
         /* Delete move. Find an existing arc uniformly at random to delete. */
         arcidx = int_urand(g->num_arcs);

@@ -1180,6 +1180,8 @@ digraph_t *allocate_digraph(uint_t num_vertices)
   g->max_term = 0;
   g->num_maxterm_nodes = 0;
   g->maxterm_nodes = NULL;
+  g->num_maxtermsender_arcs = 0;
+  g->all_maxtermsender_arcs = NULL;
   return g;
 }
 
@@ -1244,6 +1246,7 @@ void free_digraph(digraph_t *g)
   free(g->inner_nodes);
   free(g->prev_wave_degree);
   free(g->allinnerarcs);
+  free(g->all_maxtermsender_arcs);
   free(g);
 }
 
@@ -1529,7 +1532,7 @@ int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
    * to/from nodes in the immediately preceding zone. (This value will always
    * be zero for all seed nodes i.e. nodes in zone 0).
    * Also build allinnerarcs flat arcs list of arcs between nodes in inner waves
-   * used for conditional estimation fast lookup of such an arc to delete
+   * used for conditional estimation fast lookup of such an arc to delete.
    */
   for (i = 0; i < g->num_arcs; i++) {
     u = g->allarcs[i].i;
@@ -1823,10 +1826,10 @@ int load_attributes(digraph_t *g,
  */
 int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
 {
-  int      num_attr, j;
+  int      num_attr, k;
   char   **attr_names;
   int    **terms;
-  uint_t   i, u;
+  uint_t   i,u,v;
   uint_t  *term_sizes; /* number of nodes in each term */
   uint_t   num_terms;
 
@@ -1896,9 +1899,30 @@ int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
     }
   }
 
-  for (j = 0; j < num_attr; j++) {
-    free(attr_names[j]);
-    free(terms[j]);
+  /* Similarly to snowball conditional estimation, for TNT and IFD samplers
+   * build all_maxtermsender_arcs flat list of arcs sent from
+   * node with maximum term value here for fast lookup of such an arc to 
+   * delete.
+   */
+  for (i = 0; i < g->num_arcs; i++) {
+    u = g->allarcs[i].i;
+    v = g->allarcs[i].j;
+    if (g->term[u] == g->max_term) {
+      g->num_maxtermsender_arcs++;
+      DIGRAPH_DEBUG_PRINT(("maxterm arc %u: %u -> %u (terms %u %u)\n",
+			   g->num_inner_arcs-1, u, v, g->term[i], g->term[v]));
+      g->all_maxtermsender_arcs =
+	(nodepair_t *)safe_realloc(g->all_maxtermsender_arcs,
+				   g->num_maxtermsender_arcs *
+				   sizeof(nodepair_t));
+      g->all_maxtermsender_arcs[g->num_maxtermsender_arcs-1].i = u;
+      g->all_maxtermsender_arcs[g->num_maxtermsender_arcs-1].j = v;
+    }
+  }
+  
+  for (k = 0; k < num_attr; k++) {
+    free(attr_names[k]);
+    free(terms[k]);
   }
   free(attr_names);
   free(terms);

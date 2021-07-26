@@ -189,8 +189,6 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else if (useTNTsampler) {
-      if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with TNT sampler yet\n");
-      assert(!citationERGM); /* TODO implement cERGM in TNT sampler */
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
@@ -202,8 +200,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 				   attr_interaction_pair_indices,
 				   theta,
 				   addChangeStats, delChangeStats, sampler_m,
-                                     FALSE, useConditionalEstimation,
-				   forbidReciprocity);
+				   FALSE, useConditionalEstimation,
+				   forbidReciprocity, citationERGM);
       
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
@@ -413,8 +411,6 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
           fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
         }
       } else if (useTNTsampler) {
-	if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with TNT sampler yet\n");	
-	assert(!citationERGM); /* TODO implement cERGM for TNT sampler */
         acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				     n_attr_interaction,
 				     change_stats_funcs,
@@ -429,7 +425,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 				     sampler_m,
 				     TRUE,/*Algorithm EE actually does moves*/
 				     useConditionalEstimation,
-				     forbidReciprocity);
+				     forbidReciprocity, citationERGM);
       } else {
         acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                        n_attr_interaction,
