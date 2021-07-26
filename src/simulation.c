@@ -304,8 +304,6 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    useConditionalSimulation,
                                    forbidReciprocity);
     } else if (useTNTsampler) {
-      if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with TNT sampler yet\n");            
-      assert(!citationERGM); /* TODO implement cERGM in TNT sampler */
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
@@ -320,7 +318,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 				   burnin,
 				   TRUE,/*actually do moves*/
 				   useConditionalSimulation,
-				   forbidReciprocity);
+				   forbidReciprocity,
+                                   citationERGM);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -368,8 +367,6 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    useConditionalSimulation,
                                    forbidReciprocity);
     } else if (useTNTsampler) {
-      if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with TNT sampler yet\n");            
-      assert(!citationERGM); /* TODO implement cERGM in TNT sampler */
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
 				   change_stats_funcs,
@@ -384,7 +381,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      interval,
 				   TRUE,/*actually do moves*/
 				   useConditionalSimulation,
-				   forbidReciprocity);
+				   forbidReciprocity,
+                                   citationERGM);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,

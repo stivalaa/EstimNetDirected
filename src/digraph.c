@@ -1097,6 +1097,60 @@ void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
 }
 
 
+/*
+ * Insert arc i -> j into digraph g, updating all_maxtermsender_arcs flat arc list
+ *
+ * Used for citation ERGM estimation when we must add an arc that is
+ * sent from a node with highest term value
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to insert arc from
+ *   j - node to insert arc to
+ *
+ * Return value:
+ *   None
+ */
+void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j)
+{
+  assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+  insertArc(g, i, j);
+  g->num_maxtermsender_arcs++;
+  g->all_maxtermsender_arcs = (nodepair_t *)safe_realloc(g->all_maxtermsender_arcs,
+                                               g->num_maxtermsender_arcs *
+                                               sizeof(nodepair_t));
+  g->all_maxtermsender_arcs[g->num_maxtermsender_arcs-1].i = i;
+  g->all_maxtermsender_arcs[g->num_maxtermsender_arcs-1].j = j;
+}
+
+/*
+ * Remove arc i -> j from digraph g, updating all_maxtermsender_arcs flat arc list
+ *
+ * Used for citation ERGM estimation when we must delete an arc that is
+ * sent from a node with highest term value
+ *
+ * Parameters:
+ *   g - digraph
+ *   i - node to remove arc from
+ *   j - node to remove arc to
+ *   arcidx - index in all_maxtermsender_arcs flat arc list of the i->j entry for fast 
+ *            removal as this is known (arc has been selected from this list)
+ *
+ * Return value:
+ *   None
+ */
+void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
+{
+  assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+  removeArc(g, i, j);
+  /* remove entry from the flat all arcs list */
+  assert(g->all_maxtermsender_arcs[arcidx].i == i && g->all_maxtermsender_arcs[arcidx].j == j);
+  /* replace deleted entry with last entry */
+  g->num_maxtermsender_arcs--;
+  g->all_maxtermsender_arcs[arcidx].i = g->all_maxtermsender_arcs[g->num_maxtermsender_arcs].i;
+  g->all_maxtermsender_arcs[arcidx].j = g->all_maxtermsender_arcs[g->num_maxtermsender_arcs].j;
+}
+
 
 /*
  * Allocate the  digraph structure for empty digraph with given

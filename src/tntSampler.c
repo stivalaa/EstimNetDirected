@@ -276,6 +276,8 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     if (isDelete) {
       if (useConditionalEstimation){
         removeArc_allinnerarcs(g, i, j, arcidx);
+      } else if (citationERGM) {
+        removeArc_all_maxtermsender_arcs(g, i, j, arcidx);
       } else {
         removeArc_allarcs(g, i, j, arcidx);        
       }
@@ -329,6 +331,8 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         if (!isDelete) {
           if (useConditionalEstimation) {
             insertArc_allinnerarcs(g, i, j);
+          } else if (citationERGM) {
+            insertArc_all_maxtermsender_arcs(g, i, j);
           } else {
             insertArc_allarcs(g, i, j);
           }
@@ -339,6 +343,8 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         if (isDelete) {
           if (useConditionalEstimation) {
             insertArc_allinnerarcs(g, i, j);
+          } else if (citationERGM) {
+            insertArc_all_maxtermsender_arcs(g, i, j);
           } else {
             insertArc_allarcs(g, i, j);
           }
@@ -357,6 +363,8 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       if (isDelete) {
         if (useConditionalEstimation) {
           insertArc_allinnerarcs(g, i, j);
+        } else if (citationERGM) {
+          insertArc_all_maxtermsender_arcs(g, i, j);
         } else {
           insertArc_allarcs(g, i, j);          
         }
