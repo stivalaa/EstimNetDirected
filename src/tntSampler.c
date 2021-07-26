@@ -220,7 +220,32 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
     } else if (citationERGM) {
-      
+      assert(!forbidReciprocity); /* TODO not implemented for TNT cERGM */
+      if (isDelete) {
+        /* Delete move for citation ERGM: Find an existing arc i->j
+           from node in last term (i.e. term of i is max_term)
+           uniformly at random to delete.
+         */
+	arcidx = int_urand(g->num_maxtermsender_arcs);
+	i = g->all_maxtermsender_arcs[arcidx].i;
+	j = g->all_maxtermsender_arcs[arcidx].j;
+	SAMPLER_DEBUG_PRINT(("cERGM del arcidx %u (%u -> %u) terms %u %u\n", arcidx, i, j, g->term[i], g->term[j]));
+	assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+      } else {
+        /* Add move for citation ERGM: Find node i uniformly at random
+	   in last term and any node j (which is not i) unformly at
+	   random, such that arc i->j does not already exist, and add
+	   it.  Because graph is sparse, it is not too inefficient to
+	   just pick i,j nodes at random until a pair where arc i->j
+	   does not exist is found. */
+        do {
+          i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
+          do {
+            j = int_urand(g->num_nodes);
+          } while (i == j);
+          assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+        } while (isArc(g, i, j));
+      }
     } else {
       /* not using snowball or citation ERGM conditional estimation */
       if (isDelete) {
