@@ -221,6 +221,10 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       }
     } else if (citationERGM) {
       assert(!forbidReciprocity); /* TODO not implemented for TNT cERGM */
+      if (isDelete && g->num_maxtermsender_arcs == 0) {
+        fprintf(stderr, "WARNING: TNT sampler num_maxtermsender_arcs == 0\n");
+        isDelete = FALSE; /* force add move since no arcs to delete */
+      }
       if (isDelete) {
         /* Delete move for citation ERGM: Find an existing arc i->j
            from node in last term (i.e. term of i is max_term)
