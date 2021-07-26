@@ -169,8 +169,6 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (t = 0; t < M1; t++) {
     fprintf(theta_outfile, "%d ", t-M1);
     if (useIFDsampler) {
-      if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with IFD sampler yet\n");      
-      assert (!citationERGM); /* TODO implement cERGM in IFD sampler */
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
                                    change_stats_funcs,
@@ -185,7 +183,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    FALSE,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalEstimation,
-                                   forbidReciprocity);
+                                   forbidReciprocity, citationERGM);
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else if (useTNTsampler) {
@@ -388,8 +386,6 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 #endif /* DEBUG_MEMUSAGE */
       }
       if (useIFDsampler) {
-	if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with IFD sampler yet\n");
-	assert(!citationERGM); /* TODO implement cERGM for IFD sampler */
         acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                      change_stats_funcs,
                                      lambda_values,
@@ -403,7 +399,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      TRUE, /*Algorithm EE actually does moves */
                                      ifd_K, &dzArc, &ifd_aux_param,
                                      useConditionalEstimation,
-                                     forbidReciprocity);
+                                     forbidReciprocity, citationERGM);
         if (useIFDsampler && (outputAllSteps || tinner == 0)) {
           /* difference of Arc statistic for IFD sampler is just Ndel-Nadd */
           fprintf(dzA_outfile, "%g ", dzArc);

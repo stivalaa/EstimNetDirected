@@ -287,8 +287,6 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (burnin > 0) {
     gettimeofday(&start_timeval, NULL);
     if (useIFDsampler) {
-      if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with IFD sampler yet\n");
-      assert(!citationERGM); /* TODO implement cERGM in IFD sampler */
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                    change_stats_funcs,
                                    lambda_values,
@@ -302,7 +300,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    TRUE, /*actually do moves */
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
-                                   forbidReciprocity);
+                                   forbidReciprocity, citationERGM);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
@@ -350,8 +348,6 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {
     if (useIFDsampler) {
-      if (citationERGM) fprintf(stderr, "ERROR: citationERGM does not work with IFD sampler yet\n");            
-      assert(!citationERGM); /* TODO implement cERGM in IFD sampler */
       acceptance_rate = ifdSampler(g, n, n_attr, n_dyadic, n_attr_interaction,
                                    change_stats_funcs,
                                    lambda_values,
@@ -365,7 +361,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    TRUE, /*actually do moves */
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
-                                   forbidReciprocity);
+                                   forbidReciprocity, citationERGM);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
 				   n_attr_interaction,
