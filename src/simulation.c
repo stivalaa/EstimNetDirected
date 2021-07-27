@@ -672,7 +672,7 @@ int do_simulation(sim_config_t * config)
 	initialization here, and can be added and deleted in the
 	simulation */
      if (!config->arclist_filename) {
-       fprintf(stderr, "ERROR: ctiation ERGM simulation requested but no arclistFile specified.\n");
+       fprintf(stderr, "ERROR: citation ERGM simulation requested but no arclistFile specified.\n");
        return -1;
      }
      if (!(arclist_file = fopen(config->arclist_filename, "r"))) {
