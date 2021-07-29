@@ -623,14 +623,14 @@ int do_simulation(sim_config_t * config)
          foundArc = TRUE;
        }
      }
-     if (!foundArc && !config->citationERGM) {
+     if (!foundArc) {
        /* numArcs not used with citationERGM though */
        fprintf(stderr, 
                "ERROR: must include %s parameter when using IFD sampler.\n",
                ARC_PARAM_STR);
        return -1;
      }
-     if (config->numArcs == 0) {
+     if (config->numArcs == 0 && !config->citationERGM) {
        fprintf(stderr, "ERROR: must specify nonzero numArcs when "
                "using IFD sampler\n");
        return -1;
