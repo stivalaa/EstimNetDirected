@@ -163,7 +163,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double       N         = g->num_nodes;
   double       num_dyads = N*(N-1);/*directed so not div by 2*/
   double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
-  double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1); /* FIXME I think this should be divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i [ADS 28July2021]*/
+  double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
     
     
   for (i = 0; i < n; i++) {
