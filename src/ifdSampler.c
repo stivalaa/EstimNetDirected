@@ -99,9 +99,9 @@ double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
 
   if (useConditionalEstimation) {
-    return log((num_inner_dyads - num_arcs) / (num_arcs + 1));
+    return log((num_inner_dyads - g->num_inner_arcs) / (g->num_inner_arcs + 1));
   } else if (citationERGM) {
-    return log((num_maxtermsender_dyads - num_arcs) / (num_arcs + 1));
+    return log((num_maxtermsender_dyads - g->num_maxtermsender_arcs) / (g->num_maxtermsender_arcs + 1));
   } else {
     return log((num_dyads - num_arcs) / (num_arcs + 1));
   }
