@@ -75,15 +75,36 @@
  *
  * Parameters:
  *    g - digraph object
+ *    useConditionalEstimation - if True do conditional estimation of snowball
+ *                               network sample.
+ *    citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                        on term (time period)
  * 
  * Return value:
  *    edge correction value
  */
-double arcCorrection(const digraph_t *g) {
+double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
+                     bool citationERGM) {
   double N         = g->num_nodes;
   double num_dyads = N*(N-1);/*directed so not div by 2*/
   double num_arcs  = g->num_arcs;
-  return log((num_dyads - num_arcs) / (num_arcs + 1));
+
+  /* for conditional estimation on snowball sample */
+  double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
+
+
+  /* for citation ERGM */
+  double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
+    
+  assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
+
+  if (useConditionalEstimation) {
+    return log((num_inner_dyads - num_arcs) / (num_arcs + 1));
+  } else if (citationERGM) {
+    return log((num_maxtermsender_dyads - num_arcs) / (num_arcs + 1));
+  } else {
+    return log((num_dyads - num_arcs) / (num_arcs + 1));
+  }
 }
 
 
@@ -227,7 +248,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
     } else if (citationERGM) {
-      assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      assert(!forbidReciprocity); /* TODO not implemented for cERGM */
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: IFD sampler num_maxtermsender_arcs == 0\n");
         isDelete = FALSE; /* force add move since no arcs to delete */

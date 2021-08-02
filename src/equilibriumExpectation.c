@@ -162,7 +162,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double ifd_aux_param = 0; /* auxiliary parameter for IFD sampler */
 
   if (useIFDsampler)
-    arc_correction_val = arcCorrection(g);
+    arc_correction_val = arcCorrection(g, useConditionalEstimation,
+                                       citationERGM);
 
   for (l = 0; l < n; l++)
     theta[l] = 0;
@@ -360,7 +361,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   double ifd_aux_param = 0; /* auxiliary parameter for IFD sampler */
 
   if (useIFDsampler) 
-    arc_correction_val = arcCorrection(g);
+    arc_correction_val = arcCorrection(g, useConditionalEstimation,
+                                       citationERGM);
 
   for (l = 0; l < n; l++)
     thetamatrix[l] = (double *)safe_malloc(Minner*sizeof(double));
@@ -615,7 +617,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     
   if (useIFDsampler)
     printf("task %u: IFD sampler ifd_K = %g, arcCorrection = %g\n",
-           tasknum, ifd_K, arcCorrection(g));
+           tasknum, ifd_K, arcCorrection(g, useConditionalEstimation,
+                                         citationERGM));
   else if (useTNTsampler)
     printf("task %u: TNT sampler\n", tasknum);
 
