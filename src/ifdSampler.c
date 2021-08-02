@@ -227,9 +227,6 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
     } else if (citationERGM) {
-
-      fprintf(stderr, "ERROR: IFD sampler not yet working correctly with citationERGM\n"); assert(!citationERGM); /* FIXME */
-
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: IFD sampler num_maxtermsender_arcs == 0\n");

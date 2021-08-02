@@ -221,9 +221,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
     } else if (citationERGM) {
-
-      fprintf(stderr, "ERROR: TNT sampler not yet working correctly with citationERGM\n"); assert(!citationERGM); /* FIXME */
-
       assert(!forbidReciprocity); /* TODO not implemented for TNT cERGM */
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: TNT sampler num_maxtermsender_arcs == 0\n");
