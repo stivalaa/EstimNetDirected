@@ -52,7 +52,18 @@ echo "# On: " `uname -a`
 arclistFile=`grep -i arclistFile ${estimationconfig} | awk -F= '{print $2}'`
 observedStatsFilePrefix=`grep -i observedStatsFilePrefix ${estimationconfig} | awk -F= '{print $2}'`
 
-echo "# arclistFile = ${arclistFile}"
+is_cergm=0
+grep -q -i -E "citationERGM\s*=\s*True" ${estimationconfig}
+if [ $? -eq 0 ]; then
+   is_cergm=1
+fi
+if [ $is_cergm -eq 1 ]; then
+  echo "citationERGM = True"
+  grep -i termfile ${estimationconfig}
+  echo "arclistFile = ${arclistFile}"
+else
+  echo "# arclistFile = ${arclistFile}"
+fi
 echo "# observedStatsFilePrefix = ${observedStatsFilePrefix}"
 
 numNodes=`cat ${arclistFile} | grep -i '^*Vertices'| awk '{print $2}'`
