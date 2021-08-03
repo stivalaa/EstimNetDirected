@@ -74,6 +74,8 @@
  *  theta                     - parameter values (required by 
  *                              calcChangeStats for total but value
  *                              not used here)
+ *  citationERGM      - use cERGM (citation ERGM) estimation conditional
+ *                       on term (time period)
  *
  * Return value:
  *   None. The digraph parameter g is updated.
@@ -93,10 +95,13 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
                                      uint_pair_t attr_interaction_pair_indices[],                                     
                                      bool useConditionalEstimation,
                                      bool forbidReciprocity,
-                                     double addChangeStats[], double theta[])
+                                     double addChangeStats[], double theta[],
+                                     bool citationERGM)
 {
   uint_t i, j, k, l;
   double *changestats = (double *)safe_malloc(n*sizeof(double));
+
+  assert(!(citationERGM && useConditionalEstimation));
   
   for (k = 0; k < numArcs; k++) {
     if (useConditionalEstimation) {
@@ -116,6 +121,23 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
         assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
       } while (isArc(g, i, j) ||
                (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
+    } else if (citationERGM) {
+      /* cERGM: select random node i in last time period (term) and random
+       * node j (in any term) without arc i->j and add arc i->j between them.
+       * In this way
+       * we have all arcs (citations) in terms earlier than the last fixed,
+       * and we only create citations from nodes in the last term. 
+       * Because graph is sparse, it is not too inefficient
+       * to just pick random nodes until such a pair is found */
+      do {
+        do {
+          i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
+          do {
+            j = int_urand(g->num_nodes);
+          } while (i == j);
+        } while  (isArc(g, i, j));
+      } while (forbidReciprocity && isArc(g, j, i));
+      assert(g->term[i] == g->max_term);
     } else {
       /* not using conditional estimation */
       /* Add move. Find two nodes i, j without arc i->j uniformly at
@@ -455,6 +477,8 @@ int do_simulation(sim_config_t * config)
   FILE          *arclist_file;
   uint_t         num_nodes       = 0;
   double        *changeStats     = NULL;
+  uint_t         count_maxtermsender_arcs = 0;
+  uint_t         obs_maxtermsender_arcs;
   
     
 
@@ -625,12 +649,12 @@ int do_simulation(sim_config_t * config)
        }
      }
      if (!foundArc) {
-       /* numArcs not used with citationERGM though */
        fprintf(stderr, 
                "ERROR: must include %s parameter when using IFD sampler.\n",
                ARC_PARAM_STR);
        return -1;
      }
+     /* numArcs not used with citationERGM though */
      if (config->numArcs == 0 && !config->citationERGM) {
        fprintf(stderr, "ERROR: must specify nonzero numArcs when "
                "using IFD sampler\n");
@@ -708,7 +732,8 @@ int do_simulation(sim_config_t * config)
 					config->param_config.attr_indices,
 					config->param_config.attr_interaction_pair_indices,
 					dzA, theta);
-#ifdef UNDEF_XXX
+     obs_maxtermsender_arcs = g->num_maxtermsender_arcs;
+     SIMULATE_DEBUG_PRINT(("obs_maxtermsender_arcs = %u\n", obs_maxtermsender_arcs));
      /* Now delete all arcs sent from nodes in the last time period
 	(term) so that we start the simulation with an empty set of
 	these non-fixed potential arcs (all the other arcs and
@@ -720,6 +745,7 @@ int do_simulation(sim_config_t * config)
        for (l = 0; l < g->outdegree[i]; l++) {
 	 j = g->arclist[i][l];
 	 assert(isArc(g, i, j));
+         count_maxtermsender_arcs++;
 	 /* Update the statistics for removing this arc */
 	 /* Note must do the computation after actually removing the arc */
 	 removeArc(g, i, j);
@@ -746,13 +772,15 @@ int do_simulation(sim_config_t * config)
 	 }
        }
      }
+     assert(obs_maxtermsender_arcs == count_maxtermsender_arcs);
      free(changeStats);
-#endif /* UNDEF_XXX */
-   } else {
      if (config->useIFDsampler) {
-       /* Initialize the graph to random (E-R aka Bernoulli) graph with
-	  specified number of arcs for fixed density simulation (IFD sampler),
-	  and also for TNT sampler since it does 50% add/delete moves */
+       /* Initialize the graph to random graph with
+	  specified number of arcs, conditional on the citation ERGM structure,
+          for fixed density simulation (IFD sampler),
+	  and also for TNT sampler since it does 50% add/delete moves.
+          This means we add the same number of arcs we just deleted,
+          sent from max temr nodes, but now at random, no thte observed ones.*/
        make_erdos_renyi_digraph(g, config->numArcs,
 				num_param, n_attr, n_dyadic, n_attr_interaction,
 				config->param_config.change_stats_funcs,
@@ -764,7 +792,25 @@ int do_simulation(sim_config_t * config)
 				config->param_config.attr_interaction_pair_indices,                              
 				config->useConditionalSimulation,
 				config->forbidReciprocity,
-				dzA, theta);
+				dzA, theta, config->citationERGM);
+     }
+   } else {
+     if (config->useIFDsampler) {
+       /* Initialize the graph to random (E-R aka Bernoulli) graph with
+	  specified number of arcs for fixed density simulation (IFD sampler),
+	  and also for TNT sampler since it does 50% add/delete moves */
+       make_erdos_renyi_digraph(g, count_maxtermsender_arcs,
+				num_param, n_attr, n_dyadic, n_attr_interaction,
+				config->param_config.change_stats_funcs,
+				config->param_config.param_lambdas,
+				config->param_config.attr_change_stats_funcs,
+				config->param_config.dyadic_change_stats_funcs,
+				config->param_config.attr_interaction_change_stats_funcs,
+				config->param_config.attr_indices,
+				config->param_config.attr_interaction_pair_indices,                              
+				config->useConditionalSimulation,
+				config->forbidReciprocity,
+				dzA, theta, config->citationERGM);
      } else if (config->numArcs != 0) {
        fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
 	       " so numArcs parameter is ignored\n", config->numArcs);
