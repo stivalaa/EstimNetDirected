@@ -9,6 +9,7 @@ EstimNetDirected_mpi_hashtables
 *.o
 *~
 TAGS
+tags
 local.mk
 SimulateERGM
 SimulateERGM_hashtables

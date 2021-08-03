@@ -169,6 +169,8 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
     /* actually do the move by adding the arc */
     if (useConditionalEstimation) {
       insertArc_allinnerarcs(g, i, j);
+    } else if (citationERGM) {
+      insertArc_all_maxtermsender_arcs(g, i, j);
     } else {
       insertArc_allarcs(g, i, j);
     }
@@ -732,6 +734,11 @@ int do_simulation(sim_config_t * config)
 					config->param_config.attr_indices,
 					config->param_config.attr_interaction_pair_indices,
 					dzA, theta);
+     if (add_cergm_terms_to_digraph(g, config->term_filename)) {
+       fprintf(stderr, "ERROR: reading cERGM terms from %s failed\n",
+               config->term_filename);
+       return -1;
+     }
      obs_maxtermsender_arcs = g->num_maxtermsender_arcs;
      SIMULATE_DEBUG_PRINT(("obs_maxtermsender_arcs = %u\n", obs_maxtermsender_arcs));
      /* Now delete all arcs sent from nodes in the last time period
@@ -739,18 +746,16 @@ int do_simulation(sim_config_t * config)
 	these non-fixed potential arcs (all the other arcs and
 	non-arcs, from nodes in previous terms, are fixed). */
      changeStats = (double *)safe_calloc(num_param, sizeof(double));     
-     for (k = 0; k < g->num_maxterm_nodes; k++) {
-       i = g->maxterm_nodes[k];
+     for (k = 0; k < g->num_maxtermsender_arcs; k++) {
+       i = g->all_maxtermsender_arcs[k].i;
+       j = g->all_maxtermsender_arcs[k].j;
        assert(g->term[i] == g->max_term);
-       for (l = 0; l < g->outdegree[i]; l++) {
-	 j = g->arclist[i][l];
-	 assert(isArc(g, i, j));
-         count_maxtermsender_arcs++;
-	 /* Update the statistics for removing this arc */
-	 /* Note must do the computation after actually removing the arc */
-	 removeArc(g, i, j);
-	 (void)calcChangeStats(g, i, j,
-			 num_param, n_attr, n_dyadic,
+       assert(isArc(g, i, j));
+       /* Update the statistics for removing this arc */
+       /* Note must do the computation after actually removing the arc */
+       removeArc_all_maxtermsender_arcs(g, i, j, k);
+       (void)calcChangeStats(g, i, j,
+  			 num_param, n_attr, n_dyadic,
 			 n_attr_interaction,
 			 config->param_config.change_stats_funcs,
 			 config->param_config.param_lambdas,
@@ -762,17 +767,15 @@ int do_simulation(sim_config_t * config)
 			 theta,
 			 TRUE, /*isDelete*/
 			 changeStats);
-	 for (m = 0; m < num_param; m++) {
-	   dzA[m] -= changeStats[m]; /* isDelete=TRUE above only
-					changes return value total
+       for (m = 0; m < num_param; m++) {
+         dzA[m] -= changeStats[m]; /* isDelete=TRUE above only
+				      changes return value total
 					(not used here)not
 					changestats, so need to
 					subtract change stats here for
 					delete */
-	 }
        }
      }
-     assert(obs_maxtermsender_arcs == count_maxtermsender_arcs);
      free(changeStats);
      if (config->useIFDsampler) {
        /* Initialize the graph to random graph with
