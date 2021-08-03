@@ -708,6 +708,7 @@ int do_simulation(sim_config_t * config)
 					config->param_config.attr_indices,
 					config->param_config.attr_interaction_pair_indices,
 					dzA, theta);
+#ifdef UNDEF_XXX
      /* Now delete all arcs sent from nodes in the last time period
 	(term) so that we start the simulation with an empty set of
 	these non-fixed potential arcs (all the other arcs and
@@ -746,6 +747,7 @@ int do_simulation(sim_config_t * config)
        }
      }
      free(changeStats);
+#endif /* UNDEF_XXX */
    } else {
      if (config->useIFDsampler) {
        /* Initialize the graph to random (E-R aka Bernoulli) graph with
