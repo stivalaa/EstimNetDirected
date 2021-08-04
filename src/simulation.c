@@ -805,8 +805,7 @@ int do_simulation(sim_config_t * config)
   } else {
     if (config->useIFDsampler) {
       /* Initialize the graph to random (E-R aka Bernoulli) graph with
-         specified number of arcs for fixed density simulation (IFD sampler),
-         and also for TNT sampler since it does 50% add/delete moves */
+         specified number of arcs for fixed density simulation (IFD sampler) */
       make_erdos_renyi_digraph(g, config->numArcs,
                                num_param, n_attr, n_dyadic, n_attr_interaction,
                                config->param_config.change_stats_funcs,
