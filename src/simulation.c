@@ -469,7 +469,7 @@ int do_simulation(sim_config_t * config)
   digraph_t     *g;
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
-  uint_t         i, theta_i, j, k, l, m;
+  uint_t         i, theta_i, j, k, m;
   FILE          *dzA_outfile;
 #define HEADER_MAX 65536
   char           fileheader[HEADER_MAX];
@@ -479,7 +479,6 @@ int do_simulation(sim_config_t * config)
   FILE          *arclist_file;
   uint_t         num_nodes       = 0;
   double        *changeStats     = NULL;
-  uint_t         count_maxtermsender_arcs = 0;
   uint_t         obs_maxtermsender_arcs;
   
     
@@ -741,12 +740,14 @@ int do_simulation(sim_config_t * config)
     }
     obs_maxtermsender_arcs = g->num_maxtermsender_arcs;
     SIMULATE_DEBUG_PRINT(("obs_maxtermsender_arcs = %u\n", obs_maxtermsender_arcs));
+    printf("Number of arcs sent from last term in observed network: %u\n",
+           obs_maxtermsender_arcs);
     /* Now delete all arcs sent from nodes in the last time period
        (term) so that we start the simulation with an empty set of
        these non-fixed potential arcs (all the other arcs and
        non-arcs, from nodes in previous terms, are fixed). */
     changeStats = (double *)safe_calloc(num_param, sizeof(double));     
-    for (k = 0; k < g->num_maxtermsender_arcs; k++) {
+    for (k = 0; k < obs_maxtermsender_arcs; k++) {
       i = g->all_maxtermsender_arcs[k].i;
       j = g->all_maxtermsender_arcs[k].j;
       assert(g->term[i] == g->max_term);
@@ -776,6 +777,8 @@ int do_simulation(sim_config_t * config)
                                      delete */
       }
     }
+    SIMULATE_DEBUG_PRINT(("After removing maxtermsender arcs: g->num_maxtermsender_arcs = %u, g->num_arcs = %u\n", g->num_maxtermsender_arcs, g->num_arcs));
+    assert(g->num_maxtermsender_arcs == 0);
     free(changeStats);
     if (config->useIFDsampler) {
       /* Initialize the graph to random graph with
@@ -784,7 +787,7 @@ int do_simulation(sim_config_t * config)
          and also for TNT sampler since it does 50% add/delete moves.
          This means we add the same number of arcs we just deleted,
          sent from max temr nodes, but now at random, no thte observed ones.*/
-      make_erdos_renyi_digraph(g, config->numArcs,
+      make_erdos_renyi_digraph(g, obs_maxtermsender_arcs,
                                num_param, n_attr, n_dyadic, n_attr_interaction,
                                config->param_config.change_stats_funcs,
                                config->param_config.param_lambdas,
@@ -796,13 +799,15 @@ int do_simulation(sim_config_t * config)
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
                                dzA, theta, config->citationERGM);
+      SIMULATE_DEBUG_PRINT(("After adding %u random maxtermsender arcs: g->num_maxtermsender_arcs = %u, g->num_arcs = %u\n", obs_maxtermsender_arcs, g->num_maxtermsender_arcs, g->num_arcs));
+      assert(g->num_maxtermsender_arcs == obs_maxtermsender_arcs);
     }
   } else {
     if (config->useIFDsampler) {
       /* Initialize the graph to random (E-R aka Bernoulli) graph with
          specified number of arcs for fixed density simulation (IFD sampler),
          and also for TNT sampler since it does 50% add/delete moves */
-      make_erdos_renyi_digraph(g, count_maxtermsender_arcs,
+      make_erdos_renyi_digraph(g, config->numArcs,
                                num_param, n_attr, n_dyadic, n_attr_interaction,
                                config->param_config.change_stats_funcs,
                                config->param_config.param_lambdas,
