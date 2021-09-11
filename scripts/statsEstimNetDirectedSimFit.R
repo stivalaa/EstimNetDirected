@@ -105,6 +105,50 @@ deg_distr_distance <- function(g_obs, sim_graphs, mode) {
     return(mdist[length(mdist)]) # Mahalanobis distance of observed (last in vector from mahalanobis())
 }
 
+##
+## Return matrix where rows are
+## degree distribution of each observation
+## (simulated network, observed as last row), for in or out degree
+##
+## Parameters:
+##    g_obs:       observed graph igraph object
+##    sim_graphs:  simulated graphs list of igraph objects
+##    maxdeg:     maximum degree
+##    mode:       'in' or 'out' for indegree or outdegree respectively
+##
+## Return value:
+##    Matrix of degree distributions
+##
+##
+build_deg_matrix <- function(g_obs, sim_graphs, maxdeg, mode) {
+
+    deg_df <- data.frame(sim = rep(1:num_sim, each=(maxdeg+1)),
+                           degree = rep(0:maxdeg, num_sim),
+                           count = NA)
+    # construct matrix where columns are counts for degree0, degree1, etc.
+    # and rows are the observations (each row a simulated network)
+    deg_matrix <- matrix(nrow = num_sim, ncol = (1+maxdeg))
+    for (i in 1:num_sim) {
+        ## https://stackoverflow.com/questions/1617061/include-levels-of-zero-count-in-result-of-table
+        deg_table <- table(factor(degree(sim_graphs[[i]], mode = mode),
+                                  levels=0:maxdeg))
+        deg_matrix[i,] <- t(matrix(deg_table))
+    }
+
+    obs_deg_df <- data.frame(degree = rep(0:maxdeg),
+                               count = NA)
+    obs_deg_table <- table(factor(degree(g_obs, mode=mode), levels=0:maxdeg))
+    ## convert to matrix where columns are degree0, degree1,... etc.
+    ## and single row for the single observation
+    obs_deg_matrix <- t(matrix(obs_deg_table))
+
+    # Add observed data as last row
+    deg_matrix <- rbind(deg_matrix, obs_deg_matrix)
+
+    return(deg_matrix)
+}
+
+
 ###
 ### Main
 ###
@@ -137,10 +181,20 @@ stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
 stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 num_sim <- length(sim_graphs)
 
+maxdegree <- 20 # do stats for degree 0, degree 1,..., maxdegree
+
 ## In degree
 
-cat("indegree dist =",deg_distr_distance(g_obs, sim_graphs, mode='in'),"\n")
+stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='in')
 
 ## Out degree
 
-cat("outdegree dist =",deg_distr_distance(g_obs, sim_graphs, mode='out'),"\n")
+stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='out')
+
+statscov <- cov(stats_matrix)
+inverted_cov_stats_matrix <- solve(statscov) # inverse of statscov
+mdist <- mahalanobis(stats_matrix, colMeans(stats_matrix), inverted_cov_stats_matrix, inverted=TRUE)
+
+print(mdist)#XXX
+obs_mdist <- mdist[length(mdist)] # Mahalanobis distance of observed (last in vector from mahalanobis())
+cat("Mahalanobis = ", obs_mdist, "\n")
