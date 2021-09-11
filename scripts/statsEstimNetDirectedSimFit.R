@@ -196,12 +196,23 @@ stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxindegree, mode='in')
 
 stats_matrix <- cbind(stats_matrix, build_deg_matrix(g_obs, sim_graphs, maxoutdegree, mode='out'))
 
-print(stats_matrix)#XX
+## Reciprocity
+
+obs_reciprocity <- reciprocity(g_obs) 
+sim_reciprocity <- sapply(sim_graphs, function(g) reciprocity(g))
+recip_col <- as.matrix(sim_reciprocity)
+recip_col <- rbind(recip_col, obs_reciprocity)
+#print(recip_col)#XXX
+#print(dim(recip_col))#XXX
+stats_matrix <- cbind(stats_matrix, recip_col)
+
+print(dim(stats_matrix))#XXX
+#print(stats_matrix)#XXX
 
 statscov <- cov(stats_matrix)
 inverted_cov_stats_matrix <- solve(statscov) # inverse of statscov
 mdist <- mahalanobis(stats_matrix, colMeans(stats_matrix), inverted_cov_stats_matrix, inverted=TRUE)
 
-print(mdist)#XXX
+#print(mdist)#XXX
 obs_mdist <- mdist[length(mdist)] # Mahalanobis distance of observed (last in vector from mahalanobis())
 cat("Mahalanobis = ", obs_mdist, "\n")
