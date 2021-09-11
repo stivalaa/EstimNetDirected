@@ -181,15 +181,20 @@ stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
 stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 num_sim <- length(sim_graphs)
 
-maxdegree <- 5 # do stats for degree 0, degree 1,..., maxdegree
+## do stats for degree 0, degree 1,..., maxdegree
+maxdegree <- 5 # capping at this limit as if too many cols get singular matrix
+#maxindegree  <- max(degree(g_obs, mode='in'))
+#maxoutdegree <- max(degree(g_obs, mode='out'))
+maxindegree <- maxdegree
+maxoutdegree <- maxdegree
 
 ## In degree
 
-stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='in')
+stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxindegree, mode='in')
 
 ## Out degree
 
-stats_matrix <- cbind(stats_matrix, build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='out'))
+stats_matrix <- cbind(stats_matrix, build_deg_matrix(g_obs, sim_graphs, maxoutdegree, mode='out'))
 
 print(stats_matrix)#XX
 
