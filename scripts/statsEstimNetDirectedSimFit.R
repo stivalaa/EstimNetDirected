@@ -188,16 +188,19 @@ maxdegree <- 5 # capping at this limit as if too many cols get singular matrix
 maxindegree <- maxdegree
 maxoutdegree <- maxdegree
 
-## In degree
-
+###
+### In degree
+###
 stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxindegree, mode='in')
 
-## Out degree
-
+###
+### Out degree
+###
 stats_matrix <- cbind(stats_matrix, build_deg_matrix(g_obs, sim_graphs, maxoutdegree, mode='out'))
 
-## Reciprocity
-
+###
+### Reciprocity
+###
 obs_reciprocity <- reciprocity(g_obs) 
 sim_reciprocity <- sapply(sim_graphs, function(g) reciprocity(g))
 recip_col <- as.matrix(sim_reciprocity)
@@ -206,7 +209,18 @@ recip_col <- rbind(recip_col, obs_reciprocity)
 #print(dim(recip_col))#XXX
 stats_matrix <- cbind(stats_matrix, recip_col)
 
-print(dim(stats_matrix))#XXX
+###
+### giant component size
+###
+giant_component_sizes <- sapply(sim_graphs,
+                                function(g) vcount(giant.component(g)))
+giant_component_sizes <- giant_component_sizes / num_nodes
+obs_gcsize <- vcount(giant.component(g_obs)) / num_nodes
+gc_col <- as.matrix(giant_component_sizes)
+gc_col <- rbind(gc_col, obs_gcsize)
+stats_matrix <- cbind(stats_matrix, gc_col)
+
+#print(dim(stats_matrix))#XXX
 #print(stats_matrix)#XXX
 
 statscov <- cov(stats_matrix)
