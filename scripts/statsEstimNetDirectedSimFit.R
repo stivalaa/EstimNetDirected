@@ -181,7 +181,7 @@ stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
 stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 num_sim <- length(sim_graphs)
 
-maxdegree <- 20 # do stats for degree 0, degree 1,..., maxdegree
+maxdegree <- 5 # do stats for degree 0, degree 1,..., maxdegree
 
 ## In degree
 
@@ -189,7 +189,9 @@ stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='in')
 
 ## Out degree
 
-stats_matrix <- build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='out')
+stats_matrix <- cbind(stats_matrix, build_deg_matrix(g_obs, sim_graphs, maxdegree, mode='out'))
+
+print(stats_matrix)#XX
 
 statscov <- cov(stats_matrix)
 inverted_cov_stats_matrix <- solve(statscov) # inverse of statscov
