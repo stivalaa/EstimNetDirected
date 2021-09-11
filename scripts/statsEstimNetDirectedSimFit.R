@@ -220,6 +220,22 @@ gc_col <- as.matrix(giant_component_sizes)
 gc_col <- rbind(gc_col, obs_gcsize)
 stats_matrix <- cbind(stats_matrix, gc_col)
 
+###
+### Transitivity (global clustering coefficient and avg. local clustering coef.)
+###
+
+ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global"))
+cc_obs <- transitivity(g_obs, type='global')
+cc_col <- as.matrix(ccs)
+cc_col <- rbind(cc_col, cc_obs)
+stats_matrix <- cbind(stats_matrix, cc_col)
+
+ccs_localavg <- sapply(sim_graphs, function(g) transitivity(g, type='localaverage'))
+cc_localavg_obs <- transitivity(g_obs, type='localaverage')
+cc_localavg_col <- as.matrix(ccs_localavg)
+cc_localavg_col <- rbind(cc_localavg_col, cc_localavg_obs)
+stats_matrix <- cbind(stats_matrix, cc_localavg_col)
+
 #print(dim(stats_matrix))#XXX
 #print(stats_matrix)#XXX
 
