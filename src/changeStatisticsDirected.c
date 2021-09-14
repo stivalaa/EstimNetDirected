@@ -534,6 +534,17 @@ double changeAltTwoPathsTD(digraph_t *g, uint_t i, uint_t j, double lambda)
                 changeAltTwoPathsD(g, i, j, lambda));
 }
 
+/*
+ * Change statistic for loop (self-edge)
+ * Note allowLoops = True must be set for this to work
+ */
+double changeLoop(digraph_t *g, uint_t i, uint_t j, double lambda)
+{
+  (void)g;      /* unused parameter*/
+  (void)lambda; /* unused parameter */
+
+  return i == j;
+}
 
 /************************* Actor attribute (binary) **************************/
 

@@ -83,7 +83,8 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"AltTwoPathsT",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsT},
   {"AltTwoPathsD",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsD},
   {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsU},
-  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsTD}
+  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsTD},
+  {"Loop",              STRUCT_PARAM_TYPE_NONE,   changeLoop}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
