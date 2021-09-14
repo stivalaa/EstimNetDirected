@@ -201,6 +201,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t  i,j,k,l;
   uint_t  arcidx = 0;
 
+  bool allowLoops = TRUE; /* XXX */
   
   for (i = 0; i < n; i++) {
     addChangeStats[i] = delChangeStats[i] = 0;
@@ -296,7 +297,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
             i = int_urand(g->num_nodes);
             do {
               j = int_urand(g->num_nodes);
-            } while (i == j);
+            } while (!allowLoops && i == j);
           } while (isArc(g, i, j));
         } while (forbidReciprocity && isArc(g, j, i));
       }
