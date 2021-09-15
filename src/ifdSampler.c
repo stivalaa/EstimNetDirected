@@ -85,6 +85,8 @@
  */
 double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
                      bool citationERGM) {
+  bool allowLoops = TRUE; /* XXX */
+
   double N         = g->num_nodes;
   double num_dyads = N*(N-1);/*directed so not div by 2*/
   double num_arcs  = g->num_arcs;
@@ -97,6 +99,11 @@ double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
   double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
     
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
+  assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
+
+  if (allowLoops) {
+    num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
+  }
 
   if (useConditionalEstimation) {
     return log((num_inner_dyads - g->num_inner_arcs) / (g->num_inner_arcs + 1));
