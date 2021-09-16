@@ -144,8 +144,12 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */
 
+  bool allowLoops = TRUE; /* XXX */
+
   assert(!(citationERGM && useConditionalEstimation)); /* cannot do both */
+  assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
   
+
   for (i = 0; i < n; i++)
     addChangeStats[i] = delChangeStats[i] = 0;
 
@@ -161,6 +165,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
          connecting node to preceding wave. Note ignoring arc direction
          here as assumed snowball sample ignored arc directions. */
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      assert(!allowLoops);
       do {
         i = g->inner_nodes[int_urand(g->num_inner_nodes)];
         do {
@@ -179,6 +184,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        * node j (in any term) and toggle arc i->j between them. In this way
        * we have all arcs (citations) in terms earlier than the last fixed,
        * and we only create citations from nodes in the last term. */
+      assert(!allowLoops);
       do {
 	i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
 	do {
@@ -195,7 +201,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         i = int_urand(g->num_nodes);
         do {
           j = int_urand(g->num_nodes);
-        } while (i == j);
+        } while (!allowLoops && i == j);
         isDelete = isArc(g, i ,j);
       } while (forbidReciprocity && !isDelete && isArc(g, j, i));
     }
