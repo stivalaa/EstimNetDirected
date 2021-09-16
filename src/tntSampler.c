@@ -165,6 +165,14 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
   double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
     
+  bool allowLoops = TRUE; /* XXX */
+  assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
+  assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
+
+  
+  if (allowLoops) {
+    num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
+  }
     
   for (i = 0; i < n; i++) {
     addChangeStats[i] = delChangeStats[i] = 0;
@@ -183,6 +191,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     
     if (useConditionalEstimation) {
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      assert(!allowLoops);
       if (isDelete) {
         /* Delete move for conditional estimation. Find an existing
            arc between nodes in inner waves (i.e. fixing ties in
@@ -222,6 +231,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       }
     } else if (citationERGM) {
       assert(!forbidReciprocity); /* TODO not implemented for TNT cERGM */
+      assert(!allowLoops);
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: TNT sampler num_maxtermsender_arcs == 0\n");
         isDelete = FALSE; /* force add move since no arcs to delete */
@@ -269,7 +279,7 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
             i = int_urand(g->num_nodes);
             do {
               j = int_urand(g->num_nodes);
-            } while (i == j);
+            } while (!allowLoops && i == j);
           } while (isArc(g, i, j));
         } while (forbidReciprocity && isArc(g, j, i));
       }

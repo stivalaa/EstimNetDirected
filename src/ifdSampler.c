@@ -218,6 +218,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
     if (useConditionalEstimation) {
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      assert(!allowLoops);
       if (isDelete) {
         /* Delete move for conditional estimation. Find an existing
            arc between nodes in inner waves (i.e. fixing ties in
@@ -257,6 +258,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       }
     } else if (citationERGM) {
       assert(!forbidReciprocity); /* TODO not implemented for cERGM */
+      assert(!allowLoops);
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: IFD sampler num_maxtermsender_arcs == 0\n");
         isDelete = FALSE; /* force add move since no arcs to delete */
