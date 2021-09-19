@@ -79,12 +79,13 @@
  *                               network sample.
  *    citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                        on term (time period)
+ *    forbidReciprocity - if True do not allow reciprocated arcs.
  * 
  * Return value:
  *    edge correction value
  */
 double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
-                     bool citationERGM) {
+                     bool citationERGM, bool forbidReciprocity) {
   bool allowLoops = TRUE; /* XXX */
 
   double N         = g->num_nodes;
@@ -103,6 +104,10 @@ double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
 
   if (allowLoops) {
     num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
+  }
+
+  if (forbidReciprocity) {
+    num_dyads /= 2.0;
   }
 
   if (useConditionalEstimation) {

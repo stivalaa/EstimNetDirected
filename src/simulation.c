@@ -292,7 +292,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   
   if (useIFDsampler)
     ifd_aux_param = theta[arc_param_index] +
-                     arcCorrection(g, useConditionalSimulation, citationERGM);
+                     arcCorrection(g, useConditionalSimulation, citationERGM, forbidReciprocity);
   
 
   printf("sampleSize = %u, interval = %u burnin = %u\n",

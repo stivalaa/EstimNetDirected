@@ -173,6 +173,10 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (allowLoops) {
     num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
   }
+
+  if (forbidReciprocity) {
+    num_dyads /= 2.0;
+  }
     
   for (i = 0; i < n; i++) {
     addChangeStats[i] = delChangeStats[i] = 0;
