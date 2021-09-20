@@ -237,7 +237,7 @@ double changeIsolates(digraph_t *g, uint_t i, uint_t j, double lambda)
   if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
     delta--;
   }
-  if (g->indegree[j] == 0 && g->outdegree[j] == 0) {
+  if (i != j && g->indegree[j] == 0 && g->outdegree[j] == 0) {
     delta--;
   }
   return delta;
