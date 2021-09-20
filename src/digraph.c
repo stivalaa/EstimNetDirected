@@ -29,23 +29,6 @@
 #include "digraph.h"
 
 
-/*** TODO FIXME XXX for allowLoops, change statistics are wrong for
- * (at leat) AltTwoPathsT and AltKTrianglesT - seems that despite
- * the if (v == i || v == j) continue;
- * lines in update_two_path_entry() etc. here and changeAltTwoPathsT() etc.
- * in changeStatisticsDirected.c, we are still counting too many two-paths
- * and triangles. E.g.:
- * [stivala@icslogin01 ecoli_loops]$ cat obs_stats_ecoli1_struct_0.txt
- * Arc Sink Source AltInStars(2) AltOutStars(2) AltKTrianglesT(2) AltTwoPathsT(2)
- *  519 76 312 730.119 215.188 42 199.5
- * [stivala@icslogin01 ecoli_loops]$ cat obs_stats_ecoli1_loops_0.txt
- * Arc Sink Source AltInStars(2) AltOutStars(2) AltKTrianglesT(2) AltTwoPathsT(2)
- * 578 51 312 805.516 242.875 392 549.5
- * 
- * Note that counts of AltKTrianglesT and AltTwoPathsT are much higher in
- * version with loops than the original without loops.
- */
-   
 /*****************************************************************************
  *
  * local constants
