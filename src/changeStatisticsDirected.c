@@ -222,7 +222,11 @@ double changeArc(digraph_t *g, uint_t i, uint_t j, double lambda)
 double changeReciprocity(digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameter */
-  return isArc(g, j, i);
+  if (i == j) {
+    return 0;
+  } else {
+    return isArc(g, j, i);
+  }
 }
 
 /*
@@ -283,7 +287,12 @@ double changeIsolates(digraph_t *g, uint_t i, uint_t j, double lambda)
 double changeTwoPath(digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameter */
-  return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
+
+  if (i == j) {
+    return 0;
+  } else {
+    return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
+  }
 }
 
 /*
@@ -322,6 +331,9 @@ double changeTransitiveTriad(digraph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k,l,w;
   uint_t  delta = 0;
   (void)lambda; /* unused parameter */
+  if (i == j) {
+    return 0;
+  }
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)
@@ -349,6 +361,9 @@ double changeCyclicTriad(digraph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   uint_t  delta = 0;
   (void)lambda; /* unused parameter */
+  if (i == j) {
+    return 0;
+  }
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     if (v == i || v == j)
@@ -390,6 +405,10 @@ double changeAltKTrianglesT(digraph_t *g, uint_t i, uint_t j, double lambda)
   double  delta = 0;
   assert(lambda > 1);
 
+  if (i == j) {
+    return 0;
+  }
+
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j)
@@ -421,6 +440,10 @@ double changeAltKTrianglesC(digraph_t *g, uint_t i, uint_t j, double lambda)
   double delta =0;
   assert(lambda > 1);
 
+  if (i == j) {
+    return 0;
+  }
+
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
     /*removed as slows significantly: assert(isArc(g, v, i));*/
@@ -446,6 +469,10 @@ double changeAltKTrianglesD(digraph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+  if (i == j) {
+    return 0;
+  }
 
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
@@ -504,6 +531,10 @@ double changeAltTwoPathsT(digraph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
 
+  if (i == j) {
+    return 0;
+  }
+
   for (k = 0; k < g->outdegree[j]; k++) {
     v = g->arclist[j][k];
     if (v == i || v == j)
@@ -529,6 +560,10 @@ double changeAltTwoPathsD(digraph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
 
+  if (i == j) {
+    return 0;
+  }
+
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
     if (v == i || v == j) 
@@ -546,6 +581,10 @@ double changeAltTwoPathsU(digraph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+
+  if (i == j) {
+    return 0;
+  }
 
   for (k = 0; k < g->indegree[j]; k++) {
     v = g->revarclist[j][k];
@@ -629,8 +668,12 @@ double changeMatching(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeMatchingReciprocity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter*/
-  return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
-         g->catattr[a][i] == g->catattr[a][j] && isArc(g, j, i);
+  if (i == j) {
+    return 0;
+  } else {
+    return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
+           g->catattr[a][i] == g->catattr[a][j] && isArc(g, j, i);
+  }
 }
 
 /*
@@ -649,8 +692,12 @@ double changeMismatching(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDele
 double changeMismatchingReciprocity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
-  return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
-         g->catattr[a][i] != g->catattr[a][j] && isArc(g, j, i);
+  if (i == j) {
+    return 0;
+  } else {
+    return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
+           g->catattr[a][i] != g->catattr[a][j] && isArc(g, j, i);
+  }
 }
 
 
@@ -666,6 +713,10 @@ double changeMismatchingTransitiveTriad(digraph_t *g, uint_t i, uint_t j, uint_t
   uint_t v,k,l,w;
   uint_t  delta = 0;
   (void)isDelete; /* unused parameter */
+
+  if (i == j) {
+    return 0;
+  }
 
   for (k = 0; k < g->outdegree[i]; k++) {
     v = g->arclist[i][k];
@@ -745,6 +796,10 @@ double changeMismatchingTransitiveTies(digraph_t *g, uint_t i, uint_t j, uint_t 
   int L2th, L2tu, L2uh;
   int delta = 0;
   int ochange = isDelete ? -1 : 0;
+
+  if (i == j) {
+    return 0;
+  }
 
   if (isDelete) {
     insertArc(g, i, j); /* temporarily put arc i->j in for delete */
@@ -850,6 +905,8 @@ double changeDiff(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeDiffReciprocity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */  
+  if (i == j)
+    return 0;
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else  
