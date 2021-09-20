@@ -469,6 +469,10 @@ double changeAltKTrianglesU(digraph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
 
+  if (i == j) {
+    return 0;
+  }
+
   for (k = 0; k < g->indegree[j]; k++) {
     v = g->revarclist[j][k];
     if (v == i || v == j)
