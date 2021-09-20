@@ -235,7 +235,7 @@ double changeSink(digraph_t *g, uint_t i, uint_t j, double lambda)
   if (g->outdegree[i] == 0 && g->indegree[i] != 0) {
     delta--;
   }
-  if (g->outdegree[j] == 0 && g->indegree[j] == 0) {
+  if (i != j && g->outdegree[j] == 0 && g->indegree[j] == 0) {
     delta++;
   }
   return delta;
@@ -248,7 +248,7 @@ double changeSource(digraph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
   (void)lambda; /* unused parameter */
-  if (g->outdegree[i] == 0 && g->indegree[i] == 0) {
+  if (i != j && g->outdegree[i] == 0 && g->indegree[i] == 0) {
     delta++;
   }
   if (g->indegree[j] == 0 && g->outdegree[j] != 0) {
