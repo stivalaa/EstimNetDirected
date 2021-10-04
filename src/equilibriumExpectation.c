@@ -772,6 +772,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   /* only compute the observed sufficient statistics in task 0 */
   bool          computeStats = config->computeStats && tasknum == 0;
   bool          first_header_field = TRUE;
+  uint_t        loop_count = 0;
 
   if (!config->arclist_filename) {
     fprintf(stderr, "ERROR: no arclistFile specified.\n");
@@ -1036,9 +1037,16 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
 
    
    if (tasknum == 0) {
-    print_data_summary(g);
-    print_zone_summary(g);
-    print_term_summary(g);
+     print_data_summary(g, config->allowLoops);
+     loop_count = num_loops(g);
+     printf("Digraph has %u self-edges (loops)\n", loop_count);
+     if (loop_count > 0) {
+       if (!config->allowLoops) {
+	 fprintf(stderr, "WARNING: graph has self-edges but allowLoops is not true\n");
+       }
+     }
+     print_zone_summary(g);
+     print_term_summary(g);
    }
    
   if (!(dzA_outfile = fopen(dzA_outfilename, "w"))) {

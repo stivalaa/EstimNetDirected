@@ -828,14 +828,18 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
  * Return density of graph
  * 
  * Parameters:
- *   g  - digraph 
+ *   g          - digraph 
+ *   allowLoops - allow self-edges (loops)
  *
  * Return value:
  *   Density of g
  */
-double density(const digraph_t *g)
+double density(const digraph_t *g, bool allowLoops)
 {
-  return (double)g->num_arcs / ((double)g->num_nodes * (g->num_nodes - 1));
+  if (allowLoops)
+    return (double)g->num_arcs / ((double)g->num_nodes * g->num_nodes);
+  else
+    return (double)g->num_arcs / ((double)g->num_nodes * (g->num_nodes - 1));
 }
 
 /*
@@ -1369,13 +1373,14 @@ void dump_digraph_arclist(const digraph_t *g)
 /*
  * Write some summary statistics of graph and attribute data to stdout
  */
-void print_data_summary(const digraph_t * g)
+void print_data_summary(const digraph_t * g, bool allowLoops)
 {
   uint_t i,j;
   uint_t num_na_values;
   
-  printf("Digraph with %u vertices and %u arcs (density %g)\n",
-         g->num_nodes, g->num_arcs, density(g));
+  printf("Digraph with %u vertices and %u arcs (density %g) [%s]\n",
+         g->num_nodes, g->num_arcs, density(g, allowLoops),
+	 allowLoops ? "loops allowed" : "loops not allowed");
   printf("%u binary attributes\n", g->num_binattr);
   for (i = 0; i < g->num_binattr; i++) {
     printf("  %s", g->binattr_names[i]);
@@ -2045,4 +2050,22 @@ void print_term_summary(const digraph_t *g)
     printf(" %u: %u\n", i, term_sizes[i]);
   }
   free(term_sizes);
+}
+
+/*
+ * count the number of self-edges (loops) in the graph.
+ * Note: only used for warning message at start, this is not efficient,
+ * especially if the change statistics for loop is being computed anyway.
+ */
+uint_t num_loops(const digraph_t *g)
+{
+  uint_t k;
+  uint_t count = 0;
+
+  for (k = 0; k < g->num_arcs; k++) {
+    if (g->allarcs[k].i == g->allarcs[k].j) {
+      ++count;
+    }
+  }
+  return count;
 }

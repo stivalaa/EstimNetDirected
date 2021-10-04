@@ -888,7 +888,7 @@ int do_simulation(sim_config_t * config)
 
   fprintf(dzA_outfile,  "%s AcceptanceRate\n", fileheader);
 
-  print_data_summary(g);
+  print_data_summary(g, config->allowLoops);
   print_zone_summary(g);
   print_term_summary(g);
 
@@ -930,7 +930,7 @@ int do_simulation(sim_config_t * config)
 
   fclose(dzA_outfile);
 
-  print_data_summary(g);
+  print_data_summary(g, config->allowLoops);
      
   free(theta);
   free(dzA);

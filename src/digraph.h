@@ -168,7 +168,7 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j);
 #endif /*TWOPATH_LOOKUP */
   
 
-double density(const digraph_t *g); /* graph density of g */
+double density(const digraph_t *g, bool allowLoops); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
 bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j or j->i is in g */
 
@@ -192,7 +192,7 @@ void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t a
 digraph_t *allocate_digraph(uint_t num_vertices);
 void free_digraph(digraph_t *g);
 void dump_digraph_arclist(const digraph_t *g);
-void print_data_summary(const digraph_t *g);
+void print_data_summary(const digraph_t *g, bool allowLoops);
 void print_zone_summary(const digraph_t *g);
 
 void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
@@ -214,6 +214,7 @@ uint_t get_num_vertices_from_arclist_file(FILE *pajek_file);
 int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename);
 void dump_term_info(const digraph_t *g);
 void print_term_summary(const digraph_t *g);
+uint_t num_loops(const digraph_t *g);
 
 #endif /* DIGRAPH_H */
 
