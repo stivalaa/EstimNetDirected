@@ -58,7 +58,8 @@ typedef struct sim_config_s {
   char *term_filename;     /* filename of citation ERGM term file or NULL */
   bool  citationERGM;      /* use cERGM conditional estimation on terms */
   char *arclist_filename;  /* filename of Pajek file for citationERGM */  
-
+  bool allowLoops;         /* allow self-edges (loops) */
+  
   /*
    * values built by confiparser.c functions from parsed config settings
    */

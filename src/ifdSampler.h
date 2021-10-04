@@ -66,7 +66,8 @@
 #include "changeStatisticsDirected.h"
 
 double arcCorrection(const digraph_t *g, bool useConditionEstimation,
-                     bool citationERGM, bool forbidReciprocity);
+                     bool citationERGM, bool forbidReciprocity,
+		     bool allowLoops);
 
 double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
@@ -84,7 +85,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool performMove,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity, bool citationERGM);
+                  bool forbidReciprocity, bool citationERGM,
+		  bool allowLoops);
 
 #endif /* IFDSAMPLER_H */
 

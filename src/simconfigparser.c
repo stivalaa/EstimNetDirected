@@ -113,6 +113,10 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"arclistFile",   PARAM_TYPE_STRING,   offsetof(sim_config_t, arclist_filename),
   "Network in Pajek arc list format for initial state of simulation; used for citationERGM to get fixed arcs from terms other than the last"},
 
+  {"allowLoops",   PARAM_TYPE_BOOL,
+   offsetof(sim_config_t, allowLoops),
+   "allow loops (self-edges)"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to to simulate from"},
 
@@ -165,6 +169,7 @@ sim_config_t SIM_CONFIG = {
   NULL,  /* term_filename */
   FALSE, /* citationERGM */
   NULL,  /* arclist_filename */
+  FALSE, /* allowLoops */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -234,6 +239,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* term_filename */
   FALSE, /* citationERGM */
   FALSE, /* arclist_filename */
+  FALSE, /* allowLoops */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */

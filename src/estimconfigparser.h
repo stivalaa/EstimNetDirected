@@ -68,6 +68,7 @@ typedef struct estim_config_s {
   uint_t outputFileSuffixBase;/* task number added to this for output suffixes*/
   char *term_filename;     /* filename of citation ERGM term file or NULL */
   bool  citationERGM;      /* use cERGM conditional estimation on terms */
+  bool allowLoops;         /* allow self-edges (loops) */
   /*
    * values built by confiparser.c functions from parsed config settings
    */

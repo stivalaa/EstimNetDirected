@@ -118,6 +118,7 @@
  *   useTNTsampler     - use TNT sampler not IFD or basic.
  *   citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
+ *   allowLoops        - allow self-edges (loops)
  *
  * Return value:
  *   None.
@@ -145,7 +146,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  bool useIFDsampler,
                  double ifd_K,
                  bool useConditionalEstimation,
-                 bool forbidReciprocity, bool useTNTsampler, bool citationERGM)
+                 bool forbidReciprocity, bool useTNTsampler, bool citationERGM,
+		 bool allowLoops)
 {
   uint_t t, l;
   double acceptance_rate;
@@ -163,7 +165,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   if (useIFDsampler)
     arc_correction_val = arcCorrection(g, useConditionalEstimation,
-                                       citationERGM, forbidReciprocity);
+                                       citationERGM, forbidReciprocity,
+				       allowLoops);
 
   for (l = 0; l < n; l++)
     theta[l] = 0;
@@ -184,7 +187,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    FALSE,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalEstimation,
-                                   forbidReciprocity, citationERGM);
+                                   forbidReciprocity, citationERGM,
+				   allowLoops);
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else if (useTNTsampler) {
@@ -200,7 +204,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 				   theta,
 				   addChangeStats, delChangeStats, sampler_m,
 				   FALSE, useConditionalEstimation,
-				   forbidReciprocity, citationERGM);
+				   forbidReciprocity, citationERGM,
+				   allowLoops);
       
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
@@ -215,7 +220,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      theta,
                                      addChangeStats, delChangeStats, sampler_m,
                                      FALSE, useConditionalEstimation,
-                                     forbidReciprocity, citationERGM);
+                                     forbidReciprocity, citationERGM,
+				     allowLoops);
     }
     for (l = 0; l < n; l++) {
       dzA[l] = delChangeStats[l] - addChangeStats[l];
@@ -312,7 +318,8 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *
  *  citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
-
+ *  allowLoops        - allow self-edges (loops)
+ *
  * Return value:
  *   None.
  *
@@ -339,7 +346,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useConditionalEstimation,
                   bool forbidReciprocity, bool useBorisenkoUpdate,
                   double learningRate, double minTheta,
-		  bool useTNTsampler, bool citationERGM)
+		  bool useTNTsampler, bool citationERGM, bool allowLoops)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -362,7 +369,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   if (useIFDsampler) 
     arc_correction_val = arcCorrection(g, useConditionalEstimation,
-                                       citationERGM, forbidReciprocity);
+                                       citationERGM, forbidReciprocity,
+				       allowLoops);
 
   for (l = 0; l < n; l++)
     thetamatrix[l] = (double *)safe_malloc(Minner*sizeof(double));
@@ -401,7 +409,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      TRUE, /*Algorithm EE actually does moves */
                                      ifd_K, &dzArc, &ifd_aux_param,
                                      useConditionalEstimation,
-                                     forbidReciprocity, citationERGM);
+                                     forbidReciprocity, citationERGM,
+				     allowLoops);
         if (useIFDsampler && (outputAllSteps || tinner == 0)) {
           /* difference of Arc statistic for IFD sampler is just Ndel-Nadd */
           fprintf(dzA_outfile, "%g ", dzArc);
@@ -423,7 +432,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 				     sampler_m,
 				     TRUE,/*Algorithm EE actually does moves*/
 				     useConditionalEstimation,
-				     forbidReciprocity, citationERGM);
+				     forbidReciprocity, citationERGM,
+				     allowLoops);
       } else {
         acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                        n_attr_interaction,
@@ -439,7 +449,8 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                        sampler_m,
                                        TRUE,/*Algorithm EE actually does moves*/
                                        useConditionalEstimation,
-                                       forbidReciprocity, citationERGM);
+                                       forbidReciprocity, citationERGM,
+				       allowLoops);
       }
       for (l = 0; l < n; l++) {
         dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -566,6 +577,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *  useTNTsampler     - use TNT sampler not IFD or basic.
  *  citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                      on term (time period)
+ *  allowLoops        - allow self-edges (loops)
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -591,7 +603,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 bool useConditionalEstimation,
                 bool forbidReciprocity, bool useBorisenkoUpdate,
                 double learningRate, double minTheta,
-		bool useTNTsampler, bool citationERGM)
+		bool useTNTsampler, bool citationERGM, bool allowLoops)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -618,7 +630,8 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (useIFDsampler)
     printf("task %u: IFD sampler ifd_K = %g, arcCorrection = %g\n",
            tasknum, ifd_K, arcCorrection(g, useConditionalEstimation,
-                                         citationERGM, forbidReciprocity));
+                                         citationERGM, forbidReciprocity,
+					 allowLoops));
   else if (useTNTsampler)
     printf("task %u: TNT sampler\n", tasknum);
 
@@ -633,6 +646,9 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (citationERGM)
     printf("task %u: citation ERGM (cERGM) estimation conditional on term\n",
 	   tasknum);
+
+  if (allowLoops)
+    printf("task %u: allowing self-edges (loops)\n", tasknum);
 
   /* steps of algorithm S (M1_steps */
   /*uint_t M1 = (uint_t)(M1_steps *g->num_nodes / sampler_m);*/
@@ -661,7 +677,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
               attr_indices, attr_interaction_pair_indices,
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
               ifd_K, useConditionalEstimation, forbidReciprocity,
-	      useTNTsampler, citationERGM);
+	      useTNTsampler, citationERGM, allowLoops);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -707,7 +723,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
 		 useIFDsampler, ifd_K, useConditionalEstimation,
 		 forbidReciprocity, useBorisenkoUpdate, learningRate,
-                 minTheta, useTNTsampler, citationERGM);
+                 minTheta, useTNTsampler, citationERGM, allowLoops);
 
     gettimeofday(&end_timeval, NULL);
     timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -1007,6 +1023,16 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
        return -1;
      }
    }
+   
+   if (config->allowLoops) {
+    if (config->useConditionalEstimation) {
+      fprintf(stderr, "ERROR: cannot use allowLoops in conditional estimation\n");
+      return -1;
+    }
+    if (config->citationERGM) {
+      fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
+    }
+  }
 
    
    if (tasknum == 0) {
@@ -1109,7 +1135,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
               config->forbidReciprocity,
               config->useBorisenkoUpdate, config->learningRate,
               config->minTheta, config->useTNTsampler,
-	      config->citationERGM);
+	      config->citationERGM,
+	      config->allowLoops);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);

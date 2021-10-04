@@ -76,6 +76,7 @@
  *                              not used here)
  *  citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
+ *  allowLoops        - allow self-edges (loops)
  *
  * Return value:
  *   None. The digraph parameter g is updated.
@@ -96,7 +97,7 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
                                      bool useConditionalEstimation,
                                      bool forbidReciprocity,
                                      double addChangeStats[], double theta[],
-                                     bool citationERGM)
+                                     bool citationERGM, bool allowLoops)
 {
   uint_t i, j, k, l;
   double *changestats = (double *)safe_malloc(n*sizeof(double));
@@ -117,7 +118,7 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
         i = g->inner_nodes[int_urand(g->num_inner_nodes)];          
         do {
           j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
-        } while (i == j);
+        } while (!allowLoops && i == j);
         assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
       } while (isArc(g, i, j) ||
                (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
@@ -243,6 +244,7 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
  *   useTNTsampler     - use TNT sampler not IFD or basic.
  *   citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
+ *   allowLoops        - allow self-edges (loops)
  *
  * Return value:
  *   Nonzero on error, 0 if OK.
@@ -270,7 +272,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t arc_param_index,
                   double dzA[],
                   bool useTNTsampler,
-                  bool citationERGM)
+                  bool citationERGM,
+		  bool allowLoops)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -292,7 +295,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   
   if (useIFDsampler)
     ifd_aux_param = theta[arc_param_index] +
-                     arcCorrection(g, useConditionalSimulation, citationERGM, forbidReciprocity);
+      arcCorrection(g, useConditionalSimulation, citationERGM, forbidReciprocity, allowLoops);
   
 
   printf("sampleSize = %u, interval = %u burnin = %u\n",
@@ -308,6 +311,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("Simulation is conditional on no reciprocated arcs\n");
   if (citationERGM)
     printf("citation ERGM (cERGM) simulation conditional on term\n");
+  if (allowLoops)
+    printf("allowing self-edges (loops)\n");
 
   if (burnin > 0) {
     gettimeofday(&start_timeval, NULL);
@@ -325,7 +330,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    TRUE, /*actually do moves */
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
-                                   forbidReciprocity, citationERGM);
+                                   forbidReciprocity, citationERGM,
+				   allowLoops);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
@@ -342,7 +348,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    TRUE,/*actually do moves*/
                                    useConditionalSimulation,
                                    forbidReciprocity,
-                                   citationERGM);
+                                   citationERGM,
+				   allowLoops);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -359,7 +366,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      TRUE,/*actually do moves*/
                                      useConditionalSimulation,
                                      forbidReciprocity,
-                                     citationERGM);
+                                     citationERGM,
+				     allowLoops);
     }
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -386,7 +394,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    TRUE, /*actually do moves */
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
-                                   forbidReciprocity, citationERGM);
+                                   forbidReciprocity, citationERGM,
+				   allowLoops);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
@@ -403,7 +412,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    TRUE,/*actually do moves*/
                                    useConditionalSimulation,
                                    forbidReciprocity,
-                                   citationERGM);
+                                   citationERGM,
+				   allowLoops);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -420,7 +430,8 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      TRUE,/*actually do moves*/
                                      useConditionalSimulation,
                                      forbidReciprocity,
-                                     citationERGM);
+                                     citationERGM,
+				     allowLoops);
     }
     iternum = burnin + interval*(samplenum+1);
     fprintf(dzA_outfile, "%llu ", iternum);
@@ -560,7 +571,7 @@ int do_simulation(sim_config_t * config)
   }  else {
     if (config->zone_filename)
       fprintf(stderr, "WARNING: snowball sampling zones are specified"
-              " but conditional simuilation is not being used\n");
+              " but conditional simulation is not being used\n");
   }
 
 
@@ -586,7 +597,17 @@ int do_simulation(sim_config_t * config)
     }
   }
    
-   
+
+  if (config->allowLoops) {
+    if (config->useConditionalSimulation) {
+      fprintf(stderr, "ERROR: cannot use allowLoops in conditional simulation\n");
+      return -1;
+    }
+    if (config->citationERGM) {
+      fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
+    }
+  }
+  
   /* 
    *set parameter values from the configuration settings and write
    *  parameters and their values to stdout 
@@ -798,7 +819,8 @@ int do_simulation(sim_config_t * config)
                                config->param_config.attr_interaction_pair_indices,                              
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
-                               dzA, theta, config->citationERGM);
+                               dzA, theta, config->citationERGM,
+			       config->allowLoops);
       SIMULATE_DEBUG_PRINT(("After adding %u random maxtermsender arcs: g->num_maxtermsender_arcs = %u, g->num_arcs = %u\n", obs_maxtermsender_arcs, g->num_maxtermsender_arcs, g->num_arcs));
       assert(g->num_maxtermsender_arcs == obs_maxtermsender_arcs);
     }
@@ -817,7 +839,8 @@ int do_simulation(sim_config_t * config)
                                config->param_config.attr_interaction_pair_indices,                              
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
-                               dzA, theta, config->citationERGM);
+                               dzA, theta, config->citationERGM,
+			       config->allowLoops);
     } else if (config->numArcs != 0) {
       fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
               " so numArcs parameter is ignored\n", config->numArcs);
@@ -897,7 +920,8 @@ int do_simulation(sim_config_t * config)
                 config->sim_net_file_prefix,
                 dzA_outfile,
                 config->outputSimulatedNetworks, arc_param_index,
-                dzA, config->useTNTsampler, config->citationERGM);
+                dzA, config->useTNTsampler, config->citationERGM,
+		config->allowLoops);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);

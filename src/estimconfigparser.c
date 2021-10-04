@@ -145,6 +145,10 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
    offsetof(estim_config_t, citationERGM),
    "do citation ERGM (cERGM) conditional estimation on terms (time periods)"},
 
+  {"allowLoops",   PARAM_TYPE_BOOL,
+   offsetof(estim_config_t, allowLoops),
+   "allow loops (self-edges)"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -207,6 +211,7 @@ estim_config_t ESTIM_CONFIG = {
   0,     /* outputFileSuffixBase */
   NULL,  /* term_filename */
   FALSE, /* citationERGM */
+  FALSE, /* allowLoops */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -286,6 +291,7 @@ static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* outputFileSuffixBase */
   FALSE, /* term_filename */
   FALSE, /* citationERGM */
+  FALSE, /* allowLoops */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */

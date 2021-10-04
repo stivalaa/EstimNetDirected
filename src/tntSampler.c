@@ -124,6 +124,7 @@
  *   forbidReciprocity - if True do not allow reciprocated arcs.
  *   citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
+ *   allowLoops        - allow self-edges (loops)
  *
  * Return value:
  *   Acceptance rate.
@@ -148,7 +149,8 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t sampler_m,
                   bool performMove,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity, bool citationERGM)
+                  bool forbidReciprocity, bool citationERGM,
+		  bool allowLoops)
 {
   bool    isDelete;
   double *changestats = (double *)safe_malloc(n*sizeof(double));
@@ -165,7 +167,6 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
   double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
     
-  bool allowLoops = TRUE; /* XXX */
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
 

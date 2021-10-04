@@ -80,7 +80,8 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t sampler_m,
                   bool performMove,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity, bool citationERGM);
+                  bool forbidReciprocity, bool citationERGM,
+		  bool allowLoops);
 
 
 #endif /* TNTSAMPLER_H */

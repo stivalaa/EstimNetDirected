@@ -106,6 +106,7 @@
  *   forbidReciprocity - if True do not allow reciprocated arcs.
  *   citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
+ *   allowLoops  - allow self-edges (loops)
  *
  * Return value:
  *   Acceptance rate.
@@ -135,7 +136,8 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_t sampler_m,
                     bool performMove,
                     bool useConditionalEstimation,
-                    bool forbidReciprocity, bool citationERGM)
+                    bool forbidReciprocity, bool citationERGM,
+		    bool allowLoops)
 {
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
@@ -143,8 +145,6 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   bool   isDelete = FALSE; /* only init to fix warning */
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */
-
-  bool allowLoops = TRUE; /* XXX */
 
   assert(!(citationERGM && useConditionalEstimation)); /* cannot do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */

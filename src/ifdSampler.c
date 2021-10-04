@@ -80,14 +80,14 @@
  *    citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                        on term (time period)
  *    forbidReciprocity - if True do not allow reciprocated arcs.
+ *    allowLoops        - allow loops (self-edges)
  * 
  * Return value:
  *    edge correction value
  */
 double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
-                     bool citationERGM, bool forbidReciprocity) {
-  bool allowLoops = TRUE; /* XXX */
-
+                     bool citationERGM, bool forbidReciprocity,
+		     bool allowLoops) {
   double N         = g->num_nodes;
   double num_dyads = N*(N-1);/*directed so not div by 2*/
   double num_arcs  = g->num_arcs;
@@ -173,6 +173,7 @@ double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
  *   forbidReciprocity - if True do not allow reciprocated arcs.
  *   citationERGM      - use cERGM (citation ERGM) estimation conditional
  *                       on term (time period)
+ *   allowLoops        - allow loops (self-edges)
  *
  * Return value:
  *   Acceptance rate.
@@ -198,7 +199,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool performMove,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
                   bool useConditionalEstimation,
-                  bool forbidReciprocity, bool citationERGM)
+                  bool forbidReciprocity, bool citationERGM,
+		  bool allowLoops)
 {
   static bool   isDelete = FALSE; /* delete or add move. FIXME don't use static, make param */
 
@@ -212,8 +214,6 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double  acceptance_rate;
   uint_t  i,j,k,l;
   uint_t  arcidx = 0;
-
-  bool allowLoops = TRUE; /* XXX */
   
   for (i = 0; i < n; i++) {
     addChangeStats[i] = delChangeStats[i] = 0;
