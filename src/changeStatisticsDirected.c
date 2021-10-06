@@ -588,6 +588,38 @@ double changeLoop(digraph_t *g, uint_t i, uint_t j, double lambda)
   return i == j;
 }
 
+/*
+ * Change statistic for Loop Interaction (number of arcs between
+ * two nodes, both of which have a self-edge).
+ * Note allowLoops = True must be set for this to work
+ */
+double changeLoopInteraction(digraph_t *g, uint_t i, uint_t j, double lambda)
+{
+  (void)lambda; /* unused parameter */
+  uint_t delta = 0;
+  uint_t k;
+
+  /* first case, adding an arc between two nodes that both have self-edges */
+  if (i != j && has_loop(g, i) && has_loop(g, j)) {
+    ++delta;
+  }
+  else if (i == j) {
+    /* second case, adding a self-edge to a node that has an arc to or from
+       a node with a self-edge */
+    for (k = 0; k < g->outdegree[i]; k++) {
+      if (has_loop(g, g->arclist[i][k])) {
+	++delta;
+      }
+    }
+    for (k = 0; k < g->indegree[i]; k++) {
+      if (has_loop(g, g->revarclist[i][k])) {
+	++delta;
+      }
+    }
+  }
+  return (double)delta;
+}
+
 /************************* Actor attribute (binary) **************************/
 
 

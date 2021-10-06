@@ -2056,6 +2056,12 @@ void print_term_summary(const digraph_t *g)
  * count the number of self-edges (loops) in the graph.
  * Note: only used for warning message at start, this is not efficient,
  * especially if the change statistics for loop is being computed anyway.
+ *
+ * Parameters:
+ *     g - digraph
+ *
+ * Return value:
+ *     number of self-edges in g
  */
 uint_t num_loops(const digraph_t *g)
 {
@@ -2068,4 +2074,26 @@ uint_t num_loops(const digraph_t *g)
     }
   }
   return count;
+}
+
+/*
+ * Return true if a node has a self-edge (loop)
+ *
+ * Parameters:
+ *    g - digraph
+ *    u - node in g
+ *
+ * Return value:
+ *    True if u has a self-edge else False
+ */
+bool has_loop(const digraph_t *g, uint_t u)
+{
+  uint_t k;
+
+  for (k = 0; k < g->outdegree[u]; k++) {
+    if (g->arclist[u][k] == u) {
+      return TRUE;
+    }
+  }
+  return FALSE;
 }

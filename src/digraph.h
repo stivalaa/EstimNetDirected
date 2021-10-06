@@ -215,6 +215,7 @@ int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename);
 void dump_term_info(const digraph_t *g);
 void print_term_summary(const digraph_t *g);
 uint_t num_loops(const digraph_t *g);
-
+bool has_loop(const digraph_t *t, uint_t u);
+  
 #endif /* DIGRAPH_H */
 

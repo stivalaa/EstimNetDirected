@@ -109,6 +109,7 @@ double changeAltTwoPathsD(digraph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPathsU(digraph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPathsTD(digraph_t *g, uint_t i, uint_t j, double lambda);
 double changeLoop(digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeLoopInteraction(digraph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
