@@ -766,9 +766,9 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
 ###
 ### If the observed graph has self-edges (loops) then include those
 ###
-system.time( obs_loops <- length(which_loop(g_obs)) )
+system.time( obs_loops <- sum(which_loop(g_obs)) )
 if (obs_loops > 0) {
-  system.time( sim_loops <- sapply(sim_graphs, function(g) length(which_loop(g))) )
+  system.time( sim_loops <- sapply(sim_graphs, function(g) sum(which_loop(g))) )
   cat('obs loops: ', obs_loops, '\n')
   cat('sim loops: ', sim_loops, '\n')
   p <- ggplot() + geom_boxplot(aes(x = 'loops', y = sim_loops))
