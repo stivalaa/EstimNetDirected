@@ -763,6 +763,22 @@ if (num_nodes > MAX_SIZE_ESP_DSP) {
     plotlist <- c(plotlist, list(p))
 }
 
+###
+### If the observed graph has self-edges (loops) then include those
+###
+system.time( obs_loops <- length(which_loop(g_obs)) )
+if (obs_loops > 0) {
+  system.time( sim_loops <- sapply(sim_graphs, function(g) length(which_loop(g))) )
+  cat('obs loops: ', obs_loops, '\n')
+  cat('sim loops: ', sim_loops, '\n')
+  p <- ggplot() + geom_boxplot(aes(x = 'loops', y = sim_loops))
+  p <- p + geom_point(aes(x = as.numeric(ordered('loops')),
+                          y = obs_loops,
+                          colour = obscolour))
+  p <- p + ylab('count') + ptheme +
+    theme(axis.title.x = element_blank())
+  plotlist <- c(plotlist, list(p))
+}
 
 ###
 ### Write the plot to PDF
