@@ -608,12 +608,12 @@ double changeLoopInteraction(digraph_t *g, uint_t i, uint_t j, double lambda)
        a node with a self-edge */
     for (k = 0; k < g->outdegree[i]; k++) {
       if (has_loop(g, g->arclist[i][k])) {
-	++delta;
+        ++delta;
       }
     }
     for (k = 0; k < g->indegree[i]; k++) {
       if (has_loop(g, g->revarclist[i][k])) {
-	++delta;
+        ++delta;
       }
     }
   }
@@ -725,14 +725,14 @@ double changeMismatchingTransitiveTriad(digraph_t *g, uint_t i, uint_t j, uint_t
     if (v == i || v == j)
       continue;
     if (isArc(g, j, v) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
-	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][v])
+        g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+        g->catattr[a][i] != g->catattr[a][j] &&
+        g->catattr[a][i] != g->catattr[a][v])
       delta++;
     if (isArc(g, v, j) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
-	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][v])
+        g->catattr[a][j] != CAT_NA && g->catattr[a][v] != CAT_NA &&
+        g->catattr[a][i] != g->catattr[a][j] &&
+        g->catattr[a][i] != g->catattr[a][v])
       delta++;
   }
   for (l = 0; l < g->indegree[i]; l++) {
@@ -740,9 +740,9 @@ double changeMismatchingTransitiveTriad(digraph_t *g, uint_t i, uint_t j, uint_t
     if (w == i || w == j)
       continue;
     if (isArc(g, w, j) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][w] != CAT_NA &&
-	g->catattr[a][w] != g->catattr[a][i] &&
-	g->catattr[a][w] != g->catattr[a][j])
+        g->catattr[a][j] != CAT_NA && g->catattr[a][w] != CAT_NA &&
+        g->catattr[a][w] != g->catattr[a][i] &&
+        g->catattr[a][w] != g->catattr[a][j])
       delta++;
   }
   return (double)delta;
@@ -811,17 +811,17 @@ double changeMismatchingTransitiveTies(digraph_t *g, uint_t i, uint_t j, uint_t 
   for (k = 0; k < g->outdegree[j]; k++) {
     u = g->arclist[j][k];
     if (isArc(g, i, u) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
-	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][u]) {
+        g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
+        g->catattr[a][i] != g->catattr[a][j] &&
+        g->catattr[a][i] != g->catattr[a][u]) {
       L2tu = ochange;
       for (l = 0; l < g->indegree[u]; l++) {
-	v = g->revarclist[u][l];
-	if (isArc(g, i, v) && g->catattr[a][i] != g->catattr[a][v]) {
-	  L2tu++;
-	  if (L2tu >0)
-	    break;
-	}
+        v = g->revarclist[u][l];
+        if (isArc(g, i, v) && g->catattr[a][i] != g->catattr[a][v]) {
+          L2tu++;
+          if (L2tu >0)
+            break;
+        }
       }
       delta += (L2tu == 0);
     }
@@ -829,23 +829,23 @@ double changeMismatchingTransitiveTies(digraph_t *g, uint_t i, uint_t j, uint_t 
   for (k = 0; k < g->indegree[j]; k++) {
     u = g->revarclist[j][k];
     if (isArc(g, i, u) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
-	g->catattr[a][i] != g->catattr[a][j] &&
-	g->catattr[a][i] != g->catattr[a][u]) {
+        g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
+        g->catattr[a][i] != g->catattr[a][j] &&
+        g->catattr[a][i] != g->catattr[a][u]) {
       L2th++;
     }
     if (isArc(g, u, i) && g->catattr[a][i] != CAT_NA &&
-	g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
-	g->catattr[a][i] != g->catattr[a][u] &&
-	g->catattr[a][j] != g->catattr[a][u]) {
+        g->catattr[a][j] != CAT_NA && g->catattr[a][u] != CAT_NA &&
+        g->catattr[a][i] != g->catattr[a][u] &&
+        g->catattr[a][j] != g->catattr[a][u]) {
       L2uh = ochange;
       for (l = 0; l < g->outdegree[u]; l++) {
-	v = g->arclist[u][l];
-	if (isArc(g, v, j) && g->catattr[a][v] != g->catattr[a][u]) {
-	  L2uh++;
-	  if (L2uh > 0)
-	    break;
-	}
+        v = g->arclist[u][l];
+        if (isArc(g, v, j) && g->catattr[a][v] != g->catattr[a][u]) {
+          L2uh++;
+          if (L2uh > 0)
+            break;
+        }
       }
       delta += (L2uh == 0);
     }
@@ -1234,17 +1234,17 @@ double calcChangeStats(digraph_t *g, uint_t i, uint_t j,
  *   Pointer to emptystats array (parameter)
  */
 double *empty_graph_stats(digraph_t *g,
-			  uint_t n, uint_t n_attr, uint_t n_dyadic,
-			  uint_t n_attr_interaction,
-			  change_stats_func_t *change_stats_funcs[],
+                          uint_t n, uint_t n_attr, uint_t n_dyadic,
+                          uint_t n_attr_interaction,
+                          change_stats_func_t *change_stats_funcs[],
                           double lambda_values[],
-			  attr_change_stats_func_t *attr_change_stats_funcs[],
-			  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-			  attr_interaction_change_stats_func_t 
-			  *attr_interaction_change_stats_funcs[],
-			  uint_t attr_indices[],
-			  uint_pair_t attr_interaction_pair_indices[],
-			  double emptystats[])
+                          attr_change_stats_func_t *attr_change_stats_funcs[],
+                          dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                          attr_interaction_change_stats_func_t 
+                          *attr_interaction_change_stats_funcs[],
+                          uint_t attr_indices[],
+                          uint_pair_t attr_interaction_pair_indices[],
+                          double emptystats[])
 {
   uint_t l, param_i = 0;
   
