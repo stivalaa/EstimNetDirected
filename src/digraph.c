@@ -732,22 +732,22 @@ uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
     for (k = 0; k < g->outdegree[i]; k++)  {
       v = g->arclist[i][k];   /* i -> v */
       if (v == i || v == j)
-	continue;
+        continue;
       for (l = 0; l < g->indegree[j]; l++) {
-	if (g->revarclist[j][l] == v) {   /* v -> j */
-	  count++;
-	}
+        if (g->revarclist[j][l] == v) {   /* v -> j */
+          count++;
+        }
       }
     }
   } else {
     for (k = 0; k < g->indegree[j]; k++) {
       v = g->revarclist[j][k];  /* v -> j */
       if (v == i || v == j)
-	continue;
+        continue;
       for (l = 0; l < g->outdegree[i]; l++) {
-	if (g->arclist[i][l] == v) { /* i -> v */
-	  count++;
-	}
+        if (g->arclist[i][l] == v) { /* i -> v */
+          count++;
+        }
       }
     }
   }
@@ -766,22 +766,22 @@ uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
     for (k = 0; k < g->indegree[i]; k++)  {
       v = g->revarclist[i][k];   /* i <- v */
       if (v == i || v == j)
-	continue;
+        continue;
       for (l = 0; l < g->indegree[j]; l++) {
-	if (g->revarclist[j][l] == v) {   /* v -> j */
-	  count++;
-	}
+        if (g->revarclist[j][l] == v) {   /* v -> j */
+          count++;
+        }
       }
     }
   } else {
     for (k = 0; k < g->indegree[j]; k++) {
       v = g->revarclist[j][k]; /* v -> j */
       if (v == i || v == j) 
-	continue;
+        continue;
       for (l = 0; l < g->indegree[i]; l++) {
-	if (g->revarclist[i][l] == v) { /* i <- v */
-	  count++;
-	}
+        if (g->revarclist[i][l] == v) { /* i <- v */
+          count++;
+        }
       }
     }
   }
@@ -800,22 +800,22 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
     for (k = 0; k < g->outdegree[i]; k++)  {
       v = g->arclist[i][k];   /* i -> v */
       if (v == i || v == j)
-	continue;
+        continue;
       for (l = 0; l < g->outdegree[j]; l++) {
-	if (g->arclist[j][l] == v) {   /* v <- j */
-	  count++;
-	}
+        if (g->arclist[j][l] == v) {   /* v <- j */
+          count++;
+        }
       }
     }
   } else {
     for (k = 0; k < g->outdegree[j]; k++) {
       v = g->arclist[j][k]; /* v <- j */
       if (v == i || v == j)
-	continue;
+        continue;
       for (l = 0; l < g->outdegree[i]; l++) {
-	if (g->arclist[i][l] == v) { /* i -> v */
-	  count++;
-	}
+        if (g->arclist[i][l] == v) { /* i -> v */
+          count++;
+        }
       }
     }
   }
@@ -1380,7 +1380,7 @@ void print_data_summary(const digraph_t * g, bool allowLoops)
   
   printf("Digraph with %u vertices and %u arcs (density %g) [%s]\n",
          g->num_nodes, g->num_arcs, density(g, allowLoops),
-	 allowLoops ? "loops allowed" : "loops not allowed");
+         allowLoops ? "loops allowed" : "loops not allowed");
   printf("%u binary attributes\n", g->num_binattr);
   for (i = 0; i < g->num_binattr; i++) {
     printf("  %s", g->binattr_names[i]);
@@ -1971,11 +1971,11 @@ int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
     if (g->term[u] == g->max_term) {
       g->num_maxtermsender_arcs++;
       DIGRAPH_DEBUG_PRINT(("maxterm arc %u: %u -> %u (terms %u %u)\n",
-			   g->num_inner_arcs-1, u, v, g->term[i], g->term[v]));
+                           g->num_inner_arcs-1, u, v, g->term[i], g->term[v]));
       g->all_maxtermsender_arcs =
-	(nodepair_t *)safe_realloc(g->all_maxtermsender_arcs,
-				   g->num_maxtermsender_arcs *
-				   sizeof(nodepair_t));
+        (nodepair_t *)safe_realloc(g->all_maxtermsender_arcs,
+                                   g->num_maxtermsender_arcs *
+                                   sizeof(nodepair_t));
       g->all_maxtermsender_arcs[g->num_maxtermsender_arcs-1].i = u;
       g->all_maxtermsender_arcs[g->num_maxtermsender_arcs-1].j = v;
     }

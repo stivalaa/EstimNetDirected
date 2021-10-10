@@ -87,7 +87,7 @@
  */
 double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
                      bool citationERGM, bool forbidReciprocity,
-		     bool allowLoops) {
+                     bool allowLoops) {
   double N         = g->num_nodes;
   double num_dyads = N*(N-1);/*directed so not div by 2*/
   double num_arcs  = g->num_arcs;
@@ -200,7 +200,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
                   bool useConditionalEstimation,
                   bool forbidReciprocity, bool citationERGM,
-		  bool allowLoops)
+                  bool allowLoops)
 {
   static bool   isDelete = FALSE; /* delete or add move. FIXME don't use static, make param */
 
@@ -273,18 +273,18 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
            from node in last term (i.e. term of i is max_term)
            uniformly at random to delete.
          */
-	arcidx = int_urand(g->num_maxtermsender_arcs);
-	i = g->all_maxtermsender_arcs[arcidx].i;
-	j = g->all_maxtermsender_arcs[arcidx].j;
-	SAMPLER_DEBUG_PRINT(("cERGM del arcidx %u (%u -> %u) terms %u %u\n", arcidx, i, j, g->term[i], g->term[j]));
-	assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+        arcidx = int_urand(g->num_maxtermsender_arcs);
+        i = g->all_maxtermsender_arcs[arcidx].i;
+        j = g->all_maxtermsender_arcs[arcidx].j;
+        SAMPLER_DEBUG_PRINT(("cERGM del arcidx %u (%u -> %u) terms %u %u\n", arcidx, i, j, g->term[i], g->term[j]));
+        assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
       } else {
         /* Add move for citation ERGM: Find node i uniformly at random
-	   in last term and any node j (which is not i) unformly at
-	   random, such that arc i->j does not already exist, and add
-	   it.  Because graph is sparse, it is not too inefficient to
-	   just pick i,j nodes at random until a pair where arc i->j
-	   does not exist is found. */
+           in last term and any node j (which is not i) unformly at
+           random, such that arc i->j does not already exist, and add
+           it.  Because graph is sparse, it is not too inefficient to
+           just pick i,j nodes at random until a pair where arc i->j
+           does not exist is found. */
         do {
           i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
           do {
@@ -325,7 +325,7 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       if (useConditionalEstimation){
         removeArc_allinnerarcs(g, i, j, arcidx);
       } else if (citationERGM) {
-	removeArc_all_maxtermsender_arcs(g, i, j, arcidx);
+        removeArc_all_maxtermsender_arcs(g, i, j, arcidx);
       } else {
         removeArc_allarcs(g, i, j, arcidx);        
       }
@@ -389,8 +389,8 @@ double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       if (isDelete) {
         if (useConditionalEstimation) {
           insertArc_allinnerarcs(g, i, j);
-	} else if (citationERGM) {
-	  insertArc_all_maxtermsender_arcs(g, i, j);
+        } else if (citationERGM) {
+          insertArc_all_maxtermsender_arcs(g, i, j);
         } else {
           insertArc_allarcs(g, i, j);          
         }

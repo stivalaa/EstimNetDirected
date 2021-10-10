@@ -147,7 +147,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  double ifd_K,
                  bool useConditionalEstimation,
                  bool forbidReciprocity, bool useTNTsampler, bool citationERGM,
-		 bool allowLoops)
+                 bool allowLoops)
 {
   uint_t t, l;
   double acceptance_rate;
@@ -166,7 +166,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (useIFDsampler)
     arc_correction_val = arcCorrection(g, useConditionalEstimation,
                                        citationERGM, forbidReciprocity,
-				       allowLoops);
+                                       allowLoops);
 
   for (l = 0; l < n; l++)
     theta[l] = 0;
@@ -188,24 +188,24 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalEstimation,
                                    forbidReciprocity, citationERGM,
-				   allowLoops);
+                                   allowLoops);
       /* Arc parameter for IFD is auxiliary parameter adjusted by correction value */
       fprintf(theta_outfile, "%g ", ifd_aux_param - arc_correction_val);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
-				   n_attr_interaction,
-				   change_stats_funcs,
+                                   n_attr_interaction,
+                                   change_stats_funcs,
                                    lambda_values,
-				   attr_change_stats_funcs,
-				   dyadic_change_stats_funcs,
-				   attr_interaction_change_stats_funcs,
-				   attr_indices,
-				   attr_interaction_pair_indices,
-				   theta,
-				   addChangeStats, delChangeStats, sampler_m,
-				   FALSE, useConditionalEstimation,
-				   forbidReciprocity, citationERGM,
-				   allowLoops);
+                                   attr_change_stats_funcs,
+                                   dyadic_change_stats_funcs,
+                                   attr_interaction_change_stats_funcs,
+                                   attr_indices,
+                                   attr_interaction_pair_indices,
+                                   theta,
+                                   addChangeStats, delChangeStats, sampler_m,
+                                   FALSE, useConditionalEstimation,
+                                   forbidReciprocity, citationERGM,
+                                   allowLoops);
       
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
@@ -221,7 +221,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      addChangeStats, delChangeStats, sampler_m,
                                      FALSE, useConditionalEstimation,
                                      forbidReciprocity, citationERGM,
-				     allowLoops);
+                                     allowLoops);
     }
     for (l = 0; l < n; l++) {
       dzA[l] = delChangeStats[l] - addChangeStats[l];
@@ -346,7 +346,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   bool useConditionalEstimation,
                   bool forbidReciprocity, bool useBorisenkoUpdate,
                   double learningRate, double minTheta,
-		  bool useTNTsampler, bool citationERGM, bool allowLoops)
+                  bool useTNTsampler, bool citationERGM, bool allowLoops)
 {
   uint_t touter, tinner, l, t = 0;
   double acceptance_rate;
@@ -370,7 +370,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   if (useIFDsampler) 
     arc_correction_val = arcCorrection(g, useConditionalEstimation,
                                        citationERGM, forbidReciprocity,
-				       allowLoops);
+                                       allowLoops);
 
   for (l = 0; l < n; l++)
     thetamatrix[l] = (double *)safe_malloc(Minner*sizeof(double));
@@ -410,7 +410,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      ifd_K, &dzArc, &ifd_aux_param,
                                      useConditionalEstimation,
                                      forbidReciprocity, citationERGM,
-				     allowLoops);
+                                     allowLoops);
         if (useIFDsampler && (outputAllSteps || tinner == 0)) {
           /* difference of Arc statistic for IFD sampler is just Ndel-Nadd */
           fprintf(dzA_outfile, "%g ", dzArc);
@@ -419,21 +419,21 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
         }
       } else if (useTNTsampler) {
         acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
-				     n_attr_interaction,
-				     change_stats_funcs,
+                                     n_attr_interaction,
+                                     change_stats_funcs,
                                      lambda_values,
-				     attr_change_stats_funcs,
-				     dyadic_change_stats_funcs,
-				     attr_interaction_change_stats_funcs,
-				     attr_indices,
-				     attr_interaction_pair_indices,
-				     theta,
-				     addChangeStats, delChangeStats,
-				     sampler_m,
-				     TRUE,/*Algorithm EE actually does moves*/
-				     useConditionalEstimation,
-				     forbidReciprocity, citationERGM,
-				     allowLoops);
+                                     attr_change_stats_funcs,
+                                     dyadic_change_stats_funcs,
+                                     attr_interaction_change_stats_funcs,
+                                     attr_indices,
+                                     attr_interaction_pair_indices,
+                                     theta,
+                                     addChangeStats, delChangeStats,
+                                     sampler_m,
+                                     TRUE,/*Algorithm EE actually does moves*/
+                                     useConditionalEstimation,
+                                     forbidReciprocity, citationERGM,
+                                     allowLoops);
       } else {
         acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                        n_attr_interaction,
@@ -450,7 +450,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                        TRUE,/*Algorithm EE actually does moves*/
                                        useConditionalEstimation,
                                        forbidReciprocity, citationERGM,
-				       allowLoops);
+                                       allowLoops);
       }
       for (l = 0; l < n; l++) {
         dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -603,7 +603,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 bool useConditionalEstimation,
                 bool forbidReciprocity, bool useBorisenkoUpdate,
                 double learningRate, double minTheta,
-		bool useTNTsampler, bool citationERGM, bool allowLoops)
+                bool useTNTsampler, bool citationERGM, bool allowLoops)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
@@ -631,7 +631,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     printf("task %u: IFD sampler ifd_K = %g, arcCorrection = %g\n",
            tasknum, ifd_K, arcCorrection(g, useConditionalEstimation,
                                          citationERGM, forbidReciprocity,
-					 allowLoops));
+                                         allowLoops));
   else if (useTNTsampler)
     printf("task %u: TNT sampler\n", tasknum);
 
@@ -645,7 +645,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   if (citationERGM)
     printf("task %u: citation ERGM (cERGM) estimation conditional on term\n",
-	   tasknum);
+           tasknum);
 
   if (allowLoops)
     printf("task %u: allowing self-edges (loops)\n", tasknum);
@@ -677,7 +677,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
               attr_indices, attr_interaction_pair_indices,
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
               ifd_K, useConditionalEstimation, forbidReciprocity,
-	      useTNTsampler, citationERGM, allowLoops);
+              useTNTsampler, citationERGM, allowLoops);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
@@ -705,7 +705,7 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   for (i = 0; i < n; i++) {
     if (isinf(Dmean[i])) {
       fprintf(stderr, "task %u: WARNING: D0 is NaN for parameter %d, "
-	      "model may be degenerate, not continuing this run\n", tasknum, i);
+              "model may be degenerate, not continuing this run\n", tasknum, i);
       errcode = 1;
     }
   }
@@ -716,13 +716,13 @@ int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
     algorithm_EE(g, n, n_attr, n_dyadic, n_attr_interaction,
                  change_stats_funcs, lambda_values,
-		 attr_change_stats_funcs, dyadic_change_stats_funcs,
+                 attr_change_stats_funcs, dyadic_change_stats_funcs,
                  attr_interaction_change_stats_funcs,
                  attr_indices, attr_interaction_pair_indices,
-		 Mouter, M, sampler_m, ACA_EE, compC,
-		 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
-		 useIFDsampler, ifd_K, useConditionalEstimation,
-		 forbidReciprocity, useBorisenkoUpdate, learningRate,
+                 Mouter, M, sampler_m, ACA_EE, compC,
+                 Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
+                 useIFDsampler, ifd_K, useConditionalEstimation,
+                 forbidReciprocity, useBorisenkoUpdate, learningRate,
                  minTheta, useTNTsampler, citationERGM, allowLoops);
 
     gettimeofday(&end_timeval, NULL);
@@ -828,7 +828,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
      did not include multiple options (maybe should) */
   if (config->useIFDsampler && config->useTNTsampler) {
     fprintf(stderr, "ERROR: Only one of the useIFDsampler and"
-	     " useTNTsampler options may be used\n");
+             " useTNTsampler options may be used\n");
     return -1;
   }
   
@@ -1002,7 +1002,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    }  else {
      if (config->zone_filename)
        fprintf(stderr, "WARNING: snowball sampling zones are specified"
-	       " but conditional estimation is not being used\n");
+               " but conditional estimation is not being used\n");
    }
 
    /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
@@ -1010,8 +1010,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    if (config->citationERGM) {
      if (config->useConditionalEstimation) {
        fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
-	       " estimation and citation ERGM\n");
-	 return -1;
+               " estimation and citation ERGM\n");
+         return -1;
      }
      if (!config->term_filename) {
        fprintf(stderr,
@@ -1042,7 +1042,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
      printf("Digraph has %u self-edges (loops)\n", loop_count);
      if (loop_count > 0) {
        if (!config->allowLoops) {
-	 fprintf(stderr, "WARNING: graph has self-edges but allowLoops is not true\n");
+         fprintf(stderr, "WARNING: graph has self-edges but allowLoops is not true\n");
        }
      }
      print_zone_summary(g);
@@ -1143,8 +1143,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
               config->forbidReciprocity,
               config->useBorisenkoUpdate, config->learningRate,
               config->minTheta, config->useTNTsampler,
-	      config->citationERGM,
-	      config->allowLoops);
+              config->citationERGM,
+              config->allowLoops);
 
   fclose(theta_outfile);
   fclose(dzA_outfile);

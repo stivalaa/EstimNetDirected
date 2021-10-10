@@ -273,7 +273,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double dzA[],
                   bool useTNTsampler,
                   bool citationERGM,
-		  bool allowLoops)
+                  bool allowLoops)
 {
   FILE          *sim_outfile;
   char           sim_outfilename[PATH_MAX+1];
@@ -331,7 +331,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
                                    forbidReciprocity, citationERGM,
-				   allowLoops);
+                                   allowLoops);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
@@ -349,7 +349,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    useConditionalSimulation,
                                    forbidReciprocity,
                                    citationERGM,
-				   allowLoops);
+                                   allowLoops);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -367,7 +367,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      useConditionalSimulation,
                                      forbidReciprocity,
                                      citationERGM,
-				     allowLoops);
+                                     allowLoops);
     }
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
@@ -395,7 +395,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    ifd_K, &dzArc, &ifd_aux_param,
                                    useConditionalSimulation,
                                    forbidReciprocity, citationERGM,
-				   allowLoops);
+                                   allowLoops);
     } else if (useTNTsampler) {
       acceptance_rate = tntSampler(g, n, n_attr, n_dyadic,
                                    n_attr_interaction,
@@ -413,7 +413,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    useConditionalSimulation,
                                    forbidReciprocity,
                                    citationERGM,
-				   allowLoops);
+                                   allowLoops);
     } else {
       acceptance_rate = basicSampler(g, n, n_attr, n_dyadic,
                                      n_attr_interaction,
@@ -431,7 +431,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      useConditionalSimulation,
                                      forbidReciprocity,
                                      citationERGM,
-				     allowLoops);
+                                     allowLoops);
     }
     iternum = burnin + interval*(samplenum+1);
     fprintf(dzA_outfile, "%llu ", iternum);
@@ -820,7 +820,7 @@ int do_simulation(sim_config_t * config)
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
                                dzA, theta, config->citationERGM,
-			       config->allowLoops);
+                               config->allowLoops);
       SIMULATE_DEBUG_PRINT(("After adding %u random maxtermsender arcs: g->num_maxtermsender_arcs = %u, g->num_arcs = %u\n", obs_maxtermsender_arcs, g->num_maxtermsender_arcs, g->num_arcs));
       assert(g->num_maxtermsender_arcs == obs_maxtermsender_arcs);
     }
@@ -840,7 +840,7 @@ int do_simulation(sim_config_t * config)
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
                                dzA, theta, config->citationERGM,
-			       config->allowLoops);
+                               config->allowLoops);
     } else if (config->numArcs != 0) {
       fprintf(stderr, "WARNING: numArcs is set to %u but not using IFD sampler"
               " so numArcs parameter is ignored\n", config->numArcs);
@@ -921,7 +921,7 @@ int do_simulation(sim_config_t * config)
                 dzA_outfile,
                 config->outputSimulatedNetworks, arc_param_index,
                 dzA, config->useTNTsampler, config->citationERGM,
-		config->allowLoops);
+                config->allowLoops);
 
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);

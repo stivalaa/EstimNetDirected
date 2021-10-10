@@ -137,7 +137,7 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     bool performMove,
                     bool useConditionalEstimation,
                     bool forbidReciprocity, bool citationERGM,
-		    bool allowLoops)
+                    bool allowLoops)
 {
   uint_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
@@ -186,11 +186,11 @@ double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        * and we only create citations from nodes in the last term. */
       assert(!allowLoops);
       do {
-	i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
-	do {
-	  j = int_urand(g->num_nodes);
-	} while (i == j);
-	isDelete = isArc(g, i, j);
+        i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
+        do {
+          j = int_urand(g->num_nodes);
+        } while (i == j);
+        isDelete = isArc(g, i, j);
       } while (forbidReciprocity && !isDelete && isArc(g, j, i));
       assert(g->term[i] == g->max_term);
     } else {
