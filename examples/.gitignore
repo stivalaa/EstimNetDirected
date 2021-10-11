@@ -83,3 +83,10 @@ EstimNetDirected_notables_contattr_example-*.out
 R_contattr_example_EstimNetDirected_estim_simfit-*.err
 R_contattr_example_EstimNetDirected_estim_simfit-*.out
 obs_stats_polblogs_0.txt
+theta_ifd_allowloops_sim_n1000_sample_*.txt
+dzA_ifd_allowloops_sim_n1000_sample_*.txt
+sim_ifd_allowloops_sim_n1000_sample_*.net
+estimation_ifd_allowloops_sim_n1000_sample.out
+obs_stats_ifd_allowloops_n1000_sample_0.txt
+theta_ifd_allowloops_sim_n1000_sample.pdf
+dzA_ifd_allowloops_sim_n1000_sample.pdf
