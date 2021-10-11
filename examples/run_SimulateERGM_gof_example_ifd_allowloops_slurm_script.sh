@@ -28,7 +28,7 @@ module load r
 time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R ${statsfile} obs_stats_ifd_allowloops_n1000_sample_0.txt
 
 # plot goodness-of-fit observed and simulated network statistics (not in model)
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ../pythonDemo/sample_statistics_n1000_directed_binattr_sim620000000.txt ${simfileprefix}
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R sample_statistics_n1000_directed_binattr_sim620000000_loopsadded.txt ${simfileprefix}
 
 
 echo -n "ended at: "; date

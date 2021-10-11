@@ -46,7 +46,7 @@ computeStats = True # compute observed statistics of network and write to file
 # [note this part is optional for EstimeNetDirected] then *arcs
 # followed by arcs list one per line.
 
-arclistFile = ../pythonDemo/sample_statistics_n1000_directed_binattr_sim620000000.txt
+arclistFile = sample_statistics_n1000_directed_binattr_sim620000000_loopsadded.txt
 
 # Attribute files
 # binattr_file for binary attributes (0 or 1 only)
@@ -97,7 +97,7 @@ observedStatsFilePrefix = obs_stats_ifd_allowloops_n1000_sample
 #
 
 structParams =  { Reciprocity,AltInStars, AltOutStars, AltKTrianglesT, 
-                 AltTwoPathsTD }
+                 AltTwoPathsTD, Loop }
 
 #
 # Attribute parameters
