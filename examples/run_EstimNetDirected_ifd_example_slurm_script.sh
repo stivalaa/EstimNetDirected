@@ -8,10 +8,12 @@ echo -n "started at: "; date
 
 ROOT=..
 
+module purge
 module load openmpi
-module load R/3.2.5
 
 time mpirun ${ROOT}/src/EstimNetDirected_mpi config_example_ifd.txt
+
+module load r
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_ifd_sim_n1000_sample dzA_ifd_sim_n1000_sample | tee estimation_ifd_sim_n1000_sample.out
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_ifd_sim_n1000_sample dzA_ifd_sim_n1000_sample
