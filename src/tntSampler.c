@@ -172,11 +172,19 @@ double tntSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   
   if (allowLoops) {
+    /* L_max (max number of possible edges) would be a better name instead of
+       num_dyads now that self-edges are allowed,
+       since a self-edge is a possible
+       edge, but does not actually involve a dyad, only one node */
     num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
   }
 
   if (forbidReciprocity) {
-    num_dyads /= 2.0;
+    if (allowLoops) {
+      num_dyads -= N*(N-1)/2.0; /* subtract half of non-loop potential edges*/
+    } else {
+      num_dyads /= 2.0; /* no reciprocity, half number of potential edges */
+    }
   }
     
   for (i = 0; i < n; i++) {
