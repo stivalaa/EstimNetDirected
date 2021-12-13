@@ -81,7 +81,7 @@ typedef double (attr_change_stats_func_t)(digraph_t *g, uint_t i, uint_t j, uint
 /* version for change statistics with dyadic covariate */
 /* for the moment just hte same as change_stats_func_t as treated specially,
    only used for GeoDistance for now */
-typedef double (dyadic_change_stats_func_t)(digraph_t *g, uint_t i, uint_t a);
+typedef double (dyadic_change_stats_func_t)(digraph_t *g, uint_t i, uint_t j);
 
 /* change statistics with pairs of nodal attributes (attribute interactions) */
 typedef double (attr_interaction_change_stats_func_t)(digraph_t *g, uint_t i, uint_t j, uint_t a, uint_t b);
