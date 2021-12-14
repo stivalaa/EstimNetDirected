@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 ##############################################################################
 #
 # checkSetFunctions.py - verify set similarity (Jaccard) results
@@ -88,7 +88,7 @@ def main():
         sim = float(sim)
         vsim = jaccard_index(setlist[i], setlist[j])
         if (abs(sim - vsim) > 1e-05):
-            print 'FAIL',i,j,sim,vsim
+            print('FAIL',i,j,sim,vsim)
             exitcode = -1
 
     sys.exit(exitcode)

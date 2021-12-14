@@ -15,8 +15,6 @@ polblogs_test_results_baseline.txt is the output from
 PNet code to compare output with as a regression test,
 which is what run_test_polblogs.sh does.
 
-Note python scripts all require Python 2 (and NOT Python 3,
-which is not backward compatibile with Python 2).
 
 ADS
 Mon, Apr 30, 2018  1:03:02 PM

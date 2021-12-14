@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 ##############################################################################
 #
 # genRandomNodeNums.py - generate random continuous attributes
@@ -67,8 +67,8 @@ def main():
     num_pairs = int(args[0])
     N = int(args[1])
     
-    for i in xrange(num_pairs):
-      nodepair = random.sample(xrange(N), 2)
+    for i in range(num_pairs):
+      nodepair = random.sample(range(N), 2)
       sys.stdout.write("%d %d\n" % (nodepair[0], nodepair[1]))
 
     
