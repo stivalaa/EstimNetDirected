@@ -62,10 +62,10 @@ def BasicSampler(G, changestats_func_list, theta, performMove):
     accepted = 0
     addChangeStats = np.zeros(n)
     delChangeStats = np.zeros(n)
-    for k in xrange(sampler_m):
+    for k in range(sampler_m):
         # basic sampler: select two nodes i and j uniformly at random
         # and toggle edge between them
-        (i, j) = random.sample(range(G.numNodes()), 2) # without replacement
+        (i, j) = random.sample(list(range(G.numNodes())), 2) # without replacement
         assert(i != j)
         isDelete = (G.isArc(i, j))
         if isDelete:
@@ -74,7 +74,7 @@ def BasicSampler(G, changestats_func_list, theta, performMove):
         # compute change statistics for each of the n statistics using the
         # list of change statistic functions
         changestats = np.zeros(n)
-        for l in xrange(n):
+        for l in range(n):
             changestats[l] = changestats_func_list[l](G, i, j)
             assert(changestats[l] >= 0)
         changeSignMul = -1 if isDelete else +1
@@ -124,7 +124,7 @@ def algorithm_S(G, changestats_func_list, M1, theta_outfile):
     n = len(changestats_func_list)
     theta = np.zeros(n)
     D0 = np.zeros(n)
-    for t in xrange(M1):
+    for t in range(M1):
         accepted = 0
         (acceptance_rate,
          addChangeStats,
@@ -136,7 +136,7 @@ def algorithm_S(G, changestats_func_list, M1, theta_outfile):
         assert(np.all(sumChangeStats >= 0)) # zero is handled below
         D0 += dzA**2 # 1/D0 is squared derivative
         da = np.zeros(n)
-        for l in xrange(n):
+        for l in range(n):
             if (sumChangeStats[l] != 0):
                 da[l] = ACA  / sumChangeStats[l]**2
         theta_step = np.sign(dzAmean) * da * dzA**2
@@ -173,9 +173,9 @@ def algorithm_EE(G, changestats_func_list, theta, D0,
     n = len(changestats_func_list)
     dzA = np.zeros(n)  # zero outside loop, dzA accumulates in loop
     t = 0
-    for touter in xrange(Mouter):
+    for touter in range(Mouter):
         thetamatrix = np.empty((M, n)) # rows theta vectors, 1 per inner iter
-        for tinner in xrange(M):
+        for tinner in range(M):
             accepted = 0
             (acceptance_rate,
              addChangeStats,
@@ -240,27 +240,27 @@ def run_on_network_attr(edgelist_filename, param_func_list, labels,
     # inner steps of EE    
     M = int(Msteps * G.density()*(1 - G.density())*G.numNodes()**2 / sampler_m)
 
-    print 'M1 = ', M1, ' Mouter = ', Mouter, ' M = ', M
+    print('M1 = ', M1, ' Mouter = ', Mouter, ' M = ', M)
     
     theta_outfile = open(THETA_OUTFILENAME, 'w',1) # 1 means line buffering
     theta_outfile.write('t ' + ' '.join(labels) + ' ' + 'AcceptanceRate' + '\n')
-    print 'Running Algorithm S...',
+    print('Running Algorithm S...', end=' ')
     start = time.time()
     (theta, Dmean) = algorithm_S(G, param_func_list, M1, theta_outfile)
-    print time.time() - start, 's'
-    print 'after Algorithm S:'
-    print 'theta = ', theta
-    print 'Dmean = ', Dmean
+    print(time.time() - start, 's')
+    print('after Algorithm S:')
+    print('theta = ', theta)
+    print('Dmean = ', Dmean)
     dzA_outfile = open(DZA_OUTFILENAME, 'w',1)
     dzA_outfile.write('t ' + ' '.join(labels) + '\n')
-    print 'Running Algorithm EE...',
+    print('Running Algorithm EE...', end=' ')
     start = time.time()
     theta = algorithm_EE(G, param_func_list, theta, Dmean,
                          Mouter, M, theta_outfile, dzA_outfile)
-    print time.time() - start, 's'
+    print(time.time() - start, 's')
     theta_outfile.close()
     dzA_outfile.close()
-    print 'at end theta = ', theta
+    print('at end theta = ', theta)
 
     
 

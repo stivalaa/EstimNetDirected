@@ -2,3 +2,8 @@
 *~
 dzA_values_*.txt
 theta_values_*.txt
+theta_values_*.eps
+dzA_values_*.txt
+dzA_values_*.eps
+*.bak
+slurm-*.out

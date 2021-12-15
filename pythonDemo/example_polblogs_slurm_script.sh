@@ -2,14 +2,16 @@
 
 #SBATCH --job-name="Py_EstimNetSimple"
 #SBATCH --ntasks=1
-#SBATCH --time=0-24:00:00
+#SBATCH --time=0-48:00:00
 
 echo -n "started at: "; date
 
-module load numpy/1.8.2-vlsci_intel-2015.08.25-Python-2.7.9
-module load R/3.2.1-vlsci_intel-2015.08.25
+module load python/3.8.5
 
-time python ./runExample_polblogs.py
+time python3 ./runExample_polblogs.py
+
+module unload python # on cluster module load r will not work if this is not done
+module load r
 
 time Rscript plotEstimNetSimpleDemoResults.R theta_values_polblogs_arclist.txt dzA_values_polblogs_arclist.txt
 

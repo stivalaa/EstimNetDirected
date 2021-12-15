@@ -67,15 +67,15 @@ class Digraph:
         self.binattr = None # binary attributes: list by node (int not boolean)
         self.catattr = None # categorical attributes: list by node
 
-        print 'Reading graph and building matrices...',
+        print('Reading graph and building matrices...', end=' ')
         start = time.time()
         f =  open(pajek_edgelist_filename)
         l = f.readline() # first line must be e.g. "*vertices 500"
         n = int(l.split()[1])
 
         # empty graph n nodes        
-        self.G = dict(zip(range(n), [dict() for i in range(n)]))
-        self.Grev = dict(zip(range(n), [dict() for i in range(n)]))
+        self.G = dict(list(zip(list(range(n)), [dict() for i in range(n)])))
+        self.Grev = dict(list(zip(list(range(n)), [dict() for i in range(n)])))
         self.InTwoPathMatrix =  np.zeros((n, n))
         self.OutTwoPathMatrix = np.zeros((n, n))
         self.MixTwoPathMatrix = np.zeros((n, n))
@@ -84,20 +84,20 @@ class Digraph:
             l = f.readline()
         lsplit = f.readline().split()
         while len(lsplit) == 2:
-            (i, j) = map(int, lsplit)
+            (i, j) = list(map(int, lsplit))
             assert(i >= 1 and i <= n and j >= 1 and j <= n)
             self.insertArc(i-1, j-1)    # input is 1-based but we are 0-based
             lsplit = f.readline().split()
 
         if binattr_filename is not None:
-            self.binattr = map(int, open(binattr_filename).read().split()[1:]) 
+            self.binattr = list(map(int, open(binattr_filename).read().split()[1:])) 
             assert(len(self.binattr) == n)
 
         if catattr_filename is not None:
-            self.catattr = map(int, open(catattr_filename).read().split()[1:]) 
+            self.catattr = list(map(int, open(catattr_filename).read().split()[1:])) 
             assert(len(self.catattr) == n)
 
-        print time.time() - start, 's'
+        print(time.time() - start, 's')
 
 
     def numNodes(self):
@@ -110,7 +110,7 @@ class Digraph:
         """
         Return number of arcs in digraph
         """
-        return sum([len(v.keys()) for v in self.G.itervalues()])
+        return sum([len(list(v.keys())) for v in self.G.values()])
     
     def density(self):
         """
@@ -143,13 +143,13 @@ class Digraph:
         """
         Return iterator over out-neighbours of i
         """
-        return self.G[i].iterkeys()
+        return iter(self.G[i].keys())
 
     def inIterator(self, i):
         """
         Return iterator over in-neighbours of i
         """
-        return self.Grev[i].iterkeys()
+        return iter(self.Grev[i].keys())
 
     def insertArc(self, i, j):
         """
@@ -175,7 +175,7 @@ class Digraph:
         """
         incval = 1 if isAdd else -1
         n = self.numNodes()
-        for v in xrange(n):
+        for v in range(n):
             if v == i or v == j:
                 continue
             if self.isArc(i, v):

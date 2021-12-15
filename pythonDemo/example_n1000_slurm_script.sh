@@ -6,10 +6,13 @@
 
 echo -n "started at: "; date
 
-module load numpy/1.8.2-vlsci_intel-2015.08.25-Python-2.7.9
-module load R/3.2.1-vlsci_intel-2015.08.25
 
-time python ./runExample_n1000.py
+module load python/3.8.5
+
+time python3 ./runExample_n1000.py
+
+module unload python # on cluster module load r will not work if this is not done
+module load r
 
 time Rscript plotEstimNetSimpleDemoResults.R theta_values_sample_statistics_n1000_directed_binattr_sim620000000.txt dzA_values_sample_statistics_n1000_directed_binattr_sim620000000.txt
 
