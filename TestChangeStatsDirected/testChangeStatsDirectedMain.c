@@ -25,7 +25,7 @@
 #include <assert.h>
 #include "graph.h"
 #include "changeStatisticsDirected.h"
-#include "loadDigraph.h"
+#include "loadGraph.h"
 
 #define DEFAULT_NUM_TESTS 1000
 

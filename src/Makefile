@@ -25,12 +25,12 @@ DEPENDFILE = .depend
 ESTIM_COMMON_C_OBJS =  utils.o graph.o \
                  changeStatisticsDirected.o basicSampler.o \
                  equilibriumExpectation.o configparser.o estimconfigparser.o \
-                 ifdSampler.o loadDigraph.o tntSampler.o
+                 ifdSampler.o loadGraph.o tntSampler.o
 
 SIM_COMMON_C_OBJS =  utils.o graph.o \
                  changeStatisticsDirected.o basicSampler.o \
                  configparser.o simconfigparser.o ifdSampler.o simulation.o \
-                 tntSampler.o loadDigraph.o
+                 tntSampler.o loadGraph.o
 
 ESTIM_MPI_C_OBJS    = EstimNetDirectedMPImain.o
 ESTIM_NONMPI_C_OBJS = EstimNetDirectedMain.o

@@ -21,7 +21,7 @@
 #include "ifdSampler.h"
 #include "tntSampler.h"
 #include "simulation.h"
-#include "loadDigraph.h"
+#include "loadGraph.h"
 
 /*****************************************************************************
  *

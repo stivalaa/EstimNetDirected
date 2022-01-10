@@ -9,7 +9,7 @@ changeStatisticsDirected.o: changeStatisticsDirected.c \
 basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h graph.h \
  basicSampler.h
 equilibriumExpectation.o: equilibriumExpectation.c utils.h graph.h \
- loadDigraph.h changeStatisticsDirected.h basicSampler.h ifdSampler.h \
+ loadGraph.h changeStatisticsDirected.h basicSampler.h ifdSampler.h \
  tntSampler.h equilibriumExpectation.h estimconfigparser.h configparser.h
 configparser.o: configparser.c configparser.h utils.h \
  changeStatisticsDirected.h graph.h
@@ -17,7 +17,7 @@ estimconfigparser.o: estimconfigparser.c estimconfigparser.h \
  configparser.h utils.h changeStatisticsDirected.h graph.h
 ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h graph.h \
  ifdSampler.h
-loadDigraph.o: loadDigraph.c utils.h loadDigraph.h graph.h \
+loadGraph.o: loadGraph.c utils.h loadGraph.h graph.h \
  changeStatisticsDirected.h
 tntSampler.o: tntSampler.c utils.h changeStatisticsDirected.h graph.h \
  tntSampler.h

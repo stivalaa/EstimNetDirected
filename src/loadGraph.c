@@ -23,7 +23,7 @@
 #include <limits.h>
 #include <ctype.h>
 #include "utils.h"
-#include "loadDigraph.h"
+#include "loadGraph.h"
 
    
 /*****************************************************************************

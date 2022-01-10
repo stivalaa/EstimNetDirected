@@ -58,7 +58,7 @@
 #include <limits.h>
 #include "utils.h"
 #include "graph.h"
-#include "loadDigraph.h"
+#include "loadGraph.h"
 #include "basicSampler.h"
 #include "ifdSampler.h"
 #include "tntSampler.h"
@@ -1039,7 +1039,8 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    if (tasknum == 0) {
      print_data_summary(g, config->allowLoops);
      loop_count = num_loops(g);
-     printf("Digraph has %u self-edges (loops)\n", loop_count);
+     printf("%s has %u self-edges (loops)\n", 
+           g->is_directed ? "Digraph" : "Graph", loop_count);
      if (loop_count > 0) {
        if (!config->allowLoops) {
          fprintf(stderr, "WARNING: graph has self-edges but allowLoops is not true\n");
