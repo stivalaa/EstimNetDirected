@@ -48,9 +48,12 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
  * The graph g must be already allocated by allocate_graph() with the
  * correct number of nodes, which can be found by
  * get_num_nodes(pajek_file).
+ * The pre-allocated graph g also must have is_directed correctly
+ * set for directed or undirected graph.
  *
  * In the Pajek format *vertices at top, then followed by one line for each
- * vertex (just vertex number) then *arcs followed by arcs list one per
+ * vertex (just vertex number) then *arcs (or *edges for undirected)
+ * followed by arcs list one per
  * line. In this program the nodes must be numbered 1..N.
  *
  * Parameters:
@@ -136,7 +139,10 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
   int            etime;
 #endif /*TWOPATH_HASHABLES */
 #endif /* DEBUG_MEMUSAGE */
-
+  const char *directed_arcs_start_string = "*arcs"; /* case insensitive */
+  const char *undirected_edges_start_string = "*edges";
+  const char *edges_start_string = g->is_directed ? directed_arcs_start_string :
+    undirected_edges_start_string;
 
   char buf[BUFSIZE];
   /* the first lines should be e.g.
@@ -160,9 +166,10 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
   
   do {
     fgets(buf, sizeof(buf)-1, pajek_file);
-  } while (!feof(pajek_file) && strncasecmp(buf, "*arcs", 5) != 0);
+    rstrip(buf);
+  } while (!feof(pajek_file) && strcasecmp(buf, edges_start_string) != 0);
   if (feof(pajek_file)) {
-    fprintf(stderr, "did not find *arcs line\n");
+    fprintf(stderr, "did not find %s line\n", edges_start_string);
     exit(1);
   }
   if (!fgets(buf, sizeof(buf)-1, pajek_file)) {
@@ -229,13 +236,20 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
        hash table anyway would be better to check these in temporary hash
        table structure (or build graph as hash table then convert to the
        adjacency list structures). */
-    if (!isArc(g, i, j)){
-      insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
+    if (g->is_directed) {
+      if (!isArc(g, i, j)){
+	insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
+      }
+    } else {
+      /* undirected */
+      if (!isEdge(g, i, j)){
+	insertEdge_alledges(g, i, j); /* also update flat edgelist alledges */
+      }
     }
 
 #ifdef TWOPATH_HASHTABLES
 #ifdef DEBUG_MEMUSAGE
-    if (g->num_arcs % 1000 == 0){
+    if (g->is_directed && g->num_arcs % 1000 == 0){
       gettimeofday(&end_timeval, NULL);
       timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
       etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
