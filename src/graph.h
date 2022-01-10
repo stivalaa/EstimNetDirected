@@ -218,6 +218,7 @@ double density(const graph_t *g, bool allowLoops); /* graph density of g */
 bool isArc(const graph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
 bool isEdge(const graph_t *g, uint_t i, uint_t j); /* test if edge i--j in in g */
 bool isArcIgnoreDirection(const graph_t *g, uint_t i, uint_t j); /* test if arc i->j or j->i is in g */
+bool isArcOrEdge(const graph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g if directed or edge i -- j if undirected */
 
 /* these two version do not update the allarcs flat arclist */
 void insertArc(graph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
@@ -275,6 +276,15 @@ void dump_term_info(const graph_t *g);
 void print_term_summary(const graph_t *g);
 uint_t num_loops(const graph_t *g);
 bool has_loop(const graph_t *t, uint_t u);
-  
+
+/* these versions insert/remove arc or edge as appropriate for g */
+void insertArcOrEdge(graph_t *g, uint_t i, uint_t j);
+void removeArcOrEdge(graph_t *g, uint_t i, uint_t j);
+void insertArcOrEdge_updatelist(graph_t *g, uint_t i, uint_t j);
+void removeArcOrEdge_updatelist(graph_t *g, uint_t i, uint_t j, uint_t idx);
+void insertArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j);
+void removeArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j, uint_t idx);
+
+
 #endif /* GRAPH_H */
 

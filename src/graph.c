@@ -997,6 +997,23 @@ bool isArcIgnoreDirection(const graph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Test if an arc i -> j in digraph or edge i -- j in undirected graph exists
+ *
+ * Parameters:
+ *   g - graph or digraph
+ *   i - node to test arc from or edge
+ *   j - node to test arc to or edge
+ *
+ * Return value:
+ *   TRUE iff : for digraph arc i->j exists, 
+ *              for graph edge i--j exists.
+ */
+bool isArcOrEdge(const graph_t *g, uint_t i, uint_t j)
+{
+  return g->is_directed ? isArc(g, i, j) : isEdge(g, i, j);
+}
+
+/*
  * Insert arc i -> j into digraph g, WITHOUT updating allarcs flat arc list
  *
  * Parameters:
@@ -2437,4 +2454,140 @@ bool has_loop(const graph_t *g, uint_t u)
     }
   }
   return FALSE;
+}
+
+
+/*
+ * Insert arc i -> j into g if directed, or edge i -- j if g is undirected
+ *  WITHOUT updating allarcs flat arc list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to insert arc from
+ *   j - node to insert arc to
+ *
+ * Return value:
+ *   None
+ */
+void insertArcOrEdge(graph_t *g, uint_t i, uint_t j)
+{
+  if (g->is_directed)
+    insertArc(g, i, j);
+  else
+    insertEdge(g, i, j);
+}
+
+/*
+ * Remove arc i -> j from g if directed, or edge i -- j if g is undirected
+ *  WITHOUT updating allarcs flat arc list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to remove arc from
+ *   j - node to remove arc to
+ *
+ * Return value:
+ *   None
+ */
+void removeArcOrEdge(graph_t *g, uint_t i, uint_t j)
+{
+  if (g->is_directed)
+    removeArc(g, i, j);
+  else
+    removeEdge(g, i, j);
+}
+
+
+/*
+ * Insert arc i -> j into g if directed, or edge i -- j if g is undirected
+ *  updating flat arc/edge list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to insert arc from
+ *   j - node to insert arc to
+ *
+ * Return value:
+ *   None
+ */
+void insertArcOrEdge_updatelist(graph_t *g, uint_t i, uint_t j)
+{
+  if (g->is_directed)
+    insertArc_allarcs(g, i, j);
+  else
+    insertEdge_alledges(g, i, j);
+}
+
+/*
+ * Remove arc i -> j from g if directed, or edge i -- j if g is undirected
+ *   updating allarcs flat arc list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to remove arc from
+ *   j - node to remove arc t
+ *   idx - index in flat arc or edge list of the i->j entry for fast removal
+ *            as this is known (arc/edge has been selected from this list)
+
+ *
+ * Return value:
+ *   None
+ */
+void removeArcOrEdge_updatelist(graph_t *g, uint_t i, uint_t j, uint_t idx)
+{
+  if (g->is_directed)
+    removeArc_allarcs(g, i, j, idx);
+  else
+    removeEdge_alledges(g, i, j, idx);
+}
+
+
+
+/*
+ * Insert arc i -> j into g if directed, or edge i -- j if g is undirected
+ *  updating inner  arc/edge list
+ *
+ * Used for conditional estimation when we must add an arc that is
+ * between nodes in inner zones and in same zone or adjacent zones only.
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to insert arc from
+ *   j - node to insert arc to
+ *
+ * Return value:
+ *   None
+ */
+void insertArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j)
+{
+  if (g->is_directed)
+    insertArc_allinnerarcs(g, i, j);
+  else
+    insertEdge_allinneredges(g, i, j);
+}
+
+/*
+ * Remove arc i -> j from g if directed, or edge i -- j if g is undirected
+ *   updating allarcs flat arc list
+ *
+ * Used for conditional estimation when we must add an arc that is
+ * between nodes in inner zones and in same zone or adjacent zones only.
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to remove arc from
+ *   j - node to remove arc t
+ *   idx - index in inner arc or edge list of the i->j entry for fast removal
+ *            as this is known (arc/edge has been selected from this list)
+
+ *
+ * Return value:
+ *   None
+ */
+void removeArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j, uint_t idx)
+{
+  if (g->is_directed)
+    removeArc_allinnerarcs(g, i, j, idx);
+  else
+    removeEdge_allinneredges(g, i, j, idx);
 }

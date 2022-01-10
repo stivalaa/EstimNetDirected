@@ -184,6 +184,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        * node j (in any term) and toggle arc i->j between them. In this way
        * we have all arcs (citations) in terms earlier than the last fixed,
        * and we only create citations from nodes in the last term. */
+      assert(g->is_directed);
       assert(!allowLoops);
       do {
         i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
@@ -202,8 +203,8 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         do {
           j = int_urand(g->num_nodes);
         } while (!allowLoops && i == j);
-        isDelete = isArc(g, i ,j);
-      } while (forbidReciprocity && !isDelete && isArc(g, j, i));
+        isDelete = isArcOrEdge(g, i ,j);
+      } while (g->is_directed && forbidReciprocity && !isDelete && isArc(g, j, i));
     }
     
     /* The change statistics are all computed on the basis of adding arc i->j
@@ -211,7 +212,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        change statistics, and negate them */
     SAMPLER_DEBUG_PRINT(("%s %d -> %d\n",isDelete ? "del" : "add", i, j));
     if (isDelete) {
-      removeArc(g, i, j);
+      removeArcOrEdge(g, i, j);
     }
 
     total = calcChangeStats(g, i, j, n, n_attr, n_dyadic,
@@ -229,12 +230,12 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         /* actually do the move. If deleting, already done it. For add, add
            the arc now */
         if (!isDelete)
-          insertArc(g, i, j);
+          insertArcOrEdge(g, i, j);
       } else {
         /* not actually doing the moves, so reverse change for delete move
            to restore g to original state */
         if (isDelete) {
-          insertArc(g, i, j);
+          insertArcOrEdge(g, i, j);
         }
       }
       /* accumulate the change statistics for add and del moves separately */
@@ -248,7 +249,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     } else {
       /* move not acceptd, so reverse change for delete */
       if (isDelete) {
-        insertArc(g, i, j);
+        insertArcOrEdge(g, i, j);
       }
     }
   }
