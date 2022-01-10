@@ -1,6 +1,6 @@
 # EstimNetDirected
 
-EstimNetDirected implements the Equilibrium Expectation (EE) algorithm for estimating parameters of exponential random graph models (ERGMs) for large directed networks.
+EstimNetDirected implements the Equilibrium Expectation (EE) algorithm for estimating parameters of exponential random graph models (ERGMs) for large directed (or undirected) networks.
 
 The source code is written in C and (optionally) uses MPI to run multiple estimations in parallel. It was written on a Linux cluster system with OpenMPI but should be portable to any system with a standard C compiler (it works on cygwin under Windows for example). It uses the Random123 library for random number generation. 
 
@@ -25,7 +25,7 @@ The original statnet (http://statnet.org/) R implementation of cERGM is availabl
 
 ## Funding
 
-Development of the EstimNetDirected software was funded by the Swiss National Science Foundation NRP 75 project number 167326.
+Development of the EstimNetDirected software was funded by the Swiss National Science Foundation project numbers 167326 (NRP 75) and 200778.
 
 ## References
 
