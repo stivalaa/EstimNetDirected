@@ -127,7 +127,7 @@
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
 
-void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  uint_t n_attr_interaction,
                  change_stats_func_t *change_stats_funcs[],
                  double lambda_values[],
@@ -326,7 +326,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  * The theta and Dmean array parameters, which must be allocted by caller,
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
-void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   double lambda_values[],
@@ -585,7 +585,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  * The theta and Dmean array parameters, which must be allocted by caller,
  * are set to the parameter estimtes and derivative estimtes respectively.
  */
-int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+int ee_estimate(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 uint_t n_attr_interaction,
                 change_stats_func_t *change_stats_funcs[],
                 double lambda_values[],
@@ -751,7 +751,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
   FILE          *arclist_file;
-  digraph_t     *g;
+  graph_t     *g;
   uint_t         num_nodes;
   uint_t         i;
   FILE          *theta_outfile;

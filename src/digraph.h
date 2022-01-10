@@ -200,69 +200,69 @@ typedef struct digraph_s
 					 specified as i->j for each. */
   
   
-} digraph_t;
+} graph_t;
 
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 #endif /*TWOPATH_HASHTABLES */
 #else /* not using two-path lookup tables (either arrays or hashtables) */
-uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j);
-uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j);
-uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j);
-uint_t twoPaths(const digraph_t *g, uint_t i, uint_t j);
+uint_t mixTwoPaths(const graph_t *g, uint_t i, uint_t j);
+uint_t outTwoPaths(const graph_t *g, uint_t i, uint_t j);
+uint_t inTwoPaths(const graph_t *g, uint_t i, uint_t j);
+uint_t twoPaths(const graph_t *g, uint_t i, uint_t j);
 #endif /*TWOPATH_LOOKUP */
   
 
-double density(const digraph_t *g, bool allowLoops); /* graph density of g */
-bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
-bool isEdge(const digraph_t *g, uint_t i, uint_t j); /* test if edge i--j in in g */
-bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j or j->i is in g */
+double density(const graph_t *g, bool allowLoops); /* graph density of g */
+bool isArc(const graph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
+bool isEdge(const graph_t *g, uint_t i, uint_t j); /* test if edge i--j in in g */
+bool isArcIgnoreDirection(const graph_t *g, uint_t i, uint_t j); /* test if arc i->j or j->i is in g */
 
 /* these two version do not update the allarcs flat arclist */
-void insertArc(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
-void removeArc(digraph_t *g, uint_t i, uint_t j); /* delete arc i->j from g */
+void insertArc(graph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc(graph_t *g, uint_t i, uint_t j); /* delete arc i->j from g */
 
 /* these two version do not update the alledges flat edgelist */
-void insertEdge(digraph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
-void removeEdge(digraph_t *g, uint_t i, uint_t j); /* delete edge i--j from g */
+void insertEdge(graph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
+void removeEdge(graph_t *g, uint_t i, uint_t j); /* delete edge i--j from g */
 
 /* this two versions update the allarcs flat arclist also */
-void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
-void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+void insertArc_allarcs(graph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc_allarcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 /* this two versions update the alledges flat edgelist also */
-void insertEdge_alledges(digraph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
-void removeEdge_alledges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx); /* delete edge i--j from g */
+void insertEdge_alledges(graph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
+void removeEdge_alledges(graph_t *g, uint_t i, uint_t j, uint_t edgeidx); /* delete edge i--j from g */
 
 /* this two versions update the allinnerarcs flat arclist also */
-void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
-void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+void insertArc_allinnerarcs(graph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc_allinnerarcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 /* this two versions update the allinneredges flat edgelist also */
-void insertEdge_allinneredges(digraph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
-void removeEdge_allinneredges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx); /* delete edge i--j from g */
+void insertEdge_allinneredges(graph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
+void removeEdge_allinneredges(graph_t *g, uint_t i, uint_t j, uint_t edgeidx); /* delete edge i--j from g */
 
 /* this two versions update the all_maxtermsender_arcs flat arclist also */
-void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
-void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+void insertArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
+void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 
-digraph_t *allocate_graph(uint_t num_vertices, bool is_directed);
-void free_graph(digraph_t *g);
-void dump_graph_arclist(const digraph_t *g);
-void print_data_summary(const digraph_t *g, bool allowLoops);
-void print_zone_summary(const digraph_t *g);
+graph_t *allocate_graph(uint_t num_vertices, bool is_directed);
+void free_graph(graph_t *g);
+void dump_graph_arclist(const graph_t *g);
+void print_data_summary(const graph_t *g, bool allowLoops);
+void print_zone_summary(const graph_t *g);
 
-void write_graph_arclist_to_file(FILE *fp, const digraph_t *g);
+void write_graph_arclist_to_file(FILE *fp, const graph_t *g);
 
-int add_snowball_zones_to_graph(digraph_t *g, const char *zone_filename);
-void dump_zone_info(const digraph_t *g);
+int add_snowball_zones_to_graph(graph_t *g, const char *zone_filename);
+void dump_zone_info(const graph_t *g);
 
 int parse_category_set(char *str, bool firstpass, uint_t *size,
                        set_elem_e *setval);
 
-int load_attributes(digraph_t *g, 
+int load_attributes(graph_t *g, 
                     const char *binattr_filename,
                     const char *catattr_filename,
                     const char *contattr_filename,
@@ -270,11 +270,11 @@ int load_attributes(digraph_t *g,
 
 uint_t get_num_vertices_from_arclist_file(FILE *pajek_file);
 
-int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename);
-void dump_term_info(const digraph_t *g);
-void print_term_summary(const digraph_t *g);
-uint_t num_loops(const digraph_t *g);
-bool has_loop(const digraph_t *t, uint_t u);
+int add_cergm_terms_to_digraph(graph_t *g, const char *term_filename);
+void dump_term_info(const graph_t *g);
+void print_term_summary(const graph_t *g);
+uint_t num_loops(const graph_t *g);
+bool has_loop(const graph_t *t, uint_t u);
   
 #endif /* DIGRAPH_H */
 

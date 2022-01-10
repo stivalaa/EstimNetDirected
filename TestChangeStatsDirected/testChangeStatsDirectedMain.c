@@ -31,7 +31,7 @@
 
 #ifdef TWOPATH_LOOKUP
 /* get stats and dump mix-two-path hash table */
-static void dumpTwoPathTables(const digraph_t *g) {
+static void dumpTwoPathTables(const graph_t *g) {
   uint_t inSum,outSum,mixSum,inMax,outMax,mixMax;
   uint_t inNnz, outNnz, mixNnz;
 #ifdef TWOPATH_HASHTABLES
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
   char *arclist_filename = NULL;
   FILE *file           = NULL;
   uint_t     num_nodes = 0;
-  digraph_t *g         = NULL;
+  graph_t *g         = NULL;
   int    num_tests     = 0;
   int    readNodeNums  = FALSE;
   char  *nodenumfilename = NULL;

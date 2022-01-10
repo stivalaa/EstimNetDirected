@@ -130,7 +130,7 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
  * Return value:
  *   None.
  */
-static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
+static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
 {
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
@@ -191,7 +191,7 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
  * Return value:
  *   None.
  */
-static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
+static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
 {
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
@@ -637,7 +637,7 @@ static int load_set_attributes(const char   *attr_filename,
                 attr_filename, strerror(errno));
         return -1;
       }
-      DIGRAPH_DEBUG_PRINT(("load_set_attributes pass %d reopen %s at '%s'\n",
+      GRAPH_DEBUG_PRINT(("load_set_attributes pass %d reopen %s at '%s'\n",
                            pass, attr_filename, buf));
     }
     if (!fgets(buf, sizeof(buf)-1, attr_file)) {
@@ -651,7 +651,7 @@ static int load_set_attributes(const char   *attr_filename,
       thisline_values = 0;
       token = strtok_r(buf, delims, &saveptr);
       while(token) {
-        DIGRAPH_DEBUG_PRINT(("load_set_attributes pass %u token '%s'\n",
+        GRAPH_DEBUG_PRINT(("load_set_attributes pass %u token '%s'\n",
                              pass, token));
         if (!firstpass) {
           setval = (set_elem_e *)safe_malloc(setsizes[thisline_values] *
@@ -745,7 +745,7 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
 /* 
  * Count two-paths for (i, j): paths  i -> v -> j for some v
  */
-uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+uint_t mixTwoPaths(const graph_t *g, uint_t i, uint_t j)
 {
   uint_t v,k,l;
   uint_t count = 0;
@@ -781,7 +781,7 @@ uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
 /* 
  * Count out-two-paths for (i, j): paths  i <- v -> j for some v
  */
-uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+uint_t outTwoPaths(const graph_t *g, uint_t i, uint_t j)
 {
   uint_t v,k,l;
   uint_t count = 0;
@@ -817,7 +817,7 @@ uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
 /* 
  * Count in-two-paths for (i, j): paths  i -> v <- j for some v
  */
-uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
+uint_t inTwoPaths(const graph_t *g, uint_t i, uint_t j)
 {
   uint_t v,k,l;
   uint_t count = 0;
@@ -854,7 +854,7 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
 /* 
  * Count undirected two-paths for (i, j): paths  i -- v -- j for some v
  */
-uint_t twoPaths(const digraph_t *g, uint_t i, uint_t j)
+uint_t twoPaths(const graph_t *g, uint_t i, uint_t j)
 {
   uint_t v,k,l;
   uint_t count = 0;
@@ -898,7 +898,7 @@ uint_t twoPaths(const digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   Density of g
  */
-double density(const digraph_t *g, bool allowLoops)
+double density(const graph_t *g, bool allowLoops)
 {
   if (g->is_directed) {
     if (allowLoops)
@@ -924,7 +924,7 @@ double density(const digraph_t *g, bool allowLoops)
  * Return value:
  *   TRUE iff arc i->j exists
  */
-bool isArc(const digraph_t *g, uint_t i, uint_t j)
+bool isArc(const graph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
   assert(g->is_directed);
@@ -957,7 +957,7 @@ bool isArc(const digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   TRUE iff edge i -- j exists
  */
-bool isEdge(const digraph_t *g, uint_t i, uint_t j)
+bool isEdge(const graph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
   assert(!g->is_directed);
@@ -991,7 +991,7 @@ bool isEdge(const digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   TRUE iff arc i->j or j->i exists
  */
-bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j)
+bool isArcIgnoreDirection(const graph_t *g, uint_t i, uint_t j)
 {
   return isArc(g, i, j) || isArc(g, j, i);
 }
@@ -1007,7 +1007,7 @@ bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void insertArc(digraph_t *g, uint_t i, uint_t j)
+void insertArc(graph_t *g, uint_t i, uint_t j)
 {
   assert(g->is_directed);
   assert(i < g->num_nodes);
@@ -1022,7 +1022,7 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
 #ifdef TWOPATH_LOOKUP
   updateTwoPathsMatrices(g, i, j, TRUE);
 #endif /* TWOPATH_LOOKUP */
-  DIGRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
+  GRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
   /*removed as slows significantly: assert(isArc(g, i, j));*/
 
   /* update zone information for snowball conditional estimation */
@@ -1046,7 +1046,7 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void insertEdge(digraph_t *g, uint_t i, uint_t j)
+void insertEdge(graph_t *g, uint_t i, uint_t j)
 {
   assert(!g->is_directed);
   assert(i < g->num_nodes);
@@ -1061,7 +1061,7 @@ void insertEdge(digraph_t *g, uint_t i, uint_t j)
 #ifdef TWOPATH_LOOKUP
   updateTwoPathsMatrices(g, i, j, TRUE);
 #endif /* TWOPATH_LOOKUP */
-  DIGRAPH_DEBUG_PRINT(("insertEdge %u -- %u degree(%u) = %u degree(%u) = %u\n", i, j, j, g->degree[j], i, g->degree[i]));
+  GRAPH_DEBUG_PRINT(("insertEdge %u -- %u degree(%u) = %u degree(%u) = %u\n", i, j, j, g->degree[j], i, g->degree[i]));
 
   /* update zone information for snowball conditional estimation */
   if (g->zone[i] > g->zone[j]) {
@@ -1084,11 +1084,11 @@ void insertEdge(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void removeArc(digraph_t *g, uint_t i, uint_t j)
+void removeArc(graph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
   assert(g->is_directed);
-  DIGRAPH_DEBUG_PRINT(("removeArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
+  GRAPH_DEBUG_PRINT(("removeArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
   /*removed as slows significantly: assert(isArc(g, i, j));*/
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
@@ -1156,11 +1156,11 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void removeEdge(digraph_t *g, uint_t i, uint_t j)
+void removeEdge(graph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
   assert(!g->is_directed);
-  DIGRAPH_DEBUG_PRINT(("removeEdge %u -> %u degree(%u) = %u degree(%u) = %u\n", i, j, j, g->degree[j], i, g->degree[i]));
+  GRAPH_DEBUG_PRINT(("removeEdge %u -> %u degree(%u) = %u degree(%u) = %u\n", i, j, j, g->degree[j], i, g->degree[i]));
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
   assert(g->num_edges > 0);
@@ -1207,7 +1207,7 @@ void removeEdge(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j)
+void insertArc_allarcs(graph_t *g, uint_t i, uint_t j)
 {
   assert(g->is_directed);
   insertArc(g, i, j);
@@ -1228,7 +1228,7 @@ void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void insertEdge_alledges(digraph_t *g, uint_t i, uint_t j)
+void insertEdge_alledges(graph_t *g, uint_t i, uint_t j)
 {
   assert(!g->is_directed);
   insertEdge(g, i, j);
@@ -1251,7 +1251,7 @@ void insertEdge_alledges(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
+void removeArc_allarcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx)
 {
   assert(g->is_directed);
   removeArc(g, i, j);
@@ -1277,7 +1277,7 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
  * Return value:
  *   None
  */
-void removeEdge_alledges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx)
+void removeEdge_alledges(graph_t *g, uint_t i, uint_t j, uint_t edgeidx)
 {
   assert(!g->is_directed);
   removeEdge(g, i, j);
@@ -1304,7 +1304,7 @@ void removeEdge_alledges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx)
  * Return value:
  *   None
  */
-void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j)
+void insertArc_allinnerarcs(graph_t *g, uint_t i, uint_t j)
 {
   assert(g->is_directed);
   assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
@@ -1332,7 +1332,7 @@ void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void insertEdge_allinneredges(digraph_t *g, uint_t i, uint_t j)
+void insertEdge_allinneredges(graph_t *g, uint_t i, uint_t j)
 {
   assert(!g->is_directed);
   assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
@@ -1362,7 +1362,7 @@ void insertEdge_allinneredges(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
+void removeArc_allinnerarcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx)
 {
   assert(g->is_directed);
   assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
@@ -1392,7 +1392,7 @@ void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
  * Return value:
  *   None
  */
-void removeEdge_allinneredges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx)
+void removeEdge_allinneredges(graph_t *g, uint_t i, uint_t j, uint_t edgeidx)
 {
   assert(!g->is_directed);
   assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
@@ -1421,7 +1421,7 @@ void removeEdge_allinneredges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx)
  * Return value:
  *   None
  */
-void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j)
+void insertArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j)
 {
   assert(g->is_directed);
   assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
@@ -1450,7 +1450,7 @@ void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j)
  * Return value:
  *   None
  */
-void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
+void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx)
 {
   assert(g->is_directed);
   assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
@@ -1475,9 +1475,9 @@ void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t a
  * Return values:
  *    Allocated and initizlied to empty graph or digraph
  */
-digraph_t *allocate_graph(uint_t num_vertices, bool is_directed)
+graph_t *allocate_graph(uint_t num_vertices, bool is_directed)
 {
-  digraph_t *g = (digraph_t *)safe_calloc(1, sizeof(digraph_t));
+  graph_t *g = (graph_t *)safe_calloc(1, sizeof(graph_t));
   g->is_directed = is_directed;
   g->num_nodes = num_vertices;
   if (is_directed) {
@@ -1592,7 +1592,7 @@ digraph_t *allocate_graph(uint_t num_vertices, bool is_directed)
  *    None
  * Note the pointer g itelf is freed in this function
  */
-void free_graph(digraph_t *g)
+void free_graph(graph_t *g)
 {
   uint_t i;
 
@@ -1702,7 +1702,7 @@ uint_t get_num_vertices_from_arclist_file(FILE *pajek_file)
  *    None.
  *
  */
-void dump_graph_arclist(const digraph_t *g)
+void dump_graph_arclist(const graph_t *g)
 {
   write_graph_arclist_to_file(stdout, g);
 }
@@ -1710,7 +1710,7 @@ void dump_graph_arclist(const digraph_t *g)
 /*
  * Write some summary statistics of graph and attribute data to stdout
  */
-void print_data_summary(const digraph_t * g, bool allowLoops)
+void print_data_summary(const graph_t * g, bool allowLoops)
 {
   uint_t i,j;
   uint_t num_na_values;
@@ -1771,7 +1771,7 @@ void print_data_summary(const digraph_t * g, bool allowLoops)
 /*
  * Write some statistics about the snowball sampling zones to stdout.
  */
-void print_zone_summary(const digraph_t *g)
+void print_zone_summary(const graph_t *g)
 {
   uint_t   i;
   uint_t  *zone_sizes; /* number of nodes in each zone */
@@ -1808,7 +1808,7 @@ void print_zone_summary(const digraph_t *g)
  *    None.
  *
  */
-void write_graph_arclist_to_file(FILE *fp, const digraph_t *g)
+void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
 {
   uint_t i, j, count=0;
 
@@ -1855,7 +1855,7 @@ void write_graph_arclist_to_file(FILE *fp, const digraph_t *g)
  * 1
  * 2
  */
-int add_snowball_zones_to_graph(digraph_t *g, const char *zone_filename)
+int add_snowball_zones_to_graph(graph_t *g, const char *zone_filename)
 {
   int      num_attr, j;
   char   **attr_names;
@@ -1954,7 +1954,7 @@ int add_snowball_zones_to_graph(digraph_t *g, const char *zone_filename)
     }
     if (g->zone[u] < g->max_zone && g->zone[v] < g->max_zone) {
       g->num_inner_arcs++;
-      DIGRAPH_DEBUG_PRINT(("inner arc %u: %u -> %u (zones %u %u)\n", g->num_inner_arcs-1, u, v, g->zone[i], g->zone[v]));
+      GRAPH_DEBUG_PRINT(("inner arc %u: %u -> %u (zones %u %u)\n", g->num_inner_arcs-1, u, v, g->zone[i], g->zone[v]));
       g->allinnerarcs = (nodepair_t *)safe_realloc(g->allinnerarcs,
                                                    g->num_inner_arcs *
                                                    sizeof(nodepair_t));
@@ -1984,7 +1984,7 @@ int add_snowball_zones_to_graph(digraph_t *g, const char *zone_filename)
  * Return value:
  *  None
  */
-void dump_zone_info(const digraph_t *g)
+void dump_zone_info(const graph_t *g)
 {
   uint_t   i;
   uint_t   num_zones = g->max_zone + 1;
@@ -2090,7 +2090,7 @@ int parse_category_set(char *str, bool firstpass, uint_t *size,
         /* first pass, just get largest int for size of set */
         if (val + 1 > *size) {
           *size = val + 1;
-          DIGRAPH_DEBUG_PRINT(("parse_category_set token '%s' size now %u\n",
+          GRAPH_DEBUG_PRINT(("parse_category_set token '%s' size now %u\n",
                                token, *size));
         }
       } else {
@@ -2126,7 +2126,7 @@ int parse_category_set(char *str, bool firstpass, uint_t *size,
  *    nonzero on error
  *
  */
-int load_attributes(digraph_t *g, 
+int load_attributes(graph_t *g, 
                     const char *binattr_filename,
                     const char *catattr_filename,
                     const char *contattr_filename,
@@ -2226,7 +2226,7 @@ int load_attributes(digraph_t *g,
  * 1
  * 2
  */
-int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
+int add_cergm_terms_to_digraph(graph_t *g, const char *term_filename)
 {
   int      num_attr, k;
   char   **attr_names;
@@ -2311,7 +2311,7 @@ int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
     v = g->allarcs[i].j;
     if (g->term[u] == g->max_term) {
       g->num_maxtermsender_arcs++;
-      DIGRAPH_DEBUG_PRINT(("maxterm arc %u: %u -> %u (terms %u %u)\n",
+      GRAPH_DEBUG_PRINT(("maxterm arc %u: %u -> %u (terms %u %u)\n",
                            g->num_inner_arcs-1, u, v, g->term[i], g->term[v]));
       g->all_maxtermsender_arcs =
         (nodepair_t *)safe_realloc(g->all_maxtermsender_arcs,
@@ -2343,7 +2343,7 @@ int add_cergm_terms_to_digraph(digraph_t *g, const char *term_filename)
  * Return value:
  *  None
  */
-void dump_term_info(const digraph_t *g)
+void dump_term_info(const graph_t *g)
 {
   uint_t   i;
   uint_t   num_terms = g->max_term + 1;
@@ -2369,7 +2369,7 @@ void dump_term_info(const digraph_t *g)
 /*
  * Write some statistics about the cERGM time periods (terms) to stdout.
  */
-void print_term_summary(const digraph_t *g)
+void print_term_summary(const graph_t *g)
 {
   uint_t   i;
   uint_t  *term_sizes; /* number of nodes in each term */
@@ -2404,7 +2404,7 @@ void print_term_summary(const digraph_t *g)
  * Return value:
  *     number of self-edges in g
  */
-uint_t num_loops(const digraph_t *g)
+uint_t num_loops(const graph_t *g)
 {
   uint_t k;
   uint_t count = 0;
@@ -2427,7 +2427,7 @@ uint_t num_loops(const digraph_t *g)
  * Return value:
  *    True if u has a self-edge else False
  */
-bool has_loop(const digraph_t *g, uint_t u)
+bool has_loop(const graph_t *g, uint_t u)
 {
   uint_t k;
 

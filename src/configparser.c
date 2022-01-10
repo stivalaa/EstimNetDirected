@@ -1124,7 +1124,7 @@ void dump_parameter_names(void)
  * particular type, it uses the index in the correct array without
  * ambiguity.
  */
-int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g)
+int build_attr_indices_from_names(param_config_t *pconfig, const graph_t *g)
 {
   uint_t i, j;
   bool   found;
@@ -1229,7 +1229,7 @@ int build_attr_indices_from_names(param_config_t *pconfig, const digraph_t *g)
  * error else 0.
  *
  */
-int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g,
+int build_dyadic_indices_from_names(param_config_t *pconfig,  graph_t *g,
                                     bool requireErgmValue)
 {
   uint_t i, j;
@@ -1468,7 +1468,7 @@ int build_dyadic_indices_from_names(param_config_t *pconfig,  digraph_t *g,
  * it uses the index in the correct array without ambiguity.
  */
 int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
-                                                   const digraph_t *g)
+                                                   const graph_t *g)
 {
   uint_t i, j, attrnum;
   bool   found;

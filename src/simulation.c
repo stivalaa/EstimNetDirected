@@ -81,7 +81,7 @@
  * Return value:
  *   None. The digraph parameter g is updated.
  */
-static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
+static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
                                      uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      uint_t n_attr_interaction,
                                      change_stats_func_t *change_stats_funcs[],
@@ -251,7 +251,7 @@ static void make_erdos_renyi_digraph(digraph_t *g, uint_t numArcs,
 
  *
  */
-int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   double lambda_values[],
@@ -477,7 +477,7 @@ int do_simulation(sim_config_t * config)
 {
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
-  digraph_t     *g;
+  graph_t     *g;
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
   uint_t         i, theta_i, j, k, m;

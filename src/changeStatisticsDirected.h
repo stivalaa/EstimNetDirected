@@ -73,91 +73,91 @@
  ****************************************************************************/
 
 /* typedef for change statistics function  */
-typedef double (change_stats_func_t)(digraph_t *g, uint_t i, uint_t j, double lambda);
+typedef double (change_stats_func_t)(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /* version for change statistics with nodal attribute */
-typedef double (attr_change_stats_func_t)(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+typedef double (attr_change_stats_func_t)(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /* version for change statistics with dyadic covariate */
 /* for the moment just hte same as change_stats_func_t as treated specially,
    only used for GeoDistance for now */
-typedef double (dyadic_change_stats_func_t)(digraph_t *g, uint_t i, uint_t j);
+typedef double (dyadic_change_stats_func_t)(graph_t *g, uint_t i, uint_t j);
 
 /* change statistics with pairs of nodal attributes (attribute interactions) */
-typedef double (attr_interaction_change_stats_func_t)(digraph_t *g, uint_t i, uint_t j, uint_t a, uint_t b);
+typedef double (attr_interaction_change_stats_func_t)(graph_t *g, uint_t i, uint_t j, uint_t a, uint_t b);
 
 /************************* Structural ****************************************/
 
-double changeArc(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeReciprocity(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeSink(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeSource(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeInTwoStars(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeOutTwoStars(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeIsolates(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeTwoPath(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeTransitiveTriad(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeCyclicTriad(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltInStars(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltOutStars(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltKTrianglesT(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltKTrianglesC(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltKTrianglesD(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltKTrianglesU(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltTwoPathsT(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltTwoPathsD(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltTwoPathsU(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeAltTwoPathsTD(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeLoop(digraph_t *g, uint_t i, uint_t j, double lambda);
-double changeLoopInteraction(digraph_t *g, uint_t i, uint_t j, double lambda);
+double changeArc(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeReciprocity(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeSink(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeSource(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeInTwoStars(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeOutTwoStars(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeTransitiveTriad(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeCyclicTriad(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltInStars(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltOutStars(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesT(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesC(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesD(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKTrianglesU(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsT(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsD(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsU(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltTwoPathsTD(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
-double changeSender(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeReceiver(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeInteraction(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /********************* Actor attribute (categorical) *************************/
 
-double changeMatching(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMatchingReciprocity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatching(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatchingReciprocity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatchingTransitiveTriad(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatchingTransitiveTies(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /********************* Actor attribute (continuous) *************************/
 
-double changeContinuousSender(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeContinuousReceiver(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiff(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffReciprocity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffSign(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffDirSR(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffDirRS(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 
 /********************* Actor attribute (set of categorical) *******************/
 
-double changeJaccardSimilarity(digraph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 
 /********************* Dyadic covariate (continuous) *************************/
 
-double changeGeoDistance(digraph_t *g, uint_t i, uint_t j);
-double changeLogGeoDistance(digraph_t *g, uint_t i, uint_t j);
-double changeEuclideanDistance(digraph_t *g, uint_t i, uint_t j);
+double changeGeoDistance(graph_t *g, uint_t i, uint_t j);
+double changeLogGeoDistance(graph_t *g, uint_t i, uint_t j);
+double changeEuclideanDistance(graph_t *g, uint_t i, uint_t j);
 
 
 /************ Actor attribute interaction (categorical) *********************/
 
-double changeMatchingInteraction(digraph_t *g, uint_t i, uint_t j,
+double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
                                  uint_t a, uint_t b);
 
 
 /*************************** Other functions *********************************/
 
-double calcChangeStats(digraph_t *g, uint_t i, uint_t j,
+double calcChangeStats(graph_t *g, uint_t i, uint_t j,
                        uint_t n, uint_t n_attr, uint_t n_dyadic,
                        uint_t n_attr_interaction,
                        change_stats_func_t *change_stats_funcs[],
@@ -175,7 +175,7 @@ double calcChangeStats(digraph_t *g, uint_t i, uint_t j,
 
 double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n);
 
-double *empty_graph_stats(digraph_t *g,
+double *empty_graph_stats(graph_t *g,
 			  uint_t n, uint_t n_attr, uint_t n_dyadic,
 			  uint_t n_attr_interaction,
 			  change_stats_func_t *change_stats_funcs[],

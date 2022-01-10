@@ -41,7 +41,7 @@
 #include "estimconfigparser.h"
 #include "changeStatisticsDirected.h"
 
-void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  uint_t n_attr_interaction,
                  change_stats_func_t *change_stats_funcs[],
                  double lambda_values[],
@@ -62,7 +62,7 @@ void algorithm_S(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  bool forbidReciprocity,
 		 bool useTNTsampler, bool citationERGM, bool allowLoops);
 
-void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   double lambda_values[],
@@ -86,7 +86,7 @@ void algorithm_EE(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 		  bool useTNTsampler, bool citationERGM, bool allowLoops);
 
 
-int ee_estimate(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
+int ee_estimate(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 uint_t n_attr_interaction,
                 change_stats_func_t *change_stats_funcs[],
                 double lambda_values[],

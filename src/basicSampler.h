@@ -61,7 +61,7 @@
 
 #include "changeStatisticsDirected.h"
 
-double basicSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
+double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_t n_attr_interaction,
                     change_stats_func_t *change_stats_funcs[],
                     double lambda_values[],

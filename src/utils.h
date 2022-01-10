@@ -35,10 +35,10 @@ extern "C" {
 #define CONFIG_DEBUG_PRINT(x) /* nothing */
 #endif
   
-#ifdef DEBUG_DIGRAPH
-#define DIGRAPH_DEBUG_PRINT(x) printf("DEBUG DIGRAPH: "); printf x
+#ifdef DEBUG_GRAPH
+#define GRAPH_DEBUG_PRINT(x) printf("DEBUG GRAPH: "); printf x
 #else
-#define DIGRAPH_DEBUG_PRINT(x) /* nothing */
+#define GRAPH_DEBUG_PRINT(x) /* nothing */
 #endif
   
 #ifdef DEBUG_SAMPLER

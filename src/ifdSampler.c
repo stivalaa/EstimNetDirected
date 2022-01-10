@@ -85,7 +85,7 @@
  * Return value:
  *    edge correction value
  */
-double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
+double arcCorrection(const graph_t *g, bool useConditionalEstimation,
                      bool citationERGM, bool forbidReciprocity,
                      bool allowLoops) {
   double N         = g->num_nodes;
@@ -191,7 +191,7 @@ double arcCorrection(const digraph_t *g, bool useConditionalEstimation,
  * function pointer array. On exit they are set to the sum values of the
  * change statistics for add and delete moves respectively.
  */
-double ifdSampler(digraph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
+double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
                   change_stats_func_t *change_stats_funcs[],
                   double lambda_values[],

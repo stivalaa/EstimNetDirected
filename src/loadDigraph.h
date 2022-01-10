@@ -13,7 +13,7 @@
 #include "digraph.h"
 #include "changeStatisticsDirected.h"
 
-digraph_t *load_digraph_from_arclist_file(FILE *pajek_file, digraph_t *g,
+graph_t *load_digraph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           bool computeStats,
                                           uint_t n, uint_t n_attr,
                                           uint_t n_dyadic,
