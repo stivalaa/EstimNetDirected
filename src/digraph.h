@@ -6,10 +6,12 @@
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
- * Directed graph data structure. Stored as arc lists (both forward and
- * a "reversed" version, for fast iteration over both in- and out- neighbours)
- * and fast lookup hash tables for two-paths, and flat arcs list for fast 
- * finding of random arc.
+ * Directed or undirected graph data structure. 
+ *
+ * For directed, stored as arc lists (both forward and a "reversed"
+ * version, for fast iteration over both in- and out- neighbours).
+ * Also, fast lookup hash tables for two-paths, and flat arcs or edges
+ * list for fast finding of random arc.
  *
  * Nodes are numbered 0 .. n-1.
  *
@@ -75,6 +77,12 @@ typedef struct {
 typedef struct digraph_s
 {
   uint_t   num_nodes;  /* number of nodes */
+
+  bool     is_directed;/* TRUE for directed graph, else undirected */
+
+  /* 
+   * Directed graph, used only if is_directed 
+   */
   uint_t   num_arcs;   /* number of arcs */
   uint_t  *outdegree;  /* for each node, number of nodes it has an arc to */
   uint_t **arclist;    /* arc adjacency lists: for each node i, array of
@@ -96,6 +104,31 @@ typedef struct digraph_s
   uint_t *outTwoPathMatrix; /* n x n contiguous matrix counting out-two-paths */
 #endif /*TWOPATH_HASHTABLES*/
 #endif /* TWOPATH_LOOKUP */
+  
+
+  /*
+   * Undirected graph, used only if !is_directed 
+   */
+  uint_t   num_edges;  /* number of edges */
+  uint_t  *degree;     /* for each node, number of nodes it has an edge to */
+  uint_t **edgelist;   /* edge adjacency lists: for each node i, array of
+                          degree[i] nodes it has an arc to.
+			  Note that for each edge i--j there will be two
+			  entries, one for i and one for j */
+  nodepair_t *alledges;/* list of all edges specified as i--j for each. */
+
+#ifdef TWOPATH_LOOKUP
+#ifdef TWOPATH_HASHTABLES
+  /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
+  twopath_record_t *twoPathHashTab; /* hash table counting two-paths */
+#else /* using array not hashtables for two-path lookup */
+  uint_t *twoPathMatrix; /* n x n contiguous matrix counting two-paths */
+#endif /*TWOPATH_HASHTABLES*/
+#endif /* TWOPATH_LOOKUP */
+
+  /*
+   * Fields used for both directed and undirected graphs
+   */
   
   /* node attributes */
   uint_t   num_binattr;   /* number of binary attributes */
@@ -130,19 +163,31 @@ typedef struct digraph_s
   uint_t y_index;         /* index in digraph contattr of y coordinate */
   uint_t z_index;         /* index in digraph contattr of z coordinate */
 
-  /* snowball sampling information, only used for conditional estimation */
+  /* 
+   * snowball sampling information, only used for conditional estimation 
+   */
   uint_t *zone;        /* for each node, snowball sampling zone (0 for seeds) */
   uint_t max_zone;     /* highest zone number (zone number of outermost wave) */
   uint_t num_inner_nodes;/*number of nodes in inner waves (all but last zone)*/
   uint_t *inner_nodes; /* id of each of the num_inner_nodes inner wave nodes */
   uint_t *prev_wave_degree; /* for each  node, number of edges 
                                to/from a node in earlier wave (node zone -1 ) */
+
+  /* for digraphs only */
   uint_t num_inner_arcs;  /* number of arcs in inner waves, length of
                              allinnerarcs list */
   nodepair_t *allinnerarcs; /* list of all inner wave arcs specified
                              * as i->j for each. */
+  /* for undirected graphs only */
+  uint_t num_inner_edges;  /* number of edges in inner waves, length of
+                             allinneredges list */
+  nodepair_t *allinneredges; /* list of all inner wave edges specified
+                             * as i--j for each. */
 
-  /* term (time period) information, only used for citation ERGM (cERGM) */
+  /* 
+   * term (time period) information, only used for citation ERGM (cERGM) 
+   * which is only for directed graphs
+   */
   uint_t *term;    /* for each node, the sequential time period (term) */
   uint_t max_term;  /* highest term number (time period) 0 ... max_term */
   uint_t num_maxterm_nodes; /* number of nodes in last (latest) term */
@@ -165,39 +210,53 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j);
 uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j);
 uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j);
+uint_t twoPaths(const digraph_t *g, uint_t i, uint_t j);
 #endif /*TWOPATH_LOOKUP */
   
 
 double density(const digraph_t *g, bool allowLoops); /* graph density of g */
 bool isArc(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
+bool isEdge(const digraph_t *g, uint_t i, uint_t j); /* test if edge i--j in in g */
 bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j); /* test if arc i->j or j->i is in g */
 
 /* these two version do not update the allarcs flat arclist */
 void insertArc(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc(digraph_t *g, uint_t i, uint_t j); /* delete arc i->j from g */
 
+/* these two version do not update the alledges flat edgelist */
+void insertEdge(digraph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
+void removeEdge(digraph_t *g, uint_t i, uint_t j); /* delete edge i--j from g */
+
 /* this two versions update the allarcs flat arclist also */
 void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
+/* this two versions update the alledges flat edgelist also */
+void insertEdge_alledges(digraph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
+void removeEdge_alledges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx); /* delete edge i--j from g */
+
 /* this two versions update the allinnerarcs flat arclist also */
 void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
+
+/* this two versions update the allinneredges flat edgelist also */
+void insertEdge_allinneredges(digraph_t *g, uint_t i, uint_t j); /* add edge i--j to g */
+void removeEdge_allinneredges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx); /* delete edge i--j from g */
 
 /* this two versions update the all_maxtermsender_arcs flat arclist also */
 void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j); /* add arc i->j to g */
 void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 
-digraph_t *allocate_digraph(uint_t num_vertices);
-void free_digraph(digraph_t *g);
-void dump_digraph_arclist(const digraph_t *g);
+digraph_t *allocate_graph(uint_t num_vertices, bool is_directed);
+void free_graph(digraph_t *g);
+void dump_graph_arclist(const digraph_t *g);
 void print_data_summary(const digraph_t *g, bool allowLoops);
 void print_zone_summary(const digraph_t *g);
 
-void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g);
+void write_graph_arclist_to_file(FILE *fp, const digraph_t *g);
 
-int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename);
+int add_snowball_zones_to_graph(digraph_t *g, const char *zone_filename);
 void dump_zone_info(const digraph_t *g);
 
 int parse_category_set(char *str, bool firstpass, uint_t *size,

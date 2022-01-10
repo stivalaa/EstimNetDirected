@@ -59,6 +59,7 @@ typedef struct sim_config_s {
   bool  citationERGM;      /* use cERGM conditional estimation on terms */
   char *arclist_filename;  /* filename of Pajek file for citationERGM */  
   bool allowLoops;         /* allow self-edges (loops) */
+  bool isDirected;         /* directed graph (else undirected) */  
   
   /*
    * values built by confiparser.c functions from parsed config settings

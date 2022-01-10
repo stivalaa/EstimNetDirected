@@ -4,10 +4,12 @@
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
- * Directed graph data structure. Stored as arc lists (both forward
- * and a "reversed" version, for fast iteration over both in- and out-
- * neighbours) and fast lookup hash tables for two-paths, and also
- * flat arcs list for fast selection of an arc uniformly at random.
+ * Directed or undirected graph data structure. 
+ *
+ * For directed, stored as arc lists (both forward and a "reversed"
+ * version, for fast iteration over both in- and out- neighbours).
+ * Also, fast lookup hash tables for two-paths, and flat arcs or edges
+ * list for fast finding of random arc.
  *
  * Preprocessor defines used:
  *
@@ -133,35 +135,45 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
 
-  for (k = 0; k < g->outdegree[i]; k++) {
-    v = g->arclist[i][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,i,v)); */
-    update_twopath_entry(&g->outTwoPathHashTab, v, j, incval);
-    update_twopath_entry(&g->outTwoPathHashTab, j, v, incval);
-  }
-  for (k = 0; k < g->indegree[j]; k++) {
-    v = g->revarclist[j][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,v,j)); */
-    update_twopath_entry(&g->inTwoPathHashTab, v, i, incval);
-    update_twopath_entry(&g->inTwoPathHashTab, i, v, incval);
-  }
-  for (k = 0; k < g->indegree[i]; k++)  {
-    v = g->revarclist[i][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,v,i));*/
-    update_twopath_entry(&g->mixTwoPathHashTab, v, j, incval);
-  }
-  for (k = 0; k < g->outdegree[j]; k++) {
-    v = g->arclist[j][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,j,v));*/
-    update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
+  if (g->is_directed) {
+    for (k = 0; k < g->outdegree[i]; k++) {
+      v = g->arclist[i][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,i,v)); */
+      update_twopath_entry(&g->outTwoPathHashTab, v, j, incval);
+      update_twopath_entry(&g->outTwoPathHashTab, j, v, incval);
+    }
+    for (k = 0; k < g->indegree[j]; k++) {
+      v = g->revarclist[j][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,v,j)); */
+      update_twopath_entry(&g->inTwoPathHashTab, v, i, incval);
+      update_twopath_entry(&g->inTwoPathHashTab, i, v, incval);
+    }
+    for (k = 0; k < g->indegree[i]; k++)  {
+      v = g->revarclist[i][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,v,i));*/
+      update_twopath_entry(&g->mixTwoPathHashTab, v, j, incval);
+    }
+    for (k = 0; k < g->outdegree[j]; k++) {
+      v = g->arclist[j][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,j,v));*/
+      update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
+    }
+  } else {
+    /* undirected */
+    for (k = 0; k < g->degree[i]; k++)  {
+      v = g->edgelist[i][k];
+      if (v == i || v == j)
+	continue;
+      update_twopath_entry(&g->twoPathHashTab, v, j, incval);
+    }
   }
 }
 #else /* using arrays not hash tables for two-path lookup */
@@ -184,35 +196,45 @@ static void updateTwoPathsMatrices(digraph_t *g, uint_t i, uint_t j, bool isAdd)
   uint_t v,k;
   int incval = isAdd ? 1 : -1;
 
-  for (k = 0; k < g->outdegree[i]; k++) {
-    v = g->arclist[i][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,i,v)); */
-    g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
-    g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
-  }
-  for (k = 0; k < g->indegree[j]; k++) {
-    v = g->revarclist[j][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,v,j)); */
-    g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
-    g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
-  }
-  for (k = 0; k < g->indegree[i]; k++)  {
-    v = g->revarclist[i][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,v,i));*/
-    g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
-  }
-  for (k = 0; k < g->outdegree[j]; k++) {
-    v = g->arclist[j][k];
-    if (v == i || v == j)
-      continue;
-    /*removed as slows significantly: assert(isArc(g,j,v));*/
-    g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+  if (g->is_directed) {
+    for (k = 0; k < g->outdegree[i]; k++) {
+      v = g->arclist[i][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,i,v)); */
+      g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
+      g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
+    }
+    for (k = 0; k < g->indegree[j]; k++) {
+      v = g->revarclist[j][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,v,j)); */
+      g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
+      g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+    }
+    for (k = 0; k < g->indegree[i]; k++)  {
+      v = g->revarclist[i][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,v,i));*/
+      g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
+    }
+    for (k = 0; k < g->outdegree[j]; k++) {
+      v = g->arclist[j][k];
+      if (v == i || v == j)
+	continue;
+      /*removed as slows significantly: assert(isArc(g,j,v));*/
+      g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
+    }
+  } else {
+    /* undirected */
+    for (k = 0; k < g->degree[i]; k++)  {
+      v = g->edgelist[i][k];
+      if (v == i || v == j)
+	continue;
+      g->twoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
+    }
   }
 }
 #endif /*TWOPATH_HASHTABLES*/
@@ -728,6 +750,8 @@ uint_t mixTwoPaths(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k,l;
   uint_t count = 0;
 
+  assert(g->is_directed);
+  
   if (g->outdegree[i] < g->indegree[j]) {
     for (k = 0; k < g->outdegree[i]; k++)  {
       v = g->arclist[i][k];   /* i -> v */
@@ -762,6 +786,8 @@ uint_t outTwoPaths(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k,l;
   uint_t count = 0;
 
+  assert(g->is_directed);
+  
   if (g->indegree[i] < g->indegree[j]) {
     for (k = 0; k < g->indegree[i]; k++)  {
       v = g->revarclist[i][k];   /* i <- v */
@@ -796,6 +822,8 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
   uint_t v,k,l;
   uint_t count = 0;
 
+  assert(g->is_directed);
+  
   if (g->outdegree[i] < g->outdegree[j]) {
     for (k = 0; k < g->outdegree[i]; k++)  {
       v = g->arclist[i][k];   /* i -> v */
@@ -822,13 +850,49 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
   return count;
 }
 
+
+/* 
+ * Count undirected two-paths for (i, j): paths  i -- v -- j for some v
+ */
+uint_t twoPaths(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t v,k,l;
+  uint_t count = 0;
+
+  assert(!g->is_directed);
+  if (g->degree[i] < g->degree[j]) {
+    for (k = 0; k < g->degree[i]; k++)  {
+      v = g->edgelist[i][k];   /* i -- v */
+      if (v == i || v == j)
+        continue;
+      for (l = 0; l < g->degree[j]; l++) {
+        if (g->edgelist[j][l] == v) {   /* v -- j */
+          count++;
+        }
+      }
+    }
+  } else {
+    for (k = 0; k < g->degree[j]; k++) {
+      v = g->edgelist[j][k];  /* v -- j */
+      if (v == i || v == j)
+        continue;
+      for (l = 0; l < g->degree[i]; l++) {
+        if (g->edgelist[i][l] == v) { /* i -- v */
+          count++;
+        }
+      }
+    }
+  }
+  return count;
+}
+
 #endif /*TWOPATH_LOOKUP*/
 
 /* 
  * Return density of graph
  * 
  * Parameters:
- *   g          - digraph 
+ *   g          - graph 
  *   allowLoops - allow self-edges (loops)
  *
  * Return value:
@@ -836,10 +900,17 @@ uint_t inTwoPaths(const digraph_t *g, uint_t i, uint_t j)
  */
 double density(const digraph_t *g, bool allowLoops)
 {
-  if (allowLoops)
-    return (double)g->num_arcs / ((double)g->num_nodes * g->num_nodes);
-  else
-    return (double)g->num_arcs / ((double)g->num_nodes * (g->num_nodes - 1));
+  if (g->is_directed) {
+    if (allowLoops)
+      return (double)g->num_arcs / ((double)g->num_nodes * g->num_nodes);
+    else
+      return (double)g->num_arcs / ((double)g->num_nodes * (g->num_nodes - 1));
+  } else {
+    if (allowLoops)
+      return (double)g->num_edges / (((double)g->num_nodes * g->num_nodes)/2.0);
+    else
+      return (double)g->num_edges / (((double)g->num_nodes * (g->num_nodes - 1))/2.0);
+  }
 }
 
 /*
@@ -856,6 +927,7 @@ double density(const digraph_t *g, bool allowLoops)
 bool isArc(const digraph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
+  assert(g->is_directed);
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
   if (g->outdegree[i] < g->indegree[j]) {
@@ -867,6 +939,39 @@ bool isArc(const digraph_t *g, uint_t i, uint_t j)
   } else {
     for (k = 0; k < g->indegree[j]; k++) {
       if (g->revarclist[j][k] == i) {
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+/*
+ * Test if edge i -- j exists
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to test edge
+ *   j - node to test edge
+ *
+ * Return value:
+ *   TRUE iff edge i -- j exists
+ */
+bool isEdge(const digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t k;
+  assert(!g->is_directed);
+  assert(i < g->num_nodes);
+  assert(j < g->num_nodes);
+  if (g->degree[i] < g->degree[j]) {
+    for (k = 0; k < g->degree[i]; k++)  {
+      if (g->edgelist[i][k] == j) {
+        return TRUE;
+      }
+    }
+  } else {
+    for (k = 0; k < g->degree[j]; k++) {
+      if (g->edgelist[j][k] == i) {
         return TRUE;
       }
     }
@@ -904,6 +1009,7 @@ bool isArcIgnoreDirection(const digraph_t *g, uint_t i, uint_t j)
  */
 void insertArc(digraph_t *g, uint_t i, uint_t j)
 {
+  assert(g->is_directed);
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
   g->num_arcs++;
@@ -930,6 +1036,44 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
 }
 
 /*
+ * Insert edge i -- j into graph g, WITHOUT updating alledges flat edge list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to insert edge
+ *   j - node to insert edge
+ *
+ * Return value:
+ *   None
+ */
+void insertEdge(digraph_t *g, uint_t i, uint_t j)
+{
+  assert(!g->is_directed);
+  assert(i < g->num_nodes);
+  assert(j < g->num_nodes);
+  g->num_edges++;
+  g->edgelist[i] = (uint_t *)safe_realloc(g->edgelist[i],
+                                         (g->degree[i]+1) * sizeof(uint_t));
+  g->edgelist[i][g->outdegree[i]++] = j;
+  g->edgelist[j] = (uint_t *)safe_realloc(g->edgelist[j],
+                                            (g->degree[j]+1) * sizeof(uint_t));
+  g->edgelist[j][g->degree[j]++] = i;
+#ifdef TWOPATH_LOOKUP
+  updateTwoPathsMatrices(g, i, j, TRUE);
+#endif /* TWOPATH_LOOKUP */
+  DIGRAPH_DEBUG_PRINT(("insertEdge %u -- %u degree(%u) = %u degree(%u) = %u\n", i, j, j, g->degree[j], i, g->degree[i]));
+
+  /* update zone information for snowball conditional estimation */
+  if (g->zone[i] > g->zone[j]) {
+    assert(g->zone[i] == g->zone[j] + 1);
+    g->prev_wave_degree[i]++;
+  } else if (g->zone[j] > g->zone[i]) {
+    assert(g->zone[j] == g->zone[i] + 1);
+    g->prev_wave_degree[j]++;
+  }
+}
+
+/*
  * Remove arc i -> j from digraph g, WITHOUT updating allarcs flat arc list
  *
  * Parameters:
@@ -943,6 +1087,7 @@ void insertArc(digraph_t *g, uint_t i, uint_t j)
 void removeArc(digraph_t *g, uint_t i, uint_t j)
 {
   uint_t k;
+  assert(g->is_directed);
   DIGRAPH_DEBUG_PRINT(("removeArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
   /*removed as slows significantly: assert(isArc(g, i, j));*/
   assert(i < g->num_nodes);
@@ -1000,6 +1145,56 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
   }
 }
 
+/*
+ * Remove edge i -- j from graph g, WITHOUT updating alledges flat edge list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to remove arc from
+ *   j - node to remove arc to
+ *
+ * Return value:
+ *   None
+ */
+void removeEdge(digraph_t *g, uint_t i, uint_t j)
+{
+  uint_t k;
+  assert(!g->is_directed);
+  DIGRAPH_DEBUG_PRINT(("removeEdge %u -> %u degree(%u) = %u degree(%u) = %u\n", i, j, j, g->degree[j], i, g->degree[i]));
+  assert(i < g->num_nodes);
+  assert(j < g->num_nodes);
+  assert(g->num_edges > 0);
+  assert(g->degree[i] > 0);
+  assert(g->degree[j] > 0);
+
+  /* edgelist is not ordered, so  just replace deleted entry
+     with last entry */
+  for (k = 0; k < g->degree[i] && g->edgelist[i][k] != j; k++)
+    /*nothing*/;
+  assert(g->edgelist[i][k] == j);
+  g->edgelist[i][k] = g->edgelist[i][g->degree[i]-1];
+  for (k = 0; k < g->degree[j] && g->edgelist[j][k] != i; k++)
+    /*nothing*/;
+  assert(g->edgelist[j][k] == i);
+  g->edgelist[j][k] = g->edgelist[j][g->degree[j]-1];
+
+  g->num_edges--;
+  g->degree[i]--;
+  g->degree[j]--;
+#ifdef TWOPATH_LOOKUP
+  updateTwoPathsMatrices(g, i, j, FALSE);
+#endif /* TWOPATH_LOOKUP */
+
+  /* update zone information for snowball conditional estimation */ 
+  if (g->zone[i] > g->zone[j]) {
+    assert(g->prev_wave_degree[i] > 1);
+    g->prev_wave_degree[i]--;
+  } else if (g->zone[j] > g->zone[i]) {
+    assert(g->prev_wave_degree[j] > 1);
+    g->prev_wave_degree[j]--;
+  }
+}
+
 
 /*
  * Insert arc i -> j into digraph g, updating allarcs flat arc list
@@ -1014,11 +1209,33 @@ void removeArc(digraph_t *g, uint_t i, uint_t j)
  */
 void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j)
 {
+  assert(g->is_directed);
   insertArc(g, i, j);
   g->allarcs = (nodepair_t *)safe_realloc(g->allarcs,
                                           g->num_arcs * sizeof(nodepair_t));
   g->allarcs[g->num_arcs-1].i = i;
   g->allarcs[g->num_arcs-1].j = j;
+}
+
+/*
+ * Insert edge i -- j into graph g, updating alledeges flat edge list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to insert edge
+ *   j - node to insert edge
+ *
+ * Return value:
+ *   None
+ */
+void insertEdge_alledges(digraph_t *g, uint_t i, uint_t j)
+{
+  assert(!g->is_directed);
+  insertEdge(g, i, j);
+  g->alledges = (nodepair_t *)safe_realloc(g->alledges,
+                                          g->num_edges * sizeof(nodepair_t));
+  g->alledges[g->num_edges-1].i = i;
+  g->alledges[g->num_edges-1].j = j;
 }
 
 /*
@@ -1036,6 +1253,7 @@ void insertArc_allarcs(digraph_t *g, uint_t i, uint_t j)
  */
 void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
 {
+  assert(g->is_directed);
   removeArc(g, i, j);
   /* remove entry from the flat all arcs list */
   assert(g->allarcs[arcidx].i == i && g->allarcs[arcidx].j == j);
@@ -1043,6 +1261,32 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
   /* g->num_arcs already decremented by removeArc() */
   g->allarcs[arcidx].i = g->allarcs[g->num_arcs].i;
   g->allarcs[arcidx].j = g->allarcs[g->num_arcs].j;
+}
+
+/*
+ * Remove edge i -- j from graph g, updating alledges flat edge list
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to remove edge
+ *   j - node to remove edge
+ *   edgeidx - index in aledges flat edge list of the i--j entry for
+ *            fast removal
+ *            as this is known (edge has been selected from this list)
+ *
+ * Return value:
+ *   None
+ */
+void removeEdge_alledges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx)
+{
+  assert(!g->is_directed);
+  removeEdge(g, i, j);
+  /* remove entry from the flat all edges list */
+  assert(g->alledges[edgeidx].i == i && g->alledges[edgeidx].j == j);
+  /* replace deleted entry with last entry */
+  /* g->num_edges already decremented by removeEdge() */
+  g->alledges[edgeidx].i = g->alledges[g->num_edges].i;
+  g->alledges[edgeidx].j = g->alledges[g->num_edges].j;
 }
 
 
@@ -1062,6 +1306,7 @@ void removeArc_allarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
  */
 void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j)
 {
+  assert(g->is_directed);
   assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
   assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
   insertArc(g, i, j);
@@ -1071,6 +1316,34 @@ void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j)
                                                sizeof(nodepair_t));
   g->allinnerarcs[g->num_inner_arcs-1].i = i;
   g->allinnerarcs[g->num_inner_arcs-1].j = j;
+}
+
+/*
+ * Insert edge i -- j into graph g, updating allinneredges flat edge list
+ *
+ * Used for conditional estimation when we must add an edge that is
+ * between nodes in inner zones and in same zone or adjacent zones only.
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to insert edge
+ *   j - node to insert edge
+ *
+ * Return value:
+ *   None
+ */
+void insertEdge_allinneredges(digraph_t *g, uint_t i, uint_t j)
+{
+  assert(!g->is_directed);
+  assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+  assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+  insertEdge(g, i, j);
+  g->num_inner_edges++;
+  g->allinneredges = (nodepair_t *)safe_realloc(g->allinneredges,
+                                               g->num_inner_edges *
+                                               sizeof(nodepair_t));
+  g->allinneredges[g->num_inner_edges-1].i = i;
+  g->allinneredges[g->num_inner_edges-1].j = j;
 }
 
 /*
@@ -1091,6 +1364,7 @@ void insertArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j)
  */
 void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
 {
+  assert(g->is_directed);
   assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
   assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
   removeArc(g, i, j);
@@ -1100,6 +1374,36 @@ void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
   g->num_inner_arcs--;
   g->allinnerarcs[arcidx].i = g->allinnerarcs[g->num_inner_arcs].i;
   g->allinnerarcs[arcidx].j = g->allinnerarcs[g->num_inner_arcs].j;
+}
+
+/*
+ * Remove edge i -- j from graph g, updating allinneredges flat edge list
+ *
+ * Used for conditional estimation when we must delete an edge that is
+ * between nodes in inner zones and in same zone or adjacent zones only.
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to remove edge
+ *   j - node to remove edge
+ *   edgeidx - index in allinneredges flat edge list of the i->j entry for fast 
+ *            removal as this is known (edge has been selected from this list)
+ *
+ * Return value:
+ *   None
+ */
+void removeEdge_allinneredges(digraph_t *g, uint_t i, uint_t j, uint_t edgeidx)
+{
+  assert(!g->is_directed);
+  assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
+  assert(labs((long)g->zone[i] - (long)g->zone[j]) <= 1);
+  removeEdge(g, i, j);
+  /* remove entry from the flat all edges list */
+  assert(g->allinneredges[edgeidx].i == i && g->allinneredges[edgeidx].j == j);
+  /* replace deleted entry with last entry */
+  g->num_inner_edges--;
+  g->allinneredges[edgeidx].i = g->allinneredges[g->num_inner_edges].i;
+  g->allinneredges[edgeidx].j = g->allinneredges[g->num_inner_edges].j;
 }
 
 
@@ -1119,6 +1423,7 @@ void removeArc_allinnerarcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
  */
 void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j)
 {
+  assert(g->is_directed);
   assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
   insertArc(g, i, j);
   g->num_maxtermsender_arcs++;
@@ -1147,6 +1452,7 @@ void insertArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j)
  */
 void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t arcidx)
 {
+  assert(g->is_directed);
   assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
   removeArc(g, i, j);
   /* remove entry from the flat all arcs list */
@@ -1159,61 +1465,93 @@ void removeArc_all_maxtermsender_arcs(digraph_t *g, uint_t i, uint_t j, uint_t a
 
 
 /*
- * Allocate the  digraph structure for empty digraph with given
+ * Allocate the  graph/digraph structure for empty graph/digraph with given
  * number of nodes.
  *
  * Parameters:
- *    num_vertices - number of nodes in digraph
+ *    num_vertices - number of nodes in graph/digraph
+ *    is_directed  - TRUE for directed graph else undirected
  *
  * Return values:
- *    Allocated and initizlied to empty digraph
+ *    Allocated and initizlied to empty graph or digraph
  */
-digraph_t *allocate_digraph(uint_t num_vertices)
+digraph_t *allocate_graph(uint_t num_vertices, bool is_directed)
 {
-  digraph_t *g = (digraph_t *)safe_malloc(sizeof(digraph_t));
-  
+  digraph_t *g = (digraph_t *)safe_calloc(1, sizeof(digraph_t));
+  g->is_directed = is_directed;
   g->num_nodes = num_vertices;
-  g->num_arcs = 0;
-  g->outdegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
-  g->arclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
-  g->indegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
-  g->revarclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
-  g->allarcs = NULL;
-
+  if (is_directed) {
+    g->num_arcs = 0;
+    g->outdegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
+    g->arclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
+    g->indegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
+    g->revarclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
+    g->allarcs = NULL;
+    
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
-  g->mixTwoPathHashTab = NULL;
-  g->inTwoPathHashTab = NULL;
-  g->outTwoPathHashTab = NULL;
-
-  assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
+    g->mixTwoPathHashTab = NULL;
+    g->inTwoPathHashTab = NULL;
+    g->outTwoPathHashTab = NULL;
+    
+    assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
 #ifdef DEBUG_MEMUSAGE
 #ifdef HASH_BLOOM
-  /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
-  MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
-                        HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+    /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
+    MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
+			  HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
-  g->mixTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-                                              sizeof(uint_t));
-  g->inTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-                                             sizeof(uint_t));
-  g->outTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-                                              sizeof(uint_t));
+    g->mixTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+						sizeof(uint_t));
+    g->inTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+					       sizeof(uint_t));
+    g->outTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+						sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
-  MEMUSAGE_DEBUG_PRINT(("mixTwoPathMatrix size %f MB\n", 
-                        (double)num_vertices*num_vertices*sizeof(uint_t)/
-                        (1024*1024)));
-  MEMUSAGE_DEBUG_PRINT(("inTwoPathMatrix size %f MB\n", 
-                        (double)num_vertices*num_vertices*sizeof(uint_t)/
-                        (1024*1024)));
-  MEMUSAGE_DEBUG_PRINT(("outTwoPathMatrix size %f MB\n", 
-                        (double)num_vertices*num_vertices*sizeof(uint_t)/
-                        (1024*1024)));
+    MEMUSAGE_DEBUG_PRINT(("mixTwoPathMatrix size %f MB\n", 
+			  (double)num_vertices*num_vertices*sizeof(uint_t)/
+			  (1024*1024)));
+    MEMUSAGE_DEBUG_PRINT(("inTwoPathMatrix size %f MB\n", 
+			  (double)num_vertices*num_vertices*sizeof(uint_t)/
+			  (1024*1024)));
+    MEMUSAGE_DEBUG_PRINT(("outTwoPathMatrix size %f MB\n", 
+			  (double)num_vertices*num_vertices*sizeof(uint_t)/
+			  (1024*1024)));
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
+  } else {
+    /* undirected */
+    g->num_edges = 0;
+    g->degree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
+    g->edgelist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
+    g->alledges = NULL;
+    
+#ifdef TWOPATH_LOOKUP
+#ifdef TWOPATH_HASHTABLES
+    g->twoPathHashTab = NULL;
+    
+    assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
+#ifdef DEBUG_MEMUSAGE
+#ifdef HASH_BLOOM
+    /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
+    MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
+			  HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+#endif /* HASH_BLOOM */
+#endif /* DEBUG_MEMUSAGE */
+#else
+    g->twoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+						sizeof(uint_t));
+#ifdef DEBUG_MEMUSAGE
+    MEMUSAGE_DEBUG_PRINT(("twoPathMatrix size %f MB\n", 
+			  (double)num_vertices*num_vertices*sizeof(uint_t)/
+			  (1024*1024)));
+#endif /*DEBUG_MEMUSAGE*/
+#endif /* TWOPATH_HASHTABLES */
+#endif /* TWOPATH_LOOKUP */
+  }
   
   g->num_binattr = 0;
   g->binattr_names = NULL;
@@ -1246,15 +1584,15 @@ digraph_t *allocate_digraph(uint_t num_vertices)
 }
 
 /*
- * Free the digraph internal structures and digraph itself
+ * Free the graph internal structures and graph itself
  *
  * Parameters:
- *    g - digraph to deallocate
+ *    g - graph to deallocate
  * Return value:
  *    None
  * Note the pointer g itelf is freed in this function
  */
-void free_digraph(digraph_t *g)
+void free_graph(digraph_t *g)
 {
   uint_t i;
 
@@ -1291,15 +1629,14 @@ void free_digraph(digraph_t *g)
   free(g->revarclist);
   free(g->indegree);
   free(g->outdegree);
+  free(g->alledges);
+  free(g->edgelist);
+  free(g->degree);
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
-  deleteAllHashTable(g->mixTwoPathHashTab);
-  deleteAllHashTable(g->inTwoPathHashTab);
-  deleteAllHashTable(g->outTwoPathHashTab);
+  deleteAllHashTable(g->twoPathHashTab);
 #else /* using arrays not hash tables for two-path lookup */
-  free(g->mixTwoPathMatrix);
-  free(g->inTwoPathMatrix);
-  free(g->outTwoPathMatrix);
+  free(g->twoPathMatrix);
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
   free(g->zone);
@@ -1356,18 +1693,18 @@ uint_t get_num_vertices_from_arclist_file(FILE *pajek_file)
 
 
 /*
- * Write arc list to stdout
+ * Write arc list or edge list to stdout
  *
  * Parameters:
- *     g - digraph to dump
+ *     g - digraph or graph to dump
  *
  * Return value:
  *    None.
  *
  */
-void dump_digraph_arclist(const digraph_t *g)
+void dump_graph_arclist(const digraph_t *g)
 {
-  write_digraph_arclist_to_file(stdout, g);
+  write_graph_arclist_to_file(stdout, g);
 }
 
 /*
@@ -1378,8 +1715,12 @@ void print_data_summary(const digraph_t * g, bool allowLoops)
   uint_t i,j;
   uint_t num_na_values;
   
-  printf("Digraph with %u vertices and %u arcs (density %g) [%s]\n",
-         g->num_nodes, g->num_arcs, density(g, allowLoops),
+  printf("%s with %u vertices and %u %s (density %g) [%s]\n",
+	 g->is_directed ? "Digraph" : "Graph",
+         g->num_nodes,
+	 g->is_directed ? g->num_arcs : g->num_edges,
+	 g->is_directed ? "arcs" : "edges",
+	 density(g, allowLoops),
          allowLoops ? "loops allowed" : "loops not allowed");
   printf("%u binary attributes\n", g->num_binattr);
   for (i = 0; i < g->num_binattr; i++) {
@@ -1467,7 +1808,7 @@ void print_zone_summary(const digraph_t *g)
  *    None.
  *
  */
-void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
+void write_graph_arclist_to_file(FILE *fp, const digraph_t *g)
 {
   uint_t i, j, count=0;
 
@@ -1514,7 +1855,7 @@ void write_digraph_arclist_to_file(FILE *fp, const digraph_t *g)
  * 1
  * 2
  */
-int add_snowball_zones_to_digraph(digraph_t *g, const char *zone_filename)
+int add_snowball_zones_to_graph(digraph_t *g, const char *zone_filename)
 {
   int      num_attr, j;
   char   **attr_names;

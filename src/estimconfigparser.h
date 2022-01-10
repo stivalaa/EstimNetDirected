@@ -69,6 +69,7 @@ typedef struct estim_config_s {
   char *term_filename;     /* filename of citation ERGM term file or NULL */
   bool  citationERGM;      /* use cERGM conditional estimation on terms */
   bool allowLoops;         /* allow self-edges (loops) */
+  bool isDirected;         /* directed graph (else undirected) */
   /*
    * values built by confiparser.c functions from parsed config settings
    */

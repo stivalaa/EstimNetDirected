@@ -449,7 +449,7 @@ int simulate_ergm(digraph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
               strlen(suffix));
       sim_outfile = fopen(sim_outfilename, "w");
-      write_digraph_arclist_to_file(sim_outfile, g);
+      write_graph_arclist_to_file(sim_outfile, g);
       fclose(sim_outfile);
     }
   }
@@ -499,7 +499,7 @@ int do_simulation(sim_config_t * config)
     return -1;
   }
   
-  g = allocate_digraph(config->numNodes);
+  g = allocate_graph(config->numNodes, config->isDirected);
   if (load_attributes(g, config->binattr_filename,
                       config->catattr_filename,
                       config->contattr_filename,
@@ -509,7 +509,7 @@ int do_simulation(sim_config_t * config)
   }
 
   if (config->zone_filename) {
-    if (add_snowball_zones_to_digraph(g, config->zone_filename)) {
+    if (add_snowball_zones_to_graph(g, config->zone_filename)) {
       fprintf(stderr, "ERROR: reading snowball sampling zones from %s failed\n",
               config->zone_filename);
       return -1;
@@ -934,7 +934,7 @@ int do_simulation(sim_config_t * config)
      
   free(theta);
   free(dzA);
-  free_digraph(g);
+  free_graph(g);
    
   return 0;
 }

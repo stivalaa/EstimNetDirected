@@ -784,7 +784,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     return -1;
   }
   num_nodes = get_num_vertices_from_arclist_file(arclist_file);/* closes file */
-  g = allocate_digraph(num_nodes);
+  g = allocate_graph(num_nodes, config->isDirected);
 
 
   if (load_attributes(g, config->binattr_filename,
@@ -880,11 +880,11 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
   printf("%.2f s\n", (double)etime/1000);
 #ifdef DEBUG_DIGRAPH
-  dump_digraph_arclist(g);
+  dump_graph_arclist(g);
 #endif /*DEBUG_DIGRAPH*/
 
   if (config->zone_filename) {
-    if (add_snowball_zones_to_digraph(g, config->zone_filename)) {
+    if (add_snowball_zones_to_graph(g, config->zone_filename)) {
       fprintf(stderr, "ERROR: reading snowball sampling zones from %s failed\n",
               config->zone_filename);
       return -1;
@@ -1155,10 +1155,10 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
             strlen(suffix));
     sim_outfile = fopen(sim_outfilename, "w");
-    write_digraph_arclist_to_file(sim_outfile, g);
+    write_graph_arclist_to_file(sim_outfile, g);
     fclose(sim_outfile);
   }
-  free_digraph(g);
+  free_graph(g);
   free(theta);
   free(graphStats);
   return 0;
