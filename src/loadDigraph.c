@@ -1,10 +1,10 @@
 /*****************************************************************************
  * 
- * File:    loadDigraph.c
+ * File:    loadGraph.c
  * Author:  Alex Stivala
  * Created: October 2017
  *
- * Load digraph from Pajek format arc list file and optionally compute
+ * Load digraph or graph from Pajek format arc list file and optionally compute
  * statistics corresponding to ERGM parameters.
  *
  * Preprocessor defines used:
@@ -42,10 +42,10 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
 
 
 /*
- * Build digraph from Pajek format arc list file.
- * Note this builds the digraph structure only, not the node attributes.
+ * Build graph or digraph from Pajek format arc list file.
+ * Note this builds the graph structure only, not the node attributes.
  * These are read and built separately by calling load_attributes().
- * The graph g must be already allocated by allocate_digraph() with the
+ * The graph g must be already allocated by allocate_graph() with the
  * correct number of nodes, which can be found by
  * get_num_nodes(pajek_file).
  *
@@ -101,7 +101,7 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
  *
  * Note this function calls exit() on error.
  */
-graph_t *load_digraph_from_arclist_file(FILE *pajek_file, graph_t *g,
+graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           bool computeStats,
                                           uint_t n, uint_t n_attr,
                                           uint_t n_dyadic,

@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
             arclist_filename, strerror(errno));
     return -1;
   }
-  g = load_digraph_from_arclist_file(file, g, FALSE,
+  g = load_graph_from_arclist_file(file, g, FALSE,
                                      0, 0, 0, 0, NULL, NULL, NULL, NULL,
                                      NULL, NULL, NULL, NULL, NULL);
   gettimeofday(&end_timeval, NULL);

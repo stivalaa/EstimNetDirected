@@ -742,7 +742,7 @@ int do_simulation(sim_config_t * config)
               config->arclist_filename, strerror(errno));
       return -1;
     }
-    g = load_digraph_from_arclist_file(arclist_file, g,
+    g = load_graph_from_arclist_file(arclist_file, g,
                                        TRUE /*computeStats*/,
                                        num_param,
                                        n_attr, n_dyadic, n_attr_interaction,

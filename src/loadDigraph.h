@@ -1,11 +1,11 @@
-#ifndef LOADDIGRAPH_H
-#define LOADDIGRAPH_H
+#ifndef LOADGRAPH_H
+#define LOADGRAPH_H
 /*****************************************************************************
- * File:    loadDigraph.h
+ * File:    loadGraph.h
  * Author:  Alex Stivala
  * Created: October 2017
  *
- * Load digraph from Pajek format arc list file and optionally compute
+ * Load digraph or graph from Pajek format arc list file and optionally compute
  * statistics corresponding to ERGM parameters.
  *
  ****************************************************************************/
@@ -13,7 +13,7 @@
 #include "graph.h"
 #include "changeStatisticsDirected.h"
 
-graph_t *load_digraph_from_arclist_file(FILE *pajek_file, graph_t *g,
+graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           bool computeStats,
                                           uint_t n, uint_t n_attr,
                                           uint_t n_dyadic,
@@ -34,5 +34,5 @@ graph_t *load_digraph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           double theta[]);
 
 
-#endif /* LOADDIGRAPH_H */
+#endif /* LOADGRAPH_H */
 

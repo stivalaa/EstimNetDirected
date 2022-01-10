@@ -863,7 +863,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   if (computeStats)
     printf(" and computing observed statistics");
   printf("..\n");
-  g = load_digraph_from_arclist_file(arclist_file, g,
+  g = load_graph_from_arclist_file(arclist_file, g,
                                      computeStats,
                                      num_param,
                                      n_attr, n_dyadic, n_attr_interaction,

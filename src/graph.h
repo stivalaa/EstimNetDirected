@@ -1,5 +1,5 @@
-#ifndef DIGRAPH_H
-#define DIGRAPH_H
+#ifndef GRAPH_H
+#define GRAPH_H
 /*****************************************************************************
  * 
  * File:    graph.h
@@ -276,5 +276,5 @@ void print_term_summary(const graph_t *g);
 uint_t num_loops(const graph_t *g);
 bool has_loop(const graph_t *t, uint_t u);
   
-#endif /* DIGRAPH_H */
+#endif /* GRAPH_H */
 
