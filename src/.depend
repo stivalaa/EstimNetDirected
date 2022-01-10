@@ -3,29 +3,29 @@ utils.o: utils.c utils.h Random123-1.09/include/Random123/threefry.h \
  Random123-1.09/include/Random123/features/gccfeatures.h \
  Random123-1.09/include/Random123/array.h \
  Random123-1.09/include/Random123/features/sse.h
-digraph.o: digraph.c digraph.h utils.h
+graph.o: graph.c graph.h utils.h
 changeStatisticsDirected.o: changeStatisticsDirected.c \
- changeStatisticsDirected.h utils.h digraph.h
-basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h \
- digraph.h basicSampler.h
-equilibriumExpectation.o: equilibriumExpectation.c utils.h digraph.h \
+ changeStatisticsDirected.h utils.h graph.h
+basicSampler.o: basicSampler.c utils.h changeStatisticsDirected.h graph.h \
+ basicSampler.h
+equilibriumExpectation.o: equilibriumExpectation.c utils.h graph.h \
  loadDigraph.h changeStatisticsDirected.h basicSampler.h ifdSampler.h \
  tntSampler.h equilibriumExpectation.h estimconfigparser.h configparser.h
 configparser.o: configparser.c configparser.h utils.h \
- changeStatisticsDirected.h digraph.h
+ changeStatisticsDirected.h graph.h
 estimconfigparser.o: estimconfigparser.c estimconfigparser.h \
- configparser.h utils.h changeStatisticsDirected.h digraph.h
-ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h digraph.h \
+ configparser.h utils.h changeStatisticsDirected.h graph.h
+ifdSampler.o: ifdSampler.c utils.h changeStatisticsDirected.h graph.h \
  ifdSampler.h
-loadDigraph.o: loadDigraph.c utils.h loadDigraph.h digraph.h \
+loadDigraph.o: loadDigraph.c utils.h loadDigraph.h graph.h \
  changeStatisticsDirected.h
-tntSampler.o: tntSampler.c utils.h changeStatisticsDirected.h digraph.h \
+tntSampler.o: tntSampler.c utils.h changeStatisticsDirected.h graph.h \
  tntSampler.h
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
- estimconfigparser.h configparser.h changeStatisticsDirected.h digraph.h \
+ estimconfigparser.h configparser.h changeStatisticsDirected.h graph.h \
  equilibriumExpectation.h
 EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h \
- estimconfigparser.h configparser.h changeStatisticsDirected.h digraph.h \
+ estimconfigparser.h configparser.h changeStatisticsDirected.h graph.h \
  equilibriumExpectation.h
 SimulateERGMmain.o: SimulateERGMmain.c utils.h simconfigparser.h \
- configparser.h changeStatisticsDirected.h digraph.h simulation.h
+ configparser.h changeStatisticsDirected.h graph.h simulation.h

@@ -28,7 +28,7 @@
 #include <string.h>
 #include <errno.h>
 #include <math.h>
-#include "digraph.h"
+#include "graph.h"
 
 
 /*****************************************************************************

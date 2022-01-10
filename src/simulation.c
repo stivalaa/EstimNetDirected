@@ -16,7 +16,7 @@
 #include <assert.h>
 #include <limits.h>
 #include "utils.h"
-#include "digraph.h"
+#include "graph.h"
 #include "basicSampler.h"
 #include "ifdSampler.h"
 #include "tntSampler.h"

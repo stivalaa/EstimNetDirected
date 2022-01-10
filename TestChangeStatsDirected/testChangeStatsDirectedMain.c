@@ -23,7 +23,7 @@
 #include <string.h>
 #include <time.h>
 #include <assert.h>
-#include "digraph.h"
+#include "graph.h"
 #include "changeStatisticsDirected.h"
 #include "loadDigraph.h"
 

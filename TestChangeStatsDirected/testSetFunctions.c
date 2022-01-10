@@ -28,7 +28,7 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
-#include "digraph.h"
+#include "graph.h"
 #include "changeStatisticsDirected.h"
 
 #define MAX_VALS  2000

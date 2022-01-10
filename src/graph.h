@@ -2,7 +2,7 @@
 #define DIGRAPH_H
 /*****************************************************************************
  * 
- * File:    digraph.h
+ * File:    graph.h
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *

@@ -10,7 +10,7 @@
  *
  ****************************************************************************/
 
-#include "digraph.h"
+#include "graph.h"
 #include "changeStatisticsDirected.h"
 
 graph_t *load_digraph_from_arclist_file(FILE *pajek_file, graph_t *g,
