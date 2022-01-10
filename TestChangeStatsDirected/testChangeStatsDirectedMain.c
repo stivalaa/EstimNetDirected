@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
          arclist_filename);
 #endif
   num_nodes = get_num_vertices_from_arclist_file(file); /* closes file */
-  g = allocate_digraph(num_nodes);
+  g = allocate_graph(num_nodes, TRUE);
   if (!(file = fopen(arclist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
             arclist_filename, strerror(errno));
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
   fprintf(stderr, "%.2f s\n", (double)etime/1000);
 #ifdef DEBUG_DIGRAPH
-  dump_digraph_arclist(g);
+  dump_graph_arclist(g);
 #endif /*DEBUG_DIGRAPH*/
 
 #ifdef TWOPATH_LOOKUP
