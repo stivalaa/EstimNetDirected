@@ -609,8 +609,16 @@ int do_simulation(sim_config_t * config)
     }
     if (config->citationERGM) {
       fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
+      return -1;
     }
   }
+
+  if (config->forbidReciprocity && !config->isDirected) {
+    fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
+	    "undirected graph\n");
+    return -1;
+  }
+  
   
   /* 
    *set parameter values from the configuration settings and write

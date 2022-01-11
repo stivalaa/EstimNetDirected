@@ -160,26 +160,24 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t  i,j,k,l;
   uint_t  arcidx = 0;
   double  alpha;
-  const double prob      = 0.5; /* equal probability of add or delete */
-  const double odds      = prob / (1 - prob);
-  double       N         = g->num_nodes;
-  double       num_dyads = N*(N-1);/*directed so not div by 2*/
-  double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
+  const double prob = 0.5; /* equal probability of add or delete */
+  const double odds = prob / (1 - prob);
+  double  N         = g->num_nodes;
+  double num_dyads  = num_graph_dyads(g, allowLoops);
+
+  /* for conditional estimation on snowball sample */
+  double       num_inner_dyads =  num_graph_inner_dyads(g);
+  uint_t       num_inner_arcs  =  num_inner_arcs_or_edges(g);
+
+  /* for citation ERGM */
   double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
+  
     
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
-
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
   
-  if (allowLoops) {
-    /* L_max (max number of possible edges) would be a better name instead of
-       num_dyads now that self-edges are allowed,
-       since a self-edge is a possible
-       edge, but does not actually involve a dyad, only one node */
-    num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
-  }
-
-  if (forbidReciprocity) {
+  if (g->is_directed && forbidReciprocity) {
     if (allowLoops) {
       num_dyads -= N*(N-1)/2.0; /* subtract half of non-loop potential edges*/
     } else {
@@ -193,7 +191,7 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   for (k = 0; k < sampler_m; k++) {
 
-    if (g->num_arcs > 0)
+    if (num_arcs_or_edges(g) > 0)
       isDelete = (urand() < prob); /*add or delete move with equal probability*/
     else
       isDelete = FALSE; /* force an add move on empty graph */
@@ -278,7 +276,7 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* not using snowball or citation ERGM conditional estimation */
       if (isDelete) {
         /* Delete move. Find an existing arc uniformly at random to delete. */
-        arcidx = int_urand(g->num_arcs);
+        arcidx = int_urand(num_arcs_or_edges(g));
         i = g->allarcs[arcidx].i;
         j = g->allarcs[arcidx].j;
         /*removed as slows significantly: assert(isArc(g, i, j));*/
@@ -322,15 +320,15 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                             theta, isDelete, changestats);
 
     
-    /* adjust the acceptance probability as done in MHproposals.c
-       MH_TNT() in statnet ergm code */
+    /* adjust the acceptance probability for Metropolis-Hastings
+       (as for MHproposals.c MH_TNT() in statnet ergm code) */
     if (useConditionalEstimation) {
       if (isDelete) {
-        total += log( g->num_inner_arcs == 1 ? 1.0 / (prob * num_inner_dyads + (1 - prob)) :
-                    g->num_inner_arcs / (odds * num_inner_dyads + g->num_inner_arcs) );
+        total += log( num_inner_arcs == 1 ? 1.0 / (prob * num_inner_dyads + (1 - prob)) :
+                    num_inner_arcs / (odds * num_inner_dyads + num_inner_arcs) );
       } else {
-        total += log( g->num_inner_arcs == 0 ? prob * num_inner_dyads + (1 - prob) :
-                    1 + (odds * num_inner_dyads) / (g->num_inner_arcs + 1) );
+        total += log( num_inner_arcs == 0 ? prob * num_inner_dyads + (1 - prob) :
+                    1 + (odds * num_inner_dyads) / (num_inner_arcs + 1) );
       }
     } else if (citationERGM) {
       if (isDelete) {
@@ -342,11 +340,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       }
     } else {
       if (isDelete) {
-        total += log( g->num_arcs == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
-                    g->num_arcs / (odds * num_dyads + g->num_arcs) );
+        total += log( num_arcs_or_edges(g) == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
+		      num_arcs_or_edges(g) / (odds * num_dyads + num_arcs_or_edges(g)) );
       } else {
-        total += log( g->num_arcs == 0 ? prob * num_dyads + (1 - prob) :
-                    1 + (odds * num_dyads) / (g->num_arcs + 1) );
+        total += log( num_arcs_or_edges(g) == 0 ? prob * num_dyads + (1 - prob) :
+		      1 + (odds * num_dyads) / (num_arcs_or_edges(g) + 1) );
       }
     }
   
@@ -360,7 +358,7 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       accepted++;
       SAMPLER_DEBUG_PRINT(("[%s] accepted = %lu (%g) num_arcs = %u\n", 
                            isDelete ? "del" :  "add",
-                           accepted, k>0?(double)accepted/k:-1, g->num_arcs));
+                           accepted, k>0?(double)accepted/k:-1, num_arcs_or_edges(g)));
       if (performMove) {
         /* actually do the move. If deleting, already done it. For add, add
            the arc now */

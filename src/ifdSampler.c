@@ -94,7 +94,7 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
 
   /* for conditional estimation on snowball sample */
   double       num_inner_dyads =  num_graph_inner_dyads(g);
-
+  uint_t       num_inner_arcs  =  num_inner_arcs_or_edges(g);
 
   /* for citation ERGM */
   double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
@@ -103,15 +103,7 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
   assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
 
-  if (allowLoops) {
-    /* L_max (max number of possible edges) would be a better name instead of
-       num_dyads now that self-edges are allowed,
-       since a self-edge is a possible
-       edge, but does not actually involve a dyad, only one node */
-    num_dyads = N*N;  /* if self-edges are allowed, then N^2 not N(N-1) */
-  }
-
-  if (forbidReciprocity) {
+  if (g->is_directed && forbidReciprocity) {
     if (allowLoops) {
       num_dyads -= N*(N-1)/2.0; /* subtract half of non-loop potential edges*/
     } else {
@@ -120,9 +112,9 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
   }
 
   if (useConditionalEstimation) {
-    return log((num_inner_dyads - g->num_inner_arcs) / (g->num_inner_arcs + 1));
+    return log((num_inner_dyads - num_inner_arcs) / (double)(num_inner_arcs + 1));
   } else if (citationERGM) {
-    return log((num_maxtermsender_dyads - g->num_maxtermsender_arcs) / (g->num_maxtermsender_arcs + 1));
+    return log((num_maxtermsender_dyads - g->num_maxtermsender_arcs) / (double)(g->num_maxtermsender_arcs + 1));
   } else {
     return log((num_dyads - num_arcs) / (num_arcs + 1));
   }

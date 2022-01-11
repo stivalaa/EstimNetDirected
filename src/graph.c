@@ -927,8 +927,8 @@ double num_graph_dyads(const graph_t *g, bool allowLoops)
 double num_graph_inner_dyads(const graph_t *g)
 {
   return g->is_directed ?
-    g->num_inner_nodes*(g->num_inner_nodes-1) :
-    g->num_inner_nodes*(g->num_inner_nodes-1)/2.0;
+    (double)g->num_inner_nodes*(g->num_inner_nodes-1) :
+    (double)g->num_inner_nodes*(g->num_inner_nodes-1)/2.0;
 }
 
 /*
@@ -946,6 +946,23 @@ uint_t num_arcs_or_edges(const graph_t *g)
     return g->num_arcs;
   else
     return g->num_edges;
+}
+
+/*
+ * Return number of inner snowball zone arcs (digraph) or edges (graph)
+ *
+ * Parameters:
+ *   g          - graph or digraph
+ *
+ * Return value:
+ *   Number of inner snowball zone edges or arcs
+ */
+uint_t num_inner_arcs_or_edges(const graph_t *g)
+{
+  if (g->is_directed)
+    return g->num_inner_arcs;
+  else
+    return g->num_inner_edges;
 }
 
 /*

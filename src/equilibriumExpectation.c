@@ -1031,15 +1031,21 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    }
    
    if (config->allowLoops) {
-    if (config->useConditionalEstimation) {
-      fprintf(stderr, "ERROR: cannot use allowLoops in conditional estimation\n");
-      return -1;
-    }
-    if (config->citationERGM) {
-      fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
-    }
-  }
+     if (config->useConditionalEstimation) {
+       fprintf(stderr, "ERROR: cannot use allowLoops in conditional estimation\n");
+       return -1;
+     }
+     if (config->citationERGM) {
+       fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
+       return -1;
+     }
+   }
 
+   if (config->forbidReciprocity && !config->isDirected) {
+     fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
+	     "undirected graph\n");
+     return -1;
+   }
    
    if (tasknum == 0) {
      print_data_summary(g, config->allowLoops);
