@@ -1061,7 +1061,7 @@ bool isEdge(const graph_t *g, uint_t i, uint_t j)
  */
 bool isArcIgnoreDirection(const graph_t *g, uint_t i, uint_t j)
 {
-  return isArc(g, i, j) || isArc(g, j, i);
+  return g->is_directed ? (isArc(g, i, j) || isArc(g, j, i)) : isEdge(g, i, j);
 }
 
 /*
