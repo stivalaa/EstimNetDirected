@@ -62,16 +62,18 @@ typedef struct {
 #define GET_MIX2PATH_ENTRY(g, i, j) get_twopath_entry((g)->mixTwoPathHashTab, (i), (j))
 #define GET_IN2PATH_ENTRY(g, i, j) get_twopath_entry((g)->inTwoPathHashTab, (i), (j))
 #define GET_OUT2PATH_ENTRY(g, i, j) get_twopath_entry((g)->outTwoPathHashTab, (i), (j))
+#define GET_2PATH_ENTRY(g, i, j) get_twopath_entry((g)->twoPathHashTab, (i), (j)) /* undirected */
 #else
 #define GET_MIX2PATH_ENTRY(g, i, j) ((g)->mixTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
+#define GET_2PATH_ENTRY(g, i, j) ((g)->twoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)]) /* undirected */
 #endif /* TWOPATH_HASHTABLES */
 #else /* not using two-path lookup tables (either arrays or hashtables) */
 #define GET_MIX2PATH_ENTRY(g, i, j) mixTwoPaths((g), (i), (j))
 #define GET_OUT2PATH_ENTRY(g, i, j) outTwoPaths((g), (i), (j))
 #define GET_IN2PATH_ENTRY(g, i, j) inTwoPaths((g), (i), (j))
-
+#define GET_2PATH_ENTRY(g, i, j) twoPaths((g), (i), (j)) /* undirected */
 #endif /* TWOPATH_LOOKUP */
 
 typedef struct graph_s
