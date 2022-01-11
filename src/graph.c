@@ -888,11 +888,71 @@ uint_t twoPaths(const graph_t *g, uint_t i, uint_t j)
 
 #endif /*TWOPATH_LOOKUP*/
 
-/* 
+/*
+ * Return number of potential arcs or edges in a graph
+ *
+ * Parameters:
+ *   g          - graph or digraph
+ *   allowLoops - allow self-edges (loops)
+ *
+ * Return value:
+ *   Number of potential arcs or edges in g
+ */
+double num_graph_dyads(const graph_t *g, bool allowLoops)
+{
+  if (g->is_directed) {
+    if (allowLoops)
+      return (double)g->num_nodes * g->num_nodes;
+    else
+      return (double)g->num_nodes * (g->num_nodes - 1);
+  } else {
+    if (allowLoops)
+      return ((double)g->num_nodes * g->num_nodes)/2.0;
+    else
+      return ((double)g->num_nodes * (g->num_nodes - 1))/2.0;
+  }
+}
+
+/*
+ * Return number of potential arcs or edges between inner snowball nodes a graph
+ * Must not allow loops
+ *
+ * Parameters:
+ *   g          - graph or digraph
+ *
+ * Return value:
+ *   Number of potential arcs or edges between inner nodes g
+ */
+
+double num_graph_inner_dyads(const graph_t *g)
+{
+  return g->is_directed ?
+    g->num_inner_nodes*(g->num_inner_nodes-1) :
+    g->num_inner_nodes*(g->num_inner_nodes-1)/2.0;
+}
+
+/*
+ * Return number of arcs (digraph) or edges (graph)
+ *
+ * Parameters:
+ *   g          - graph or digraph
+ *
+ * Return value:
+ *   Number of edges or arcs
+ */
+uint_t num_arcs_or_edges(const graph_t *g)
+{
+  if (g->is_directed)
+    return g->num_arcs;
+  else
+    return g->num_edges;
+}
+
+/*
  * Return density of graph
  * 
  * Parameters:
- *   g          - graph 
+ *   g          - graph or digraph
  *   allowLoops - allow self-edges (loops)
  *
  * Return value:
@@ -900,18 +960,9 @@ uint_t twoPaths(const graph_t *g, uint_t i, uint_t j)
  */
 double density(const graph_t *g, bool allowLoops)
 {
-  if (g->is_directed) {
-    if (allowLoops)
-      return (double)g->num_arcs / ((double)g->num_nodes * g->num_nodes);
-    else
-      return (double)g->num_arcs / ((double)g->num_nodes * (g->num_nodes - 1));
-  } else {
-    if (allowLoops)
-      return (double)g->num_edges / (((double)g->num_nodes * g->num_nodes)/2.0);
-    else
-      return (double)g->num_edges / (((double)g->num_nodes * (g->num_nodes - 1))/2.0);
-  }
+  return (double)num_arcs_or_edges(g) / num_graph_dyads(g, allowLoops);
 }
+
 
 /*
  * Test if arc i -> j exists

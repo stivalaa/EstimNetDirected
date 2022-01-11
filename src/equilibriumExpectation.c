@@ -1006,8 +1006,13 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    }
 
    /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
-      values were specified */
+      values were specified, and other requirements for cERGM */
    if (config->citationERGM) {
+     if (!config->isDirected) {
+       fprintf(stderr, "ERROR: citation ERGM estimation required directed"
+	       "graph\n");
+       return -1;
+     }
      if (config->useConditionalEstimation) {
        fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
                " estimation and citation ERGM\n");
@@ -1114,7 +1119,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   if (computeStats) {
     fprintf(obs_stats_outfile, "%s\n", fileheader);
     if (config->useIFDsampler) { /* Arc stat not in array, output separately */
-      fprintf(obs_stats_outfile, "%u ", g->num_arcs);
+      fprintf(obs_stats_outfile, "%u ", num_arcs_or_edges(g));
     }
     for (i = 0; i < num_param; i++) {
       fprintf(obs_stats_outfile, "%g", graphStats[i]);

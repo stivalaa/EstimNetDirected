@@ -213,7 +213,9 @@ uint_t inTwoPaths(const graph_t *g, uint_t i, uint_t j);
 uint_t twoPaths(const graph_t *g, uint_t i, uint_t j);
 #endif /*TWOPATH_LOOKUP */
   
-
+double num_graph_dyads(const graph_t *g, bool allowLoops); /*max possible edges in g*/
+double num_graph_inner_dyads(const graph_t *g); /*max edges beteen inner nodes*/
+uint_t num_arcs_or_edges(const graph_t *g); /* number of arcs or edges in g */
 double density(const graph_t *g, bool allowLoops); /* graph density of g */
 bool isArc(const graph_t *g, uint_t i, uint_t j); /* test if arc i->j is in g */
 bool isEdge(const graph_t *g, uint_t i, uint_t j); /* test if edge i--j in in g */

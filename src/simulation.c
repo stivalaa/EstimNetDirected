@@ -580,6 +580,10 @@ int do_simulation(sim_config_t * config)
      network (from which arcs sent from nodes not in the last term (time
      period) are fixed */
   if (config->citationERGM) {
+    if (!config->isDirected) {
+      fprintf(stderr, "ERROR: citation ERGM simulation requires directed graph\n");
+      return -1;
+    }
     if (config->useConditionalSimulation) {
       fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
               " simulation and citation ERGM\n");

@@ -70,8 +70,8 @@
  * Return the value to subtract from the IFD auxiliary parameter in
  * order to get the Arc parameter value when using the IFD sampler,
  * i.e. recover the parameter Theta_L when we have the value of the
- * auxiliary parameter V from equation (20) in the paper (but for
- * directed graphs here).
+ * auxiliary parameter V from equation (20) in the paper (but also for
+ * directed graphs and other complications like conditional estimation here).
  *
  * Parameters:
  *    g - digraph object
@@ -89,11 +89,11 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
                      bool citationERGM, bool forbidReciprocity,
                      bool allowLoops) {
   double N         = g->num_nodes;
-  double num_dyads = N*(N-1);/*directed so not div by 2*/
-  double num_arcs  = g->num_arcs;
+  double num_dyads = num_graph_dyads(g, allowLoops);
+  double num_arcs  = (double)num_arcs_or_edges(g);
 
   /* for conditional estimation on snowball sample */
-  double       num_inner_dyads = g->num_inner_nodes*(g->num_inner_nodes-1);
+  double       num_inner_dyads =  num_graph_inner_dyads(g);
 
 
   /* for citation ERGM */
@@ -101,6 +101,7 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
     
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
 
   if (allowLoops) {
     /* L_max (max number of possible edges) would be a better name instead of
