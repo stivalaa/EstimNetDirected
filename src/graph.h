@@ -74,7 +74,7 @@ typedef struct {
 
 #endif /* TWOPATH_LOOKUP */
 
-typedef struct digraph_s
+typedef struct graph_s
 {
   uint_t   num_nodes;  /* number of nodes */
 
