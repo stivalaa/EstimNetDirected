@@ -214,9 +214,16 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
            ignored arc directions.
          */
         do {
-          arcidx = int_urand(g->num_inner_arcs);
-          i = g->allinnerarcs[arcidx].i;
-          j = g->allinnerarcs[arcidx].j;
+	  if (g->is_directed) {
+	    arcidx = int_urand(g->num_inner_arcs);
+	    i = g->allinnerarcs[arcidx].i;
+	    j = g->allinnerarcs[arcidx].j;
+	  }
+	  else {
+	    arcidx = int_urand(g->num_inner_edges);
+	    i = g->allinneredges[arcidx].i;
+	    j = g->allinneredges[arcidx].j;
+	  }
           SAMPLER_DEBUG_PRINT(("conditional del arcidx %u (%u -> %u) zones %u %u\n", arcidx, i, j, g->zone[i], g->zone[j]));
           assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
           /* any tie must be within same zone or between adjacent zones */
@@ -237,10 +244,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
             j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
           } while (i == j);
           assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
-        } while (isArc(g, i, j) ||
+        } while (isArcOrEdge(g, i, j) ||
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
     } else if (citationERGM) {
+      assert(g->is_directed); /* cERGM only for digraphs */
       assert(!forbidReciprocity); /* TODO not implemented for TNT cERGM */
       assert(!allowLoops);
       if (isDelete && g->num_maxtermsender_arcs == 0) {
@@ -276,11 +284,18 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* not using snowball or citation ERGM conditional estimation */
       if (isDelete) {
         /* Delete move. Find an existing arc uniformly at random to delete. */
-        arcidx = int_urand(num_arcs_or_edges(g));
-        i = g->allarcs[arcidx].i;
-        j = g->allarcs[arcidx].j;
-        /*removed as slows significantly: assert(isArc(g, i, j));*/
-        /* no need to condsider forbidReciprocity on delete move */
+	if (g->is_directed) {
+	  arcidx = int_urand(g->num_arcs);
+	  i = g->allarcs[arcidx].i;
+	  j = g->allarcs[arcidx].j;
+	  /*removed as slows significantly: assert(isArc(g, i, j));*/
+	  /* no need to condsider forbidReciprocity on delete move */
+	} else {
+	  /* undirected */
+	  arcidx = int_urand(g->num_edges);
+	  i = g->alledges[arcidx].i;
+	  j = g->alledges[arcidx].j;
+	}
       } else {
         /* Add move. Find two nodes i, j without arc i->j uniformly at
            random. Because graph is sparse, it is not too inefficient
@@ -291,8 +306,8 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
             do {
               j = int_urand(g->num_nodes);
             } while (!allowLoops && i == j);
-          } while (isArc(g, i, j));
-        } while (forbidReciprocity && isArc(g, j, i));
+          } while (isArcOrEdge(g, i, j));
+        } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
       }
     }
     
