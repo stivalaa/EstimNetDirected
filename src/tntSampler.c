@@ -301,11 +301,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        change statistics, and negate them */
     if (isDelete) {
       if (useConditionalEstimation){
-        removeArc_allinnerarcs(g, i, j, arcidx);
+        removeArcOrEdge_updateinnerlist(g, i, j, arcidx);
       } else if (citationERGM) {
         removeArc_all_maxtermsender_arcs(g, i, j, arcidx);
       } else {
-        removeArc_allarcs(g, i, j, arcidx);        
+        removeArcOrEdge_updatelist(g, i, j, arcidx);
       }
     }
 
@@ -364,11 +364,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
            the arc now */
         if (!isDelete) {
           if (useConditionalEstimation) {
-            insertArc_allinnerarcs(g, i, j);
+            insertArcOrEdge_updateinnerlist(g, i, j);
           } else if (citationERGM) {
             insertArc_all_maxtermsender_arcs(g, i, j);
           } else {
-            insertArc_allarcs(g, i, j);
+            insertArcOrEdge_updatelist(g, i, j);
           }
         }
       } else {
@@ -376,11 +376,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
            to restore g to original state */
         if (isDelete) {
           if (useConditionalEstimation) {
-            insertArc_allinnerarcs(g, i, j);
+            insertArcOrEdge_updateinnerlist(g, i, j);
           } else if (citationERGM) {
             insertArc_all_maxtermsender_arcs(g, i, j);
           } else {
-            insertArc_allarcs(g, i, j);
+            insertArcOrEdge_updatelist(g, i, j);
           }
         }
       }
@@ -396,11 +396,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* move not acceptd, so reverse change for delete */
       if (isDelete) {
         if (useConditionalEstimation) {
-          insertArc_allinnerarcs(g, i, j);
+          insertArcOrEdge_updateinnerlist(g, i, j);
         } else if (citationERGM) {
           insertArc_all_maxtermsender_arcs(g, i, j);
         } else {
-          insertArc_allarcs(g, i, j);          
+          insertArcOrEdge_updatelist(g, i, j);
         }
       }
     }
