@@ -2426,9 +2426,17 @@ uint_t num_loops(const graph_t *g)
   uint_t k;
   uint_t count = 0;
 
-  for (k = 0; k < g->num_arcs; k++) {
-    if (g->allarcs[k].i == g->allarcs[k].j) {
-      ++count;
+  if (g->is_directed) {
+    for (k = 0; k < g->num_arcs; k++) {
+      if (g->allarcs[k].i == g->allarcs[k].j) {
+	++count;
+      }
+    }
+  } else {
+    for (k = 0; k < g->num_edges; k++) {
+      if (g->alledges[k].i == g->alledges[k].j) {
+	++count;
+      }
     }
   }
   return count;
@@ -2448,9 +2456,17 @@ bool has_loop(const graph_t *g, uint_t u)
 {
   uint_t k;
 
-  for (k = 0; k < g->outdegree[u]; k++) {
-    if (g->arclist[u][k] == u) {
-      return TRUE;
+  if (g->is_directed) {
+    for (k = 0; k < g->outdegree[u]; k++) {
+      if (g->arclist[u][k] == u) {
+	return TRUE;
+      }
+    }
+  } else {
+    for (k = 0; k < g->degree[u]; k++) {
+      if (g->edgelist[u][k] == u) {
+	return TRUE;
+      }
     }
   }
   return FALSE;
