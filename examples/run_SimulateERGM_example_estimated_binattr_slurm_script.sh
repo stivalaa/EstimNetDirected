@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name="SimualateERGM_GoF"
+#SBATCH --job-name="SimulateERGM_GoF"
 #SBATCH --ntasks=1
 #SBATCH --time=0-4:00:00
 
