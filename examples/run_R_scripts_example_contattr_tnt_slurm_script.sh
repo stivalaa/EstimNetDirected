@@ -10,7 +10,7 @@ echo -n "started at: "; date
 
 ROOT=..
 
-module load R/3.2.5
+module load r
 
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_sim_n2000_cont_sample dzA_sim_n2000_cont_sample

@@ -8,10 +8,12 @@ echo -n "started at: "; date
 
 ROOT=..
 
+module purge
 module load openmpi
-module load R/3.2.5
 
 time mpirun ${ROOT}/src/EstimNetDirected_mpi config_polblogs.txt
+
+module load r
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_polblogs dzA_polblogs
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_polblogs dzA_polblogs
