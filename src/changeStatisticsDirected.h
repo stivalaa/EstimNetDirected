@@ -63,28 +63,8 @@
 
 #include "utils.h"
 #include "graph.h"
+#include "changeStatisticsTypes.h"
 
-
-
-/*****************************************************************************
- *
- * typedefs
- *
- ****************************************************************************/
-
-/* typedef for change statistics function  */
-typedef double (change_stats_func_t)(graph_t *g, uint_t i, uint_t j, double lambda);
-
-/* version for change statistics with nodal attribute */
-typedef double (attr_change_stats_func_t)(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-
-/* version for change statistics with dyadic covariate */
-/* for the moment just hte same as change_stats_func_t as treated specially,
-   only used for GeoDistance for now */
-typedef double (dyadic_change_stats_func_t)(graph_t *g, uint_t i, uint_t j);
-
-/* change statistics with pairs of nodal attributes (attribute interactions) */
-typedef double (attr_interaction_change_stats_func_t)(graph_t *g, uint_t i, uint_t j, uint_t a, uint_t b);
 
 /************************* Structural ****************************************/
 
@@ -136,10 +116,6 @@ double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
-
-/********************* Actor attribute (set of categorical) *******************/
-
-double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 
 /********************* Dyadic covariate (continuous) *************************/

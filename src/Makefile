@@ -23,12 +23,14 @@ include common.mk
 DEPENDFILE = .depend
 
 ESTIM_COMMON_C_OBJS =  utils.o graph.o \
-                 changeStatisticsDirected.o basicSampler.o \
+                 changeStatisticsGeneral.o changeStatisticsDirected.o \
+                 basicSampler.o \
                  equilibriumExpectation.o configparser.o estimconfigparser.o \
                  ifdSampler.o loadGraph.o tntSampler.o
 
 SIM_COMMON_C_OBJS =  utils.o graph.o \
-                 changeStatisticsDirected.o basicSampler.o \
+                 changeStatisticsGeneral.o changeStatisticsDirected.o \
+                 basicSampler.o \
                  configparser.o simconfigparser.o ifdSampler.o simulation.o \
                  tntSampler.o loadGraph.o
 

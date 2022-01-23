@@ -5,7 +5,7 @@ CC = gcc
 
 CFLAGS += -I../src
 
-OBJS =  ../src/changeStatisticsDirected.o ../src/graph.o ../src/utils.o ../src/changeStatisticsDirected.o ../src/loadGraph.o
+OBJS = ../src/changeStatisticsGeneral.o  ../src/changeStatisticsDirected.o ../src/graph.o ../src/utils.o ../src/changeStatisticsDirected.o ../src/loadGraph.o
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 

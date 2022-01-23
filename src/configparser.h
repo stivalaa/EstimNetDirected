@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include "utils.h"
+#include "changeStatisticsGeneral.h"
 #include "changeStatisticsDirected.h"
 
 /* These must be macros not const to use in initializer  */
