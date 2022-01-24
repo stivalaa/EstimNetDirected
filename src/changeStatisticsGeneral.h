@@ -10,8 +10,7 @@
  * directed and undirected graphs. Each
  * function takes a pointer to a digraph struct, and two node numbers
  * i and j and returns the value of the change statistic for adding
- * the edge i -- j or arc i -> j or j <- i; the functions in this 
- * module are for those where these cases are all the same.
+ * the edge i -- j or arc i -> j.
  *
  * Also takes lambda (decay) parameter which is only used for
  * some statistics ("alternating" statistics).
@@ -70,17 +69,80 @@
 #include "graph.h"
 #include "changeStatisticsTypes.h"
 
+/************************* Structural ****************************************/
+
+double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda);
+
+
+/************************* Actor attribute (binary) **************************/
+
+double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
+/********************* Actor attribute (categorical) *************************/
+
+double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
 /********************* Actor attribute (continuous) *************************/
 
-double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /********************* Actor attribute (set of categorical) *******************/
 
 double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
+
+
+/********************* Dyadic covariate (continuous) *************************/
+
+double changeGeoDistance(graph_t *g, uint_t i, uint_t j);
+double changeLogGeoDistance(graph_t *g, uint_t i, uint_t j);
+double changeEuclideanDistance(graph_t *g, uint_t i, uint_t j);
+
+
+
+
+/************ Actor attribute interaction (categorical) *********************/
+
+double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
+                                 uint_t a, uint_t b);
+
+
+
 /*************************** Other functions *********************************/
 
+double calcChangeStats(graph_t *g, uint_t i, uint_t j,
+                       uint_t n, uint_t n_attr, uint_t n_dyadic,
+                       uint_t n_attr_interaction,
+                       change_stats_func_t *change_stats_funcs[],
+                       double               lambda_values[],
+                       attr_change_stats_func_t *attr_change_stats_funcs[],
+                       dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+                       attr_interaction_change_stats_func_t 
+                                        *attr_interaction_change_stats_funcs[],
+                       uint_t attr_indices[],
+                       uint_pair_t attr_interaction_pair_indices[],
+                       const double theta[],
+                       bool isDelete,
+                       double changestats[]);
+
+
 double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n);
+
+double *empty_graph_stats(graph_t *g,
+			  uint_t n, uint_t n_attr, uint_t n_dyadic,
+			  uint_t n_attr_interaction,
+			  change_stats_func_t *change_stats_funcs[],
+                          double lambda_values[],
+			  attr_change_stats_func_t *attr_change_stats_funcs[],
+			  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
+			  attr_interaction_change_stats_func_t 
+			  *attr_interaction_change_stats_funcs[],
+			  uint_t attr_indices[],
+			  uint_pair_t attr_interaction_pair_indices[],
+			  double emptystats[]);
 
 
 

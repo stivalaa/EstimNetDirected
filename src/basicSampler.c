@@ -59,6 +59,7 @@
 #include <assert.h>
 #include <math.h>
 #include "utils.h"
+#include "changeStatisticsGeneral.h"
 #include "changeStatisticsDirected.h"
 #include "basicSampler.h"
 

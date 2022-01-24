@@ -67,6 +67,22 @@
 #include "changeStatisticsDirected.h"
 
 
+/*****************************************************************************
+ *
+ * local functions
+ *
+ ****************************************************************************/
+
+/*
+ * signum function, returns -1 for negative x, +1 for positive x, else 0
+ */
+static double signum(double x)
+{
+  /* https://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c */
+  return (0 < x) - (x < 0);
+}
+
+
 
 /*****************************************************************************
  *
@@ -79,11 +95,12 @@
 
 
 /* 
- * Change statistic for Ac
+ * Change statistic for Arc
  */
 double changeArc(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)g; (void)i; (void)j; (void)lambda; /* unused parameters */
+  assert(g->is_directed);
   return 1;
 }
 
@@ -93,6 +110,7 @@ double changeArc(graph_t *g, uint_t i, uint_t j, double lambda)
 double changeReciprocity(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameter */
+  assert(g->is_directed);
   if (i == j) {
     return 0;
   } else {
@@ -107,6 +125,7 @@ double changeSink(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
   (void)lambda; /* unused parameter */
+  assert(g->is_directed);
   if (g->outdegree[i] == 0 && g->indegree[i] != 0) {
     delta--;
   }
@@ -123,6 +142,7 @@ double changeSource(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
   (void)lambda; /* unused parameter */
+  assert(g->is_directed);
   if (i != j && g->outdegree[i] == 0 && g->indegree[i] == 0) {
     delta++;
   }
@@ -132,39 +152,7 @@ double changeSource(graph_t *g, uint_t i, uint_t j, double lambda)
   return delta;
 }
 
-/*
- * Change statistic for Isolates
- */
-double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda)
-{
-  double delta = 0;
-  (void)lambda; /* unused parameter */
-  if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
-    delta--;
-  }
-  if (i != j && g->indegree[j] == 0 && g->outdegree[j] == 0) {
-    delta--;
-  }
-  return delta;
-}
 
-/*
- * Change statistic for two-path (triad census 021C; but note that since
- * these statistics, unlike motifs, are not induced subgraphs, this also
- * counts, in some cases multiple times, 111D, 111U, 030T, 030C, 201,
- * 120D, 120U, 120C, 210, 300)
- * also known as TwoMixStar (or m2star)
- */
-double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda)
-{
-  (void)lambda; /* unused parameter */
-
-  if (i == j) {
-    return 0;
-  } else {
-    return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
-  }
-}
 
 /*
  * Change statistic for in-2-star (triad census 021U; but note that since
@@ -176,6 +164,7 @@ double changeInTwoStars(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameter */
   (void)i; /* unused parameter */
+  assert(g->is_directed);
   return g->indegree[j];
 }
 
@@ -202,6 +191,7 @@ double changeTransitiveTriad(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k,l,w;
   uint_t  delta = 0;
   (void)lambda; /* unused parameter */
+  assert(g->is_directed);
   if (i == j) {
     return 0;
   }
@@ -232,6 +222,7 @@ double changeCyclicTriad(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   uint_t  delta = 0;
   (void)lambda; /* unused parameter */
+  assert(g->is_directed);
   if (i == j) {
     return 0;
   }
@@ -253,6 +244,7 @@ double changeAltInStars(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t jindegree = g->indegree[j];
   (void)i; /*unused parameter*/
   assert(lambda > 1);
+  assert(g->is_directed);
   return lambda * (1 - POW_LOOKUP(1-1/lambda, jindegree));
 }
 
@@ -264,6 +256,7 @@ double changeAltOutStars(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t ioutdegree = g->outdegree[i];
   (void)j;/*unused parameter*/
   assert(lambda > 1);
+  assert(g->is_directed);
   return lambda * (1 - POW_LOOKUP(1-1/lambda, ioutdegree));
 }
 
@@ -275,7 +268,8 @@ double changeAltKTrianglesT(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double  delta = 0;
   assert(lambda > 1);
-
+  assert(g->is_directed);
+  
   if (i == j) {
     return 0;
   }
@@ -310,6 +304,7 @@ double changeAltKTrianglesC(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta =0;
   assert(lambda > 1);
+  assert(g->is_directed);
 
   if (i == j) {
     return 0;
@@ -340,6 +335,7 @@ double changeAltKTrianglesD(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+  assert(g->is_directed);
 
   if (i == j) {
     return 0;
@@ -373,6 +369,7 @@ double changeAltKTrianglesU(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+  assert(g->is_directed);
 
   if (i == j) {
     return 0;
@@ -405,6 +402,7 @@ double changeAltTwoPathsT(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+  assert(g->is_directed);
 
   if (i == j) {
     return 0;
@@ -434,6 +432,7 @@ double changeAltTwoPathsD(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+  assert(g->is_directed);
 
   if (i == j) {
     return 0;
@@ -456,6 +455,7 @@ double changeAltTwoPathsU(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k;
   double delta = 0;
   assert(lambda > 1);
+  assert(g->is_directed);
 
   if (i == j) {
     return 0;
@@ -481,17 +481,6 @@ double changeAltTwoPathsTD(graph_t *g, uint_t i, uint_t j, double lambda)
                 changeAltTwoPathsD(g, i, j, lambda));
 }
 
-/*
- * Change statistic for loop (self-edge)
- * Note allowLoops = True must be set for this to work
- */
-double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda)
-{
-  (void)g;      /* unused parameter*/
-  (void)lambda; /* unused parameter */
-
-  return i == j;
-}
 
 /*
  * Change statistic for Loop Interaction (number of arcs between
@@ -503,6 +492,7 @@ double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda)
   (void)lambda; /* unused parameter */
   uint_t delta = 0;
   uint_t k;
+  assert(g->is_directed);
 
   /* first case, adding an arc between two nodes that both have self-edges */
   if (i != j && has_loop(g, i) && has_loop(g, j)) {
@@ -534,6 +524,7 @@ double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda)
 double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete) 
 {
   (void)j; (void)isDelete; /*unused parameters*/
+  assert(g->is_directed);
   return g->binattr[a][i] != BIN_NA && g->binattr[a][i];
 }
 
@@ -543,31 +534,13 @@ double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)i; (void)isDelete; /*unused parameters*/
+  assert(g->is_directed);
   return g->binattr[a][j] != BIN_NA && g->binattr[a][j];
 }
 
-/*
- * Change statistic for Interaction
- */
-double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
-{
-  (void)isDelete; /* unused parameter */
-  return g->binattr[a][i] != BIN_NA && g->binattr[a][j] != BIN_NA &&
-         g->binattr[a][i] && g->binattr[a][j];
-}
 
 /********************* Actor attribute (categorical) *************************/
 
-
-/*
- * Change statistic for categorical matching
- */
-double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
-{
-  (void)isDelete; /* unused parameter */
-  return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
-         g->catattr[a][i] == g->catattr[a][j];
-}
 
 /*
  * Change statistic for categorical matching reciprocity
@@ -575,6 +548,7 @@ double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter*/
+  assert(g->is_directed);
   if (i == j) {
     return 0;
   } else {
@@ -583,15 +557,6 @@ double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool 
   }
 }
 
-/*
- * Change statistic for categorical mismatching
- */
-double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
-{
-  (void)isDelete; /* unused parameter */
-  return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
-         g->catattr[a][i] != g->catattr[a][j];
-}
 
 /*
  * Change statistic for categorical mismatching reciprocity
@@ -599,6 +564,7 @@ double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
+  assert(g->is_directed);
   if (i == j) {
     return 0;
   } else {
@@ -620,7 +586,8 @@ double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a
   uint_t v,k,l,w;
   uint_t  delta = 0;
   (void)isDelete; /* unused parameter */
-
+  assert(g->is_directed);
+  
   if (i == j) {
     return 0;
   }
@@ -703,7 +670,8 @@ double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a,
   int L2th, L2tu, L2uh;
   int delta = 0;
   int ochange = isDelete ? -1 : 0;
-
+  assert(g->is_directed);
+  
   if (i == j) {
     return 0;
   }
@@ -773,6 +741,7 @@ double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a,
 double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)j; (void)isDelete; /*unused parameters*/
+  assert(g->is_directed);
   if (isnan(g->contattr[a][i]))
     return 0;
   else
@@ -785,6 +754,7 @@ double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
 double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)i; (void)isDelete; /*unused parameters*/
+  assert(g->is_directed);
   if (isnan(g->contattr[a][j]))
     return 0;
   else
@@ -792,17 +762,6 @@ double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 }
 
 
-/*
- * Change statistic for continuous diff (absolute difference of attribute)
- */
-double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
-{
-  (void)isDelete; /* unused parameter */
-  if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
-    return 0;
-  else
-    return fabs(g->contattr[a][i] - g->contattr[a][j]);
-}
 
 /*
  * Change statistic for continuous diff (absolute difference of attribute)
@@ -811,6 +770,7 @@ double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
+  assert(g->is_directed);
   if (i == j)
     return 0;
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
@@ -819,6 +779,21 @@ double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDe
     return fabs(g->contattr[a][i] - g->contattr[a][j]) * isArc(g, j, i);
 }
 
+
+/*
+ * Change statistic for continuous diff sign (sign of difference of attribute)
+ * for attr_i - attr_j (so +1 when sending node has higher attribute value and -1
+ * when receiving node has higher attribute value).
+ */
+double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /* unused parameter */
+  assert(g->is_directed);
+  if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
+    return 0;
+  else
+    return signum(g->contattr[a][i] - g->contattr[a][j]);
+}
 
 
 /*
@@ -832,7 +807,8 @@ double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDe
  */
 double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
-  (void)isDelete; /* unused parameter */    
+  (void)isDelete; /* unused parameter */
+  assert(g->is_directed);
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
   {
     return 0;
@@ -856,7 +832,8 @@ double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
  */
 double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
-  (void)isDelete; /* unused parameter */    
+  (void)isDelete; /* unused parameter */
+  assert(g->is_directed);
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
   {
     return 0;
@@ -872,288 +849,4 @@ double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 
 
 
-/********************* Dyadic covariate (continuous) *************************/
 
-/* 
- * Change statistic for geographical distance between two nodes,
- * using for each node the pair of continuous attributes labelled 
- * as being latitude and longitude
- */
-double changeGeoDistance(graph_t *g, uint_t i, uint_t j)
-{
-  double dist, lati, longi, latj, longj;
-
-  lati  = g->contattr[g->latitude_index][i];
-  longi = g->contattr[g->longitude_index][i];
-  latj  = g->contattr[g->latitude_index][j];
-  longj = g->contattr[g->longitude_index][j];
-
-  if (isnan(lati) || isnan(longi) || isnan(latj) || isnan(longj)) {
-    return 0;
-  }
-  else {
-    dist = geo_distance(lati, longi, latj, longj);
-    return dist;
-  }
-}
-
-/* 
- * Change statistic for logarithm of geographical distance between two nodes,
- * using for each node the pair of continuous attributes labelled 
- * as being latitude and longitude
- */
-double changeLogGeoDistance(graph_t *g, uint_t i, uint_t j)
-{
-  double dist;
-
-  dist = changeGeoDistance(g, i, j);
-  if (dist > 0) {
-    return log(dist);
-  } else {
-    return 0;
-  }
-}
-
-
-/* 
- * Change statistic for Euclidean distance between two nodes,
- * using for each node the triple of continuous attributes labelled 
- * as being x, y, and z coordinates.
- */
-double changeEuclideanDistance(graph_t *g, uint_t i, uint_t j)
-{
-  double dist, xi, xj, yi, yj, zi, zj;
-
-  xi  = g->contattr[g->x_index][i];
-  xj  = g->contattr[g->x_index][j];
-  yi  = g->contattr[g->y_index][i];
-  yj  = g->contattr[g->y_index][j];
-  zi  = g->contattr[g->z_index][i];
-  zj  = g->contattr[g->z_index][j];
-  
-
-  if (isnan(xi) || isnan(yi) || isnan(zi) ||
-      isnan(xj) || isnan(yj) || isnan(zj)) {
-    return 0;
-  }
-  else {
-    dist = euclidean_distance(xi, yi, zi, xj, yj, zj);
-    return dist;
-  }
-}
-
-
-/******************Attribute interaction (categorical) ***********************/
-
-/* 
- * Change statistic for interaction effect of two categorical attributes 
- * matching: adding arc i->j increases statistic by 1 when
- * nodes i and j have the same categorical attribute value attribute a
- * and also have the same categorical attribute value for attribute b
- * (note a and b are different attributes, they don't have to have the same
- * value)
- */
-double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
-                                 uint_t a, uint_t b)
-{
-  return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
-    g->catattr[b][i] != CAT_NA && g->catattr[b][j] != CAT_NA &&
-    g->catattr[a][i] == g->catattr[a][j] &&
-    g->catattr[b][i] == g->catattr[b][j];
-}
-
-
-/*****************************************************************************
- *
- * other external functions
- *
- ****************************************************************************/
-
-/*
- *
- * Compute the change statistics for addition of arc i->j
- * This involves summing over all the statistics specified for structural
- * effects, nodal attribute effects, dyadic covariate effects, and attribute
- * interaction effects.
- *
- * Parameters:
- *   g      - digraph object. Modifed if performMove is true.
- *   i      - node source of arc being added (or deleted)
- *   j      - node dest of arc being added (or deleted)
- *   n      - number of parameters (length of theta vector and total
- *            number of change statistic functions)
- *   n_attr - number of attribute change stats functions
- *   n_dyadic -number of dyadic covariate change stats funcs
- *   n_attr_interaction - number of attribute interaction change stats funcs
- *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n-n_attr-n_dyadic-n_attr_interaction
- *   lambda_values      - array of lambda values for change stats funcs
- *   attr_change_stats_funcs - array of pointers to change statistics functions
- *                             length is n_attr
- *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
- *                             length is n_dyadic
- *   attr_interaction_change_stats_funcs - array of points to attribute 
- *                                        interaction change statstistics
- *                                        functinons. Length is
- *                                        n_attr_interaction.
- *   attr_indices   - array of n_attr attribute indices (index into g->binattr
- *                    or g->catattr) corresponding to attr_change_stats_funcs
- *                    E.g. for Sender effect on the first binary attribute,
- *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
- *                    changeSender
- *   attr_interaction_pair_indices - array of n_attr_interaction attribute pair
- *                                   indices (as above, but each element is
- *                                   a pair of such indices) for attribute
- *                                   interaction effects.
- *   theta  - array of n parameter values corresponding to change stats funcs
- *   isDelete - TRUE if arc is being deleted (statistics negated then)
- *   changestats - (OUT) array of n change statistics values corresponding to
- *                 change stats funcs. Allocated by caller.
- *
- * Return value:
- *   Sum of all change statistics for additionof arc i->j
- */
-double calcChangeStats(graph_t *g, uint_t i, uint_t j,
-                       uint_t n, uint_t n_attr, uint_t n_dyadic,
-                       uint_t n_attr_interaction,
-                       change_stats_func_t *change_stats_funcs[],
-                       double               lambda_values[],
-                       attr_change_stats_func_t *attr_change_stats_funcs[],
-                       dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                       attr_interaction_change_stats_func_t 
-                                        *attr_interaction_change_stats_funcs[],
-                       uint_t attr_indices[],
-                       uint_pair_t attr_interaction_pair_indices[],
-                       const double theta[],
-                       bool isDelete,
-                       double changestats[])
-{
-  double total = 0;  /* sum of theta*changestats */
-  uint_t l, param_i = 0;
-  
-  /* structural effects */
-  for (l = 0; l < n - n_attr - n_dyadic - n_attr_interaction; l++) { 
-    changestats[param_i] = (*change_stats_funcs[l])(g, i, j,
-                                                    lambda_values[param_i]);
-    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-    param_i++;
-  }
-  /* nodal attribute effects */
-  for (l = 0; l < n_attr; l++) {
-    changestats[param_i] = (*attr_change_stats_funcs[l])
-      (g, i, j, attr_indices[l], isDelete);
-    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-    param_i++;
-  }
-  /* dyadic covariate effects */
-  for (l = 0; l < n_dyadic; l++) {
-    changestats[param_i] = (*dyadic_change_stats_funcs[l])(g, i, j);
-    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
-    param_i++;
-  }
-  /* attribute pair interaction effects */
-  for (l = 0; l < n_attr_interaction; l++) {
-    changestats[param_i] = (*attr_interaction_change_stats_funcs[l])
-      (g, i, j, attr_interaction_pair_indices[l].first,
-       attr_interaction_pair_indices[l].second);
-    total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i]; 
-    param_i++;
-  }
-  return total;
-}
-
-
-/*
- *
- * Compute the observed statistics for the empty graph (no arcs; all nodes
- * are isolates). [The number of nodes is always fixed here].
- * 
- * This is zero for all of the statistics except Isolates, where it is
- * the number of nodes. (Any statistics added in the future where the value
- * for the empty graph is not zero will have to be added here).
- * 
- * Parameters:
- *   g      - digraph object.
- *   n      - number of parameters (length of theta vector and total
- *            number of change statistic functions)
- *   n_attr - number of attribute change stats functions
- *   n_dyadic -number of dyadic covariate change stats funcs
- *   n_attr_interaction - number of attribute interaction change stats funcs
- *   change_stats_funcs - array of pointers to change statistics functions
- *                        length is n-n_attr-n_dyadic-n_attr_interaction
- *   lambda_values      - array of lambda values for change stats funcs
- *                        same length as change_stats_funcs
- *   attr_change_stats_funcs - array of pointers to change statistics functions
- *                             length is n_attr
- *   dyadic_change_stats_funcs - array of pointers to dyadic change stats funcs
- *                             length is n_dyadic
- *   attr_interaction_change_stats_funcs - array of points to attribute 
- *                                        interaction change statstistics
- *                                        functinons. Length is
- *                                        n_attr_interaction.
- *   attr_indices   - array of n_attr attribute indices (index into g->binattr
- *                    or g->catattr) corresponding to attr_change_stats_funcs
- *                    E.g. for Sender effect on the first binary attribute,
- *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
- *                    changeSender
- *   attr_interaction_pair_indices - array of n_attr_interaction attribute pair
- *                                   indices (as above, but each element is
- *                                   a pair of such indices) for attribute
- *                                   interaction effects.
- *   emptystats - (OUT) array of n observed statistics values corresponding to
- *                 change stats funcs. Allocated by caller.
- *
- * Return value:
- *   Pointer to emptystats array (parameter)
- */
-double *empty_graph_stats(graph_t *g,
-                          uint_t n, uint_t n_attr, uint_t n_dyadic,
-                          uint_t n_attr_interaction,
-                          change_stats_func_t *change_stats_funcs[],
-                          double lambda_values[],
-                          attr_change_stats_func_t *attr_change_stats_funcs[],
-                          dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                          attr_interaction_change_stats_func_t 
-                          *attr_interaction_change_stats_funcs[],
-                          uint_t attr_indices[],
-                          uint_pair_t attr_interaction_pair_indices[],
-                          double emptystats[])
-{
-  uint_t l, param_i = 0;
-  
-  (void)attr_change_stats_funcs; /* unused parameter */
-  (void)lambda_values;           /* unused parameter */
-  (void)dyadic_change_stats_funcs; /* unused parameter */
-  (void)attr_interaction_change_stats_funcs; /* unused parameter */
-  (void)attr_indices; /* unused parameter */
-  (void)attr_interaction_pair_indices; /* unused parameter */
-
-  /* structural effects */
-  for (l = 0; l < n - n_attr - n_dyadic - n_attr_interaction; l++) { 
-    /* It is valid to compare function pointer this way in C */
-    /* https://stackoverflow.com/questions/14985423/function-pointer-equality-in-c */
-    if (change_stats_funcs[l] == changeIsolates) {
-      /* The Isolates statistic is the number of nodes for empty graph */
-      emptystats[param_i] = g->num_nodes;
-    } else {
-      emptystats[param_i] = 0;
-    }
-    param_i++;
-  }
-  /* nodal attribute effects */
-  for (l = 0; l < n_attr; l++) {
-    emptystats[param_i] = 0;
-    param_i++;
-  }
-  /* dyadic covariate effects */
-  for (l = 0; l < n_dyadic; l++) {
-    emptystats[param_i] = 0;
-    param_i++;
-  }
-  /* attribute pair interaction effects */
-  for (l = 0; l < n_attr_interaction; l++) {
-    emptystats[param_i] = 0;
-    param_i++;
-  }
-  return emptystats;
-}

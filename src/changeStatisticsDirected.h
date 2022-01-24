@@ -74,8 +74,6 @@ double changeSink(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeSource(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeInTwoStars(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeOutTwoStars(graph_t *g, uint_t i, uint_t j, double lambda);
-double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda);
-double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeTransitiveTriad(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeCyclicTriad(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltInStars(graph_t *g, uint_t i, uint_t j, double lambda);
@@ -88,20 +86,17 @@ double changeAltTwoPathsT(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPathsD(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPathsU(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPathsTD(graph_t *g, uint_t i, uint_t j, double lambda);
-double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
 double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
 
 /********************* Actor attribute (categorical) *************************/
 
-double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
@@ -110,59 +105,12 @@ double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a,
 
 double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 
-
-/********************* Dyadic covariate (continuous) *************************/
-
-double changeGeoDistance(graph_t *g, uint_t i, uint_t j);
-double changeLogGeoDistance(graph_t *g, uint_t i, uint_t j);
-double changeEuclideanDistance(graph_t *g, uint_t i, uint_t j);
-
-
-/************ Actor attribute interaction (categorical) *********************/
-
-double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
-                                 uint_t a, uint_t b);
-
-
-/*************************** Other functions *********************************/
-
-double calcChangeStats(graph_t *g, uint_t i, uint_t j,
-                       uint_t n, uint_t n_attr, uint_t n_dyadic,
-                       uint_t n_attr_interaction,
-                       change_stats_func_t *change_stats_funcs[],
-                       double               lambda_values[],
-                       attr_change_stats_func_t *attr_change_stats_funcs[],
-                       dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-                       attr_interaction_change_stats_func_t 
-                                        *attr_interaction_change_stats_funcs[],
-                       uint_t attr_indices[],
-                       uint_pair_t attr_interaction_pair_indices[],
-                       const double theta[],
-                       bool isDelete,
-                       double changestats[]);
-
-
-double jaccard_index(set_elem_e a[], set_elem_e b[], uint_t n);
-
-double *empty_graph_stats(graph_t *g,
-			  uint_t n, uint_t n_attr, uint_t n_dyadic,
-			  uint_t n_attr_interaction,
-			  change_stats_func_t *change_stats_funcs[],
-                          double lambda_values[],
-			  attr_change_stats_func_t *attr_change_stats_funcs[],
-			  dyadic_change_stats_func_t *dyadic_change_stats_funcs[],
-			  attr_interaction_change_stats_func_t 
-			  *attr_interaction_change_stats_funcs[],
-			  uint_t attr_indices[],
-			  uint_pair_t attr_interaction_pair_indices[],
-			  double emptystats[]);
 
 #endif /* CHANGESTATISTICSDIRECTED_H */
 

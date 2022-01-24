@@ -11,7 +11,7 @@
  ****************************************************************************/
 
 #include "graph.h"
-#include "changeStatisticsDirected.h"
+#include "changeStatisticsGeneral.h"
 
 graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           bool computeStats,
