@@ -170,11 +170,21 @@ double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
   (void)lambda; /* unused parameter */
-  if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
-    delta--;
-  }
-  if (i != j && g->indegree[j] == 0 && g->outdegree[j] == 0) {
-    delta--;
+  if (g->is_directed) {
+    if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
+      delta--;
+    }
+    if (i != j && g->indegree[j] == 0 && g->outdegree[j] == 0) {
+      delta--;
+    }
+  } else {
+    /* undirected */
+    if (g->degree[i] == 0) {
+      delta--;
+    }
+    if (i != j && g->degree[j] == 0) {
+      delta--;
+    }
   }
   return delta;
 }
@@ -198,6 +208,7 @@ double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda)
       return g->indegree[i] + g->outdegree[j] - (isArc(g, j, i) ? 2 : 0);
     }
   } else {
+    /* undirected */
     if (i == j) {
       return 0;
     } else {
