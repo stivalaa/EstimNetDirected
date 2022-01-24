@@ -7,5 +7,5 @@
 # Run all the regression  / unit tests.
 #
 
-./run_test_polblogs.sh
-./run_test_sets.sh
+(cd TestChangeStatsDirected && ./run_test_polblogs.sh)
+(cd TestSetFunctions && ./run_test_sets.sh)
