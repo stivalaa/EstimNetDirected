@@ -2,7 +2,7 @@
 #define CHANGESTATISTICSGENERAL_H
 /*****************************************************************************
  * 
- * File:    changeStatisticsGeneral.c
+ * File:    changeStatisticsGeneral.h
  * Author:  Alex Stivala
  * Created: January 2022
  *
