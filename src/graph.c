@@ -172,6 +172,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->edgelist[i][k];
       if (v == i || v == j)
         continue;
+      update_twopath_entry(&g->twoPathHashTab, v, j, incval);
+      update_twopath_entry(&g->twoPathHashTab, j, v, incval);
+    }
+    for (k = 0; k < g->degree[j]; k++)  {
+      v = g->edgelist[j][k];
+      if (v == i || v == j)
+        continue;
+      update_twopath_entry(&g->twoPathHashTab, v, i, incval);
       update_twopath_entry(&g->twoPathHashTab, i, v, incval);
     }
   }
