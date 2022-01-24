@@ -161,3 +161,19 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
   return delta;
 }
 
+
+/************************* Actor attribute (binary) **************************/
+
+
+/*
+ * Change statistic for Activity
+ */
+double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_directed);
+  return (g->binattr[a][i] == BIN_NA ? 0 : g->binattr[a][i] +
+	  g->binattr[a][j] == BIN_NA ? 0 : g->binattr[a][j]);
+
+
+}

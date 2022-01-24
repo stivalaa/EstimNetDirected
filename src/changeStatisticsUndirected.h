@@ -74,6 +74,12 @@ double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPaths(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda);
-  
+
+
+/************************* Actor attribute (binary) **************************/
+
+double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
+
 #endif /* CHANGESTATISTICSUNDIRECTED_H */
 
