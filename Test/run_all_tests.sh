@@ -8,4 +8,5 @@
 #
 
 (cd TestChangeStatsDirected && ./run_test_polblogs.sh)
+(cd TestChangeStatsUndirected && ./run_test_netscience.sh)
 (cd TestSetFunctions && ./run_test_sets.sh)
