@@ -1895,7 +1895,7 @@ void print_zone_summary(const graph_t *g)
  */
 void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
 {
-  uint_t i, j, count=0, loop_count=0;
+  uint_t i, j, count=0;
 
   fprintf(fp, "*vertices %u\n", g->num_nodes);
   for (i = 0; i < g->num_nodes; i++)
@@ -1915,16 +1915,13 @@ void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
     fprintf(fp, "*edges\n");
     for (i = 0; i < g->num_nodes; i++)  {
       for (j = 0; j < g->degree[i]; j++) {
-        count++;
-        if (i <= j) {
-          fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
-          if (i == j) {
-            loop_count++;
-          } 
-        }
+	if (i <= g->edgelist[i][j]) {
+	  count++;
+	  fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
+	}
       }
     }
-    assert(count ==  2*g->num_edges - loop_count); /* loops only counted once */
+    assert(count == g->num_edges);
   }
 }
 

@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
     if (i == j) {
       continue;
     }
-    printf("i = %d, j = %d, changeKStars = %g, changeKTriangles = %g, changeAltTwoPaths = %g\n", i, j,
+    printf("i = %d, j = %d, changeKStars = %g, changeKTriangles = %g ,changeAltTwoPaths = %g\n", i, j,
            changeAltStars(g, i, j, lambda),
            changeAltKTriangles(g, i, j, lambda),
            changeAltTwoPaths(g, i, j, lambda)
