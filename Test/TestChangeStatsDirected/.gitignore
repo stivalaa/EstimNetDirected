@@ -9,9 +9,6 @@ polblogs_test_results_hash.out
 polblogs_test_results.diff
 polblogs_test_results.out
 *.o
-set_test_input.txt
-set_test_results.out
-set_test_results_check.out
 polblogs_test_results_array.diff
 polblogs_test_results_array.out
 polblogs_test_results_arrays.diff

@@ -1,15 +1,17 @@
-include ../src/common.mk
--include ../src/local.mk
+include ../../src/common.mk
+-include ../../src/local.mk
+
+SRCDIR = ../../src
 
 CC = gcc
 
-CFLAGS += -I../src
+CFLAGS += -I$(SRCDIR)
 
-OBJS = ../src/changeStatisticsGeneral.o  ../src/changeStatisticsDirected.o ../src/graph.o ../src/utils.o ../src/changeStatisticsDirected.o ../src/loadGraph.o
+OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsDirected.o $(SRCDIR)/graph.o $(SRCDIR)/utils.o $(SRCDIR)/changeStatisticsDirected.o $(SRCDIR)/loadGraph.o
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 
-all: testChangeStatsDirected testChangeStatsDirected_hash testSetFunctions testChangeStatsDirected_array
+all: testChangeStatsDirected testChangeStatsDirected_hash testChangeStatsDirected_array
 
 
 testChangeStatsDirected: testChangeStatsDirectedMain.o $(OBJS)
@@ -22,14 +24,10 @@ testChangeStatsDirected_array: testChangeStatsDirectedMain_array.o $(ARRAY_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 
-testSetFunctions: testSetFunctions.o  $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ -lm
-
 
 clean:
 	$(RM) testChangeStatsDirected testChangeStatsDirected_hash
 	$(RM) testChangeStatsDirectedMain.o testChangeStatsDirectedMain_hash.o
-	$(RM) testSetFunctions
 	$(RM) testChangeStatsDirected_array testChangeStatsDirectedMain_array.o
 
 %_hash.o: %.c

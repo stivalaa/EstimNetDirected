@@ -12,7 +12,7 @@ DIFFILE=polblogs_test_results.diff
 
 echo "1. no two-path lookup"
 
-time ./testChangeStatsDirected ../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
+time ./testChangeStatsDirected ../../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
 
 BASELINE_NO2PATHTABLES=polblogs_test_results_baseline_no2pathtables.txt
 cat ${BASELINE} | sed '/^[a-z]*2p sum = .*/d;s/, [a-z]*2p sum = .*$//'  > ${BASELINE_NO2PATHTABLES}
@@ -33,7 +33,7 @@ DIFFILE=polblogs_test_results_array.diff
 
 echo "2. two-path matrices"
 
-time ./testChangeStatsDirected_array ../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
+time ./testChangeStatsDirected_array ../../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
 
 diff ${BASELINE} ${OUTPUT} > ${DIFFILE}
 
@@ -52,7 +52,7 @@ echo "3. two-path hash tables"
 OUTPUT=polblogs_test_results_hash.out
 DIFFILE=polblogs_test_results_hash.diff
 
-time ./testChangeStatsDirected_hash ../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
+time ./testChangeStatsDirected_hash ../../pythonDemo/polblogs/polblogs_arclist.txt  polblogs_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
 
 diff ${BASELINE} ${OUTPUT} > ${DIFFILE}
 
