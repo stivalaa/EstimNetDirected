@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
   fprintf(stderr, "%.2f s\n", (double)etime/1000);
 #ifdef DEBUG_DIGRAPH
-  dump_graph_edgelist(g);
+  dump_graph_arclist(g);
 #endif /*DEBUG_DIGRAPH*/
 
 #ifdef TWOPATH_LOOKUP

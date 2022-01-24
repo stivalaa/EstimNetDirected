@@ -1139,7 +1139,7 @@ void insertEdge(graph_t *g, uint_t i, uint_t j)
   g->num_edges++;
   g->edgelist[i] = (uint_t *)safe_realloc(g->edgelist[i],
                                          (g->degree[i]+1) * sizeof(uint_t));
-  g->edgelist[i][g->outdegree[i]++] = j;
+  g->edgelist[i][g->degree[i]++] = j;
   g->edgelist[j] = (uint_t *)safe_realloc(g->edgelist[j],
                                             (g->degree[j]+1) * sizeof(uint_t));
   g->edgelist[j][g->degree[j]++] = i;
@@ -1895,20 +1895,37 @@ void print_zone_summary(const graph_t *g)
  */
 void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
 {
-  uint_t i, j, count=0;
+  uint_t i, j, count=0, loop_count=0;
 
   fprintf(fp, "*vertices %u\n", g->num_nodes);
   for (i = 0; i < g->num_nodes; i++)
     fprintf(fp, "%u\n", i+1);
-  fprintf(fp, "*arcs\n");
-  for (i = 0; i < g->num_nodes; i++)  {
-    for (j = 0; j < g->outdegree[i]; j++) {
-      count++;
-      fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
-      /*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
+  if (g->is_directed) {
+    fprintf(fp, "*arcs\n");
+    for (i = 0; i < g->num_nodes; i++)  {
+      for (j = 0; j < g->outdegree[i]; j++) {
+	count++;
+	fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
+	/*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
+      }
     }
+    assert(count == g->num_arcs);
+  } else {
+    /* undirected */
+    fprintf(fp, "*edges\n");
+    for (i = 0; i < g->num_nodes; i++)  {
+      for (j = 0; j < g->degree[i]; j++) {
+	count++;
+        if (i <= j) {
+  	  fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
+          if (i == j) {
+            loop_count++;
+          } 
+        }
+      }
+    }
+    assert(count ==  2*g->num_edges - loop_count); /* loops only counted once */
   }
-  assert(count == g->num_arcs);
 }
 
 

@@ -8,11 +8,15 @@ Also included is a simple Python demonstration implementation. The Python implem
 
 For more information, and the original implementation for undirected networks, see http://www.estimnet.org/.
 
-As well as some simulated networks, as an empirical example, the political bloggers network from the paper:
+As well as some simulated networks, as empirical examples, the political bloggers network from the paper:
 
 Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 2004 US election: divided they blog. Pages 36-43 of: Proceedings of the 3rd international workshop on link discovery. ACM.
 
-is included. This network was downloaded from Mark Newman's network data page.
+and the network science coauthorship network from the paper:
+
+Newman, M. E. (2006). Finding community structure in networks using the eigenvectors of matrices. Physical review E, 74(3), 036104.
+
+are included. These networks were downloaded from Mark Newman's network data page.
 
 If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below (specifically Stivala, Robins, & Lomi (2020) for the EstimNetDirected software, and Byshkin et al. (2018) for the EE algorithm) in any resulting publications.
 

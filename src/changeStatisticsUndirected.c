@@ -153,7 +153,7 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
     v = g->edgelist[i][k];
     if (v == i || v == j)
       continue;
-    if (isArc(g, i, v))
+    if (isEdge(g, i, v))
       delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, i, v)) +
 	POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, v, j));
   }
