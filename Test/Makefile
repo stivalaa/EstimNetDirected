@@ -1,5 +1,5 @@
 
-SUBDIRS = TestChangeStatsDirected TestSetFunctions
+SUBDIRS = TestChangeStatsDirected TestChangeStatsUndirected TestSetFunctions
 
 all:
 	for dir in $(SUBDIRS); do \
