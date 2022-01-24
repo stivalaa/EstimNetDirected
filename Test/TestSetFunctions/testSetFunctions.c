@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <time.h>
 #include "graph.h"
-#include "changeStatisticsDirected.h"
+#include "changeStatisticsGeneral.h"
 
 #define MAX_VALS  2000
 #define NUM_TESTS 1000

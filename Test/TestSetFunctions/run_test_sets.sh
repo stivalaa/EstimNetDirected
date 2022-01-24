@@ -12,7 +12,7 @@
 
 rc=0
 
-INPUT=../examples/setAttributes_n1000.txt
+INPUT=../../examples/setAttributes_n1000.txt
 TMP_INPUT=set_test_input.txt
 OUTPUT=set_test_results.out
 CHECK_OUTPUT=set_test_results_check.out
@@ -23,6 +23,11 @@ cat ${INPUT} | cut -d' ' -f1 > ${TMP_INPUT}
 echo "Running tests on set parsing and set similarity functions..."
 
 time ./testSetFunctions ${TMP_INPUT} > ${OUTPUT}
+if [ $? -ne 0 ]; then
+  echo
+  echo "**** FAILED ****"
+  exit 1
+fi
 python3 ./checkSetFunctions.py ${TMP_INPUT} ${OUTPUT} > ${CHECK_OUTPUT}
 
 if [ $? -eq 0 ]; then
