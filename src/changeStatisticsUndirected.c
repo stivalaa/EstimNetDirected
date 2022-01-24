@@ -123,7 +123,7 @@ double changeAltTwoPaths(graph_t *g, uint_t i, uint_t j, double lambda)
     v = g->edgelist[i][k];
     if (v == i || v == j)
       continue;
-    delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, v, j));
+    delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, j, v));
   }
 
   return delta;
@@ -150,7 +150,7 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
   }
 
   for (k = 0; k < g->degree[j]; k++) {
-    v = g->edgelist[i][k];
+    v = g->edgelist[j][k];
     if (v == i || v == j)
       continue;
     if (isEdge(g, i, v))
