@@ -139,7 +139,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->outdegree[i]; k++) {
       v = g->arclist[i][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,i,v)); */
       update_twopath_entry(&g->outTwoPathHashTab, v, j, incval);
       update_twopath_entry(&g->outTwoPathHashTab, j, v, incval);
@@ -147,7 +147,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->indegree[j]; k++) {
       v = g->revarclist[j][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,v,j)); */
       update_twopath_entry(&g->inTwoPathHashTab, v, i, incval);
       update_twopath_entry(&g->inTwoPathHashTab, i, v, incval);
@@ -155,14 +155,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->indegree[i]; k++)  {
       v = g->revarclist[i][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,v,i));*/
       update_twopath_entry(&g->mixTwoPathHashTab, v, j, incval);
     }
     for (k = 0; k < g->outdegree[j]; k++) {
       v = g->arclist[j][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,j,v));*/
       update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
     }
@@ -171,7 +171,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->degree[i]; k++)  {
       v = g->edgelist[i][k];
       if (v == i || v == j)
-	continue;
+        continue;
       update_twopath_entry(&g->twoPathHashTab, v, j, incval);
     }
   }
@@ -200,7 +200,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->outdegree[i]; k++) {
       v = g->arclist[i][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,i,v)); */
       g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
       g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
@@ -208,7 +208,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->indegree[j]; k++) {
       v = g->revarclist[j][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,v,j)); */
       g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
       g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
@@ -216,14 +216,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->indegree[i]; k++)  {
       v = g->revarclist[i][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,v,i));*/
       g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
     }
     for (k = 0; k < g->outdegree[j]; k++) {
       v = g->arclist[j][k];
       if (v == i || v == j)
-	continue;
+        continue;
       /*removed as slows significantly: assert(isArc(g,j,v));*/
       g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
     }
@@ -232,7 +232,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     for (k = 0; k < g->degree[i]; k++)  {
       v = g->edgelist[i][k];
       if (v == i || v == j)
-	continue;
+        continue;
       g->twoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
     }
   }
@@ -1584,26 +1584,26 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed)
 #ifdef HASH_BLOOM
     /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
     MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
-			  HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+                          HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
     g->mixTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-						sizeof(uint_t));
+                                                sizeof(uint_t));
     g->inTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-					       sizeof(uint_t));
+                                               sizeof(uint_t));
     g->outTwoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-						sizeof(uint_t));
+                                                sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
     MEMUSAGE_DEBUG_PRINT(("mixTwoPathMatrix size %f MB\n", 
-			  (double)num_vertices*num_vertices*sizeof(uint_t)/
-			  (1024*1024)));
+                          (double)num_vertices*num_vertices*sizeof(uint_t)/
+                          (1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("inTwoPathMatrix size %f MB\n", 
-			  (double)num_vertices*num_vertices*sizeof(uint_t)/
-			  (1024*1024)));
+                          (double)num_vertices*num_vertices*sizeof(uint_t)/
+                          (1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("outTwoPathMatrix size %f MB\n", 
-			  (double)num_vertices*num_vertices*sizeof(uint_t)/
-			  (1024*1024)));
+                          (double)num_vertices*num_vertices*sizeof(uint_t)/
+                          (1024*1024)));
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
@@ -1623,16 +1623,16 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed)
 #ifdef HASH_BLOOM
     /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
     MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
-			  HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+                          HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
     g->twoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-						sizeof(uint_t));
+                                                sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
     MEMUSAGE_DEBUG_PRINT(("twoPathMatrix size %f MB\n", 
-			  (double)num_vertices*num_vertices*sizeof(uint_t)/
-			  (1024*1024)));
+                          (double)num_vertices*num_vertices*sizeof(uint_t)/
+                          (1024*1024)));
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
@@ -1801,11 +1801,11 @@ void print_data_summary(const graph_t * g, bool allowLoops)
   uint_t num_na_values;
   
   printf("%s with %u vertices and %u %s (density %g) [%s]\n",
-	 g->is_directed ? "Digraph" : "Graph",
+         g->is_directed ? "Digraph" : "Graph",
          g->num_nodes,
-	 g->is_directed ? g->num_arcs : g->num_edges,
-	 g->is_directed ? "arcs" : "edges",
-	 density(g, allowLoops),
+         g->is_directed ? g->num_arcs : g->num_edges,
+         g->is_directed ? "arcs" : "edges",
+         density(g, allowLoops),
          allowLoops ? "loops allowed" : "loops not allowed");
   printf("%u binary attributes\n", g->num_binattr);
   for (i = 0; i < g->num_binattr; i++) {
@@ -1904,9 +1904,9 @@ void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
     fprintf(fp, "*arcs\n");
     for (i = 0; i < g->num_nodes; i++)  {
       for (j = 0; j < g->outdegree[i]; j++) {
-	count++;
-	fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
-	/*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
+        count++;
+        fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
+        /*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
       }
     }
     assert(count == g->num_arcs);
@@ -1915,9 +1915,9 @@ void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
     fprintf(fp, "*edges\n");
     for (i = 0; i < g->num_nodes; i++)  {
       for (j = 0; j < g->degree[i]; j++) {
-	count++;
+        count++;
         if (i <= j) {
-  	  fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
+          fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
           if (i == j) {
             loop_count++;
           } 
@@ -2514,13 +2514,13 @@ uint_t num_loops(const graph_t *g)
   if (g->is_directed) {
     for (k = 0; k < g->num_arcs; k++) {
       if (g->allarcs[k].i == g->allarcs[k].j) {
-	++count;
+        ++count;
       }
     }
   } else {
     for (k = 0; k < g->num_edges; k++) {
       if (g->alledges[k].i == g->alledges[k].j) {
-	++count;
+        ++count;
       }
     }
   }
@@ -2544,13 +2544,13 @@ bool has_loop(const graph_t *g, uint_t u)
   if (g->is_directed) {
     for (k = 0; k < g->outdegree[u]; k++) {
       if (g->arclist[u][k] == u) {
-	return TRUE;
+        return TRUE;
       }
     }
   } else {
     for (k = 0; k < g->degree[u]; k++) {
       if (g->edgelist[u][k] == u) {
-	return TRUE;
+        return TRUE;
       }
     }
   }
