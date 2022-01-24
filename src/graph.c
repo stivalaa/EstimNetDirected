@@ -233,6 +233,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->edgelist[i][k];
       if (v == i || v == j)
         continue;
+      g->twoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
+      g->twoPathMatrix[INDEX2D(j, v, g->num_nodes)]+=incval;
+    }
+    for (k = 0; k < g->degree[j]; k++)  {
+      v = g->edgelist[j][k];
+      if (v == i || v == j)
+        continue;
+      g->twoPathMatrix[INDEX2D(v, i, g->num_nodes)]+=incval;
       g->twoPathMatrix[INDEX2D(i, v, g->num_nodes)]+=incval;
     }
   }
