@@ -212,7 +212,7 @@ double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda)
     if (i == j) {
       return 0;
     } else {
-      assert(FALSE); /* TODO undirected changeTwoPath */
+      return g->degree[i] + g->degree[j];
     }
   }
 }

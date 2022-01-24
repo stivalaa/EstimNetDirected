@@ -66,3 +66,98 @@
 #include <assert.h>
 #include "changeStatisticsUndirected.h"
 
+/*****************************************************************************
+ *
+ * change statistics functions
+ *
+ ****************************************************************************/
+
+
+/************************* Structural ****************************************/
+
+
+/* 
+ * Change statistic for Edge
+ */
+double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  (void)g; (void)i; (void)j; (void)lambda; /* unused parameters */
+  assert(!g->is_directed);
+  return 1;
+}
+
+/*
+ * Change statistic for alternating k-stars (AS)
+ */
+double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  assert(lambda > 1);
+  assert(!g->is_directed);
+  return lambda * (2 -
+		   POW_LOOKUP(1-1/lambda, g->degree[i]) -
+		   POW_LOOKUP(1-1/lambda, g->degree[j]));
+}
+
+
+/*
+ * Change statistics for alternating two-path (A2P)
+ */
+double changeAltTwoPaths(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t v,k;
+  double delta = 0;
+  assert(lambda > 1);
+  assert(!g->is_directed);
+
+  if (i == j) {
+    return 0;
+  }
+
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    if (v == i || v == j)
+      continue;
+    delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, i, v));
+  }
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (v == i || v == j)
+      continue;
+    delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, v, j));
+  }
+
+  return delta;
+}
+
+
+/*
+ * Change statistic for alternating k-triangles (AT)
+ */
+double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t v,k,tmp;
+  double  delta = 0;
+  assert(lambda > 1);
+  assert(!g->is_directed);
+  
+  if (i == j) {
+    return 0;
+  }
+  if (g->degree[i] < g->degree[j]) {
+    tmp = i;
+    i = j;
+    j = tmp;
+  }
+
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[i][k];
+    if (v == i || v == j)
+      continue;
+    if (isArc(g, i, v))
+      delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, i, v)) +
+	POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, v, j));
+  }
+  delta += lambda * (1 - POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, i, j)));
+  return delta;
+}
+
