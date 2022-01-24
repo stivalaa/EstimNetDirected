@@ -67,7 +67,7 @@ static void dumpTwoPathTable(const graph_t *g) {
   }
  #endif /*TWOPATH_HASHTABLES*/
 
-  printf("sum = %u, max = %u\n", sum, max);
+  printf("twoPath sum = %u, max = %u\n", sum, max);
   printf("nnz = %u (%.4f%%)\n", nnz,
          100*(double)nnz/(g->num_nodes*g->num_nodes));
 }
@@ -291,10 +291,10 @@ int main(int argc, char *argv[])
     removeEdge(g, i, j);
     /* removeEdge() calles updateTwoPathsMatrices() itself */
 #ifdef TWOPATH_LOOKUP
-    printf("i = %d, j = %d, num_edges = %d, ", i, j, g->num_edges);
+    printf("i = %d, j = %d, num_edge = %d, ", i, j, g->num_edges);
     dumpTwoPathTable(g);
     #else
-    printf("i = %d, j = %d, num_edges = %d\n", i, j, g->num_edges);
+    printf("i = %d, j = %d, num_edge = %d\n", i, j, g->num_edges);
 #endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
