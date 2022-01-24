@@ -61,7 +61,7 @@ static void dumpTwoPathTable(const graph_t *g) {
         nnz++;
       }
       if (g->twoPathMatrix[INDEX2D(i, j, g->num_nodes)] > max) {
-        max = g->inTwoPathMatrix[INDEX2D(i, j, g->num_nodes)];
+        max = g->twoPathMatrix[INDEX2D(i, j, g->num_nodes)];
       }
     }
   }
