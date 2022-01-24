@@ -1,0 +1,28 @@
+Coauthorships in network science network
+netscience_edgelist.txt converted from GML version downloaded from
+Mark Newman's network data page 
+http://www-personal.umich.edu/~mejn/netdata/netscience.zip
+and converted to Pajek edge list format. Citation is:
+
+Newman, M. E. (2006). Finding community structure in networks using the eigenvectors of matrices. Physical review E, 74(3), 036104.
+
+netscience_nodepairs.txt generated with:
+
+ python2 ../TestChangeStatsDirected/genRandomNodeNums.py 1000 1589 > netscience_nodepairs.txt
+ 
+netscience_test_results.out generated with:
+
+ time ./testChangeStats netscience_edgelist.txt  netscience_nodepairs.txt  > netscience_test_results.out
+
+This way the same netscience_nodepairs.txt can
+be used wiht the same netscience network
+to test two-path matrix update and change
+statistics with different implementations
+as they should get the same results repaetably
+
+netscience_test_results_baseline.txt is the output from
+PNet code to compare output with as a regression test,
+which is what run_test_netscience.sh does.
+
+ADS
+Mon Jan 24 14:53:49 AEDT 2022
