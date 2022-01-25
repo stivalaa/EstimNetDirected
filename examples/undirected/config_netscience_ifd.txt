@@ -81,7 +81,7 @@ simNetFilePrefix = sim_ifd_netscience
 
 # prefix for observed network statistics
 
-observedStatsFilePrefix = obs_stats_ifd_boriseko_netscience
+observedStatsFilePrefix = obs_stats_ifd_netscience
 
 
 ################## Parameters to estimate ####################################
