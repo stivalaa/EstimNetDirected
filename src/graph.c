@@ -1721,9 +1721,15 @@ void free_graph(graph_t *g)
   }
   free(g->setattr);
   free(g->setattr_names);
-  for (i = 0; i < g->num_nodes; i++)  {
-    free(g->arclist[i]);
-    free(g->revarclist[i]);
+  if (g->is_directed) {
+    for (i = 0; i < g->num_nodes; i++)  {
+      free(g->arclist[i]);
+      free(g->revarclist[i]);
+    }
+  } else {
+    for (i = 0; i < g->num_nodes; i++)  {
+      free(g->edgelist[i]);
+    }
   }
   free(g->allarcs);
   free(g->arclist);
