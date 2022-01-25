@@ -90,7 +90,7 @@ observedStatsFilePrefix = obs_stats_ifd_boriseko_netscience
 # Structural parameters
 #
 
-structParams =  { Edge }
+structParams =  { AltStars }
 
 #
 # Attribute parameters
