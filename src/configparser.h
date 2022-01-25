@@ -23,6 +23,7 @@
 #include "utils.h"
 #include "changeStatisticsGeneral.h"
 #include "changeStatisticsDirected.h"
+#include "changeStatisticsUndirected.h"
 
 /* These must be macros not const to use in initializer  */
 /* not case sensitive */

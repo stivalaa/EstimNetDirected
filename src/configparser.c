@@ -85,7 +85,11 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsU},
   {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsTD},
   {"Loop",              STRUCT_PARAM_TYPE_NONE,   changeLoop},
-  {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   changeLoopInteraction}
+  {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   changeLoopInteraction},
+  {"Edge",              STRUCT_PARAM_TYPE_NONE,   changeEdge},
+  {"AltStars",          STRUCT_PARAM_TYPE_LAMBDA, changeAltStars},
+  {"AltTwoPaths",       STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPaths},
+  {"AltKTriangles",     STRUCT_PARAM_TYPE_LAMBDA, changeAltKTriangles}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
@@ -112,7 +116,8 @@ static const attr_param_t ATTR_PARAMS[] =
   {"DiffSign",               ATTR_TYPE_CONTINUOUS, changeDiffSign},
   {"DiffDirSR",              ATTR_TYPE_CONTINUOUS, changeDiffDirSR},
   {"DiffDirRS",              ATTR_TYPE_CONTINUOUS, changeDiffDirRS},
-  {"JaccardSimilarity",      ATTR_TYPE_SET,        changeJaccardSimilarity}
+  {"JaccardSimilarity",      ATTR_TYPE_SET,        changeJaccardSimilarity},
+  {"Activity",               ATTR_TYPE_BINARY,     changeActivity}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
