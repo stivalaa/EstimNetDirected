@@ -150,7 +150,7 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
    "allow loops (self-edges)"},
 
   {"isDirected",   PARAM_TYPE_BOOL,
-   offsetof(estim_config_t, allowLoops),
+   offsetof(estim_config_t, isDirected),
    "directed graph"},
 
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
