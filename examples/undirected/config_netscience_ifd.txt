@@ -90,7 +90,7 @@ observedStatsFilePrefix = obs_stats_ifd_netscience
 # Structural parameters
 #
 
-structParams =  { AltStars }
+structParams =  { AltStars, AltTwoPaths, AltKTriangles }
 
 #
 # Attribute parameters
