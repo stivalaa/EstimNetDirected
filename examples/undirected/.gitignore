@@ -4,3 +4,6 @@ theta_*.pdf
 dzA_*.pdf
 sim_*.net
 obs_stats_*.txt
+slurm-*.out
+EstimNetDirected_*.out
+EstimNetDirected_*.err
