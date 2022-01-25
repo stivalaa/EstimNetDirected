@@ -31,6 +31,7 @@
 #define ATTR_PARAMS_STR               "attrParams"
 #define DYADIC_PARAMS_STR             "dyadicParams"
 #define ARC_PARAM_STR                 "Arc"
+#define EDGE_PARAM_STR                "Edge"
 #define ATTR_INTERACTION_PARAMS_STR   "attrInteractionParams"
 
 

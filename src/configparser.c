@@ -86,7 +86,7 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsTD},
   {"Loop",              STRUCT_PARAM_TYPE_NONE,   changeLoop},
   {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   changeLoopInteraction},
-  {"Edge",              STRUCT_PARAM_TYPE_NONE,   changeEdge},
+  {EDGE_PARAM_STR,      STRUCT_PARAM_TYPE_NONE,   changeEdge},
   {"AltStars",          STRUCT_PARAM_TYPE_LAMBDA, changeAltStars},
   {"AltTwoPaths",       STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPaths},
   {"AltKTriangles",     STRUCT_PARAM_TYPE_LAMBDA, changeAltKTriangles}

@@ -491,7 +491,7 @@ int do_simulation(sim_config_t * config)
   uint_t         num_nodes       = 0;
   double        *changeStats     = NULL;
   uint_t         obs_maxtermsender_arcs;
-  
+  const char    *arc_param_str   = NULL;
     
 
   if (!config->stats_filename) {
@@ -675,9 +675,10 @@ int do_simulation(sim_config_t * config)
      get its index as it is needed to compute the initial value of the
      IFD sampler auxilliary parameter,
      and also instead the numArcs parameter is included (fixed density) */
+  arc_param_str = config->isDirected ? ARC_PARAM_STR : EDGE_PARAM_STR; 
   if (config->useIFDsampler) {
     for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
-      if (strcasecmp(config->param_config.param_names[i], ARC_PARAM_STR) == 0) {
+      if (strcasecmp(config->param_config.param_names[i], arc_param_str) == 0) {
         arc_param_index = i;
         foundArc = TRUE;
       }
@@ -685,7 +686,7 @@ int do_simulation(sim_config_t * config)
     if (!foundArc) {
       fprintf(stderr, 
               "ERROR: must include %s parameter when using IFD sampler.\n",
-              ARC_PARAM_STR);
+              arc_param_str);
       return -1;
     }
     /* numArcs not used with citationERGM though */

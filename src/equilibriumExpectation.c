@@ -773,6 +773,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   bool          computeStats = config->computeStats && tasknum == 0;
   bool          first_header_field = TRUE;
   uint_t        loop_count = 0;
+  const char   *arc_param_str = NULL;
 
   if (!config->arclist_filename) {
     fprintf(stderr, "ERROR: no arclistFile specified.\n");
@@ -940,16 +941,17 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     }
   }
 
-   
+  arc_param_str = g->is_directed ? ARC_PARAM_STR : EDGE_PARAM_STR;
+
    /* Ensure that for the IFD sampler there is no Arc parameter included 
       as the IFD sampler computes this itself from the auxiliary parameter */
    if (config->useIFDsampler) {
      for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
-       if (strcasecmp(config->param_config.param_names[i], ARC_PARAM_STR) == 0) {
+       if (strcasecmp(config->param_config.param_names[i], arc_param_str) == 0) {
          fprintf(stderr, 
-                 "ERROR: cannot include Arc parameter when using IFD sampler.\n"
-                 "Either unset useIFDsampler or remove Arc from %s.\n",
-                 STRUCT_PARAMS_STR);
+                 "ERROR: cannot include %s parameter when using IFD sampler.\n"
+                 "Either unset useIFDsampler or remove %s from %s.\n",
+		 arc_param_str, arc_param_str, STRUCT_PARAMS_STR);
          return -1;
        }
      }
@@ -1066,10 +1068,10 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
             "(%s)\n", tasknum, dzA_outfilename, strerror(errno));
     return -1;
   }
-
+  
   /* write headers for output files */
   if (config->useIFDsampler){/* IFD sampler always computes an Arc parameter */
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s", ARC_PARAM_STR);
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX,"%s", arc_param_str);
     first_header_field = FALSE;
   }
   for (i = 0; i < config->param_config.num_change_stats_funcs; i++)  {
