@@ -14,7 +14,7 @@ Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 200
 
 and the network science coauthorship network from the paper:
 
-Newman, M. E. (2006). Finding community structure in networks using the eigenvectors of matrices. Physical review E, 74(3), 036104.
+Newman, M. E. (2006). Finding community structure in networks using the eigenvectors of matrices. Physical Review E, 74(3), 036104.
 
 are included. These networks were downloaded from Mark Newman's network data page.
 
