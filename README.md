@@ -18,7 +18,7 @@ If you use this software (or any alternative implementation of the algorithms de
 
 The "citation ERGM" (cERGM) model variant, which can also be estimated with this software, is described by:
 
-Schmid, C. S., Chen, T. H. Y., & Desmarais, B. A. (2021). Generative Dynamics of Supreme Court Citations: Analysis with a New Statistical Network Model. arXiv preprint arXiv:2101.07197.
+Schmid, C., Chen, T., & Desmarais, B. (2021). Generative Dynamics of Supreme Court Citations: Analysis with a New Statistical Network Model. Political Analysis, 1-20. doi:10.1017/pan.2021.20
 
 The original statnet (http://statnet.org/) R implementation of cERGM is available from https://github.com/schmid86/cERGM/.
 
