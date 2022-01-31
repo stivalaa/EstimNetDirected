@@ -19,7 +19,7 @@ samplerSteps= 1000 # sampler iterations (per algorithm step)
 Ssteps =100 # steps of Algorithm S 
 
 
-EEsteps= 1500 # steps of Algorithm EE. 
+EEsteps= 5000 # steps of Algorithm EE. 
 EEinnerSteps = 100 # inner iterations of Algorithm EE 
 
 
