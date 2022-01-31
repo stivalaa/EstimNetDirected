@@ -12,4 +12,7 @@ EstimNetDirected_*.err
 estimation_ifd_example_n1000_binattr.txt
 stats_gof_example_n1000_binattr_ifd-plots.eps
 stats_gof_example_n1000_binattr_ifd.txt
+SimulateERGM_gof_ifd_example_n1000_binattr-*.err
+SimulateERGM_gof_ifd_example_n1000_binattr-*.out
+config_gof_example_n1000_binattr_ifd.txt
 
