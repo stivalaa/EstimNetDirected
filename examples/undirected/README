@@ -1,0 +1,18 @@
+Examples of running the EstimNetDirected program on undirected networks.
+
+sample_statistics_n1000_binattr_50_50_sim280000000.txt  and
+binaryAttributes_50_50.txt is a simulated 1000 node network 
+with binary attribute, simulated from the following ERGM parameters using PNet:
+
+  Parameter Values:
+  edge	-4.00000
+  AS(2.00)	0.20000
+  AT(2.00)	1.00000
+  A2P(2.00)	-0.20000
+  binaryAttribute_interaction	0.50000
+  binaryAttribute_activity	0.20000
+
+
+
+ADS
+Mon Jan 31 17:00:08 AEDT 2022
