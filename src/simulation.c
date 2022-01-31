@@ -744,6 +744,8 @@ int do_simulation(sim_config_t * config)
        fixed; arcs from the last time period will be deleted in the
        initialization here, and can be added and deleted in the
        simulation */
+    assert(g->is_directed);
+    assert(config->allowLoops);
     if (!config->arclist_filename) {
       fprintf(stderr, "ERROR: citation ERGM simulation requested but no arclistFile specified.\n");
       return -1;

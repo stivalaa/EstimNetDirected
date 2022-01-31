@@ -101,7 +101,7 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
      like ergm-constraints in statnet instead of this ad-hoc way */
 
   {"numArcs",        PARAM_TYPE_UINT,     offsetof(sim_config_t, numArcs),
-   "number of arcs for Improved Fixed Density simulation (useIFDsampler=TRUE)"},
+   "number of arcs (edges for undirected) for Improved Fixed Density simulation (useIFDsampler=TRUE)"},
 
   {"termFile",      PARAM_TYPE_STRING,  offsetof(sim_config_t, term_filename),
    "citation ERGM (cERGM) term (time period) filename"},
