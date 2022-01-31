@@ -7,3 +7,5 @@ obs_stats_*.txt
 slurm-*.out
 EstimNetDirected_*.out
 EstimNetDirected_*.err
+.Rhistory
+.RData
