@@ -245,12 +245,11 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
             j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
           } while (i == j);
           assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
-        } while (isArcOrEdge(g, i, j) ||
+        } while (isArcIgnoreDirection(g, i, j) ||
                  (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
       }
     } else if (citationERGM) {
       assert(g->is_directed); /* cERGM only for digraphs */
-      assert(!forbidReciprocity); /* TODO not implemented for TNT cERGM */
       assert(!allowLoops);
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: TNT sampler num_maxtermsender_arcs == 0\n");
@@ -279,7 +278,7 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
             j = int_urand(g->num_nodes);
           } while (i == j);
           assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
-        } while (isArc(g, i, j));
+        } while (forbidReciprocity && isArc(g, i, j));
       }
     } else {
       /* not using snowball or citation ERGM conditional estimation */

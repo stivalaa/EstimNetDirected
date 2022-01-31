@@ -149,7 +149,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   assert(!(citationERGM && useConditionalEstimation)); /* cannot do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
-  
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */  
 
   for (i = 0; i < n; i++)
     addChangeStats[i] = delChangeStats[i] = 0;

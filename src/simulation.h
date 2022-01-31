@@ -5,7 +5,7 @@
  * Author:  Alex Stivala
  * Created: October 2019
  *
- * Draw samples from ERGM distribution of directed graphs.
+ * Draw samples from ERGM distribution of graphs.
  *
  ****************************************************************************/
 

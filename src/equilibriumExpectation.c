@@ -1033,6 +1033,10 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    }
    
    if (config->allowLoops) {
+     if (!config->isDirected) {
+       fprintf(stderr, "ERROR: cannot use allowLoops with undirected graph\n");
+       return -1;
+     }
      if (config->useConditionalEstimation) {
        fprintf(stderr, "ERROR: cannot use allowLoops in conditional estimation\n");
        return -1;

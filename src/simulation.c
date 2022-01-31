@@ -4,7 +4,7 @@
  * Author:  Alex Stivala
  * Created: October 2019
  *
- * Draw samples from ERGM distribution of directed graphs.
+ * Draw samples from ERGM distribution of graphs.
  *
  ****************************************************************************/
 
@@ -31,12 +31,12 @@
 
 
 /*
- * Make an Erdos-Renyi aka Bernoulli directed random graph G(n, m)
+ * Make an Erdos-Renyi aka Bernoulli random graph G(n, m)
  * with n nodes and m m edges. I.e. the m edges are placed between
  * dyads chosen uniformly at random.
  *
  * Parameters:
- *   g                        - digraph object. Modifed.
+ *   g                        - graph object. Modifed.
  *   numArcs                  - number of arcs [m in G(n,m) notation]
  *   n      - number of parameters (length of theta vector and total
  *            number of change statistic functions)
@@ -103,10 +103,13 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
   double *changestats = (double *)safe_malloc(n*sizeof(double));
 
   assert(!(citationERGM && useConditionalEstimation));
+  assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
   
   for (k = 0; k < numArcs; k++) {
     if (useConditionalEstimation) {
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
+      assert(!allowLoops);
       /* Add move for conditional estimation. Find two nodes i, j in
          inner waves without arc i->j uniformly at random. Because
          graph is sparse, it is not too inefficient to just pick
@@ -118,9 +121,9 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
         i = g->inner_nodes[int_urand(g->num_inner_nodes)];          
         do {
           j = g->inner_nodes[int_urand(g->num_inner_nodes)];        
-        } while (!allowLoops && i == j);
+        } while (i == j);
         assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
-      } while (isArc(g, i, j) ||
+      } while (isArcIgnoreDirection(g, i, j) ||
                (labs((long)g->zone[i] - (long)g->zone[j]) > 1));
     } else if (citationERGM) {
       /* cERGM: select random node i in last time period (term) and random
@@ -130,6 +133,8 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
        * and we only create citations from nodes in the last term. 
        * Because graph is sparse, it is not too inefficient
        * to just pick random nodes until such a pair is found */
+      assert(g->is_directed); /* cERGM only for digraphs */
+      assert(!allowLoops);
       do {
         do {
           i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
@@ -149,9 +154,9 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
           i = int_urand(g->num_nodes);
           do {
             j = int_urand(g->num_nodes);
-          } while (i == j);
-        } while (isArc(g, i, j));
-      } while (forbidReciprocity && isArc(g, j, i));
+          } while (!allowLoops && i == j);
+        } while (isArcOrEdge(g, i, j));
+      } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
     }
 
     /* add change statistics to addChangeStats array */
@@ -169,11 +174,11 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
     
     /* actually do the move by adding the arc */
     if (useConditionalEstimation) {
-      insertArc_allinnerarcs(g, i, j);
+      insertArcOrEdge_updateinnerlist(g, i, j);
     } else if (citationERGM) {
       insertArc_all_maxtermsender_arcs(g, i, j);
     } else {
-      insertArc_allarcs(g, i, j);
+      insertArcOrEdge_updatelist(g, i, j);
     }
   }
   free(changestats);
@@ -188,10 +193,10 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
 
 
 /*
- * Generate digraphs from ERGM distribution with supplied parameters.
+ * Generate graphs from ERGM distribution with supplied parameters.
  *
  * Parameters:
- *   g      - (in/out) Initial digraph object (empty graph with N nodes
+ *   g      - (in/out) Initial graph object (empty graph with N nodes
  *            intiially where N is number of nodes in graphs to simulate).
  *   n      - number of parameters (length of theta vector and total
  *            number of change statistics functions)
@@ -292,6 +297,8 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   assert(!(useIFDsampler && useTNTsampler));
   assert(!(citationERGM && useConditionalSimulation));  
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
+  assert(!(allowLoops && (useConditionalSimulation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
   
   if (useIFDsampler)
     ifd_aux_param = theta[arc_param_index] +
@@ -300,6 +307,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   printf("sampleSize = %u, interval = %u burnin = %u\n",
          sample_size, interval, burnin);
+  printf("%s graph\n", g->is_directed ? "Directed" : "Undirected");
   if (useIFDsampler)
     printf("IFD sampler ifd_K = %g initial auxiliary parameter V = %g\n",
            ifd_K, ifd_aux_param);
@@ -603,6 +611,10 @@ int do_simulation(sim_config_t * config)
    
 
   if (config->allowLoops) {
+     if (!config->isDirected) {
+       fprintf(stderr, "ERROR: cannot use allowLoops with undirected graph\n");
+       return -1;
+     }
     if (config->useConditionalSimulation) {
       fprintf(stderr, "ERROR: cannot use allowLoops in conditional simulation\n");
       return -1;
@@ -820,7 +832,7 @@ int do_simulation(sim_config_t * config)
          for fixed density simulation (IFD sampler),
          and also for TNT sampler since it does 50% add/delete moves.
          This means we add the same number of arcs we just deleted,
-         sent from max temr nodes, but now at random, no thte observed ones.*/
+         sent from max temr nodes, but now at random, not the observed ones.*/
       make_erdos_renyi_digraph(g, obs_maxtermsender_arcs,
                                num_param, n_attr, n_dyadic, n_attr_interaction,
                                config->param_config.change_stats_funcs,
