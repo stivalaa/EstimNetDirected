@@ -3,8 +3,8 @@
 #SBATCH --job-name="SimulateERGM_gof_example_n1000_binattr"
 #SBATCH --ntasks=1
 #SBATCH --time=0-0:30:00
-#SBATCH --output=SimulateERGM_ifd_example_n1000_binattr-%j.out
-#SBATCH --error=SimulateERGM_ifd_example_n1000_binattr-%j.err
+#SBATCH --output=SimulateERGM_gof_ifd_example_n1000_binattr-%j.out
+#SBATCH --error=SimulateERGM_gof_ifd_example_n1000_binattr-%j.err
 
 echo -n "started at: "; date
 
@@ -16,7 +16,7 @@ GOF_CONFIG_FILE=config_gof_example_n1000_binattr_ifd.txt
 
 module load r
 
-${ROOT}/estimnetdirectedEstimation2simulationConfig.sh  config_example_n1000_binattar_ifd.txt  estimation_ifd_example_n1000_binattr.txt ${STATS_FILE} ${SIM_FILE_PREFIX} > ${GOF_CONFIG_FILE}
+${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh  config_example_n1000_binattar_ifd.txt  estimation_ifd_example_n1000_binattr.txt ${STATS_FILE} ${SIM_FILE_PREFIX} > ${GOF_CONFIG_FILE}
 
 rm ${SIM_FILE_PREFIX}_*.net
 
