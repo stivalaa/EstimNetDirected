@@ -21,4 +21,10 @@ config_gof_example_n1000_binattr_tnt.txt
 estimation_tnt_example_n1000_binattr.txt
 stats_gof_example_n1000_binattr_tnt-plots.eps
 stats_gof_example_n1000_binattr_tnt.txt
+SimulateERGM_gof_basic_example_n1000_binattr-*.err
+SimulateERGM_gof_basic_example_n1000_binattr-*.out
+config_gof_example_n1000_binattr_basic.txt
+estimation_basic_example_n1000_binattr.txt
+stats_gof_example_n1000_binattr_basic-plots.eps
+stats_gof_example_n1000_binattr_basic.txt
 
