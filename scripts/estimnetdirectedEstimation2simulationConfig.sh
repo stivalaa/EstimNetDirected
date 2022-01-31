@@ -85,6 +85,7 @@ grep -i contattrFile ${estimationconfig}
 grep -i setattrFile ${estimationconfig}
 
 # options that need to be same in simulation as estimation
+grep -wi isdirected ${estimationconfig}
 grep -wi forbidreciprocity ${estimationconfig}
 grep -wi allowloops ${estimationconfig}
 
