@@ -9,3 +9,7 @@ EstimNetDirected_*.out
 EstimNetDirected_*.err
 .Rhistory
 .RData
+estimation_ifd_example_n1000_binattr.txt
+stats_gof_example_n1000_binattr_ifd-plots.eps
+stats_gof_example_n1000_binattr_ifd.txt
+
