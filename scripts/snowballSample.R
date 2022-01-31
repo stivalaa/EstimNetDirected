@@ -22,7 +22,7 @@ library(igraph)
 ## Return value:
 ##     igraph graph object built from data in file
 ##
-read_graph_file <- function(filename, directed) {
+read_graph_file <- function(filename, directed=TRUE) {
   alltext <- readLines(filename)
   if (any(grepl('*matrix', alltext, fixed=TRUE))) {
       return (read_graph_matrix_file(filename, directed))
@@ -31,6 +31,11 @@ read_graph_file <- function(filename, directed) {
       if (any(grepl('***This graph contains:****', alltext, fixed=TRUE))) {
           ## remove extra lines written by PNet
           pajek_text <- alltext[1:which(alltext == '***This graph contains:****')-1]
+      }
+      if (any(grepl('^[*]arcs', alltext, fixed=FALSE, ignore.case=TRUE))) {
+        directed = TRUE
+      } else if (any(grepl('^[*]edges', alltext, fixed=FALSE, ignore.case=TRUE))) {
+        directed = FALSE
       }
       ## remove all the vertex lines that don't seem to work with igraph pajek format
       firstline <- pajek_text[1]

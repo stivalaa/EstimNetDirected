@@ -117,6 +117,7 @@ my_scientific_10 <- function(x) {
 ##    g_obs:       observed graph igraph object
 ##    sim_graphs:  simulated graphs list of igraph objects
 ##    mode:       'in' or 'out' for indegree or outdegree respectively
+##                or 'all' for undirected graph
 ##
 ## Return value:
 ##    ggplot2 object to add to plot list
@@ -173,7 +174,11 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     ## need to adjust the group aesthetic?" and it does not work.
     ## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
     p <- p + ptheme
-    p <- p + xlab(paste(mode, '-degree', sep='')) + ylab('fraction of nodes')
+    degreetype <- 'degree'
+    if (mode == 'in' || mode =='out') {
+      degreetype <- paste(mode, 'degree', sep='-')
+    }
+    p <- p + xlab(degreetype) + ylab('fraction of nodes')
     if (maxdeg > 200) {
         p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 200))
     } else if (maxdeg > 50) {
@@ -194,6 +199,7 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
 ##    g_obs:       observed graph igraph object
 ##    sim_graphs:  simulated graphs list of igraph objects
 ##    mode:       'in' or 'out' for indegree or outdegree respectively
+##                 or all for undirected
 ##    use_log:    TRUE to do log degree
 ##
 ## Return value:
@@ -224,7 +230,11 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
     p <- ggplot(dat, aes(degree, fill = group, colour = group)) +
         geom_histogram(aes(y = ..density..),
                        alpha = 0.4, position = 'identity', lwd = 0.2)
-    p <- p + xlab(paste(ifelse(use_log, "log ", ""), mode, '-degree', sep=''))
+    degreetype <- 'degree'
+    if (mode == 'in' || mode =='out') {
+      degreetype <- paste(mode, 'degree', sep='-')
+    }
+    p <- p + xlab(paste(ifelse(use_log, "log ", ""), degreetype, sep=''))
     p <- p + theme(legend.title=element_blank(),
                    legend.position = c(0.9, 0.8))
     end <- Sys.time()
@@ -262,13 +272,12 @@ obscolour <- 'red' # colour to plot observed graph points/lines
 graph_glob <- paste(simnetfileprefix, "_[0-9]*[.]net", sep='')
 outfilename <- paste(simnetfileprefix, "pdf", sep='.')
 
-g_obs <- read_graph_file(netfilename, directed = TRUE)
+g_obs <- read_graph_file(netfilename)
 
 sim_files <- Sys.glob(graph_glob)
 cat('Reading ', length(sim_files), ' graphs...\n')
 system.time(sim_graphs <- sapply(sim_files,
-                                 FUN = function(f) read_graph_file(f,
-                                                                   directed=TRUE),
+                                 FUN = function(f) read_graph_file(f),
                                  simplify = FALSE))
 
 num_nodes <- vcount(g_obs)
@@ -283,32 +292,48 @@ ptheme <-  theme(legend.position = 'none')
 
 plotlist <- list()
 
-###
-### In degree
-###
+if (is.directed(g_obs)) {
+  ##
+  ## In degree
+  ##
 
-system.time(plotlist <- c(plotlist,
-                          list(deg_distr_plot(g_obs, sim_graphs, 'in'))))
+  system.time(plotlist <- c(plotlist,
+                            list(deg_distr_plot(g_obs, sim_graphs, 'in'))))
 
-system.time(plotlist <- c(plotlist,
-                          list(deg_hist_plot(g_obs, sim_graphs, 'in', FALSE))))
+  system.time(plotlist <- c(plotlist,
+                            list(deg_hist_plot(g_obs, sim_graphs, 'in', FALSE))))
 
-system.time(plotlist <- c(plotlist,
-                          list(deg_hist_plot(g_obs, sim_graphs, 'in', TRUE))))
+  system.time(plotlist <- c(plotlist,
+                            list(deg_hist_plot(g_obs, sim_graphs, 'in', TRUE))))
 
 
-###
-### Out degree
-###
+  ##
+  ## Out degree
+  ##
 
-system.time(plotlist <- c(plotlist,
-                          list(deg_distr_plot(g_obs, sim_graphs, 'out'))))
+  system.time(plotlist <- c(plotlist,
+                            list(deg_distr_plot(g_obs, sim_graphs, 'out'))))
 
-system.time(plotlist <- c(plotlist,
-                          list(deg_hist_plot(g_obs, sim_graphs, 'out', FALSE))))
+  system.time(plotlist <- c(plotlist,
+                            list(deg_hist_plot(g_obs, sim_graphs, 'out', FALSE))))
 
-system.time(plotlist <- c(plotlist,
-                          list(deg_hist_plot(g_obs, sim_graphs, 'out', TRUE))))
+  system.time(plotlist <- c(plotlist,
+                            list(deg_hist_plot(g_obs, sim_graphs, 'out', TRUE))))
+
+} else {
+  ##
+  ## Degree
+  ##
+
+  system.time(plotlist <- c(plotlist,
+                            list(deg_distr_plot(g_obs, sim_graphs, 'all'))))
+
+  system.time(plotlist <- c(plotlist,
+                            list(deg_hist_plot(g_obs, sim_graphs, 'all', FALSE))))
+
+  system.time(plotlist <- c(plotlist,
+                            list(deg_hist_plot(g_obs, sim_graphs, 'all', TRUE))))
+}
 
 
 ## ###
@@ -331,26 +356,27 @@ system.time(plotlist <- c(plotlist,
 ###
 ### Reciprocity
 ###
-## Uses the default reciprocity in igraph which is probability
-## that opposite counterpart of directed edge is also in the graph.
-## Note can also use triad census 102 which is just graph with a mutual
-## arc between two vertices (more related to the alternative reciprocity
-## definition which we are not using), but not quite the same and also
-## for very large graphs the triad 102 census count overflows and has to
-## be omitted, while this does not.
-system.time( obs_reciprocity <- reciprocity(g_obs) )
-system.time( sim_reciprocity <- sapply(sim_graphs, function(g) reciprocity(g)) )
-cat('obs reciprocity: ', obs_reciprocity, '\n')
-cat('sim reciprocity: ', sim_reciprocity, '\n')
-p <- ggplot() + geom_boxplot(aes(x = 'reciprocity', y = sim_reciprocity))
-p <- p + geom_point(aes(x = as.numeric(ordered('reciprocity')),
-                        y = obs_reciprocity,
-                        colour = obscolour))
-p <- p + ylab('fraction of arcs') + ptheme +
-  theme(axis.title.x = element_blank())
-##p <- p + ylim(0, 1)
-plotlist <- c(plotlist, list(p))
-
+if (is.directed(g_obs)) {
+  ## Uses the default reciprocity in igraph which is probability
+  ## that opposite counterpart of directed edge is also in the graph.
+  ## Note can also use triad census 102 which is just graph with a mutual
+  ## arc between two vertices (more related to the alternative reciprocity
+  ## definition which we are not using), but not quite the same and also
+  ## for very large graphs the triad 102 census count overflows and has to
+  ## be omitted, while this does not.
+  system.time( obs_reciprocity <- reciprocity(g_obs) )
+  system.time( sim_reciprocity <- sapply(sim_graphs, function(g) reciprocity(g)) )
+  cat('obs reciprocity: ', obs_reciprocity, '\n')
+  cat('sim reciprocity: ', sim_reciprocity, '\n')
+  p <- ggplot() + geom_boxplot(aes(x = 'reciprocity', y = sim_reciprocity))
+  p <- p + geom_point(aes(x = as.numeric(ordered('reciprocity')),
+                          y = obs_reciprocity,
+                          colour = obscolour))
+  p <- p + ylab('fraction of arcs') + ptheme +
+    theme(axis.title.x = element_blank())
+  ##p <- p + ylim(0, 1)
+  plotlist <- c(plotlist, list(p))
+}
 
 
 ###
@@ -460,66 +486,67 @@ plotlist <- c(plotlist, list(p))
 ### Triad census
 ###
 
-## Note that on large networks, triad census counts can overflow and
-## give negative numbers
-## https://github.com/igraph/igraph/issues/625
-## https://github.com/igraph/igraph/issues/497
-## 003 and 012 and 102 can overflow on too large networks
-## so will drop them if any are negative or arbitrarily network is
-## 'too large'
-dropFirstThree <- FALSE 
-## if (num_nodes > 1000000) {
-##     dropFirstThree <- TRUE
-## }
-nTriads <- choose(num_nodes, 3)
-system.time(obs_triadcensus <- triad.census(g_obs))
-num_triad_types <- length(obs_triadcensus)
-stopifnot(num_triad_types == 16)
-triadnames <- c('003', '012', '102', '021D', '021U', '021C', '111D',
-                '111U', '030T', '030C', '201', '120D', '120U', '120C',
-                '210', '300')
-stopifnot(length(triadnames) == num_triad_types)
-names(obs_triadcensus) <- triadnames
-cat('obs triad census: ', obs_triadcensus, '\n')
-if (obs_triadcensus[1] < 0 || obs_triadcensus[2] < 0 || obs_triadcensus[3] < 0) {
+if (is.directed(g_obs)) {
+  ## Note that on large networks, triad census counts can overflow and
+  ## give negative numbers
+  ## https://github.com/igraph/igraph/issues/625
+  ## https://github.com/igraph/igraph/issues/497
+  ## 003 and 012 and 102 can overflow on too large networks
+  ## so will drop them if any are negative or arbitrarily network is
+  ## 'too large'
+  dropFirstThree <- FALSE 
+  ## if (num_nodes > 1000000) {
+  ##     dropFirstThree <- TRUE
+  ## }
+  nTriads <- choose(num_nodes, 3)
+  system.time(obs_triadcensus <- triad.census(g_obs))
+  num_triad_types <- length(obs_triadcensus)
+  stopifnot(num_triad_types == 16)
+  triadnames <- c('003', '012', '102', '021D', '021U', '021C', '111D',
+                  '111U', '030T', '030C', '201', '120D', '120U', '120C',
+                  '210', '300')
+  stopifnot(length(triadnames) == num_triad_types)
+  names(obs_triadcensus) <- triadnames
+  cat('obs triad census: ', obs_triadcensus, '\n')
+  if (obs_triadcensus[1] < 0 || obs_triadcensus[2] < 0 || obs_triadcensus[3] < 0) {
     dropFirstThree <- TRUE
-}
-sim_triadcensus_df <- data.frame(sim = rep(1:num_sim, each = num_triad_types),
-                                 triad = rep(triadnames, num_sim),
-                                 count = NA)
-obs_triadcensus_df <- data.frame(triad = triadnames,
-                                 count = NA)
-## as for degree distributions, using loops as trying to do it "properly"
-## in R was just too difficult
-for (tname in triadnames) {
+  }
+  sim_triadcensus_df <- data.frame(sim = rep(1:num_sim, each = num_triad_types),
+                                   triad = rep(triadnames, num_sim),
+                                   count = NA)
+  obs_triadcensus_df <- data.frame(triad = triadnames,
+                                   count = NA)
+  ## as for degree distributions, using loops as trying to do it "properly"
+  ## in R was just too difficult
+  for (tname in triadnames) {
     obs_triadcensus_df[which(obs_triadcensus_df[,"triad"] == tname,
                              arr.ind=TRUE), "count"] <-
-        obs_triadcensus[tname]
-}
-obs_triadcensus_df$triadfraction <- obs_triadcensus_df$count / nTriads
-for (i in 1:num_sim) {
+      obs_triadcensus[tname]
+  }
+  obs_triadcensus_df$triadfraction <- obs_triadcensus_df$count / nTriads
+  for (i in 1:num_sim) {
     system.time(sim_triadcensus <- triad_census(sim_graphs[[i]]))
     names(sim_triadcensus) <- triadnames
     cat('sim triad census ', i, ': ', sim_triadcensus, '\n')
     if (sim_triadcensus[1] < 0 || sim_triadcensus[2] < 0 || sim_triadcensus[3] < 0) {
-        dropFirstThree <- TRUE
+      dropFirstThree <- TRUE
     }
     for (tname in triadnames) {
-        sim_triadcensus_df[which(sim_triadcensus_df[,"sim"] == i &
-                                 sim_triadcensus_df[,"triad"] == tname,
-                                 arr.ind=TRUE), "count"] <-
-            sim_triadcensus[tname]
+      sim_triadcensus_df[which(sim_triadcensus_df[,"sim"] == i &
+                               sim_triadcensus_df[,"triad"] == tname,
+                               arr.ind=TRUE), "count"] <-
+        sim_triadcensus[tname]
     }
-}
+  }
 
-## make factor with triad names explicitly specified to keep them in order
-sim_triadcensus_df$triad <- factor(sim_triadcensus_df$triad, levels = triadnames)
-obs_triadcensus_df$triad <- factor(obs_triadcensus_df$triad, levels = triadnames)
+  ## make factor with triad names explicitly specified to keep them in order
+  sim_triadcensus_df$triad <- factor(sim_triadcensus_df$triad, levels = triadnames)
+  obs_triadcensus_df$triad <- factor(obs_triadcensus_df$triad, levels = triadnames)
 
-sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
-## Remove first two triads if necessary
-## (003 triad (empty graph) and 012 (single edge))
-if (dropFirstThree) {
+  sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
+  ## Remove first two triads if necessary
+  ## (003 triad (empty graph) and 012 (single edge))
+  if (dropFirstThree) {
     cat ("WARNING: dropping triad census 003 and 012 and 102 as overflow detected\n")
     sim_triadcensus_df <- sim_triadcensus_df[which(sim_triadcensus_df$triad != "003"),]
     obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "003"),]
@@ -527,73 +554,73 @@ if (dropFirstThree) {
     obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "012"),]
     sim_triadcensus_df <- sim_triadcensus_df[which(sim_triadcensus_df$triad != "102"),]
     obs_triadcensus_df <- obs_triadcensus_df[which(obs_triadcensus_df$triad != "102"),]
-}
-p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
-p <- p + geom_boxplot()
-p <- p + ylab('fraction of triads') + ptheme +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-  xlab('Triad census')
-## who knows why the hjust and vjust are needed, or what they should
-## be, but they do seem to be, otherwise labels are not positioned right
-## (note depends on which versoin of R/ggplot2 being used, but this worked
-## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
-## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
-p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
-                                                  colour = obscolour,
-                                                  group = 1))
-plotlist <- c(plotlist, list(p))  # no logarithm
-p <- p + scale_y_log10() + ylab("frac. triads (log scale)")
-plotlist <- c(plotlist, list(p))  # log scale on y axis
-
-if (do_subplots) {
-  ## write separate file for triad census (log) plot
-  ## add points for separate plot only (too large and messy on combined plots)
-  ## also use raw number of triads rather than normalizing
-  p <- ggplot(sim_triadcensus_df, aes(x = triad, y = count))
+  }
+  p <- ggplot(sim_triadcensus_df, aes(x = triad, y = triadfraction))
   p <- p + geom_boxplot()
-  p <- p + ptheme +
+  p <- p + ylab('fraction of triads') + ptheme +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-  xlab('Triad census')
+    xlab('Triad census')
   ## who knows why the hjust and vjust are needed, or what they should
   ## be, but they do seem to be, otherwise labels are not positioned right
   ## (note depends on which versoin of R/ggplot2 being used, but this worked
   ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
   ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
-  p <- p + scale_y_log10(labels = my_scientific_10) 
-  p <- p + ylab("number of triads (log scale)")
-  p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = count,
-                                                  colour = obscolour,
-                                                  group = 1))
-  p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = count,
+  p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = triadfraction,
                                                     colour = obscolour,
                                                     group = 1))
-  triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
-  cat("writing triad census (log) plot to EPS file ", triad_outfilename, "\n")
-  postscript(triad_outfilename, horizontal=FALSE, onefile=FALSE, paper="special", width=9, height=6)
-  ##pdf(triad_outfilename,onefile=FALSE, paper="special")
-  print(p)
-  dev.off()
+  plotlist <- c(plotlist, list(p))  # no logarithm
+  p <- p + scale_y_log10() + ylab("frac. triads (log scale)")
+  plotlist <- c(plotlist, list(p))  # log scale on y axis
+
+  if (do_subplots) {
+    ## write separate file for triad census (log) plot
+    ## add points for separate plot only (too large and messy on combined plots)
+    ## also use raw number of triads rather than normalizing
+    p <- ggplot(sim_triadcensus_df, aes(x = triad, y = count))
+    p <- p + geom_boxplot()
+    p <- p + ptheme +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+      xlab('Triad census')
+    ## who knows why the hjust and vjust are needed, or what they should
+    ## be, but they do seem to be, otherwise labels are not positioned right
+    ## (note depends on which versoin of R/ggplot2 being used, but this worked
+    ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
+    ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+    p <- p + scale_y_log10(labels = my_scientific_10) 
+    p <- p + ylab("number of triads (log scale)")
+    p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = count,
+                                                      colour = obscolour,
+                                                      group = 1))
+    p <- p + geom_point(data = obs_triadcensus_df, aes(x = triad, y = count,
+                                                       colour = obscolour,
+                                                       group = 1))
+    triad_outfilename <- paste(simnetfileprefix, "_triadcensus.eps", sep="")
+    cat("writing triad census (log) plot to EPS file ", triad_outfilename, "\n")
+    postscript(triad_outfilename, horizontal=FALSE, onefile=FALSE, paper="special", width=9, height=6)
+    ##pdf(triad_outfilename,onefile=FALSE, paper="special")
+    print(p)
+    dev.off()
+  }
+
+
+  ## ## log-odds version
+  ## obs_triadcensus_df$logodds <- log(obs_triadcensus_df$triadfraction / (1 - obs_triadcensus_df$triadfraction))
+  ## sim_triadcensus_df$logodds <- log(sim_triadcensus_df$triadfraction / (1 - sim_triadcensus_df$triadfraction))
+  ## p <- ggplot(sim_triadcensus_df, aes(x = triad, y = logodds))
+  ## p <- p + geom_boxplot()
+  ## p <- p + ylab('log-odds') + ptheme +
+  ##   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  ##   xlab('Triad census')
+  ## ## who knows why the hjust and vjust are needed, or what they should
+  ## ## be, but they do seem to be, otherwise labels are not positioned right
+  ## ## (note depends on which versoin of R/ggplot2 being used, but this worked
+  ## ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
+  ## ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  ## p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = logodds,
+  ##                                                   colour = obscolour,
+  ##                                                   group = 1))
+  ## plotlist <- c(plotlist, list(p))  # no logarithm
 }
-
-
-### ## log-odds version
-### obs_triadcensus_df$logodds <- log(obs_triadcensus_df$triadfraction / (1 - obs_triadcensus_df$triadfraction))
-### sim_triadcensus_df$logodds <- log(sim_triadcensus_df$triadfraction / (1 - sim_triadcensus_df$triadfraction))
-### p <- ggplot(sim_triadcensus_df, aes(x = triad, y = logodds))
-### p <- p + geom_boxplot()
-### p <- p + ylab('log-odds') + ptheme +
-###   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-###   xlab('Triad census')
-### ## who knows why the hjust and vjust are needed, or what they should
-### ## be, but they do seem to be, otherwise labels are not positioned right
-### ## (note depends on which versoin of R/ggplot2 being used, but this worked
-### ## when I wrote it with R 3.4.2 ggplot2 2.2.1 on Windows 10 cygwin:
-### ## https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
-### p <- p + geom_line(data = obs_triadcensus_df, aes(x = triad, y = logodds,
-###                                                   colour = obscolour,
-###                                                   group = 1))
-### plotlist <- c(plotlist, list(p))  # no logarithm
-
 
 ##
 ## geodesics (shortest paths)
