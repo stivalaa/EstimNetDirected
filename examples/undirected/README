@@ -14,5 +14,13 @@ with binary attribute, simulated from the following ERGM parameters using PNet:
 
 
 
+netscience is the Coauthorships in network science network
+netscience_edgelist.txt converted from GML version downloaded from
+Mark Newman's network data page 
+http://www-personal.umich.edu/~mejn/netdata/netscience.zip
+and converted to Pajek edge list format. Citation is:
+
+Newman, M. E. (2006). Finding community structure in networks using the eigenvectors of matrices. Physical review E, 74(3), 036104.
+
 ADS
 Mon Jan 31 17:00:08 AEDT 2022
