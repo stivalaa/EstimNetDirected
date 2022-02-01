@@ -17,8 +17,9 @@ time mpirun ${ROOT}/src/EstimNetDirected_mpi config_netscience_tnt.txt
 
 module load r
 
-time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_tnt_netscience dzA_tnt_netscience
+time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_tnt_netscience dzA_tnt_netscience | tee estimation_tnt_netscience.txt
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_tnt_netscience dzA_tnt_netscience
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ../../Test/TestChangeStatsUndirected/netscience_edgelist.txt sim_tnt_netscience
 
 echo -n "ended at: "; date
 

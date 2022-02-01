@@ -27,4 +27,16 @@ config_gof_example_n1000_binattr_basic.txt
 estimation_basic_example_n1000_binattr.txt
 stats_gof_example_n1000_binattr_basic-plots.eps
 stats_gof_example_n1000_binattr_basic.txt
+SimulateERGM_gof_ifd_netscience-*.err
+SimulateERGM_gof_ifd_netscience-*.out
+SimulateERGM_gof_tnt_netscience-*.err
+SimulateERGM_gof_tnt_netscience-*.out
+config_gof_netscience_ifd.txt
+config_gof_netscience_tnt.txt
+estimation_ifd_netscience.txt
+estimation_tnt_netscience.txt
+stats_gof_netscience_ifd-plots.eps
+stats_gof_netscience_ifd.txt
+stats_gof_netscience_tnt-plots.eps
+stats_gof_netscience_tnt.txt
 
