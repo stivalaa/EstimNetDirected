@@ -16,7 +16,7 @@ GOF_CONFIG_FILE=config_gof_netscience_ifd.txt
 
 module load r
 
-${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh  config_netscience_ifd.txt   estimation_ifd_netscience.txt ${STATS_FILE} ${SIM_FILE_PREFIX} > ${GOF_CONFIG_FILE}
+#${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh  config_netscience_ifd.txt   estimation_ifd_netscience.txt ${STATS_FILE} ${SIM_FILE_PREFIX} > ${GOF_CONFIG_FILE}
 
 rm ${SIM_FILE_PREFIX}_*.net
 

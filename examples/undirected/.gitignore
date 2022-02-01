@@ -31,7 +31,6 @@ SimulateERGM_gof_ifd_netscience-*.err
 SimulateERGM_gof_ifd_netscience-*.out
 SimulateERGM_gof_tnt_netscience-*.err
 SimulateERGM_gof_tnt_netscience-*.out
-config_gof_netscience_ifd.txt
 config_gof_netscience_tnt.txt
 estimation_ifd_netscience.txt
 estimation_tnt_netscience.txt
