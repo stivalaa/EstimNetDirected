@@ -441,7 +441,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      citationERGM,
                                      allowLoops);
     }
-    iternum = burnin + interval*(samplenum+1);
+    iternum = (ulonglong_t)burnin + (ulonglong_t)interval*(samplenum+1);
     fprintf(dzA_outfile, "%llu ", iternum);
     for (l = 0; l < n; l++) {
       dzA[l] += addChangeStats[l] - delChangeStats[l]; /* dzA accumulates */
