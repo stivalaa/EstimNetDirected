@@ -134,15 +134,16 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     uint_pair_t attr_interaction_pair_indices[],
                     double theta[],
                     double addChangeStats[], double delChangeStats[],
-                    uint_t sampler_m,
+                    ulong_t sampler_m,
                     bool performMove,
                     bool useConditionalEstimation,
                     bool forbidReciprocity, bool citationERGM,
                     bool allowLoops)
 {
-  uint_t accepted = 0;    /* number of accepted moves */
+  ulong_t accepted = 0;    /* number of accepted moves */
   double acceptance_rate;
-  uint_t i,j,k,l;
+  uint_t i,j,l;
+  ulong_t k;
   bool   isDelete = FALSE; /* only init to fix warning */
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double total;  /* sum of theta*changestats */

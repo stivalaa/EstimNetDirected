@@ -1614,6 +1614,12 @@ void dump_config_names(const void *config,
       case PARAM_TYPE_SET:
         fprintf(stderr, "(set of ERGM parameter names)\n");
         break;
+
+      case PARAM_TYPE_ULONG:
+        fprintf(stderr, "(unsigned long integer) [default %lu]\n",
+                *(const ulong_t *)((const char *)config + config_params[i].offset));
+        break;
+
         
       default:
       fprintf(stderr, "ERROR (internal): unknown parameter type %d\n",
@@ -1654,6 +1660,7 @@ int check_and_set_param_value(const char *paramname,
   char  *endptr; /* for strtod() */
   uint_t valueint;
   bool   valuebool;
+  ulong_t valuelong;
 
   for (i = 0; i < num_config_params; i++) {
     if (strcasecmp(paramname, config_params[i].name) == 0) {
@@ -1758,6 +1765,15 @@ int check_and_set_param_value(const char *paramname,
         fprintf(stderr, "ERROR (internal): unknown parameter %s\n", paramname);
         return 1;
       }
+      break;
+
+    case PARAM_TYPE_ULONG:    /* numeric (unsigned long integer) */
+      if (sscanf(valuestr, "%lu", &valuelong) != 1) {
+        fprintf(stderr, "ERROR: expecting unsigned long integer value for parameter %s but got '%s'\n", paramname, valuestr);
+        return 1;
+      }
+      CONFIG_DEBUG_PRINT(("%s = %lu\n", paramname, valuelong));
+      *(ulong_t *)((char *)config + config_params[i].offset) = valuelong;
       break;
         
     default:

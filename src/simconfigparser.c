@@ -46,10 +46,10 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
   {"sampleSize",  PARAM_TYPE_UINT,     offsetof(sim_config_t, sampleSize),
    "number of network samples to take from simulation"},
 
-  {"interval",  PARAM_TYPE_UINT,     offsetof(sim_config_t, interval),
+  {"interval",  PARAM_TYPE_ULONG,     offsetof(sim_config_t, interval),
    "interval (iterations) between samples"},
 
-  {"burnin",  PARAM_TYPE_UINT,     offsetof(sim_config_t, burnin),
+  {"burnin",  PARAM_TYPE_ULONG,     offsetof(sim_config_t, burnin),
    "number of iterations to throw away before first sample"},
 
   {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(sim_config_t, useIFDsampler),

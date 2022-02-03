@@ -37,13 +37,13 @@ typedef struct sim_config_s {
    * Parameters parsed directly from config file
    */
 
-  uint_t numNodes;        /* number of nodes in digraph */
-  uint_t sampleSize;      /* number of network samples */
-  uint_t interval;        /* interval (iterations) between samples */
-  uint_t burnin;          /* iterations to throw out before 1st sample */
-  bool   useIFDsampler;   /* Use IFD sampler instead of basic sampler */
-  bool   useTNTsampler;   /* Use TNT sampler (not basic or IFD sampler) */
-  double ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
+  uint_t  numNodes;        /* number of nodes in digraph */
+  uint_t  sampleSize;      /* number of network samples */
+  ulong_t interval;        /* interval (iterations) between samples */
+  ulong_t burnin;          /* iterations to throw out before 1st sample */
+  bool    useIFDsampler;   /* Use IFD sampler instead of basic sampler */
+  bool    useTNTsampler;   /* Use TNT sampler (not basic or IFD sampler) */
+  double  ifd_K;           /* multiplier for aux parameter step size in IFD sampler */
   bool  outputSimulatedNetworks; /* output simulated networks  */
   char *binattr_filename; /* filename of binary attributes file or NULL */
   char *catattr_filename; /* filename of categorical attributes file or NULL */

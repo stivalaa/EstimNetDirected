@@ -15,13 +15,15 @@ basicSampler.o: basicSampler.c utils.h changeStatisticsGeneral.h graph.h \
 equilibriumExpectation.o: equilibriumExpectation.c utils.h graph.h \
  loadGraph.h changeStatisticsGeneral.h changeStatisticsTypes.h \
  basicSampler.h changeStatisticsDirected.h ifdSampler.h tntSampler.h \
- equilibriumExpectation.h estimconfigparser.h configparser.h
+ equilibriumExpectation.h estimconfigparser.h configparser.h \
+ changeStatisticsUndirected.h
 configparser.o: configparser.c configparser.h utils.h \
  changeStatisticsGeneral.h graph.h changeStatisticsTypes.h \
- changeStatisticsDirected.h
+ changeStatisticsDirected.h changeStatisticsUndirected.h
 estimconfigparser.o: estimconfigparser.c estimconfigparser.h \
  configparser.h utils.h changeStatisticsGeneral.h graph.h \
- changeStatisticsTypes.h changeStatisticsDirected.h
+ changeStatisticsTypes.h changeStatisticsDirected.h \
+ changeStatisticsUndirected.h
 ifdSampler.o: ifdSampler.c utils.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h ifdSampler.h
 loadGraph.o: loadGraph.c utils.h loadGraph.h graph.h \
@@ -31,11 +33,11 @@ tntSampler.o: tntSampler.c utils.h changeStatisticsGeneral.h graph.h \
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h \
- equilibriumExpectation.h
+ changeStatisticsUndirected.h equilibriumExpectation.h
 EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h \
- equilibriumExpectation.h
+ changeStatisticsUndirected.h equilibriumExpectation.h
 SimulateERGMmain.o: SimulateERGMmain.c utils.h simconfigparser.h \
  configparser.h changeStatisticsGeneral.h graph.h changeStatisticsTypes.h \
- changeStatisticsDirected.h simulation.h
+ changeStatisticsDirected.h changeStatisticsUndirected.h simulation.h

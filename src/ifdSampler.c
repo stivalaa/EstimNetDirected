@@ -197,7 +197,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_pair_t attr_interaction_pair_indices[],
                   double theta[],
                   double addChangeStats[], double delChangeStats[],
-                  uint_t sampler_m,
+                  ulong_t sampler_m,
                   bool performMove,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
                   bool useConditionalEstimation,
@@ -208,13 +208,14 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   double *changestats = (double *)safe_malloc(n*sizeof(double));
   double  total;        /* sum of theta*changestats */
-  uint_t  accepted = 0; /* number of accepted moves */
+  ulong_t  accepted = 0; /* number of accepted moves */
   /* Ndel and Nadd are int not uint_t as we do signed math with them */
   int     Ndel = 0;     /* number of add moves */
   int     Nadd = 0;     /* number of delete moves */
   double  ifd_aux_param_step;
   double  acceptance_rate;
-  uint_t  i,j,k,l;
+  uint_t  i,j,l;
+  ulong_t k;
   uint_t  arcidx = 0;
   
   for (i = 0; i < n; i++) {

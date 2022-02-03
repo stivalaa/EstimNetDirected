@@ -266,7 +266,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
                   uint_pair_t attr_interaction_pair_indices[],
-                  uint_t sample_size, uint_t interval, uint_t burnin,
+                  uint_t sample_size, ulong_t interval, ulong_t burnin,
                   double theta[],
                   bool useIFDsampler, double ifd_K,
                   bool useConditionalSimulation,
@@ -305,7 +305,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       arcCorrection(g, useConditionalSimulation, citationERGM, forbidReciprocity, allowLoops);
   
 
-  printf("sampleSize = %u, interval = %u burnin = %u\n",
+  printf("sampleSize = %u, interval = %lu burnin = %lu\n",
          sample_size, interval, burnin);
   printf("%s graph\n", g->is_directed ? "Directed" : "Undirected");
   if (useIFDsampler)
@@ -384,7 +384,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
     gettimeofday(&end_timeval, NULL);
     timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
     etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-    printf("burnin %u iterations took %.2f s\n", burnin, (double)etime/1000);
+    printf("burnin %lu iterations took %.2f s\n", burnin, (double)etime/1000);
   }
 
   for (samplenum = 0; samplenum < sample_size; samplenum++) {

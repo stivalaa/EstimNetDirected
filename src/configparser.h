@@ -63,7 +63,8 @@ typedef enum param_type_e {
   PARAM_TYPE_UINT,     /* numeric (unsigned integer) */
   PARAM_TYPE_BOOL,     /* Boolean ("True" or "False" in config, bool in struct*/
   PARAM_TYPE_STRING,   /* string (may be quoted, not necessarily) */
-  PARAM_TYPE_SET       /* comma delimited set of other params enclosed in {} */
+  PARAM_TYPE_SET,      /* comma delimited set of other params enclosed in {} */
+  PARAM_TYPE_ULONG,    /* numeric (unsigned long integer) */
 } param_type_e;
 
 
