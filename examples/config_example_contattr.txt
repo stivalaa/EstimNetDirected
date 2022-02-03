@@ -7,7 +7,7 @@
 
 ################## Algorithm constants #######################################
 
-
+useIFDsampler = True
 
 useBorisenkoUpdate = true # use the Borisenko et al. (2019) update algorithm
 
@@ -87,7 +87,7 @@ observedStatsFilePrefix = obs_stats_n2000_cont_sample
 # Structural parameters
 #
 
-structParams =  {Arc ,  Reciprocity,AltInStars, AltOutStars, AltKTrianglesT, 
+structParams = { Reciprocity,AltInStars, AltOutStars, AltKTrianglesT, 
                  AltTwoPathsTD }
 
 #
