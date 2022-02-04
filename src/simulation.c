@@ -292,7 +292,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   ulonglong_t iternum;
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int            etime;
-  char           suffix[16]; /* only has to be large enough for "_x.txt" 
+  char           suffix[32]; /* only has to be large enough for "_x.txt" 
                                 where fx is iteration number */
 
   assert(!(useIFDsampler && useTNTsampler));
@@ -456,6 +456,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
       sprintf(suffix, "_%llu.net", iternum);
       strncat(sim_outfilename, suffix, sizeof(sim_outfilename) - 1 -
               strlen(suffix));
+      SIMULATE_DEBUG_PRINT(("sim_outfilename = '%s'\n", sim_outfilename));
       sim_outfile = fopen(sim_outfilename, "w");
       write_graph_arclist_to_file(sim_outfile, g);
       fclose(sim_outfile);
