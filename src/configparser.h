@@ -223,6 +223,7 @@ network_type_e get_dyadic_param_network_type(const char *attrParamName);
 network_type_e get_attr_interaction_param_network_type(const char *attrParamName);
 bool is_allowed_network_type(network_type_e net_type, const graph_t *g);
 const char *network_type_str(network_type_e net_type);
-
+int check_param_network_type(param_config_t *pconfig, const graph_t *g);
+  
 #endif /* CONFIGPARSER_H */
 

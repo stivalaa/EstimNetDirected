@@ -537,6 +537,11 @@ int do_simulation(sim_config_t * config)
     dump_term_info(g);
 #endif /* DEBUG_CERGM */
   }
+
+  if (check_param_network_type(&config->param_config, g)) {
+    fprintf(stderr, "ERROR: parameter not compatible with network type\n");
+    return -1;
+  }
   
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */

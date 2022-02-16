@@ -787,6 +787,10 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   num_nodes = get_num_vertices_from_arclist_file(arclist_file);/* closes file */
   g = allocate_graph(num_nodes, config->isDirected);
 
+  if (check_param_network_type(&config->param_config, g)) {
+    fprintf(stderr, "ERROR: parameter not compatible with network type\n");
+    return -1;
+  }
 
   if (load_attributes(g, config->binattr_filename,
                       config->catattr_filename,

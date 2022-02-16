@@ -1920,27 +1920,63 @@ bool is_allowed_network_type(network_type_e net_type, const graph_t *g)
  * Check all the ERGM paramters are allowed for the network type.
  * Return nonzero on error.
  */
-int check_param_network_type(param_config_t *pconfig,
-			     const graph_t *g)
+int check_param_network_type(param_config_t *pconfig, const graph_t *g)
 {
   uint_t         i;
   network_type_e net_type;
 
   /* structural parameters */
+  for (i = 0; i < pconfig->num_change_stats_funcs; i++) {
+    net_type = get_struct_param_network_type(pconfig->param_names[i]);
+    if (!(is_allowed_network_type(net_type, g))) {
+      fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
+              g->is_directed ? "Directed" : "Undirected",
+	      STRUCT_PARAMS_STR,
+	      pconfig->param_names[i],
+	      network_type_str(net_type));
+
+      return 1;
+    }
+  }
 
   /* attribute parameters */
   for (i = 0; i < pconfig->num_attr_change_stats_funcs; i++) {
     net_type = get_attr_param_network_type(pconfig->attr_param_names[i]);
     if (!(is_allowed_network_type(net_type, g))) {
-      fprintf(stderr, "Bad network type for %s %s (%s)\n",
+      fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
+              g->is_directed ? "Directed" : "Undirected",
 	      ATTR_PARAMS_STR,
-	      pconfig->attr_param_names[i]);
+	      pconfig->attr_param_names[i],
+	      network_type_str(net_type));
+
       return 1;
     }
   }
 
   /* dyadic parameters */
+  for (i = 0; i < pconfig->num_dyadic_change_stats_funcs; i++) {
+    net_type = get_dyadic_param_network_type(pconfig->dyadic_param_names[i]);
+    if (!(is_allowed_network_type(net_type, g))) {
+      fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
+              g->is_directed ? "Directed" : "Undirected",
+	      DYADIC_PARAMS_STR,
+	      pconfig->dyadic_param_names[i],
+	      network_type_str(net_type));
+      return 1;
+    }
+  }
 
   /* attribute interaction parameters */
-	
+  for (i = 0; i < pconfig->num_attr_interaction_change_stats_funcs; i++) {
+    net_type = get_attr_interaction_param_network_type(pconfig->attr_interaction_param_names[i]);
+    if (!(is_allowed_network_type(net_type, g))) {
+      fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
+              g->is_directed ? "Directed" : "Undirected",
+	      ATTR_INTERACTION_PARAMS_STR,
+	      pconfig->attr_interaction_param_names[i],
+	      network_type_str(net_type));
+      return 1;
+    }
+  }
+  return 0;
 }
