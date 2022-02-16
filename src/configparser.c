@@ -64,32 +64,32 @@ static const char *FALSE_STR = "false";
  */
 static const struct_param_t STRUCT_PARAMS[] =
 {
-  {ARC_PARAM_STR,       STRUCT_PARAM_TYPE_NONE,   changeArc},
-  {"Reciprocity",       STRUCT_PARAM_TYPE_NONE,   changeReciprocity},
-  {"Sink",              STRUCT_PARAM_TYPE_NONE,   changeSink},
-  {"Source",            STRUCT_PARAM_TYPE_NONE,   changeSource},
-  {"Isolates",          STRUCT_PARAM_TYPE_NONE,   changeIsolates},
-  {"TwoPaths",          STRUCT_PARAM_TYPE_NONE,   changeTwoPath},
-  {"InTwoStars",        STRUCT_PARAM_TYPE_NONE,   changeInTwoStars},
-  {"OutTwoStars",       STRUCT_PARAM_TYPE_NONE,   changeOutTwoStars},
-  {"TransitiveTriangles",STRUCT_PARAM_TYPE_NONE,  changeTransitiveTriad},
-  {"CyclicTriangles",   STRUCT_PARAM_TYPE_NONE,   changeCyclicTriad},
-  {"AltInStars",        STRUCT_PARAM_TYPE_LAMBDA, changeAltInStars},
-  {"AltOutStars",       STRUCT_PARAM_TYPE_LAMBDA, changeAltOutStars},
-  {"AltKTrianglesT",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesT},
-  {"AltKTrianglesC",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesC},
-  {"AltKTrianglesD",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesD},
-  {"AltKTrianglesU",    STRUCT_PARAM_TYPE_LAMBDA, changeAltKTrianglesU},
-  {"AltTwoPathsT",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsT},
-  {"AltTwoPathsD",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsD},
-  {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsU},
-  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPathsTD},
-  {"Loop",              STRUCT_PARAM_TYPE_NONE,   changeLoop},
-  {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   changeLoopInteraction},
-  {EDGE_PARAM_STR,      STRUCT_PARAM_TYPE_NONE,   changeEdge},
-  {"AltStars",          STRUCT_PARAM_TYPE_LAMBDA, changeAltStars},
-  {"AltTwoPaths",       STRUCT_PARAM_TYPE_LAMBDA, changeAltTwoPaths},
-  {"AltKTriangles",     STRUCT_PARAM_TYPE_LAMBDA, changeAltKTriangles}
+  {ARC_PARAM_STR,       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeArc},
+  {"Reciprocity",       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeReciprocity},
+  {"Sink",              STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeSink},
+  {"Source",            STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeSource},
+  {"Isolates",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       changeIsolates},
+  {"TwoPaths",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       changeTwoPath},
+  {"InTwoStars",        STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeInTwoStars},
+  {"OutTwoStars",       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeOutTwoStars},
+  {"TransitiveTriangles",STRUCT_PARAM_TYPE_NONE,  NETWORK_TYPE_DIRECTED,   changeTransitiveTriad},
+  {"CyclicTriangles",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeCyclicTriad},
+  {"AltInStars",        STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltInStars},
+  {"AltOutStars",       STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltOutStars},
+  {"AltKTrianglesT",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesT},
+  {"AltKTrianglesC",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesC},
+  {"AltKTrianglesD",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesD},
+  {"AltKTrianglesU",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesU},
+  {"AltTwoPathsT",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsT},
+  {"AltTwoPathsD",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsD},
+  {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsU},
+  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsTD},
+  {"Loop",              STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       changeLoop},
+  {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeLoopInteraction},
+  {EDGE_PARAM_STR,      STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, changeEdge},
+  {"AltStars",          STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, changeAltStars},
+  {"AltTwoPaths",       STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, changeAltTwoPaths},
+  {"AltKTriangles",     STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, changeAltKTriangles}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
@@ -100,24 +100,24 @@ static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
  */
 static const attr_param_t ATTR_PARAMS[] =
 {
-  {"Sender",       ATTR_TYPE_BINARY,      changeSender},
-  {"Receiver",     ATTR_TYPE_BINARY,      changeReceiver},
-  {"Interaction",  ATTR_TYPE_BINARY,      changeInteraction},
-  {"Matching",     ATTR_TYPE_CATEGORICAL, changeMatching},
-  {"MatchingReciprocity",    ATTR_TYPE_CATEGORICAL, changeMatchingReciprocity},
-  {"Mismatching",            ATTR_TYPE_CATEGORICAL, changeMismatching},
-  {"MismatchingReciprocity", ATTR_TYPE_CATEGORICAL, changeMismatchingReciprocity},
-  {"MismatchingTransitiveTriad", ATTR_TYPE_CATEGORICAL, changeMismatchingTransitiveTriad},
-  {"MismatchingTransitiveTies", ATTR_TYPE_CATEGORICAL, changeMismatchingTransitiveTies},
-  {"ContinuousSender",       ATTR_TYPE_CONTINUOUS, changeContinuousSender},
-  {"ContinuousReceiver",     ATTR_TYPE_CONTINUOUS, changeContinuousReceiver},
-  {"Diff",                   ATTR_TYPE_CONTINUOUS, changeDiff},
-  {"DiffReciprocity",        ATTR_TYPE_CONTINUOUS, changeDiffReciprocity},
-  {"DiffSign",               ATTR_TYPE_CONTINUOUS, changeDiffSign},
-  {"DiffDirSR",              ATTR_TYPE_CONTINUOUS, changeDiffDirSR},
-  {"DiffDirRS",              ATTR_TYPE_CONTINUOUS, changeDiffDirRS},
-  {"JaccardSimilarity",      ATTR_TYPE_SET,        changeJaccardSimilarity},
-  {"Activity",               ATTR_TYPE_BINARY,     changeActivity}
+  {"Sender",                     ATTR_TYPE_BINARY,      NETWORK_TYPE_DIRECTED,   changeSender},
+  {"Receiver",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_DIRECTED,   changeReceiver},
+  {"Interaction",                ATTR_TYPE_BINARY,      NETWORK_TYPE_BOTH,       changeInteraction},
+  {"Matching",                   ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       changeMatching},
+  {"MatchingReciprocity",        ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMatchingReciprocity},
+  {"Mismatching",                ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       changeMismatching},
+  {"MismatchingReciprocity",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMismatchingReciprocity},
+  {"MismatchingTransitiveTriad", ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMismatchingTransitiveTriad},
+  {"MismatchingTransitiveTies",  ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMismatchingTransitiveTies},
+  {"ContinuousSender",           ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeContinuousSender},
+  {"ContinuousReceiver",         ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeContinuousReceiver},
+  {"Diff",                       ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_BOTH,       changeDiff},
+  {"DiffReciprocity",            ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffReciprocity},
+  {"DiffSign",                   ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffSign},
+  {"DiffDirSR",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffDirSR},
+  {"DiffDirRS",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffDirRS},
+  {"JaccardSimilarity",          ATTR_TYPE_SET,         NETWORK_TYPE_BOTH,       changeJaccardSimilarity},
+  {"Activity",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, changeActivity}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
@@ -129,9 +129,9 @@ static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
  */
 static const dyadic_param_t DYADIC_PARAMS[] =
 {
-  {"GeoDistance",    DYADIC_TYPE_GEODISTANCE,   changeGeoDistance},
-  {"logGeoDistance", DYADIC_TYPE_GEODISTANCE,   changeLogGeoDistance},
-  {"EuclideanDistance", DYADIC_TYPE_EUCLIDEANDISTANCE, changeEuclideanDistance}
+  {"GeoDistance",       DYADIC_TYPE_GEODISTANCE,       NETWORK_TYPE_BOTH, changeGeoDistance},
+  {"logGeoDistance",    DYADIC_TYPE_GEODISTANCE,       NETWORK_TYPE_BOTH, changeLogGeoDistance},
+  {"EuclideanDistance", DYADIC_TYPE_EUCLIDEANDISTANCE, NETWORK_TYPE_BOTH, changeEuclideanDistance}
 };
 static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
   sizeof(DYADIC_PARAMS[0]);
@@ -142,7 +142,7 @@ static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
  */
 static const attr_interaction_param_t ATTR_INTERACTION_PARAMS[] =
 {
-  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, changeMatchingInteraction},
+  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH, changeMatchingInteraction},
 };
 static const uint_t NUM_ATTR_INTERACTION_PARAMS =
   sizeof(ATTR_INTERACTION_PARAMS) / sizeof(ATTR_INTERACTION_PARAMS[0]);

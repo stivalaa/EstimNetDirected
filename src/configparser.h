@@ -91,7 +91,13 @@ typedef enum dyadic_type_e {
   DYADIC_TYPE_EUCLIDEANDISTANCE /* continuous Euclidean distance from x/y/z */
 } dyadic_type_e;
 
-
+/* ERGM change statistic network type */
+typedef enum network_type_e {
+  NETWORK_TYPE_INVALID,     /* invalid type, used as error return value */
+  NETWORK_TYPE_DIRECTED,    /* directed one-mode network */
+  NETWORK_TYPE_UNDIRECTED,  /* undirected one-mode network */
+  NETWORK_TYPE_BOTH         /* directed or undirected one-mode network */
+} network_type_e;
 
 /* configuration parameter */
 typedef struct config_param_s {
@@ -105,6 +111,7 @@ typedef struct config_param_s {
 typedef struct struct_param_s {
   const char          *name;                 /* structural parameter name */
   struct_param_type_e  struct_param_type;    /* does it have lambda parameter */
+  network_type_e       network_type;         /* network type it works with */
   change_stats_func_t *change_stats_func;    /* corresponding change stat */
 } struct_param_t;
 
@@ -112,6 +119,7 @@ typedef struct struct_param_s {
 typedef struct attr_param_s {
   const char          *name;                 /* attribute parameter name */
   attr_type_e          type;                 /* attribute parameter type */
+  network_type_e       network_type;         /* network type it works with */  
   attr_change_stats_func_t *attr_change_stats_func;  /* corresponding func. */
 } attr_param_t;
 
@@ -119,6 +127,7 @@ typedef struct attr_param_s {
 typedef struct dyadic_param_s {
   const char          *name;                 /*dyadic covariate parameter name */
   dyadic_type_e        type;                 /*dyadic covariate parameter type */
+  network_type_e       network_type;         /* network type it works with */  
   dyadic_change_stats_func_t *dyadic_change_stats_func; /* corresponding func. */
 } dyadic_param_t;
 
@@ -126,6 +135,7 @@ typedef struct dyadic_param_s {
 typedef struct attr_interaction_param_s {
   const char          *name;       /* attribute interaction parameter name */
   attr_type_e          type;       /* attribute interaction parameter type */
+  network_type_e       network_type;         /* network type it works with */  
   attr_interaction_change_stats_func_t *attr_interaction_change_stats_func;  /* corresponding func. */
 } attr_interaction_param_t;
 
