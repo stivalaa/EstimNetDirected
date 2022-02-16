@@ -1785,3 +1785,92 @@ int check_and_set_param_value(const char *paramname,
   return 0;
 }
 
+
+/*
+ * Given name of structural parameter, returns its network type, by searching
+ * in the STRUCT_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_type_e get_struct_param_network_type(const char *structParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
+    if (strcasecmp(STRUCT_PARAMS[i].name, structParamName) == 0) {
+      return STRUCT_PARAMS[i].network_type;
+    }
+  }
+  return NETWORK_TYPE_INVALID;
+}
+
+
+
+/*
+ * Given name of attribute parameter, returns its network type, by searching
+ * in the ATTR_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_type_e get_attr_param_network_type(const char *attrParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_ATTR_PARAMS; i++) {
+    if (strcasecmp(ATTR_PARAMS[i].name, attrParamName) == 0) {
+      return ATTR_PARAMS[i].network_type;
+    }
+  }
+  return NETWORK_TYPE_INVALID;
+}
+
+/*
+ * Given name of dyadic covariate parameter, returns its network type, 
+ * by searching
+ * in the DYADIC_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_type_e get_dyadic_param_network_type(const char *dyadicParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
+    if (strcasecmp(DYADIC_PARAMS[i].name, dyadicParamName) == 0) {
+      return DYADIC_PARAMS[i].network_type;
+    }
+  }
+  return NETWORK_TYPE_INVALID;
+}
+
+/*
+ * Given name of attribute interaction parameter, returns its network type,
+ * by searching
+ * in the ATTR_INTERACTION_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_type_e get_attr_interaction_param_network_type(const char
+						       *attrInteractionParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
+    if (strcasecmp(ATTR_INTERACTION_PARAMS[i].name,
+                   attrInteractionParamName) == 0) {
+      return ATTR_INTERACTION_PARAMS[i].network_type;
+    }
+  }
+  return NETWORK_TYPE_INVALID;
+}
+
+
+
+
+
+
+/*
+ * Check all the ERGM paramters are allowed for the network type.
+ * Return nonzero on error.
+ */
+int check_param_network_type(param_config_t *pconfig,
+			     const config_param_t *config_params,
+			     const graph_t *g)
+{
+}

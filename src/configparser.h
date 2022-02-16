@@ -217,6 +217,10 @@ int check_and_set_param_value(const char *paramname,
                               uint_t num_config_params,
                               bool requireErgmValue);
 
+network_type_e get_struct_param_network_type(const char *structParamName);
+network_type_e get_attr_param_network_type(const char *attrParamName);
+network_type_e get_dyadic_param_network_type(const char *attrParamName);
+network_type_e get_attr_interaction_param_network_type(const char *attrParamName);
 
 #endif /* CONFIGPARSER_H */
 
