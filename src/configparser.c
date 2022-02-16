@@ -1073,11 +1073,13 @@ void dump_parameter_names(void)
   uint_t i;
   fprintf(stderr, "Structural parameters (%s):\n", STRUCT_PARAMS_STR);
   for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
-    fprintf(stderr, "  %s\n", STRUCT_PARAMS[i].name);
+    fprintf(stderr, "  %s (%s)\n", STRUCT_PARAMS[i].name,
+	    network_type_str(STRUCT_PARAMS[i].network_type));
   }
   fprintf(stderr, "Attribute parameters (%s):\n", ATTR_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_PARAMS; i++) {
-    fprintf(stderr, "  %s (%s)\n", ATTR_PARAMS[i].name,
+    fprintf(stderr, "  %s (%s) (%s)\n", ATTR_PARAMS[i].name,
+	    network_type_str(ATTR_PARAMS[i].network_type),
             ATTR_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
@@ -1086,7 +1088,8 @@ void dump_parameter_names(void)
   }
   fprintf(stderr, "Dyadic covariate parameters (%s):\n", DYADIC_PARAMS_STR);
   for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
-    fprintf(stderr, " %s (%s)\n", DYADIC_PARAMS[i].name,
+    fprintf(stderr, " %s (%s) (%s)\n", DYADIC_PARAMS[i].name,
+	    network_type_str(DYADIC_PARAMS[i].network_type),
             DYADIC_PARAMS[i].type == DYADIC_TYPE_GEODISTANCE ?
             "latitude,longitude" :
             (DYADIC_PARAMS[i].type == DYADIC_TYPE_EUCLIDEANDISTANCE ?
@@ -1095,7 +1098,8 @@ void dump_parameter_names(void)
   fprintf(stderr, "Attribute interaction parameters (%s)\n",
           ATTR_INTERACTION_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
-    fprintf(stderr, " %s (%s)\n", ATTR_INTERACTION_PARAMS[i].name,
+    fprintf(stderr, " %s (%s) (%s)\n", ATTR_INTERACTION_PARAMS[i].name,
+	    network_type_str(ATTR_INTERACTION_PARAMS[i].network_type),
             ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
@@ -1862,7 +1866,54 @@ network_type_e get_attr_interaction_param_network_type(const char
 
 
 
+/*
+ * Return string describing network type
+ */
+const char *network_type_str(network_type_e net_type)
+{
+  switch(net_type) {
+    case NETWORK_TYPE_DIRECTED:
+      return "Directed";
+      break;
 
+    case NETWORK_TYPE_UNDIRECTED:
+      return "Undirected";
+      break;
+
+    case NETWORK_TYPE_BOTH:
+      return "Both";
+
+    default:
+      return "*UNKNOWN*";
+      break;
+  }
+}
+
+/*
+ * Return TRUE if network type (used to label ERGM parameters, i.e. change
+ * statistics functions) is allowed with the given graph  else FALSE
+ */
+bool is_allowed_network_type(network_type_e net_type, const graph_t *g)
+{
+  switch(net_type) {
+    case NETWORK_TYPE_DIRECTED:
+      return g->is_directed;
+      break;
+
+    case NETWORK_TYPE_UNDIRECTED:
+      return !g->is_directed;
+      break;
+
+    case NETWORK_TYPE_BOTH:
+      return TRUE;
+
+    default:
+      fprintf(stderr, "ERROR (internal): Unknown network type %d\n", net_type);
+      return FALSE;
+      break;
+  }
+}
+ 
 
 
 /*
@@ -1870,7 +1921,26 @@ network_type_e get_attr_interaction_param_network_type(const char
  * Return nonzero on error.
  */
 int check_param_network_type(param_config_t *pconfig,
-			     const config_param_t *config_params,
 			     const graph_t *g)
 {
+  uint_t         i;
+  network_type_e net_type;
+
+  /* structural parameters */
+
+  /* attribute parameters */
+  for (i = 0; i < pconfig->num_attr_change_stats_funcs; i++) {
+    net_type = get_attr_param_network_type(pconfig->attr_param_names[i]);
+    if (!(is_allowed_network_type(net_type, g))) {
+      fprintf(stderr, "Bad network type for %s %s (%s)\n",
+	      ATTR_PARAMS_STR,
+	      pconfig->attr_param_names[i]);
+      return 1;
+    }
+  }
+
+  /* dyadic parameters */
+
+  /* attribute interaction parameters */
+	
 }
