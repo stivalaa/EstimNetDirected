@@ -45,11 +45,13 @@ read_graph_file <- function(filename, directed=TRUE) {
         directed = FALSE
       }
       ## remove all the vertex lines that don't seem to work with igraph pajek format
-      firstline <- pajek_text[1]
-      pajek_text <- pajek_text[(which(grepl('^[*]', pajek_text[2:length(pajek_text)]))+1):length(pajek_text)]
+      ## # (no longer necessary)
+      ##firstline <- pajek_text[1]
+      ##pajek_text <- pajek_text[(which(grepl('^[*]', pajek_text[2:length(pajek_text)]))+1):length(pajek_text)]
       tmpfilename <- tempfile()
-      write(firstline, file=tmpfilename)
-      write(pajek_text, file=tmpfilename, append=TRUE)
+      ##write(firstline, file=tmpfilename)
+      ##write(pajek_text, file=tmpfilename, append=TRUE)
+      write(pajek_text, file=tmpfilename)
       g <- read.graph(tmpfilename, format="pajek")
       unlink(tmpfilename)
       stopifnot(is.directed(g) == directed)
