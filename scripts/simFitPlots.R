@@ -1,4 +1,3 @@
-#!/usr/bin/Rscript
 ##
 ## File:    simFitPlots.R
 ## Author:  Alex Stivala
