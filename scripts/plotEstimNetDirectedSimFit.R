@@ -148,7 +148,6 @@ stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
 stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 num_sim <- length(sim_graphs)
 
-ptheme <-  theme(legend.position = 'none')
 
 ## build the list of plots
 plotlist <- build_sim_fit_plots(g_obs, sim_graphs)

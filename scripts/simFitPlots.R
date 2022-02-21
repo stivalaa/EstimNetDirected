@@ -43,6 +43,8 @@ MAX_SIZE_ESP_DSP <-  100000 ## do not do shared partners if more nodes than this
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
 
+ptheme <-  theme(legend.position = 'none')
+
 # http://stackoverflow.com/questions/10762287/how-can-i-format-axis-labels-with-exponents-with-ggplot2-and-scales
 orig_scientific_10 <- function(x) {
   parse(text=gsub("e", " %*% 10^", scientific_format()(x)))
