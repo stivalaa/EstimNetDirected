@@ -69,6 +69,7 @@ my_scientific_10 <- function(x) {
 ##
 ##
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
+    num_sim <- length(sim_graphs)
     start = Sys.time()
     maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
                   degree(g_obs, mode=mode))
@@ -205,7 +206,13 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
 ##
 build_sim_fit_plots <- function(g_obs, sim_graphs) {
 
+  num_sim <- length(sim_graphs)
+
   num_nodes <- vcount(g_obs)
+  ## all simulated graphs must have the same number of nodes
+  stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
+  ## and it must be the same a the number of nodes in the observed graph
+  stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 
   plotlist <- list()
 
