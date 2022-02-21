@@ -275,6 +275,13 @@ outfilename <- paste(simnetfileprefix, "pdf", sep='.')
 g_obs <- read_graph_file(netfilename)
 
 sim_files <- Sys.glob(graph_glob)
+if (length(sim_files) == 0) {
+  ## try .gz (compressed) instead
+  cat('No .net files with prefix ', simnetfileprefix, ' found, trying .net.gz instead\n')
+  graph_glob <- paste(simnetfileprefix, "_[0-9]*[.]net.gz", sep='')
+  sim_files <- Sys.glob(graph_glob)
+}
+
 cat('Reading ', length(sim_files), ' graphs...\n')
 system.time(sim_graphs <- sapply(sim_files,
                                  FUN = function(f) read_graph_file(f),

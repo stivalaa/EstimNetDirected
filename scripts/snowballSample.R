@@ -23,7 +23,12 @@ library(igraph)
 ##     igraph graph object built from data in file
 ##
 read_graph_file <- function(filename, directed=TRUE) {
-  alltext <- readLines(filename)
+  if (grepl("\\.gz$", filename)) {
+    ## read directly from compressed (.gz) file
+    alltext <- readLines(gzfile(filename))
+  } else {
+    alltext <- readLines(filename)
+  }
   if (any(grepl('*matrix', alltext, fixed=TRUE))) {
       return (read_graph_matrix_file(filename, directed))
   } else {
