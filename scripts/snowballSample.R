@@ -25,7 +25,9 @@ library(igraph)
 read_graph_file <- function(filename, directed=TRUE) {
   if (grepl("\\.gz$", filename)) {
     ## read directly from compressed (.gz) file
-    alltext <- readLines(gzfile(filename))
+    gzcon <- gzfile(filename)
+    alltext <- readLines(gzcon)
+    close(gzcon)
   } else {
     alltext <- readLines(filename)
   }

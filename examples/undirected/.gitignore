@@ -3,6 +3,7 @@ dzA_*.txt
 theta_*.pdf
 dzA_*.pdf
 sim_*.net
+sim_*.net.gz
 obs_stats_*.txt
 slurm-*.out
 EstimNetDirected_*.out
