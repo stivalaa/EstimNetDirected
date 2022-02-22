@@ -210,7 +210,7 @@ for (i in 1:length(sim_graphs)) {
   stopifnot( length(maxterm_nodes) == length(this_maxterm_nodes) && all(as_ids(this_maxterm_nodes) == maxterm_nodes) )
 system.time(
   this_maxterm_receiver_nodes <- Reduce(union, lapply(this_maxterm_nodes,
-                                function(x)
+                                function(v)
                                 Filter(function(x) !(x %in% this_maxterm_nodes),
                                     neighbors(sim_graphs[[i]], v, mode='out'))))
 )
