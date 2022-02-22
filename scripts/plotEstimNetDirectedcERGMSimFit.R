@@ -157,6 +157,7 @@ term_df <- read.table(termfilename, header=TRUE, stringsAsFactors=FALSE)
 stopifnot(vcount(g_obs) == nrow(term_df))
 stopifnot(min(term_df$term) == 0)
 stopifnot(length(unique(term_df$term)) == 1 + max(term_df$term))
+V(g_obs)$name <- 1:vcount(g_obs) # make sure graph is named so not relying on internal node ids
 V(g_obs)$term <- term_df$term
 
 sim_files <- Sys.glob(graph_glob)
@@ -179,19 +180,43 @@ stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
 stopifnot(num_nodes == vcount(sim_graphs[[1]]))
 
 ## add term as node attriute to all simulated graphs
+## also make sure graphs are named so not relying on internal node ids
 for (i in 1:length(sim_graphs)) {
   V(sim_graphs[[i]])$term <- term_df$term
+  V(sim_graphs[[i]])$name <- 1:vcount(sim_graphs[[i]])
 }
 
-## Get subgraph induced by nodes in last term only for all graphs
-## TODO include union of all nodes (in all simulated and observed) that
+## Get subgraph induced by union of nodes in last term and 
+## all nodes (in all simulated and observed) that
 ## receive arcs from nodes in last term
 maxterm <- max(term_df$term)
 cat('maxterm = ', maxterm, '\n')
-g_obs <- induced.subgraph(g_obs, which(V(g_obs)$term == maxterm))
-cat('There are ', vcount(g_obs), ' nodes in last time period\n')
+maxterm_nodes <- V(g_obs)[which(V(g_obs)$term == maxterm)]
+cat('There are ', length(maxterm_nodes), ' nodes in last time period\n')
+maxterm_receiver_nodes <- Filter(function(x) !(x %in% maxterm_nodes),
+                                 neighbors(g_obs, maxterm_nodes, mode='out'))
+cat('There are ', length(maxterm_receiver_nodes), ' additional nodes in g_obs receiving arcs from nodes in last time period\n')
+## convert vertex sequences to ordinary vectors of integers (node name attr)
+## so that they are compatible between different graph objects
+maxterm_nodes <- as_ids(maxterm_nodes)
+maxterm_receiver_nodes <- as_ids(maxterm_receiver_nodes)
 for (i in 1:length(sim_graphs)) {
-  sim_graphs[[i]] <- induced.subgraph(sim_graphs[[i]], which(V(sim_graphs[[i]])$term == maxterm))
+  this_maxterm_nodes <- V(sim_graphs[[i]])[which(V(sim_graphs[[i]])$term == maxterm)]
+  stopifnot( length(maxterm_nodes) == length(this_maxterm_nodes) && all(as_ids(this_maxterm_nodes) == maxterm_nodes) )
+  this_maxterm_receiver_nodes <- Filter(function(x) !(x %in% maxterm_nodes),
+                                        neighbors(sim_graphs[[i]], 
+                                                  maxterm_nodes, mode='out'))
+  cat('There are ', length(this_maxterm_receiver_nodes), ' additional nodes in simulated graph ', i, ' receiving arcs from nodes in last time period\n')
+  maxterm_receiver_nodes <- base::union(maxterm_receiver_nodes,
+                                        as_ids(this_maxterm_receiver_nodes))
+  cat('There are now ', length(maxterm_receiver_nodes), ' total unique extra nodes receiving ties from last time period\n')
+}
+
+g_obs <- induced.subgraph(g_obs, union(maxterm_nodes, maxterm_receiver_nodes))
+cat('Final induced subgraphs have ', vcount(g_obs), ' nodes\n')
+for (i in 1:length(sim_graphs)) {
+  sim_graphs[[i]] <- induced.subgraph(sim_graphs[[i]],
+                                 union(maxterm_nodes, maxterm_receiver_nodes))
 }
 
 ## build the list of plots
