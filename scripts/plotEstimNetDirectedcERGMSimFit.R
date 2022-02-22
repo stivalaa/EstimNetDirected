@@ -193,8 +193,13 @@ maxterm <- max(term_df$term)
 cat('maxterm = ', maxterm, '\n')
 maxterm_nodes <- V(g_obs)[which(V(g_obs)$term == maxterm)]
 cat('There are ', length(maxterm_nodes), ' nodes in last time period\n')
-maxterm_receiver_nodes <- Filter(function(x) !(x %in% maxterm_nodes),
-                                 neighbors(g_obs, maxterm_nodes, mode='out'))
+## neighbors() only takes a single node not a node sequence, so have to use
+## Reduce(union, lapply(nodesequence), ...)
+system.time(
+maxterm_receiver_nodes <- Reduce(union, lapply(maxterm_nodes, function(v)
+                                    Filter(function(x) !(x %in% maxterm_nodes),
+                                              neighbors(g_obs, v, mode='out'))))
+)
 cat('There are ', length(maxterm_receiver_nodes), ' additional nodes in g_obs receiving arcs from nodes in last time period\n')
 ## convert vertex sequences to ordinary vectors of integers (node name attr)
 ## so that they are compatible between different graph objects
@@ -203,9 +208,12 @@ maxterm_receiver_nodes <- as_ids(maxterm_receiver_nodes)
 for (i in 1:length(sim_graphs)) {
   this_maxterm_nodes <- V(sim_graphs[[i]])[which(V(sim_graphs[[i]])$term == maxterm)]
   stopifnot( length(maxterm_nodes) == length(this_maxterm_nodes) && all(as_ids(this_maxterm_nodes) == maxterm_nodes) )
-  this_maxterm_receiver_nodes <- Filter(function(x) !(x %in% maxterm_nodes),
-                                        neighbors(sim_graphs[[i]], 
-                                                  maxterm_nodes, mode='out'))
+system.time(
+  this_maxterm_receiver_nodes <- Reduce(union, lapply(this_maxterm_nodes,
+                                function(x)
+                                Filter(function(x) !(x %in% this_maxterm_nodes),
+                                    neighbors(sim_graphs[[i]], v, mode='out'))))
+)
   cat('There are ', length(this_maxterm_receiver_nodes), ' additional nodes in simulated graph ', i, ' receiving arcs from nodes in last time period\n')
   maxterm_receiver_nodes <- base::union(maxterm_receiver_nodes,
                                         as_ids(this_maxterm_receiver_nodes))
