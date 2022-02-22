@@ -197,14 +197,14 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
 ## Parameters:
 ##    g_obs:       observed graph igraph object
 ##    sim_graphs:  simulated graphs list of igraph objects
-##    mode:       'in' or 'out' for indegree or outdegree respectively
-##                or 'all' for undirected graph
+##    do_subplots: if TRUE, do subplots of triad census on separate .eps file 
+##                 also (default FALSE)
 ##
 ## Return value:
 ##    ggplot2 object to add to plot list
 ##
 ##
-build_sim_fit_plots <- function(g_obs, sim_graphs) {
+build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
 
   num_sim <- length(sim_graphs)
 
