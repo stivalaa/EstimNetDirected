@@ -195,26 +195,29 @@ maxterm_nodes <- V(g_obs)[which(V(g_obs)$term == maxterm)]
 cat('There are ', length(maxterm_nodes), ' nodes in last time period\n')
 ## neighbors() only takes a single node not a node sequence, so have to use
 ## Reduce(union, lapply(nodesequence), ...)
-system.time(
+print(system.time(
 maxterm_receiver_nodes <- Reduce(union, lapply(maxterm_nodes, function(v)
                                     Filter(function(x) !(x %in% maxterm_nodes),
                                               neighbors(g_obs, v, mode='out'))))
-)
+))
 cat('There are ', length(maxterm_receiver_nodes), ' additional nodes in g_obs receiving arcs from nodes in last time period\n')
+obs_extra_nodes <- length(maxterm_receiver_nodes)
 ## convert vertex sequences to ordinary vectors of integers (node name attr)
 ## so that they are compatible between different graph objects
 maxterm_nodes <- as_ids(maxterm_nodes)
 maxterm_receiver_nodes <- as_ids(maxterm_receiver_nodes)
+sim_extra_nodes <- rep(NA, length(sim_graphs))
 for (i in 1:length(sim_graphs)) {
   this_maxterm_nodes <- V(sim_graphs[[i]])[which(V(sim_graphs[[i]])$term == maxterm)]
   stopifnot( length(maxterm_nodes) == length(this_maxterm_nodes) && all(as_ids(this_maxterm_nodes) == maxterm_nodes) )
-system.time(
+print(system.time(
   this_maxterm_receiver_nodes <- Reduce(union, lapply(this_maxterm_nodes,
                                 function(v)
                                 Filter(function(x) !(x %in% this_maxterm_nodes),
                                     neighbors(sim_graphs[[i]], v, mode='out'))))
-)
+))
   cat('There are ', length(this_maxterm_receiver_nodes), ' additional nodes in simulated graph ', i, ' receiving arcs from nodes in last time period\n')
+  sim_extra_nodes[i] <- length(this_maxterm_receiver_nodes)
   maxterm_receiver_nodes <- base::union(maxterm_receiver_nodes,
                                         as_ids(this_maxterm_receiver_nodes))
   cat('There are now ', length(maxterm_receiver_nodes), ' total unique extra nodes receiving ties from last time period\n')
@@ -229,6 +232,18 @@ for (i in 1:length(sim_graphs)) {
 
 ## build the list of plots
 plotlist <- build_sim_fit_plots(g_obs, sim_graphs)
+
+## add plot for number of extra nodes in earlier time periods added
+## as receivers of an arc from the last time period, for each graph
+summary(sim_extra_nodes)#XXX
+p <- ggplot() + geom_boxplot(aes(x = 'cited earlier term nodes',
+                                 y = sim_extra_nodes))
+p <- p + geom_point(aes(x = as.numeric(ordered('cited earlier term nodes')),
+                        y = obs_extra_nodes,
+                        colour = obscolour))
+p <- p + ylab('number of nodes')
+p <- p + ptheme + theme(axis.title.x = element_blank())
+plotlist <- c(plotlist, list(p))
 
 ###
 ### Write the plots to PDF
