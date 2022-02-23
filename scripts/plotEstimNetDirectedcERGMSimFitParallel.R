@@ -41,6 +41,17 @@
 ## of igraph neighbors() function over nodes in last term, as it
 ## is extrememely slow (as in about 4 hours for approx. 100 000 nodes).
 ##
+## WARNING (important!):
+## But now the problem is that it seems it can take huge amounts of
+## memory -- this works fine on EPOcergms/term02 (97553 nodes in last term)
+## but when I tried it on term 15 (124217 nodes in last term) R went
+## completely crazy, used all the memory (64 GB) and swap on a cluster
+## partition 'slim' node, and actually crashed the node because of this
+## (happened twice). So tried on a partition 'fat' node (128 GB) and
+## same thing happened (but was monitoring so cancelled job just in time
+## to stop node exhausting swap and crashing). R is just too inefficient
+## it seems - will need to rewrite relevant parts in Python or something.
+##
 ## Usage: Rscript plotEsimtNetDirectedcERGMSimFitParallel.R [-s] netfilename termfilename simNetFilePrefix
 ##  netfilename is the Pajek format observed graph (the input arclistFile
 ##     for EstimNetDirected)
