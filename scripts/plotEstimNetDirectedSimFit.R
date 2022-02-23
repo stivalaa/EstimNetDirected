@@ -150,7 +150,7 @@ num_sim <- length(sim_graphs)
 
 
 ## build the list of plots
-plotlist <- build_sim_fit_plots(g_obs, sim_graphs)
+plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots)
 
 ###
 ### Write the plots to PDF

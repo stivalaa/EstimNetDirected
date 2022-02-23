@@ -231,7 +231,7 @@ for (i in 1:length(sim_graphs)) {
 }
 
 ## build the list of plots
-plotlist <- build_sim_fit_plots(g_obs, sim_graphs)
+plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots)
 
 ## add plot for number of extra nodes in earlier time periods added
 ## as receivers of an arc from the last time period, for each graph
