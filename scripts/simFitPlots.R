@@ -161,14 +161,16 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
         dobs <- data.frame(degree = degree(g_obs, mode=mode),
                            group = 'obs')
     }
+#    print(names(dobs))#XXX
 #    print('about to get simdegrees...')#XXX seems to be only way to debug in R...
     ## get degrees of all simulated graphs in one histogram
-    simdegrees <- unlist(sapply(sim_graphs, function(g) degree(g, mode=mode)))
+    simdegrees <- as.vector(unlist(sapply(sim_graphs, function(g) degree(g, mode=mode)))) ## as.vector() and unlist() BOTH seems to be required, otherwise rbind() below crashes with error about wrong number of columns
     if (use_log) {
         dsim <- data.frame(degree = log(simdegrees), group = 'sim')
     } else {
         dsim <- data.frame(degree = simdegrees, group = 'sim')
     }
+#    print(names(dsim))#XXX
 #    print('about to rbind dobs and dsim...') #XXX seems to be only way to debug in R...
     dat <- rbind(dobs, dsim)
     end <- Sys.time()
