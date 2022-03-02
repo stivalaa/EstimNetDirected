@@ -7,3 +7,11 @@ dzA_sim_cergm_0.txt
 obs_stats_0.txt
 sim_sim_cergm_0.net
 theta_sim_cergm_0.txt
+simulation_gof_sim_cergm_*.net
+dzA_sim_cergm.pdf
+estimation_example_cergm.txt
+simulation_gof_sim_cergm.pdf
+simulation_gof_sim_cergm_cergm.pdf
+simulation_gof_sim_cergm_cergm2.pdf
+stats_gof_sim_cergm.txt
+theta_sim_cergm.pdf
