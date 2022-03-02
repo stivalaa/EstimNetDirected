@@ -207,8 +207,12 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
 build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
 
   num_sim <- length(sim_graphs)
-
   plotlist <- list()
+
+  cat('obs num nodes: ', vcount(g_obs), '\n')
+  cat('sim num nodes: ', sapply(sim_graphs, vcount), '\n')
+
+  
 
   if (is.directed(g_obs)) {
     ##
@@ -253,22 +257,6 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
                               list(deg_hist_plot(g_obs, sim_graphs, 'all', TRUE))))
   }
 
-
-  ## ###
-  ## ### (weakly) Connected components
-  ## ### This is commented out as it isn't very useful
-
-  ## system.time(components <- sapply(sim_graphs, function(g) length(decompose.graph(g))))
-
-
-  ## cat('obs components: ', length(decompose.graph(g_obs)), '\n')
-  ## cat('sim components: ', components, '\n')
-  ## p <- ggplot() + geom_boxplot(aes(x = 'components', y = components))
-  ## p <- p + geom_point(aes(x = as.numeric(ordered('components')),
-  ##                         y = length(decompose.graph(g_obs)),
-  ##                         colour = obscolour))
-  ## p <- p + ptheme +   theme(axis.title.x = element_blank())
-  ## plotlist <- c(plotlist, list(p))
 
 
   ##
