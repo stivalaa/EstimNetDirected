@@ -245,8 +245,8 @@ print(system.time(
 
 ##print( unlist(sapply(sim_graphs, function(g) degree(g, mode='in'))) )#XXX
 ##print( degree(g_obs, mode='out') ) # XXX
-print( max(unlist(sapply(sim_graphs, function(g) degree(g, mode='out'))), degree(g_obs, mode='out')) ) #XXX
-print( max(unlist(sapply(sim_graphs, function(g) degree(g, mode='in'))), degree(g_obs, mode='in')) ) #XXX
+##print( max(unlist(sapply(sim_graphs, function(g) degree(g, mode='out'))), degree(g_obs, mode='out')) ) #XXX
+##print( max(unlist(sapply(sim_graphs, function(g) degree(g, mode='in'))), degree(g_obs, mode='in')) ) #XXX
        
 ## build the list of plots
 plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots)
@@ -254,9 +254,9 @@ plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots)
 ## add plot for number of nodes in each induced subgraph, with
 ## boxplot for simulated graphs and red point for observed
 ## as receivers of an arc from the last time period, for each graph
-print(vcount(g_obs)) #XXX
+##print(vcount(g_obs)) #XXX
 sim_nodecounts <- sapply(sim_graphs, vcount)
-summary(sim_nodecounts) #XXX
+##summary(sim_nodecounts) #XXX
 xlabel <-'Nodes in induced subgraph'
 p <- ggplot() + geom_boxplot(aes(x = xlabel,
                                  y = sim_nodecounts))

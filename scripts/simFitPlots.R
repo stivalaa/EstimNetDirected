@@ -152,7 +152,7 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
 ##    ggplot2 object to add to plot list
 ##
 deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
-    print('in deg_hist_plot...')#XXX seems to be only way to debug in R...
+#    print('in deg_hist_plot...')#XXX seems to be only way to debug in R...
     start <- Sys.time()
     if (use_log) {
         dobs <- data.frame(degree = log(degree(g_obs, mode=mode)),
@@ -161,7 +161,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
         dobs <- data.frame(degree = degree(g_obs, mode=mode),
                            group = 'obs')
     }
-    print('about to get simdegrees...')#XXX seems to be only way to debug in R...
+#    print('about to get simdegrees...')#XXX seems to be only way to debug in R...
     ## get degrees of all simulated graphs in one histogram
     simdegrees <- unlist(sapply(sim_graphs, function(g) degree(g, mode=mode)))
     if (use_log) {
@@ -169,7 +169,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
     } else {
         dsim <- data.frame(degree = simdegrees, group = 'sim')
     }
-    print('about to rbind dobs and dsim...') #XXX seems to be only way to debug in R...
+#    print('about to rbind dobs and dsim...') #XXX seems to be only way to debug in R...
     dat <- rbind(dobs, dsim)
     end <- Sys.time()
     cat(mode, "-degree histogram data frame construction took",
