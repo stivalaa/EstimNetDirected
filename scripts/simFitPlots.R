@@ -71,7 +71,7 @@ my_scientific_10 <- function(x) {
 deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     num_sim <- length(sim_graphs)
     start = Sys.time()
-    maxdeg <- max(sapply(sim_graphs, function(g) degree(g, mode=mode)),
+    maxdeg <- max(unlist(sapply(sim_graphs, function(g) degree(g, mode=mode))),
                   degree(g_obs, mode=mode))
     cat("Max ", mode, " degree is ", maxdeg, "\n")
     deg_df <- data.frame(sim = rep(1:num_sim, each=(maxdeg+1)),
@@ -152,6 +152,7 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
 ##    ggplot2 object to add to plot list
 ##
 deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
+    print('in deg_hist_plot...')#XXX seems to be only way to debug in R...
     start <- Sys.time()
     if (use_log) {
         dobs <- data.frame(degree = log(degree(g_obs, mode=mode)),
@@ -160,13 +161,15 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
         dobs <- data.frame(degree = degree(g_obs, mode=mode),
                            group = 'obs')
     }
+    print('about to get simdegrees...')#XXX seems to be only way to debug in R...
     ## get degrees of all simulated graphs in one histogram
-    simdegrees <- as.vector(sapply(sim_graphs, function(g) degree(g, mode=mode)))
+    simdegrees <- unlist(sapply(sim_graphs, function(g) degree(g, mode=mode)))
     if (use_log) {
         dsim <- data.frame(degree = log(simdegrees), group = 'sim')
     } else {
         dsim <- data.frame(degree = simdegrees, group = 'sim')
     }
+    print('about to rbind dobs and dsim...') #XXX seems to be only way to debug in R...
     dat <- rbind(dobs, dsim)
     end <- Sys.time()
     cat(mode, "-degree histogram data frame construction took",
@@ -222,6 +225,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
     system.time(plotlist <- c(plotlist,
                               list(deg_distr_plot(g_obs, sim_graphs, 'in'))))
 
+    print('about to do deg_hist_plot...')
     system.time(plotlist <- c(plotlist,
                               list(deg_hist_plot(g_obs, sim_graphs, 'in', FALSE))))
 
