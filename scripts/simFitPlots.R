@@ -88,7 +88,7 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     }
     deg_df$degree <- as.factor(deg_df$degree)
     deg_df$count[which(is.na(deg_df$count))] <- 0
-    deg_df$nodefraction <- deg_df$count / num_nodes
+    deg_df$nodefraction <- deg_df$count / sapply(sim_graphs, vcount)
     end = Sys.time()
     cat(mode, "-degree sim data frame construction took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -105,7 +105,7 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     ## simulated degree distribution)
     obs_deg_df$degree <- as.factor(obs_deg_df$degree)
     obs_deg_df$count[which(is.na(obs_deg_df$count))] <- 0
-    obs_deg_df$nodefraction <- obs_deg_df$count / num_nodes
+    obs_deg_df$nodefraction <- obs_deg_df$count / vcount(g_obs)
     ##print(obs_deg_df)#XXX
     end = Sys.time()
     cat(mode, "-degree obs data frame construction took",
@@ -208,12 +208,6 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
 
   num_sim <- length(sim_graphs)
 
-  num_nodes <- vcount(g_obs)
-  ## all simulated graphs must have the same number of nodes
-  stopifnot(length(unique((sapply(sim_graphs, function(g) vcount(g))))) == 1)
-  ## and it must be the same a the number of nodes in the observed graph
-  stopifnot(num_nodes == vcount(sim_graphs[[1]]))
-
   plotlist <- list()
 
   if (is.directed(g_obs)) {
@@ -309,8 +303,8 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
 
   system.time(giant_component_sizes <- sapply(sim_graphs,
                                               function(g) vcount(giant.component(g))))
-  giant_component_sizes <- giant_component_sizes / num_nodes
-  obs_gcsize <- vcount(giant.component(g_obs)) / num_nodes
+  giant_component_sizes <- giant_component_sizes / sapply(sim_graphs, vcount)
+  obs_gcsize <- vcount(giant.component(g_obs)) / vcount(g_obs)
   cat('obs giant component size: ', obs_gcsize, '\n')
   cat('sim giant component size: ', giant_component_sizes, '\n')
   p <- ggplot() + geom_boxplot(aes(x = 'giant component', y = giant_component_sizes))
@@ -321,59 +315,6 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   p <- p + ptheme +   theme(axis.title.x = element_blank())
   ##p <- p + ylim(0, 1)
   plotlist <- c(plotlist, list(p))
-
-
-
-  ##
-  ## (weakly) Connected components size distribution
-  ##
-  ## This is commented out as it always is too hard to read, a histogram
-  ## works better but hard to superimpose these with multiple simluated graphs
-
-  ## sim_component_sizes <- unlist(sapply(sim_graphs,
-  ##                               function(g) sapply(decompose.graph(g),
-  ##                                                  function(h) vcount(h))))
-  ## obs_component_sizes <- sapply(decompose.graph(g_obs), function(g) vcount(g))
-  ## maxcomponentsize <- max(c(sim_component_sizes, obs_component_sizes))
-  ## componentsize_df <- data.frame(sim = rep(1:num_sim, each=maxcomponentsize),
-  ##                                componentsize = rep(1:maxcomponentsize, num_sim),
-  ##                                count = NA)
-  ## for (i in 1:num_sim) {
-  ##     ## using ineffecient and inelegant double loops as per above for degree
-  ##     ## distribution. (see also necessity for as.character(j) below)
-  ##     sim_component_sizes <- sapply(decompose.graph(sim_graphs[[i]]),
-  ##                                   function(g) vcount(g))
-  ##     componentsize_table <- table(sim_component_sizes)
-  ##     for (j in 0:maxcomponentsize) {
-  ##         componentsize_df[which(componentsize_df[,"sim"] == i &
-  ##                                componentsize_df[,"componentsize"] == j,
-  ##                                arr.ind=TRUE),
-  ##                          "count"] <-
-  ##             componentsize_table[as.character(j)]
-  ##     }
-  ## }
-  ## componentsize_df$componentsize <- as.factor(componentsize_df$componentsize)
-  ## componentsize_df$count[which(is.na(componentsize_df$count))] <- 0
-  ## componentsize_df$nodefraction <- componentsize_df$count / num_nodes
-  ## obs_componentsize_df <- data.frame(componentsize = 1:maxcomponentsize,
-  ##                                    count = NA)
-  ## obs_componentsize_table <- table(obs_component_sizes)
-  ## for (j in 0:maxcomponentsize) {
-  ##     obs_componentsize_df[which(obs_componentsize_df[,"componentsize"] == j,
-  ##                                arr.ind=TRUE), "count"] <-
-  ##         componentsize_table[as.character(j)]
-  ## }
-  ## obs_componentsize_df$componentsize <- as.factor(obs_componentsize_df$componentsize)
-  ## obs_componentsize_df$count[which(is.na(obs_componentsize_df$count))] <- 0
-  ## obs_componentsize_df$nodefraction <- obs_componentsize_df$count / num_nodes
-  ## p <- ggplot(componentsize_df, aes(componentsize, nodefraction)) + geom_boxplot()
-  ## p <- p + geom_line(data = obs_componentsize_df, aes(componentsize, nodefraction,
-  ##                                             colour = obscolour,
-  ##                                             group = 1))
-  ## p <- p + ptheme
-  ## p <- p + xlab('component size') + ylab('fraction of nodes')
-  ## ##p <- p + scale_y_log10()
-  ## plotlist <- c(plotlist, list(p))
 
 
 
@@ -416,13 +357,10 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
     ## https://github.com/igraph/igraph/issues/625
     ## https://github.com/igraph/igraph/issues/497
     ## 003 and 012 and 102 can overflow on too large networks
-    ## so will drop them if any are negative or arbitrarily network is
-    ## 'too large'
+    ## so will drop them if any are negative 
     dropFirstThree <- FALSE 
-    ## if (num_nodes > 1000000) {
-    ##     dropFirstThree <- TRUE
-    ## }
-    nTriads <- choose(num_nodes, 3)
+    nTriads_obs <- choose(vcount(g_obs), 3)
+    nTriads_sim <- sapply(sim_graphs, function(h) choose(vcount(h), 3))
     system.time(obs_triadcensus <- triad.census(g_obs))
     num_triad_types <- length(obs_triadcensus)
     stopifnot(num_triad_types == 16)
@@ -447,7 +385,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
                                arr.ind=TRUE), "count"] <-
         obs_triadcensus[tname]
     }
-    obs_triadcensus_df$triadfraction <- obs_triadcensus_df$count / nTriads
+    obs_triadcensus_df$triadfraction <- obs_triadcensus_df$count / nTriads_obs
     for (i in 1:num_sim) {
       system.time(sim_triadcensus <- triad_census(sim_graphs[[i]]))
       names(sim_triadcensus) <- triadnames
@@ -467,7 +405,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
     sim_triadcensus_df$triad <- factor(sim_triadcensus_df$triad, levels = triadnames)
     obs_triadcensus_df$triad <- factor(obs_triadcensus_df$triad, levels = triadnames)
 
-    sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads
+    sim_triadcensus_df$triadfraction <- sim_triadcensus_df$count / nTriads_sim
     ## Remove first two triads if necessary
     ## (003 triad (empty graph) and 012 (single edge))
     if (dropFirstThree) {
@@ -549,11 +487,12 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ##
   ## geodesics (shortest paths)
   ##
-  if (num_nodes > MAX_SIZE_GEODESIC) {
-    cat("WARNING: graph with ", num_nodes,
+  if (vcount(g_obs) > MAX_SIZE_GEODESIC) {
+    cat("WARNING: graph with ", vcount(g_obs),
         " too large to do geodesic fit, skipping\n")
   } else {
-    num_dyads <- choose(num_nodes, 2) # num_nodes*(num_nodes-1)/2
+    num_dyads_obs <- choose(vcount(g_obs), 2) # N*(N-1)/2
+    num_dyads_sim <- sapply(sim_graphs, function(h) choose(vcount(h), 2))
     system.time(obs_geodesics <- distance_table(g_obs)$res)
     system.time(sim_geodesics <- sapply(sim_graphs,
                                         function(g) distance_table(g)$res,
@@ -579,7 +518,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
       geodesic_df[which(geodesic_df[,"sim"] == i), "count"] <- sg
     }
     geodesic_df$geodesic <- as.factor(geodesic_df$geodesic)
-    geodesic_df$nodefraction <- geodesic_df$count / num_dyads
+    geodesic_df$nodefraction <- geodesic_df$count / num_dyads_sim
     end = Sys.time()
     cat("Geodesic sim data frame construction took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -592,7 +531,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
     }
     obs_geodesic_df <- data.frame(geodesic = 1:maxgeodesic,
                                   count = as.numeric(obs_geodesics))
-    obs_geodesic_df$nodefraction <- obs_geodesic_df$count / num_dyads
+    obs_geodesic_df$nodefraction <- obs_geodesic_df$count / num_dyads_obs
     end = Sys.time()
     cat("Geodesic obs data frame construction took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -610,8 +549,8 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ## edgewise shared partners
   ##
 
-  if (num_nodes > MAX_SIZE_ESP_DSP) {
-    cat("WARNING: graph with ", num_nodes,
+  if (vcount(g_obs) > MAX_SIZE_ESP_DSP) {
+    cat("WARNING: graph with ", vcount(g_obs),
         "nodes too large to do edgewise shared partners, skipping\n")
   } else {
     library(statnet)   
@@ -668,8 +607,8 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ## dyadwise shared partners
   ##
 
-  if (num_nodes > MAX_SIZE_ESP_DSP) {
-    cat("WARNING: graph with ", num_nodes,
+  if (vcount(g_obs) > MAX_SIZE_ESP_DSP) {
+    cat("WARNING: graph with ", vcount(g_obs),
         "nodes too large to do dyadwise shared partners, skipping\n")
   } else {
     system.time(net_obs <- asNetwork(g_obs))
