@@ -79,6 +79,10 @@ for (statname in statnames) {
     }
     p <- p + xlab('t')
     p <- p + ylab(statname)
+    p <- p + scale_x_continuous(guide = guide_axis(check.overlap = TRUE,
+                                                   #n.dodge = 2,
+                                                   #angle = 90
+                                                  ))
     plotlist <- c(plotlist, list(p))
 
     p <- ggplot(simstats_statname, aes(x=value))
@@ -96,7 +100,10 @@ for (statname in statnames) {
                           color = "red")
     }
     p <- p + xlab(statname)
-    p <- p + scale_x_continuous(guide = guide_axis(check.overlap = TRUE))
+    p <- p + scale_x_continuous(guide = guide_axis(check.overlap = TRUE,
+                                                   #n.dodge = 2,
+                                                   #angle = 90
+                                                  ))
     plotlist <- c(plotlist, list(p))
 
     ## compute t-ratio
