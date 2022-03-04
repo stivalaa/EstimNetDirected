@@ -35,9 +35,20 @@ library(grid)
 library(gridExtra)
 library(ggplot2)
 library(reshape)
+library(scales)
 
 zSigma <- 1.96 # number of standard deviations for 95% confidence interval
 
+# http://stackoverflow.com/questions/10762287/how-can-i-format-axis-labels-with-exponents-with-ggplot2-and-scales
+orig_scientific_10 <- function(x) {
+  parse(text=gsub("e", " %*% 10^", scientific_format()(x)))
+}
+my_scientific_10 <- function(x) {
+# also remove + and leading 0 in exponennt
+  parse( text=gsub("e", " %*% 10^", gsub("e[+]0", "e", scientific_format()(x))) )
+}
+
+   
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) < 1 || length(args) > 2) {
     cat("Usage: Rscript plotSimulationDiagnostics.R simulation_stats.txt [obs_stats.txt]\n")
@@ -82,7 +93,8 @@ for (statname in statnames) {
     p <- p + scale_x_continuous(guide = guide_axis(check.overlap = TRUE,
                                                    #n.dodge = 2,
                                                    #angle = 90
-                                                  ))
+                                                  ),
+                                labels = my_scientific_10)
     plotlist <- c(plotlist, list(p))
 
     p <- ggplot(simstats_statname, aes(x=value))
