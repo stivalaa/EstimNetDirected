@@ -96,6 +96,7 @@ for (statname in statnames) {
                           color = "red")
     }
     p <- p + xlab(statname)
+    p <- p + scale_x_continuous(guide = guide_axis(check.overlap = TRUE))
     plotlist <- c(plotlist, list(p))
 
     ## compute t-ratio
