@@ -34,6 +34,15 @@ library(reshape)
 library(doBy)
 library(scales)
 
+## read in R source file from directory where this script is located
+##http://stackoverflow.com/questions/1815606/rscript-determine-path-of-the-executing-script
+source_local <- function(fname){
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep=.Platform$file.sep))
+}
+source_local('snowballSample.R') # for giant.component()
+
 ## some statistics are too slow to practically compute on large networks,
 ## these are just guesses (and certainly for geodesic a 1.6 million node
 ## network could not be computed in 4 hours for example).

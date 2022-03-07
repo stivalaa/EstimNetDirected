@@ -94,7 +94,6 @@ source_local <- function(fname){
   source(paste(base_dir, fname, sep=.Platform$file.sep))
 }
 
-source_local('snowballSample.R')
 source_local('simFitPlots.R')
 
 
