@@ -34,15 +34,6 @@ library(reshape)
 library(doBy)
 library(scales)
 
-## read in R source file from directory where this script is located
-##http://stackoverflow.com/questions/1815606/rscript-determine-path-of-the-executing-script
-source_local <- function(fname){
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep=.Platform$file.sep))
-}
-source_local('snowballSample.R') # for giant.component()
-
 ## some statistics are too slow to practically compute on large networks,
 ## these are just guesses (and certainly for geodesic a 1.6 million node
 ## network could not be computed in 4 hours for example).
@@ -63,6 +54,23 @@ my_scientific_10 <- function(x) {
   parse( text=gsub("e", " %*% 10^", gsub("e[+]0", "e", scientific_format()(x))) )
    
 }
+
+
+##
+## giant_component() - return largest connected component of the graph
+## 
+## Paramters:
+##    graph - igraph to get giant componetn of
+##
+## Return value:
+##    largest connected component of graph
+##
+giant.component <- function(graph) {
+  cl <- clusters(graph)
+  return(induced.subgraph(graph, which(cl$membership == which.max(cl$csize))))
+}
+
+
 
 ##
 ## Return plot of degree distribution, for in or out degree

@@ -134,7 +134,7 @@ source_local <- function(fname){
   base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
   source(paste(base_dir, fname, sep=.Platform$file.sep))
 }
-
+source_local('snowballSample.R')
 source_local('simFitPlots.R')
 
 
