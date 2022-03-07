@@ -206,7 +206,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
 ##                 also (default FALSE)
 ##
 ## Return value:
-##    ggplot2 object to add to plot list
+##    list of ggplot2 objects
 ##
 ##
 build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
