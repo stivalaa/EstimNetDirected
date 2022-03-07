@@ -3,6 +3,11 @@
 ## File:    plotEstimNetDirectedcERGMSimFitParallel.R
 ## Author:  Alex Stivala
 ## Created: February 2022
+###
+###
+### OBSOLETE: DO NOT USE. Use plotEstimNetDirectedcERGMSimFit2.R instead.
+###
+###
 ##
 ## Plot some simple graph statistics of the observed network on same
 ## plot as those of the networks output from the end of the MCMC
