@@ -606,6 +606,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
                                               colour = obscolour, group = 1))
     p <- p + ptheme + xlab("edgewise shared partners") +
       ylab("fraction of edges")
+    p <- p + guides(x = guide_axis(check.overlap = TRUE))
     plotlist <- c(plotlist, list(p))
 
     ## add log scale version
@@ -658,6 +659,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
                                               colour = obscolour, group = 1))
     p <- p + ptheme + xlab("dyadwise shared partners") +
       ylab("fraction of dyads")
+    p <- p + guides(x = guide_axis(check.overlap = TRUE))
     plotlist <- c(plotlist, list(p))
     ## add log scale version
     p <- p + scale_y_log10() + ylab("frac. dyads (log scale)")
@@ -680,5 +682,6 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
       theme(axis.title.x = element_blank())
     plotlist <- c(plotlist, list(p))
   }
+  warnings()#XXX
   return(plotlist)
 }
