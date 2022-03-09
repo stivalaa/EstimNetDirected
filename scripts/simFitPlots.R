@@ -149,6 +149,7 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     } else if (maxdeg > 20) {
         p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 5))
     }
+    p <- p + guides(x = guide_axis(check.overlap = TRUE))
     end = Sys.time()
     cat(mode, "-degree plotting took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -682,6 +683,5 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
       theme(axis.title.x = element_blank())
     plotlist <- c(plotlist, list(p))
   }
-  warnings()#XXX
   return(plotlist)
 }

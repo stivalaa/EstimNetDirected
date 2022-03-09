@@ -274,3 +274,6 @@ cat("writing plots to PDF file ", outfilename, "\n")
 pdf(outfilename, onefile=FALSE, paper="special", width=9.9, height=6.6)
 system.time(do.call(grid.arrange, plotlist))
 dev.off()
+
+warnings() #XXX
+
