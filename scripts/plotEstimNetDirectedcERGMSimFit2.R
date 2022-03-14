@@ -206,7 +206,9 @@ cat('maxterm = ', maxterm, '\n')
 
 ## Get subgraph induced by union of nodes in last term and 
 ## all nodes that receive arcs from nodes in last term, in observed graph
-maxterm_nodes <- V(g_obs)[which(V(g_obs)$term == maxterm)]
+print(system.time(
+  maxterm_nodes <- V(g_obs)[which(V(g_obs)$term == maxterm)]
+))
 cat('There are ', length(maxterm_nodes), ' nodes in last time period\n')
 ## neighbors() only takes a single node not a node sequence, so have to use
 ## Reduce(union, lapply(nodesequence), ...)
@@ -224,7 +226,9 @@ cat('Induced subgraph of g_obs has ', vcount(g_obs), ' nodes\n')
 ## This means that the induced subgraphs may be of different sizes
 ## from each other, and from the induced subgraph of the observed graph.
 for (i in 1:length(sim_graphs)) {
-  this_maxterm_nodes <- V(sim_graphs[[i]])[which(V(sim_graphs[[i]])$term == maxterm)]
+  print(system.time(
+    this_maxterm_nodes <- V(sim_graphs[[i]])[which(V(sim_graphs[[i]])$term == maxterm)]
+  ))
   stopifnot( length(maxterm_nodes) == length(this_maxterm_nodes) )
 print(system.time(
   this_maxterm_receiver_nodes <- Reduce(union, lapply(this_maxterm_nodes,
@@ -233,9 +237,11 @@ print(system.time(
                                     neighbors(sim_graphs[[i]], v, mode='out'))))
 ))
   cat('There are ', length(this_maxterm_receiver_nodes), ' additional nodes in simulated graph ', i, ' receiving arcs from nodes in last time period\n')
-  sim_graphs[[i]] <- induced.subgraph(sim_graphs[[i]],
-                                      union(this_maxterm_nodes,
-                                            this_maxterm_receiver_nodes))
+  print(system.time((
+    sim_graphs[[i]] <- induced.subgraph(sim_graphs[[i]],
+                                        union(this_maxterm_nodes,
+                                              this_maxterm_receiver_nodes))
+  ))
   cat('Induced subgraph of simulated graph ', i, ' has ', vcount(sim_graphs[[i]]), ' nodes\n')
 }
 
