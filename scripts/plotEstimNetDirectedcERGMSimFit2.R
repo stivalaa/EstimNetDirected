@@ -214,8 +214,7 @@ cat('There are ', length(maxterm_nodes), ' nodes in last time period\n')
 ## Reduce(union, lapply(nodesequence), ...)
 print(system.time(
 maxterm_receiver_nodes <- Reduce(union, lapply(maxterm_nodes, function(v)
-                                    Filter(function(x) !(x %in% maxterm_nodes),
-                                              neighbors(g_obs, v, mode='out'))))
+                                               neighbors(g_obs, v, mode='out')))
 ))
 cat('There are ', length(maxterm_receiver_nodes), ' additional nodes in g_obs receiving arcs from nodes in last time period\n')
 print(system.time(
@@ -234,9 +233,8 @@ for (i in 1:length(sim_graphs)) {
   stopifnot( length(maxterm_nodes) == length(this_maxterm_nodes) )
   print(system.time(
     this_maxterm_receiver_nodes <- Reduce(union, lapply(this_maxterm_nodes,
-                                  function(v)
-                                Filter(function(x) !(x %in% this_maxterm_nodes),
-                                    neighbors(sim_graphs[[i]], v, mode='out'))))
+                                     function(v)
+                                     neighbors(sim_graphs[[i]], v, mode='out')))
   ))
   cat('There are ', length(this_maxterm_receiver_nodes), ' additional nodes in simulated graph ', i, ' receiving arcs from nodes in last time period\n')
   print(system.time(
