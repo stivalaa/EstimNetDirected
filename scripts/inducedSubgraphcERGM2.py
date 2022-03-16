@@ -8,7 +8,7 @@
 # Created: March 2022
 #
 #
-# Statsu: NOT TESTED YET
+# Status: NOT TESTED YET
 #
 ##############################################################################
 """
@@ -22,7 +22,7 @@ For SNAP see
 
 http://snap.stanford.edu/snappy/index.html
 
-Used version 4.0.0.
+Used version 4.1.0.
 
 NB Using Python 2.7 (not Python 3) as could not get SNAP to install on Python 3.
 """
@@ -41,7 +41,7 @@ def cERGM2_subgraph(G):
     """
     cERGM2_subgraph() - get subgraph for cERGM goodness-of-fit
 
-    Retruns the subgraph induced by the union
+    Returns the subgraph induced by the union
     of the nodes in the last term (time period), and all nodes in
     earlier terms that receive arcs from them. 
   
@@ -65,7 +65,7 @@ def cERGM2_subgraph(G):
     termdict = dict() # map nodeid : term
     N = snap.ConvertGraph(snap.PNEANet, G) # copy graph/network G to network N
     maxterm = max([G.GetIntAttrDatN(i, "term") for i in G.nodes()])
-    maxterm_nodes = [i for i in G.nodes() if i == maxterm]
+    maxterm_nodes = [i for i in G.nodes() if G.GetIntAttdDatN(i, "term") == maxterm]
     nodes = set(maxterm_nodes) # will accumulate all nodes here
     for i in maxterm_nodes:
         termdict[i] = maxterm

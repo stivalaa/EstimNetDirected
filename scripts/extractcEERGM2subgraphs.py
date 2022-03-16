@@ -94,7 +94,7 @@ def convert_estimnetdirected_to_pajek_format(infile, outf):
     """
     Convert EstimNEtDirected Pajek network file format to the more verbose
     Pajek file format where each node is specified explicitly.
-    EstimNetDirected uses a format like this:
+    EstimNetDirected can use a format like this:
 
     *Vertices 9032
     *Arcs
@@ -117,7 +117,10 @@ def convert_estimnetdirected_to_pajek_format(infile, outf):
     739 1
     ...
 
-    This function does that conversion.
+    This function does that conversion. Note that EstimNeDirected writes
+    Pajek .net files in this format, so not nedded for those, but
+    many programs write in the simpler format (without all the vertices named)
+    and EstimNetDirected can read it, but snaplLoadPajek() cannot.
 
     Parameters:
         infile  - filename of EstimNetDirected Pajek format file to read
@@ -185,42 +188,45 @@ def main():
     termfilename = args[1]
     simnetfileprefix = args[2]
 
+    print netfilename 
     tmpfd, tmpfile = tempfile.mkstemp()
     tmpf = os.fdopen(tmpfd, "w")
     if convert_estimnetdirected_to_pajek_format(netfilename, tmpf) != 0:
         sys.stderr.write('ERROR: bad data in ' + netfilename + '\n')
         sys.exit(1)
     tmpf.close()
-    G = snap.LoadPajek(snap.PNGraph, tmpfile)
+    # Need to use PNEANet not PNGraph to allow attributes with AddIntAtrN etc.
+    G = snap.LoadPajek(snap.PNEANet, tmpfile)
     os.remove(tmpfile)
     snap.PrintInfo(G)
 
     termdat = open(termfilename).readlines()
-    if (termdat[0] != "term"):
+    if (termdat[0].rstrip() != "term"):
         sys.stderr.write("ERROR: expecting 'term' as first line of " + termfilename + "\n")
         sys.exit(1)
     terms = [int(x) for x in termdat[1:]]
     print 'maxterm = ', max(terms)
     assert(len(terms) == G.GetNodes())
-    for (i, node) in enumerate(g.Nodes()):
-        G.AddIntAttrN(node, terms[i], "term")
+    for (i, node) in enumerate(G.Nodes()):
+        G.AddIntAttrDatN(node, terms[i], "term")
     
-    graph_glob = simnetfileprefix + "_[0-9]*[.]net"
-    sim_files = glob_re(graph_glob, os.listdir())
+    graph_glob = simnetfileprefix + "_[0-9]*[.]net$"
+    sim_files = glob_re(graph_glob, os.listdir("."))
     gz = False
     if len(sim_files) == 0:
         print 'No .net files with prefix ', simnetfileprefix, ' found, trying .net.gz instead'
-        graph_glob = simnetfileprefix + "_[0-9]*[.]net.gz"
-        sim_files = glob_re(graph_glob, os.listdir())
+        graph_glob = simnetfileprefix + "_[0-9]*[.]net.gz$"
+        sim_files = glob_re(graph_glob, os.listdir("."))
         gz = True
-           
 
     for simfile in sim_files:
         if gz:
+            print simfile
             tmpfd, tmpfile = tempfile.mkstemp()
+            tmpf = os.fdopen(tmpfd, "w")
             try:
-                tmpfd.write(gzip.open(simfile).read())
-                tmpfd.close()
+                tmpf.write(gzip.open(simfile).read())
+                tmpf.close()
                 G = snap.LoadPajek(snap.PNGraph, tmpfile)
             finally:
                 os.remove(tmpfile)
