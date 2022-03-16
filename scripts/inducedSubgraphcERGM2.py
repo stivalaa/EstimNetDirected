@@ -10,11 +10,20 @@
 #
 ##############################################################################
 """
-Functions to do snowball sampling in a (large) network using 
+Functions to get induced subgraph for citation ERGM (cERGM) 
+goodness-of-fit tests in a (large) network using 
 SNAP, annotating node with term (time period)
 
 Reimplementation of the R/igraph code in plotEstimNetDirectedcERGMSimFit2.r
- using Python and SNAP instead as R is too slow and not scalable.
+using Python and SNAP instead as R is too slow and not scalable: 
+the original R/igraph code takes several hours per network on the patent
+data (approx 100 000 nodes per time period) for example, making it
+unusuable since large numbers of networks are needed (and the cluster has
+a 48 hour time limit, and even embarrassing parallelism is not practical either
+since in R even 'multicore' means the entire memory is copied for each
+core),  while this takes approx 0.1 seconds, and also uses less memory.
+
+
 
 For SNAP see
 
