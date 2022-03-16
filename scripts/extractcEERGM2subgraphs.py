@@ -7,7 +7,6 @@
 # Author:  Alex Stivala
 # Created: March 2022
 #
-#
 ##############################################################################
 """Extract subgraphs for cERGM goodness-of-fit
 

@@ -8,8 +8,6 @@
 # Created: March 2022
 #
 #
-# Status: NOT TESTED YET
-#
 ##############################################################################
 """
 Functions to do snowball sampling in a (large) network using 
