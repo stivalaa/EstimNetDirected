@@ -188,6 +188,9 @@ def main():
     termfilename = args[1]
     simnetfileprefix = args[2]
 
+    ##
+    ## Load observed graph
+    ##
     print netfilename 
     tmpfd, tmpfile = tempfile.mkstemp()
     tmpf = os.fdopen(tmpfd, "w")
@@ -200,9 +203,9 @@ def main():
     os.remove(tmpfile)
     snap.PrintInfo(G)
 
-    start = time.time()
-    Gsubgraph = cERGM2_subgraph(G)
-    print 'Getting subgraph took ', start - time.time(), 's'
+    ## 
+    ## Load term (time period) data
+    ##
 
     termdat = open(termfilename).readlines()
     if (termdat[0].rstrip() != "term"):
@@ -210,10 +213,26 @@ def main():
         sys.exit(1)
     terms = [int(x) for x in termdat[1:]]
     print 'maxterm = ', max(terms)
+
+
+    ## 
+    ## Annotate observed graph with term data
+    ##
     assert(len(terms) == G.GetNodes())
     for (i, node) in enumerate(G.Nodes()):
         G.AddIntAttrDatN(node, terms[i], "term")
-    
+
+    ##
+    ## Get subgraph for observed graph
+    ##
+    start = time.time()
+    Gsubgraph = cERGM2_subgraph(G)
+    print 'Getting subgraph took ', time.time() - start, 's'
+    snap.PrintInfo(G)
+   
+    ##
+    ## Load simulated graphs, annotate with terms, and get subgraphs for each
+    ## 
     graph_glob = simnetfileprefix + "_[0-9]*[.]net$"
     sim_files = glob_re(graph_glob, os.listdir("."))
     gz = False
@@ -231,11 +250,18 @@ def main():
             try:
                 tmpf.write(gzip.open(simfile).read())
                 tmpf.close()
-                G = snap.LoadPajek(snap.PNGraph, tmpfile)
+                G = snap.LoadPajek(snap.PNEANet, tmpfile)
             finally:
                 os.remove(tmpfile)
         else:
-            G = snap.LoadPajek(snap.PNGraph, simfile)
+            G = snap.LoadPajek(snap.PNEANet, simfile)
+        assert(len(terms) == G.GetNodes())
+        for (i, node) in enumerate(G.Nodes()):
+            G.AddIntAttrDatN(node, terms[i], "term")
+        snap.PrintInfo(G)
+        start = time.time()
+        Gsubgraph = cERGM2_subgraph(G)
+        print 'Getting subgraph took ', time.time() - start, 's'
         snap.PrintInfo(G)
 
 

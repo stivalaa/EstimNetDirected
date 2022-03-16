@@ -47,7 +47,7 @@ def cERGM2_subgraph(G):
   
 
     Parameters:
-      G - SNAP graph or network to take subgraph of
+      G - SNAP network to take subgraph of, must have 'term' int attribute
     
     Return value:
       SNAP network (TNEANet) subgraph of G with each node having 
@@ -63,9 +63,8 @@ def cERGM2_subgraph(G):
     # ass attributes on the subgraph (node ids are preserved so we
     # can do this)
     termdict = dict() # map nodeid : term
-    N = snap.ConvertGraph(snap.PNEANet, G) # copy graph/network G to network N
     maxterm = max([G.GetIntAttrDatN(i, "term") for i in G.Nodes()])
-    maxterm_nodes = [i for i in G.nodes() if G.GetIntAttdDatN(i, "term") == maxterm]
+    maxterm_nodes = [node.GetId() for node in G.Nodes() if G.GetIntAttrDatN(node, "term") == maxterm]
     nodes = set(maxterm_nodes) # will accumulate all nodes here
     for i in maxterm_nodes:
         termdict[i] = maxterm
@@ -83,13 +82,13 @@ def cERGM2_subgraph(G):
     NodeVec = snap.TIntV()
     for node in nodes:
         NodeVec.Add(node)
-    subgraphN = snap.GetSubGraph(N, NodeVec)
+    subgraphG = snap.GetSubGraph(G, NodeVec)
     # now put the terms as attributes on the subgraph nodes (which depends
     # on nodeids being preserved in the subgraph)
-    subgraphN.AddIntAttrN("term", -1)  # add term attribute init to -1
+    subgraphG.AddIntAttrN("term", -1)  # add term attribute init to -1
     for (nodeid, term) in termdict.iteritems():
-        subgraphN.AddIntAttrDatN(nodeid, term, "term")
-    return subgraphN
+        subgraphG.AddIntAttrDatN(nodeid, term, "term")
+    return subgraphG
 
 
 def write_term_file(filename, G, nodelist, termdict):
