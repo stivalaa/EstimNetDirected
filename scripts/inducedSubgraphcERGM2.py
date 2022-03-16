@@ -64,7 +64,7 @@ def cERGM2_subgraph(G):
     # can do this)
     termdict = dict() # map nodeid : term
     N = snap.ConvertGraph(snap.PNEANet, G) # copy graph/network G to network N
-    maxterm = max([G.GetIntAttrDatN(i, "term") for i in G.nodes()])
+    maxterm = max([G.GetIntAttrDatN(i, "term") for i in G.Nodes()])
     maxterm_nodes = [i for i in G.nodes() if G.GetIntAttdDatN(i, "term") == maxterm]
     nodes = set(maxterm_nodes) # will accumulate all nodes here
     for i in maxterm_nodes:

@@ -200,6 +200,10 @@ def main():
     os.remove(tmpfile)
     snap.PrintInfo(G)
 
+    start = time.time()
+    Gsubgraph = cERGM2_subgraph(G)
+    print 'Getting subgraph took ', start - time.time(), 's'
+
     termdat = open(termfilename).readlines()
     if (termdat[0].rstrip() != "term"):
         sys.stderr.write("ERROR: expecting 'term' as first line of " + termfilename + "\n")
