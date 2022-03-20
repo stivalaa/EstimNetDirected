@@ -227,7 +227,7 @@ def main():
     start = time.time()
     Gsubgraph = cERGM2_subgraph(G)
     print 'Getting subgraph took ', time.time() - start, 's'
-    snap.PrintInfo(G)
+    snap.PrintInfo(Gsubgraph)
    
     ##
     ## Load simulated graphs, annotate with terms, and get subgraphs for each
@@ -261,7 +261,7 @@ def main():
         start = time.time()
         Gsubgraph = cERGM2_subgraph(G)
         print 'Getting subgraph took ', time.time() - start, 's'
-        snap.PrintInfo(G)
+        snap.PrintInfo(Gsubgraph)
 
 
 if __name__ == "__main__":
