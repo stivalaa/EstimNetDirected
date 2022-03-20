@@ -27,7 +27,13 @@
 
  This is a reimplementation of the subgraph extract code from
  plotEstimNetDirectedcERGMSimFit2.R (R/igraph version) using Python and SNAP
- instead as R is too slow and not scalable.
+ instead as R is too slow and not scalable:
+ the original R/igraph code takes several hours per network on the patent
+ data (approx 100 000 nodes per time period) for example, making it
+ unusuable since large numbers of networks are needed (and the cluster has
+ a 48 hour time limit; even embarrassing parallelism is not practical either
+ since in R even 'multicore' means the entire memory is copied for each
+ core),  while this takes approx 0.1 seconds, and also uses less memory.
  
  For SNAP see
 
