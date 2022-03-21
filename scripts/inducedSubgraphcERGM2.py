@@ -34,6 +34,7 @@ Used version 4.1.0.
 NB Using Python 2.7 (not Python 3) as could not get SNAP to install on Python 3.
 """
 
+import gzip
 
 import snap
 
@@ -98,9 +99,10 @@ def cERGM2_subgraph(G):
     return subgraphG
 
 
-def write_term_file(filename, G, nodelist, termdict):
+
+def write_term_file_compressed(filename, G, nodelist, termdict):
     """
-    write_term_file() - write term file in EstimNetDirected format
+    write_term_file() - write term file in EstimNetDirected format gzipped
     
     The format of the term file is just the header line "term"
     and the the term (staring at 0) of each node one per line.
@@ -117,10 +119,45 @@ def write_term_file(filename, G, nodelist, termdict):
     """
     assert(len(termdict) == len(nodelist))
     assert(len(nodelist) == G.GetNodes())
-    with open(filename, 'w') as f:
-        f.write("term\n")
+    with gzip.open(filename, 'w') as f:
+        f.write("term\n".encode())
         for i in nodelist:
             assert(G.GetIntAttrDatN(i, "term") == termdict[i])
-            f.write(str(G.GetIntAttrDatN(i, "term")) + '\n')
+            f.write((str(G.GetIntAttrDatN(i, "term")) + '\n').encode())
+
+
+
+def write_graph_file_compressed(filename, G, nodelist, write_header=True):
+    """
+    write_graph_file_compressed() - write edge list in Pajek format gzipped
+    
+    Note that because snap.ConvertGraph() fails to keep node
+    attributes so we cannot use it to renumber nodes, we also
+    use nodelist to get a sequential node number for each node:
+    the index in nodelist of each nodeid is its sequential number,
+    so we can these out as sequential node numbers 1..N
+
+    So in order to do this we have to write the output ourselves in
+    an iterator, cannot use the snap.SavePajek() function.
+
+    Parameters:
+      filename - filename to write to (warning: overwritten)
+      G - SNAP graph object
+      nodelist - list of nodeids, used to order the nodes in the output
+      write_header - if True write Pajek header lines
+
+    Return value:
+       None
+    """
+    assert(len(nodelist) == G.GetNodes())
+    assert(len(nodelist) == len(set(nodelist))) # nodeids must be unique
+    # build dict mapping nodeid to sequential node number 1..N
+    seqdict = {nodeid:(seq+1) for seq, nodeid in enumerate(nodelist)}
+    with gzip.open(filename, 'wb') as f:
+        if write_header:
+            f.write("*vertices " + (str(G.GetNodes()) + "\n").encode())
+            f.write("*arcs\n".encode())
+        for EI in G.Edges():
+            f.write(("%d %d\n" % (seqdict[EI.GetSrcNId()], seqdict[EI.GetDstNId()])).encode())
 
 
