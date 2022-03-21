@@ -37,6 +37,9 @@ library(scales)
 ## some statistics are too slow to practically compute on large networks,
 ## these are just guesses (and certainly for geodesic a 1.6 million node
 ## network could not be computed in 4 hours for example).
+## TODO these are arbitrary, and the slowness has as much to do with
+## density and network structure, not just number of nodes, so should find
+## some better heuristic for this.
 MAX_SIZE_GEODESIC <- 500000 ## do not do shortest paths if more nodes than this
 MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 
