@@ -552,6 +552,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
                                                    colour = obscolour, group = 1))
     p <- p + ptheme +
       xlab("geodesic distance") + ylab("fraction of dyads")
+    p <- p + guides(x = guide_axis(check.overlap = TRUE))
     plotlist <- c(plotlist, list(p))
   }
 
