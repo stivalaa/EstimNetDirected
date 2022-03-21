@@ -17,11 +17,11 @@
  For each input graphs, writes new file with
  the induced subgraph induced by the union
  of the nodes in the last term (time period), and all nodes in
- earlier terms that receive arcs from them. 
+ earlier term that receive arcs from them. 
 
  Output files are in cwd, with _cergm2_subgraph appended before suffix (.net.gz)
  in Pajek network format (compressed with gzip).
- Also outputs files with term for each node similarly as _cergm2_subgraph_terms.txt.gz
+ Also outputs files with term for each node similarly as _cergm2_subgraph_term.txt.gz
  (also compressed)
 
  WARNING: the output files are overwritten if they exist.
@@ -239,9 +239,7 @@ def main():
     ## Write subgraph and terms for its nodes (compressed)
     ##
 
-    # renumber nodes so they are numbered 0..N-1
-    # Actually can't do this as it loses the node attributes (term)
-    # so instead build a dictionary mapping nodeid:term
+    # build a dictionary mapping nodeid:term
     # so that can be written to term file in correct order.
     # Note that then the index in nodelist of a nodeid can be used
     # as sequential node number of each node.
@@ -251,7 +249,7 @@ def main():
         nodelist.append(node.GetId())
         termdict[node.GetId()] = Gsubgraph.GetIntAttrDatN(node.GetId(), "term")
     outfilename = os.path.splitext(netfilename)[0] + '_cergm2_subgraph'  + os.path.extsep + "net.gz"
-    termoutfilename = os.path.splitext(netfilename)[0] + '_cergm2_terms' + os.path.extsep + "txt.gz"
+    termoutfilename = os.path.splitext(netfilename)[0] + '_cergm2_subraph_term' + os.path.extsep + "txt.gz"
     print 'Writing observed subgraph to ', outfilename
     write_graph_file_compressed(outfilename, Gsubgraph, nodelist)
     print 'writing observed subgraph terms to ', termoutfilename
@@ -259,6 +257,7 @@ def main():
    
     ##
     ## Load simulated graphs, annotate with terms, and get subgraphs for each
+    ## and write them to compressed (gzip) files
     ## 
     graph_glob = simnetfileprefix + "_[0-9]*[.]net$"
     sim_files = glob_re(graph_glob, os.listdir("."))
@@ -290,6 +289,24 @@ def main():
         Gsubgraph = cERGM2_subgraph(G)
         print 'Getting subgraph took ', time.time() - start, 's'
         snap.PrintInfo(Gsubgraph)
+
+        # build a dictionary mapping nodeid:term
+        # so that can be written to term file in correct order.
+        # Note that then the index in nodelist of a nodeid can be used
+        # as sequential node number of each node.
+        nodelist = list()
+        termdict = dict() # map nodeid : term
+        for node in Gsubgraph.Nodes():
+            nodelist.append(node.GetId())
+            termdict[node.GetId()] = Gsubgraph.GetIntAttrDatN(node.GetId(), "term")
+
+        regxp = re.compile("_([0-9]*)[.]net.gz$")
+        outfilename =  regxp.sub("_cergm2_subgraph_\\1.net.gz", simfile)
+        termoutfilename =  regxp.sub("_cergm2_subgraph_term_\\1.txt.gz", simfile)
+        print 'Writing simulated subgraph to ', outfilename
+        write_graph_file_compressed(outfilename, Gsubgraph, nodelist)
+        print 'writing simulated subgraph terms to ', termoutfilename
+        write_term_file_compressed(termoutfilename, Gsubgraph, nodelist, termdict)
 
 
 if __name__ == "__main__":
