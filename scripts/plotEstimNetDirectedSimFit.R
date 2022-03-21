@@ -111,7 +111,6 @@ usage <- function() {
   quit(save="no")
 }
 is_opt <- function(s) substr(s, 1, 1) == '-' # options start with '-'
-print( args)
 # get options
 opts <- Filter(is_opt, args)
 # get non-option arguments
