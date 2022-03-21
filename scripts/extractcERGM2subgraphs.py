@@ -34,7 +34,7 @@
  unusuable since large numbers of networks are needed (and the cluster has
  a 48 hour time limit; even embarrassing parallelism is not practical either
  since in R even 'multicore' means the entire memory is copied for each
- core),  while this takes approx 0.1 seconds, and also uses less memory.
+ core),  while this takes approx 1 minute, and also uses less memory.
  
  For SNAP see
 
