@@ -40,7 +40,7 @@
 ##       that R/igraph is far too slow to be practical for this task on
 ##       larger networks (e.g. taking several hours per simulated graph
 ##       to get the induced subgraphs for the MAREC patent data, versus
-##       a fraction of a second with Pyton and SNAP in extractcERGM2subgraphs.py
+##       about 1 minute with Pyton and SNAP in extractcERGM2subgraphs.py
 ##
 ## Output file is simfitPrefix.pdf (where Prefix is the simNetFilePrefix).
 ## WARNING: output file is overwritten
