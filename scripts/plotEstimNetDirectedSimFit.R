@@ -105,22 +105,31 @@ source_local('simFitPlots.R')
 ###
 
 args <- commandArgs(trailingOnly=TRUE)
-basearg <- 0
-do_subplots <- FALSE
-if (length(args) > 3) {
+
+usage <- function() {
   cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] netfilename simNetFilePrefix\n")
   quit(save="no")
-} else if (length(args) == 3) {
-  if (args[1] == "-s") {
-    do_subplots <- TRUE
-  } else {
-  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] netfilename simNetFilePrefix\n")
-  quit(save="no")
-  }
-  basearg <- basearg + 1
 }
-netfilename <- args[basearg+1]
-simnetfileprefix <- args[basearg+2]
+is_opt <- function(s) substr(s, 1, 1) == '-' # options start with '-'
+print( args)
+# get options
+opts <- Filter(is_opt, args)
+# get non-option arguments
+args <- Filter(Negate(is_opt), args)
+
+do_subplots <- FALSE
+for (opt in opts) {
+  if (opt == "-s") {
+    do_subplots <- TRUE
+   } else {
+    usage()
+   }
+}
+
+if (length(args) > 2) usage()
+
+netfilename <- args[1]
+simnetfileprefix <- args[2]
 
 
 graph_glob <- paste(simnetfileprefix, "_[0-9]*[.]net", sep='')
