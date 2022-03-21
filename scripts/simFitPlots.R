@@ -37,7 +37,7 @@ library(scales)
 ## some statistics are too slow to practically compute on large networks,
 ## these are just guesses (and certainly for geodesic a 1.6 million node
 ## network could not be computed in 4 hours for example).
-MAX_SIZE_GEODESIC <- 100000 ## do not do shortest paths if more nodes than this
+MAX_SIZE_GEODESIC <- 500000 ## do not do shortest paths if more nodes than this
 MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 
 obscolour <- 'red' # colour to plot observed graph points/lines
