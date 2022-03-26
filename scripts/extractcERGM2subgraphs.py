@@ -280,6 +280,7 @@ def main():
             finally:
                 os.remove(tmpfile)
         else:
+            print simfile
             G = snap.LoadPajek(snap.PNEANet, simfile)
         assert(len(terms) == G.GetNodes())
         for (i, node) in enumerate(G.Nodes()):
@@ -300,7 +301,10 @@ def main():
             nodelist.append(node.GetId())
             termdict[node.GetId()] = Gsubgraph.GetIntAttrDatN(node.GetId(), "term")
 
-        regxp = re.compile("_([0-9]*)[.]net.gz$")
+        if gz:
+            regxp = re.compile("_([0-9]*)[.]net.gz$")
+        else:
+            regxp = re.compile("_([0-9]*)[.]net$")
         outfilename =  regxp.sub("_cergm2_subgraph_\\1.net.gz", simfile)
         termoutfilename =  regxp.sub("_cergm2_subgraph_term_\\1.txt.gz", simfile)
         print 'Writing simulated subgraph to ', outfilename
