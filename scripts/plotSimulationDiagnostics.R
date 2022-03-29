@@ -128,7 +128,8 @@ for (statname in statnames) {
 }
 
 postscript(paste(basefilename, '-plots.eps', sep=''), onefile=FALSE,
-           paper="special", horizontal=FALSE, width=9, height=6)
+                 horizontal = TRUE)
+##           paper="special", horizontal=FALSE, width=9, height=6)
 do.call(grid.arrange, plotlist)
 dev.off()
 
