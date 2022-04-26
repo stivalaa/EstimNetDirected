@@ -1,0 +1,39 @@
+Test programs for change statistics from BPNet to generate output from these
+original change statistics function, to be used as baseline for
+EstimNetDirected test change statistics.
+
+Basline output is output of
+BPNet change stats code extracted from old BPNet code (2013) from old
+UniMelb/AURIN MelNet/BPNet code (2.0.1) used for AURIN MelNet BPNet
+web service (REST).
+
+
+test data is Robertson (1929) pollinator network 
+ robertson_pollinators_bipartite.net
+converted from original data in data/ subdirectory:
+
+  Original data: Robertson, C. 1929. Flowers and insects: lists of visitors to four hundred and fifty-three flowers. Carlinville, IL, USA, C. Robertson.
+
+ Sampling methods: Marlin, J. C. & LaBerge, W. E. 2001. The native bee fauna of Carlinville, Illinois, revisited after 75 years: a case for persistence. Conserv. Ecol. 5.
+
+  Downloaded from the Interaction Web Database 
+  (IWDB) [http://www.ecologia.ib.usp.br/iwdb/index.html] 19 April 2022.
+
+by the convert_robertson_matrix_to_pajek.R script.
+
+robertson_pollinators_nodepairs.txt generated with:
+  ./genRandomNodeNumsBipartite.py 1000 1884 1428 > robertson_pollinators_nodepairs.txt
+
+robertson_pollinators_test_results_baseline.txt is renamed from 
+robertson_pollinators_test_results.out generated from the BPNet code with:
+
+  time ./testChangeStatsBipartite.exe  robertson_pollinators_bipartite.net  robertson_pollinators_nodepairs.txt   > robertson_pollinators_test_results.out
+
+This way the same robertson_pollinators_nodepairs.txt input can be used
+with the same robertson_pollinators_bipartite.net network
+to test two-path matrix update and change statistics with different
+implementations as they should get the same results repeatably.
+
+
+ADS
+Tue Apr 26 17:01:04 AEST 2022
