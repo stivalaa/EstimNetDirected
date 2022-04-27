@@ -1908,11 +1908,12 @@ uint_t get_num_vertices_from_arclist_file(FILE *pajek_file)
  * the first lines should be e.g.
  * *vertices 36 10
  * first number is total number of nodes
- * second number is number of type P nodes ['people'].
- * the rest are type A ['affiliation'] - conventionally in the affiliation
- * matrix the rows are people (P) and the columns affiliations (A).
- * They must be numbered 1 ... N where N = num_vP + num_vA
- * so nodes 1 .. num_vP are type P and num_vP+1 .. N are type A
+ * second number is number of mode A nodes
+ * the rest are mode B - conventionally in the affiliation
+ * matrix the rows are mode A and the columns mode B, e.g. mode A is
+ * actors and mode B is their affiliations.
+ * They must be numbered 1 ... N where N = num_A + num_B
+ * so nodes 1 .. num_A are type A and num_A+1 .. N are type B
  * see e.g. http://www.pfeffer.at/txt2pajek/txt2pajek.pdf
  *
  *

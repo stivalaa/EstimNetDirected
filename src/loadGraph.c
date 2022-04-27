@@ -56,8 +56,20 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
  * followed by arcs list one per
  * line. In this program the nodes must be numbered 1..N.
  *
+ * For bipartite (two-mode) networks,
+ * the first lines should be e.g.
+ * *vertices 36 10
+ * first number is total number of nodes
+ * second number is number of mode A nodes
+ * the rest are mode B - conventionally in the affiliation
+ * matrix the rows are mode A and the columns mode B, e.g. mode A is
+ * actors and mode B is their affiliations.
+ * They must be numbered 1 ... N where N = num_A + num_B
+ * so nodes 1 .. num_A are type A and num_A+1 .. N are type B
+ * see e.g. http://www.pfeffer.at/txt2pajek/txt2pajek.pdf
+ *
  * Parameters:
- *    pajek_file   - Pajek format arclist file handle (open read).
+ *   pajek_file   - Pajek format arclist file handle (open read).
  *                   Closed by this function at end.
  *   g             - (in/out) digraph object already allocated as above.
  *   computeStats  - if TRUE the observed graph sufficient statistics
@@ -130,6 +142,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
   char *token     = NULL; /* from strtok_r() */
   const char *delims = " \t\r\n"; /* strtok_r() delimiters for header lines */
   int num_vertices = 0;
+  int num_A_vertices = 0;
   uint_t l;
   double *changestats = NULL;
 #ifdef DEBUG_MEMUSAGE
@@ -147,20 +160,35 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
   char buf[BUFSIZE];
   /* the first lines should be e.g.
    * *vertices 36
+   * for one mode, or
+   * *vertices 36 10
+   * for two-mode
    * for Pajek format
    */
   fgets(buf, sizeof(buf)-1, pajek_file);
   for (p = buf; *p !='\0'; p++) {
     *p = tolower(*p);
   }
-  if (sscanf(buf, "*vertices %d\n", &num_vertices) != 1) {
-    fprintf(stderr, "ERROR: expected *vertices n line but didn't find it\n");
-    exit(1);
+  if (g->is_bipartite) {
+    if (sscanf(buf, "*vertices %d %d\n", &num_vertices, &num_A_vertices) != 2) {
+      fprintf(stderr, "ERROR: expected *vertices n n_A line but didn't find it\n");
+      exit(1);
+    }
+  } else {
+    if (sscanf(buf, "*vertices %d\n", &num_vertices) != 1) {
+      fprintf(stderr, "ERROR: expected *vertices n line but didn't find it\n");
+      exit(1);
+    }
   }
 
   if ((uint_t)num_vertices != g->num_nodes) {
     fprintf(stderr, "ERROR: expected %u vertices but found %d\n",
             g->num_nodes, num_vertices);
+    exit(1);
+  }
+  if (g->is_bipartite && (uint_t)num_A_vertices != g->num_nodes) {
+    fprintf(stderr, "ERROR: expected %u vertices in mode A for two-mode network but found %d\n",
+            g->num_A_nodes, num_A_vertices);
     exit(1);
   }
   
@@ -214,7 +242,14 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
       fprintf(stderr, "ERROR num vertices %d but got edge %d,%d\n", num_vertices, i, j);
       exit(1); 
     }
+
     i--; j--; /* convert to 0-based */
+
+    if (g->is_bipartite) {
+      if (bipartite_node_mode(g, i) == bipartite_node_mode(g, j)) {
+	fprintf(stderr, "ERROR: network is two-mode but edge %d,%d is between two nodes of the same mode\n", i, j);
+      }
+    }
 
     if (computeStats) {
       /* accumulate change statistics in addChangeStats array */
