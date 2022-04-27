@@ -1073,13 +1073,15 @@ void dump_parameter_names(void)
   uint_t i;
   fprintf(stderr, "Structural parameters (%s):\n", STRUCT_PARAMS_STR);
   for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
-    fprintf(stderr, "  %s (%s)\n", STRUCT_PARAMS[i].name,
-	    network_type_str(STRUCT_PARAMS[i].network_type));
+    fprintf(stderr, "  %s (%s, %s)\n", STRUCT_PARAMS[i].name,
+	    network_type_str(STRUCT_PARAMS[i].network_type),
+	    network_mode_str(STRUCT_PARAMS[i].network_mode));
   }
   fprintf(stderr, "Attribute parameters (%s):\n", ATTR_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_PARAMS; i++) {
-    fprintf(stderr, "  %s (%s) (%s)\n", ATTR_PARAMS[i].name,
+    fprintf(stderr, "  %s (%s, %s) (%s)\n", ATTR_PARAMS[i].name,
 	    network_type_str(ATTR_PARAMS[i].network_type),
+	    network_mode_str(ATTR_PARAMS[i].network_mode),
             ATTR_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
@@ -1088,8 +1090,9 @@ void dump_parameter_names(void)
   }
   fprintf(stderr, "Dyadic covariate parameters (%s):\n", DYADIC_PARAMS_STR);
   for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
-    fprintf(stderr, " %s (%s) (%s)\n", DYADIC_PARAMS[i].name,
+    fprintf(stderr, " %s (%s, %s) (%s)\n", DYADIC_PARAMS[i].name,
 	    network_type_str(DYADIC_PARAMS[i].network_type),
+	    network_mode_str(DYADIC_PARAMS[i].network_mode),
             DYADIC_PARAMS[i].type == DYADIC_TYPE_GEODISTANCE ?
             "latitude,longitude" :
             (DYADIC_PARAMS[i].type == DYADIC_TYPE_EUCLIDEANDISTANCE ?
@@ -1098,8 +1101,9 @@ void dump_parameter_names(void)
   fprintf(stderr, "Attribute interaction parameters (%s)\n",
           ATTR_INTERACTION_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
-    fprintf(stderr, " %s (%s) (%s)\n", ATTR_INTERACTION_PARAMS[i].name,
+    fprintf(stderr, " %s (%s,%s) (%s)\n", ATTR_INTERACTION_PARAMS[i].name,
 	    network_type_str(ATTR_INTERACTION_PARAMS[i].network_type),
+	    network_mode_str(ATTR_INTERACTION_PARAMS[i].network_mode),
             ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
