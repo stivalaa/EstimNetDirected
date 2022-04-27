@@ -1,0 +1,12 @@
+dzA_*.txt
+theta_*.txt
+dzA_*.pdf
+theta_*.pdf
+obs_stats_*.txt
+sim_*.net
+sim_*.net.gz
+slurm-*.out
+EstimNetDirected_*.out
+EstimNetDirected_*.err
+.Rhistory
+.RData
