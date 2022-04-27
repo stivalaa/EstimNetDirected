@@ -969,16 +969,22 @@ uint_t twoPaths(const graph_t *g, uint_t i, uint_t j)
  */
 double num_graph_dyads(const graph_t *g, bool allowLoops)
 {
-  if (g->is_directed) {
-    if (allowLoops)
-      return (double)g->num_nodes * g->num_nodes;
-    else
-      return (double)g->num_nodes * (g->num_nodes - 1);
+  if (g->is_bipartite) {
+    assert(!allowLoops);
+    assert(!g->is_directed); /* directed bipartite not supported yet */
+    return ((double)g->num_A_nodes * g->num_B_nodes)/2.0;
   } else {
-    if (allowLoops)
-      return ((double)g->num_nodes * g->num_nodes)/2.0;
-    else
-      return ((double)g->num_nodes * (g->num_nodes - 1))/2.0;
+    if (g->is_directed) {
+      if (allowLoops)
+	return (double)g->num_nodes * g->num_nodes;
+      else
+	return (double)g->num_nodes * (g->num_nodes - 1);
+    } else {
+      if (allowLoops)
+	return ((double)g->num_nodes * g->num_nodes)/2.0;
+      else
+	return ((double)g->num_nodes * (g->num_nodes - 1))/2.0;
+    }
   }
 }
 
@@ -995,6 +1001,7 @@ double num_graph_dyads(const graph_t *g, bool allowLoops)
 
 double num_graph_inner_dyads(const graph_t *g)
 {
+  assert(!g->is_bipartite); /* snowball sampled bipartite not supported */
   return g->is_directed ?
     (double)g->num_inner_nodes*(g->num_inner_nodes-1) :
     (double)g->num_inner_nodes*(g->num_inner_nodes-1)/2.0;
@@ -1028,6 +1035,7 @@ uint_t num_arcs_or_edges(const graph_t *g)
  */
 uint_t num_inner_arcs_or_edges(const graph_t *g)
 {
+  assert(!g->is_bipartite); /* snowball sampled bipartite not supported */
   if (g->is_directed)
     return g->num_inner_arcs;
   else
@@ -1205,6 +1213,9 @@ void insertEdge(graph_t *g, uint_t i, uint_t j)
   assert(!g->is_directed);
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
+  if (g->is_bipartite) {
+    assert(bipartite_node_mode(g, i) != bipartite_node_mode(g, j));
+  }
   g->num_edges++;
   g->edgelist[i] = (uint_t *)safe_realloc(g->edgelist[i],
                                          (g->degree[i]+1) * sizeof(uint_t));
