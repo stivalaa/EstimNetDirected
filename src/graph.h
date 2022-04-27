@@ -6,7 +6,8 @@
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
- * Directed or undirected graph data structure. 
+ * Directed or undirected graph data structure. Also handles bipartite
+ * (two-mode)
  *
  * For directed, stored as arc lists (both forward and a "reversed"
  * version, for fast iteration over both in- and out- neighbours).
@@ -50,6 +51,14 @@ typedef struct nodepair_s /* pair of nodes (i, j) */
   uint_t  j;    /* to node */
 } nodepair_t;
 
+
+/* Mode (node type) of a node for bipartite (two-mode) networks */
+typedef enum bipartite_node_mode_e {
+  MODE_INVALID = -1,
+  MODE_A      =  0,
+  MODE_B       = 1
+} bipartite_node_mode_e;
+
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
 /* uthash hash table entry has (i,j) as key and number of tw-paths as value */
@@ -63,24 +72,32 @@ typedef struct {
 #define GET_IN2PATH_ENTRY(g, i, j) get_twopath_entry((g)->inTwoPathHashTab, (i), (j))
 #define GET_OUT2PATH_ENTRY(g, i, j) get_twopath_entry((g)->outTwoPathHashTab, (i), (j))
 #define GET_2PATH_ENTRY(g, i, j) get_twopath_entry((g)->twoPathHashTab, (i), (j)) /* undirected */
+#define GET_A2PATH_ENTRY(g, i, j) get_twopath_entry((g)->twoPathHashTabA, (i), (j)) /* bipartite */
+#define GET_B2PATH_ENTRY(g, i, j) get_twopath_entry((g)->twoPathHashTabB, (i), (j)) /* bipartite */
 #else
 #define GET_MIX2PATH_ENTRY(g, i, j) ((g)->mixTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_2PATH_ENTRY(g, i, j) ((g)->twoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)]) /* undirected */
+#define GET_A2PATH_ENTRY(g, i, j) ((g)->twoPathMatrixA[INDEX2D((i), (j), (g)->num_B_nodes)]) /* bipartite */
+#define GET_B2PATH_ENTRY(g, i, j) ((g)->twoPathMatrixB[INDEX2D((i)-(g)->num_A_nodes, (j)-(g)->num_A_nodes, (g)->num_B_nodes)]) /* bipartite */ /* Note subtracting num_A_nodes as B nodes are numbered num_A_nodes .. num_nodes */
 #endif /* TWOPATH_HASHTABLES */
 #else /* not using two-path lookup tables (either arrays or hashtables) */
 #define GET_MIX2PATH_ENTRY(g, i, j) mixTwoPaths((g), (i), (j))
 #define GET_OUT2PATH_ENTRY(g, i, j) outTwoPaths((g), (i), (j))
 #define GET_IN2PATH_ENTRY(g, i, j) inTwoPaths((g), (i), (j))
 #define GET_2PATH_ENTRY(g, i, j) twoPaths((g), (i), (j)) /* undirected */
+/* Note bipartite undirected can just use same twoPaths() function as one-mode*/
+#define GET_A2PATH_ENTRY(g, i, j) twoPaths((g), (i), (j)) /* bipartite */
+#define GET_B2PATH_ENTRY(g, i, j) twoPaths((g), (i), (j)) /* bipartite */
 #endif /* TWOPATH_LOOKUP */
 
 typedef struct graph_s
 {
   uint_t   num_nodes;  /* number of nodes */
 
-  bool     is_directed;/* TRUE for directed graph, else undirected */
+  bool     is_directed;  /* TRUE for directed graph, else undirected */
+  bool     is_bipartite; /* TRUE for two-mode graph, else one-mode */
 
   /* 
    * Directed graph, used only if is_directed 
@@ -127,6 +144,36 @@ typedef struct graph_s
   uint_t *twoPathMatrix; /* n x n contiguous matrix counting two-paths */
 #endif /*TWOPATH_HASHTABLES*/
 #endif /* TWOPATH_LOOKUP */
+
+
+  /*
+   * Bipartite (two-mode) graph, used only if is_bipartite
+   */
+
+  /* In the two-mode (bipartite) graph, we refer to the two modes (node types)
+     as A and B. There are only edges between nodes of different modes
+     i.e. between a type A node and a type B node; there are no edges
+     between nodes both of type A or both of type B.
+     As usual the nodes are indexed 0 ... N-1, but for bipartite, all the
+     type A nodes are first, followed by all the type B nodes, i.e.
+     nodes 0 .. N_A are the A nodes and N_A .. N-1 are the type B nodes
+     (where N = N_A + N_B).
+  */
+  uint_t num_A_nodes; /* number of mode A nodes. */
+  uint_t num_B_nodes; /* number of mode B nodes.
+			 num_B_nodes = num_nodes - num_A_nodes */
+
+#ifdef TWOPATH_LOOKUP
+#ifdef TWOPATH_HASHTABLES
+  /* the keys for hash tables are 64 bits: 32 bits each for i and j index */
+  twopath_record_t *twoPathHashTabA; /* hash table counting A-two-paths */
+  twopath_record_t *twoPathHashTabB; /* hash table counting B-two-paths */
+#else /* using array not hashtables for two-path lookup */
+  uint_t *twoPathMatrixA; /* n_A x n_A contiguous matrix counting A-two-paths */
+  uint_t *twoPathMatrixB; /* n_B x n_B contiguous matrix counting B-two-paths */
+#endif /*TWOPATH_HASHTABLES*/
+#endif /* TWOPATH_LOOKUP */
+
 
   /*
    * Fields used for both directed and undirected graphs
@@ -290,6 +337,7 @@ void removeArcOrEdge_updatelist(graph_t *g, uint_t i, uint_t j, uint_t idx);
 void insertArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j);
 void removeArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j, uint_t idx);
 
+bipartite_node_mode_e bipartite_node_mode(const graph_t *g, uint_t i);
 
 #endif /* GRAPH_H */
 

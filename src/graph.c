@@ -4,7 +4,8 @@
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
- * Directed or undirected graph data structure. 
+ * Directed or undirected graph data structure.  Also handles bipartite
+ * (two-mode)x
  *
  * For directed, stored as arc lists (both forward and a "reversed"
  * version, for fast iteration over both in- and out- neighbours).
@@ -67,6 +68,8 @@ static const char *SET_NONE_STRING = "NONE"; /* string in set attribute file
  * 0.01% to 0.1%. In such cases storing in dense matrix format
  * is entirely infeasible.
  *
+ * For bipartite (two-mode) networks, i is an A node and j is a B node.
+ *
  * Parameters:
  *     h - pointer to hash table (pointer itself)
  *     i - node id of source
@@ -121,6 +124,8 @@ static void update_twopath_entry(twopath_record_t **h, uint_t i, uint_t j,
  * statistics for either adding or removing arc i->j
  * The hash tables in the digraph are updated in-place
  *
+ * For bipartite (two-mode) networks, i is an A node and j is a B node.
+ *
  * Parameters:
  *   g     - digraph
  *   i     - node arc is from
@@ -136,6 +141,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
   int incval = isAdd ? 1 : -1;
 
   if (g->is_directed) {
+    assert(!g->is_bipartite); /* directed bipartite not handled yet */
     for (k = 0; k < g->outdegree[i]; k++) {
       v = g->arclist[i][k];
       if (v == i || v == j)
@@ -166,8 +172,29 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       /*removed as slows significantly: assert(isArc(g,j,v));*/
       update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
     }
+  } else if (g->is_bipartite) {
+    /* bipartite */
+    assert(!g->is_directed); /* directed bipartite not handled yet */
+    assert(bipartite_node_mode(g, i) == MODE_A &&
+	   bipartite_node_mode(g, j) == MODE_B);
+    for (k = 0; k < g->degree[i]; k++)  {
+      v = g->edgelist[i][k];
+      assert(bipartite_node_mode(g, v) == MODE_B);
+      if (v == j)
+        continue;
+      update_twopath_entry(&g->twoPathHashTabB, j, v, incval);
+      update_twopath_entry(&g->twoPathHashTabB, v, j, incval);
+    }
+    for (k = 0; k < g->degree[j]; k++)  {
+      v = g->edgelist[j][k];
+      assert(bipartite_node_mode(g, v) == MODE_A);
+      if (v == i)
+        continue;
+      update_twopath_entry(&g->twoPathHashTabA, i, v, incval);
+      update_twopath_entry(&g->twoPathHashTabA, v, i, incval);
+    }
   } else {
-    /* undirected */
+    /* undirected (one-mode) */
     for (k = 0; k < g->degree[i]; k++)  {
       v = g->edgelist[i][k];
       if (v == i || v == j)
@@ -190,6 +217,8 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
  * statistics for either adding or removing arc i->j
  * The matcies in the digraph are updated in-place
  *
+ * For bipartite (two-mode) networks, i is an A node and j is a B node.
+ *
  * Parameters:
  *   g     - digraph
  *   i     - node arc is from
@@ -205,6 +234,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
   int incval = isAdd ? 1 : -1;
 
   if (g->is_directed) {
+    assert(!g->is_directed); /* directed bipartite not handled yet */
     for (k = 0; k < g->outdegree[i]; k++) {
       v = g->arclist[i][k];
       if (v == i || v == j)
@@ -235,8 +265,30 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       /*removed as slows significantly: assert(isArc(g,j,v));*/
       g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
     }
+  } else if (g->is_bipartite) {
+    assert(!g->is_directed); /* directed bipartite not handled yet */
+    assert(bipartite_node_mode(g, i) == MODE_A &&
+	   bipartite_node_mode(g, j) == MODE_B);
+    for (k = 0; k < g->degree[i]; k++)  {
+      v = g->edgelist[i][k];
+      assert(bipartite_node_mode(g, v) == MODE_B);
+      if (v == j)
+        continue;
+      /* Note subtracting num_A_nodes as B nodes are numbered
+	 num_A_nodes .. num_nodes */
+      g->twoPathMatrixB[INDEX2D(j-g->num_A_nodes, v-g->num_A_nodes, g->num_nodes)]+=incval;
+      g->twoPathMatrixB[INDEX2D(v-g->num_A_nodes, j-g->num_A_nodes, g->num_nodes)]+=incval;
+    }
+    for (k = 0; k < g->degree[j]; k++)  {
+      v = g->edgelist[j][k];
+      assert(bipartite_node_mode(g, v) == MODE_A);
+      if (v == i)
+        continue;
+      g->twoPathMatrixA[INDEX2D(i, v, g->num_nodes)]+=incval;
+      g->twoPathMatrixA[INDEX2D(v, i, g->num_nodes)]+=incval;
+    }
   } else {
-    /* undirected */
+    /* undirected (one-mode) */
     for (k = 0; k < g->degree[i]; k++)  {
       v = g->edgelist[i][k];
       if (v == i || v == j)
@@ -901,6 +953,7 @@ uint_t twoPaths(const graph_t *g, uint_t i, uint_t j)
   }
   return count;
 }
+
 
 #endif /*TWOPATH_LOOKUP*/
 
@@ -2699,7 +2752,6 @@ void insertArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j)
  *   j - node to remove arc t
  *   idx - index in inner arc or edge list of the i->j entry for fast removal
  *            as this is known (arc/edge has been selected from this list)
-
  *
  * Return value:
  *   None
@@ -2710,4 +2762,23 @@ void removeArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j, uint_t idx)
     removeArc_allinnerarcs(g, i, j, idx);
   else
     removeEdge_allinneredges(g, i, j, idx);
+}
+
+
+/*
+ * For a bipartite (two-mode) graph, return node type (mode).
+ *
+ * Parameters:
+ *   g - graph
+ *   i - node to test
+ *
+ * Return value:
+ *   MODE_A for node i in mode A, NODE_B for mode B
+ *
+ */
+bipartite_node_mode_e bipartite_node_mode(const graph_t *g, uint_t i)
+{
+  assert(g->is_bipartite);
+  assert(i < g->num_nodes);
+  return (i < g->num_A_nodes ? MODE_A : MODE_B);
 }
