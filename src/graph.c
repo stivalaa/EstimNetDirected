@@ -1984,10 +1984,12 @@ void print_data_summary(const graph_t * g, bool allowLoops)
   uint_t i,j;
   uint_t num_na_values;
   
-  printf("%s %s with %u vertices and %u %s (density %g) [%s]\n",
+  printf("%s %s with %u vertices (%u mode A, %u mode B) and %u %s (density %g) [%s]\n",
 	 g->is_bipartite ? "Two-mode" : "One-mode",
          g->is_directed ? "Digraph" : "Graph",
          g->num_nodes,
+	 g->is_bipartite ? g->num_A_nodes : g->num_nodes,
+	 g->is_bipartite ? g->num_B_nodes : 0,
          g->is_directed ? g->num_arcs : g->num_edges,
          g->is_directed ? "arcs" : "edges",
          density(g, allowLoops),
