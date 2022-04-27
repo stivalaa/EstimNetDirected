@@ -121,6 +121,10 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
    offsetof(sim_config_t, isDirected),
    "directed graph"},
 
+  {"isBipartite",   PARAM_TYPE_BOOL,
+   offsetof(sim_config_t, isBipartite),
+   "bipartite (two-mode) graph"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to to simulate from"},
 
@@ -175,6 +179,7 @@ sim_config_t SIM_CONFIG = {
   NULL,  /* arclist_filename */
   FALSE, /* allowLoops */
   TRUE,  /* isDirected */
+  FALSE, /* isBipartite */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -246,6 +251,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* arclist_filename */
   FALSE, /* allowLoops */
   FALSE, /* isDirected */
+  FALSE, /* isBipartite */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */

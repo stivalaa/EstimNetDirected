@@ -60,6 +60,7 @@ typedef struct sim_config_s {
   char *arclist_filename;  /* filename of Pajek file for citationERGM */  
   bool allowLoops;         /* allow self-edges (loops) */
   bool isDirected;         /* directed graph (else undirected) */  
+  bool isBipartite;        /* two-mode graph (else one-mode) */
   
   /*
    * values built by confiparser.c functions from parsed config settings

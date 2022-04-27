@@ -301,7 +301,7 @@ void insertArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j); /* add ar
 void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 
-graph_t *allocate_graph(uint_t num_vertices, bool is_directed);
+graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite);
 void free_graph(graph_t *g);
 void dump_graph_arclist(const graph_t *g);
 void print_data_summary(const graph_t *g, bool allowLoops);

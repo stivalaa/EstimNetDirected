@@ -70,6 +70,7 @@ typedef struct estim_config_s {
   bool  citationERGM;      /* use cERGM conditional estimation on terms */
   bool allowLoops;         /* allow self-edges (loops) */
   bool isDirected;         /* directed graph (else undirected) */
+  bool isBipartite;        /* two-mode graph (else one-mode) */
   /*
    * values built by confiparser.c functions from parsed config settings
    */

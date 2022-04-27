@@ -153,6 +153,10 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
    offsetof(estim_config_t, isDirected),
    "directed graph"},
 
+  {"isBipartite",   PARAM_TYPE_BOOL,
+   offsetof(estim_config_t, isBipartite),
+   "bipartite (two-mode) graph"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to estimate"},
 
@@ -217,6 +221,7 @@ estim_config_t ESTIM_CONFIG = {
   FALSE, /* citationERGM */
   FALSE, /* allowLoops */
   TRUE,  /* isDirected */
+  FALSE, /* isBipartite */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -298,6 +303,7 @@ static bool ESTIM_CONFIG_IS_SET[] = {
   FALSE, /* citationERGM */
   FALSE, /* allowLoops */
   FALSE, /* isDirected */
+  FALSE, /* isBipartite */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */

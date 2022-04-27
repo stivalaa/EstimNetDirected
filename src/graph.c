@@ -1636,16 +1636,19 @@ void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arc
  * Parameters:
  *    num_vertices - number of nodes in graph/digraph
  *    is_directed  - TRUE for directed graph else undirected
+ *    is_bipartite - TRUE for two-mode graph else one-mode
  *
  * Return values:
  *    Allocated and initizlied to empty graph or digraph
  */
-graph_t *allocate_graph(uint_t num_vertices, bool is_directed)
+graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite)
 {
   graph_t *g = (graph_t *)safe_calloc(1, sizeof(graph_t));
   g->is_directed = is_directed;
+  g->is_bipartite = is_bipartite;
   g->num_nodes = num_vertices;
   if (is_directed) {
+    assert(!is_bipartite); /* directed two-mode network not supported yet */
     g->num_arcs = 0;
     g->outdegree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
     g->arclist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
