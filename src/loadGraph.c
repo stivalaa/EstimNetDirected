@@ -186,7 +186,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
             g->num_nodes, num_vertices);
     exit(1);
   }
-  if (g->is_bipartite && (uint_t)num_A_vertices != g->num_nodes) {
+  if (g->is_bipartite && (uint_t)num_A_vertices != g->num_A_nodes) {
     fprintf(stderr, "ERROR: expected %u vertices in mode A for two-mode network but found %d\n",
             g->num_A_nodes, num_A_vertices);
     exit(1);

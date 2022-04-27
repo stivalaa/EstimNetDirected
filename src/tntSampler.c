@@ -167,9 +167,6 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   double  N         = g->num_nodes;
   double num_dyads  = num_graph_dyads(g, allowLoops);
 
-  /* for conditional estimation on snowball sample */
-  double       num_inner_dyads =  num_graph_inner_dyads(g);
-  uint_t       num_inner_arcs  =  num_inner_arcs_or_edges(g);
 
   /* for citation ERGM */
   double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
@@ -339,6 +336,9 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     /* adjust the acceptance probability for Metropolis-Hastings
        (as for MHproposals.c MH_TNT() in statnet ergm code) */
     if (useConditionalEstimation) {
+      double num_inner_dyads =  num_graph_inner_dyads(g);
+      uint_t num_inner_arcs  =  num_inner_arcs_or_edges(g);
+
       if (isDelete) {
         total += log( num_inner_arcs == 1 ? 1.0 / (prob * num_inner_dyads + (1 - prob)) :
                     num_inner_arcs / (odds * num_inner_dyads + num_inner_arcs) );
