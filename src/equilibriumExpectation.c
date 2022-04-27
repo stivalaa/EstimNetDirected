@@ -796,6 +796,10 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
       fprintf(stderr, "ERROR: directed bipartite graphs not suported\n");
       return -1;
     }
+    if (config->useConditionalEstimation) {
+      fprintf(stderr, "ERROR: conditional estimation with bipartite graphs not supported\n");
+      return -1;
+    }
     
     get_num_vertices_from_bipartite_pajek_file(arclist_file,
 					       &num_nodes,
@@ -1032,8 +1036,13 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
       values were specified, and other requirements for cERGM */
    if (config->citationERGM) {
      if (!config->isDirected) {
-       fprintf(stderr, "ERROR: citation ERGM estimation required directed"
+       fprintf(stderr, "ERROR: citation ERGM estimation requires directed"
 	       "graph\n");
+       return -1;
+     }
+     if (config->isBipartite) {
+       fprintf(stderr, "ERROR: citation ERGM estimation requires one-mode"
+	       "graph not two-mode\n");
        return -1;
      }
      if (config->useConditionalEstimation) {

@@ -509,6 +509,22 @@ int do_simulation(sim_config_t * config)
   }
 
   assert(!config->isBipartite); /* TODO bipartite */
+
+  if (config->isBipartite) {
+    /* bipartite (two-mode) network */
+    if (config->allowLoops) {
+      fprintf(stderr, "ERROR: cannot allow loops in bipartite graph\n");
+      return -1;
+    }
+    if (config->isDirected) {
+      fprintf(stderr, "ERROR: directed bipartite graphs not suported\n");
+      return -1;
+    }
+    if (config->useConditionalSimulation) {
+      fprintf(stderr, "ERROR: conditional simulation with bipartite graphs not supported\n");
+      return -1;
+    }
+  }
   
   g = allocate_graph(config->numNodes, config->isDirected, config->isBipartite,
 		     0 /* TODO bipartite */);
@@ -599,6 +615,11 @@ int do_simulation(sim_config_t * config)
   if (config->citationERGM) {
     if (!config->isDirected) {
       fprintf(stderr, "ERROR: citation ERGM simulation requires directed graph\n");
+      return -1;
+    }
+    if (config->isBipartite) {
+      fprintf(stderr, "ERROR: citation ERGM simulation requires one-mode"
+	      "graph not two-mode\n");
       return -1;
     }
     if (config->useConditionalSimulation) {
