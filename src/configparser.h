@@ -91,13 +91,21 @@ typedef enum dyadic_type_e {
   DYADIC_TYPE_EUCLIDEANDISTANCE /* continuous Euclidean distance from x/y/z */
 } dyadic_type_e;
 
-/* ERGM change statistic network type */
+/* ERGM change statistic network type (directed / undirected) */
 typedef enum network_type_e {
   NETWORK_TYPE_INVALID,     /* invalid type, used as error return value */
-  NETWORK_TYPE_DIRECTED,    /* directed one-mode network */
-  NETWORK_TYPE_UNDIRECTED,  /* undirected one-mode network */
-  NETWORK_TYPE_BOTH         /* directed or undirected one-mode network */
+  NETWORK_TYPE_DIRECTED,    /* directed network */
+  NETWORK_TYPE_UNDIRECTED,  /* undirected network */
+  NETWORK_TYPE_BOTH         /* directed or undirected network */
 } network_type_e;
+
+/* ERGM change statistic network type (one-mode / two-mode) */
+typedef enum network_mode_e {
+  NETWORK_MODE_INVALID,     /* invalid type, used as error return value */
+  NETWORK_MODE_ONEMODE,     /* one-mode network */
+  NETWORK_MODE_TWOMODE,     /* two-mode (bipartite) network */
+  NETWORK_MODE_BOTH         /* one-mode or two-mode network */
+} network_mode_e;
 
 /* configuration parameter */
 typedef struct config_param_s {
@@ -111,7 +119,8 @@ typedef struct config_param_s {
 typedef struct struct_param_s {
   const char          *name;                 /* structural parameter name */
   struct_param_type_e  struct_param_type;    /* does it have lambda parameter */
-  network_type_e       network_type;         /* network type it works with */
+  network_type_e       network_type;         /* network type it works with (directed, undirected) */
+  network_mode_e       network_mode;         /* network type it works with (one-mode, two-mode) */
   change_stats_func_t *change_stats_func;    /* corresponding change stat */
 } struct_param_t;
 
@@ -119,7 +128,8 @@ typedef struct struct_param_s {
 typedef struct attr_param_s {
   const char          *name;                 /* attribute parameter name */
   attr_type_e          type;                 /* attribute parameter type */
-  network_type_e       network_type;         /* network type it works with */  
+  network_type_e       network_type;         /* network type it works with */
+  network_mode_e       network_mode;         /* network type it works with (one-mode, two-mode) */
   attr_change_stats_func_t *attr_change_stats_func;  /* corresponding func. */
 } attr_param_t;
 
@@ -127,7 +137,8 @@ typedef struct attr_param_s {
 typedef struct dyadic_param_s {
   const char          *name;                 /*dyadic covariate parameter name */
   dyadic_type_e        type;                 /*dyadic covariate parameter type */
-  network_type_e       network_type;         /* network type it works with */  
+  network_type_e       network_type;         /* network type it works with */
+  network_mode_e       network_mode;         /* network type it works with (one-mode, two-mode) */  
   dyadic_change_stats_func_t *dyadic_change_stats_func; /* corresponding func. */
 } dyadic_param_t;
 
@@ -136,6 +147,7 @@ typedef struct attr_interaction_param_s {
   const char          *name;       /* attribute interaction parameter name */
   attr_type_e          type;       /* attribute interaction parameter type */
   network_type_e       network_type;         /* network type it works with */  
+  network_mode_e       network_mode;         /* network type it works with (one-mode, two-mode) */  
   attr_interaction_change_stats_func_t *attr_interaction_change_stats_func;  /* corresponding func. */
 } attr_interaction_param_t;
 
@@ -221,8 +233,14 @@ network_type_e get_struct_param_network_type(const char *structParamName);
 network_type_e get_attr_param_network_type(const char *attrParamName);
 network_type_e get_dyadic_param_network_type(const char *attrParamName);
 network_type_e get_attr_interaction_param_network_type(const char *attrParamName);
+network_mode_e get_struct_param_network_mode(const char *structParamName);
+network_mode_e get_attr_param_network_mode(const char *attrParamName);
+network_mode_e get_dyadic_param_network_mode(const char *attrParamName);
+network_mode_e get_attr_interaction_param_network_mode(const char *attrParamName);
 bool is_allowed_network_type(network_type_e net_type, const graph_t *g);
+bool is_allowed_network_mode(network_mode_e net_mode, const graph_t *g);
 const char *network_type_str(network_type_e net_type);
+const char *network_mode_str(network_mode_e net_mode);
 int check_param_network_type(param_config_t *pconfig, const graph_t *g);
   
 #endif /* CONFIGPARSER_H */

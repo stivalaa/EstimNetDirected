@@ -64,32 +64,32 @@ static const char *FALSE_STR = "false";
  */
 static const struct_param_t STRUCT_PARAMS[] =
 {
-  {ARC_PARAM_STR,       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeArc},
-  {"Reciprocity",       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeReciprocity},
-  {"Sink",              STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeSink},
-  {"Source",            STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeSource},
-  {"Isolates",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       changeIsolates},
-  {"TwoPaths",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       changeTwoPath},
-  {"InTwoStars",        STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeInTwoStars},
-  {"OutTwoStars",       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeOutTwoStars},
-  {"TransitiveTriangles",STRUCT_PARAM_TYPE_NONE,  NETWORK_TYPE_DIRECTED,   changeTransitiveTriad},
-  {"CyclicTriangles",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeCyclicTriad},
-  {"AltInStars",        STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltInStars},
-  {"AltOutStars",       STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltOutStars},
-  {"AltKTrianglesT",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesT},
-  {"AltKTrianglesC",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesC},
-  {"AltKTrianglesD",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesD},
-  {"AltKTrianglesU",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltKTrianglesU},
-  {"AltTwoPathsT",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsT},
-  {"AltTwoPathsD",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsD},
-  {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsU},
-  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   changeAltTwoPathsTD},
-  {"Loop",              STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       changeLoop},
-  {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   changeLoopInteraction},
-  {EDGE_PARAM_STR,      STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, changeEdge},
-  {"AltStars",          STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, changeAltStars},
-  {"AltTwoPaths",       STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, changeAltTwoPaths},
-  {"AltKTriangles",     STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, changeAltKTriangles}
+  {ARC_PARAM_STR,       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeArc},
+  {"Reciprocity",       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeReciprocity},
+  {"Sink",              STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeSink},
+  {"Source",            STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeSource},
+  {"Isolates",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeIsolates},
+  {"TwoPaths",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       NETWORK_MODE_ONEMODE, changeTwoPath},
+  {"InTwoStars",        STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeInTwoStars},
+  {"OutTwoStars",       STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeOutTwoStars},
+  {"TransitiveTriangles",STRUCT_PARAM_TYPE_NONE,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeTransitiveTriad},
+  {"CyclicTriangles",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeCyclicTriad},
+  {"AltInStars",        STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltInStars},
+  {"AltOutStars",       STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltOutStars},
+  {"AltKTrianglesT",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltKTrianglesT},
+  {"AltKTrianglesC",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltKTrianglesC},
+  {"AltKTrianglesD",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltKTrianglesD},
+  {"AltKTrianglesU",    STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltKTrianglesU},
+  {"AltTwoPathsT",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltTwoPathsT},
+  {"AltTwoPathsD",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltTwoPathsD},
+  {"AltTwoPathsU",      STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltTwoPathsU},
+  {"AltTwoPathsTD",     STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltTwoPathsTD},
+  {"Loop",              STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       NETWORK_MODE_ONEMODE, changeLoop},
+  {"LoopInteraction",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeLoopInteraction},
+  {EDGE_PARAM_STR,      STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeEdge},
+  {"AltStars",          STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_ONEMODE, changeAltStars},
+  {"AltTwoPaths",       STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_ONEMODE, changeAltTwoPaths},
+  {"AltKTriangles",     STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_ONEMODE, changeAltKTriangles}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
@@ -100,24 +100,24 @@ static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
  */
 static const attr_param_t ATTR_PARAMS[] =
 {
-  {"Sender",                     ATTR_TYPE_BINARY,      NETWORK_TYPE_DIRECTED,   changeSender},
-  {"Receiver",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_DIRECTED,   changeReceiver},
-  {"Interaction",                ATTR_TYPE_BINARY,      NETWORK_TYPE_BOTH,       changeInteraction},
-  {"Matching",                   ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       changeMatching},
-  {"MatchingReciprocity",        ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMatchingReciprocity},
-  {"Mismatching",                ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       changeMismatching},
-  {"MismatchingReciprocity",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMismatchingReciprocity},
-  {"MismatchingTransitiveTriad", ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMismatchingTransitiveTriad},
-  {"MismatchingTransitiveTies",  ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   changeMismatchingTransitiveTies},
-  {"ContinuousSender",           ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeContinuousSender},
-  {"ContinuousReceiver",         ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeContinuousReceiver},
-  {"Diff",                       ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_BOTH,       changeDiff},
-  {"DiffReciprocity",            ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffReciprocity},
-  {"DiffSign",                   ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffSign},
-  {"DiffDirSR",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffDirSR},
-  {"DiffDirRS",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   changeDiffDirRS},
-  {"JaccardSimilarity",          ATTR_TYPE_SET,         NETWORK_TYPE_BOTH,       changeJaccardSimilarity},
-  {"Activity",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, changeActivity}
+  {"Sender",                     ATTR_TYPE_BINARY,      NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeSender},
+  {"Receiver",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeReceiver},
+  {"Interaction",                ATTR_TYPE_BINARY,      NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeInteraction},
+  {"Matching",                   ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeMatching},
+  {"MatchingReciprocity",        ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMatchingReciprocity},
+  {"Mismatching",                ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeMismatching},
+  {"MismatchingReciprocity",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingReciprocity},
+  {"MismatchingTransitiveTriad", ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingTransitiveTriad},
+  {"MismatchingTransitiveTies",  ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingTransitiveTies},
+  {"ContinuousSender",           ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousSender},
+  {"ContinuousReceiver",         ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousReceiver},
+  {"Diff",                       ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeDiff},
+  {"DiffReciprocity",            ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffReciprocity},
+  {"DiffSign",                   ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffSign},
+  {"DiffDirSR",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirSR},
+  {"DiffDirRS",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirRS},
+  {"JaccardSimilarity",          ATTR_TYPE_SET,         NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeJaccardSimilarity},
+  {"Activity",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeActivity}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
@@ -129,9 +129,9 @@ static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
  */
 static const dyadic_param_t DYADIC_PARAMS[] =
 {
-  {"GeoDistance",       DYADIC_TYPE_GEODISTANCE,       NETWORK_TYPE_BOTH, changeGeoDistance},
-  {"logGeoDistance",    DYADIC_TYPE_GEODISTANCE,       NETWORK_TYPE_BOTH, changeLogGeoDistance},
-  {"EuclideanDistance", DYADIC_TYPE_EUCLIDEANDISTANCE, NETWORK_TYPE_BOTH, changeEuclideanDistance}
+  {"GeoDistance",       DYADIC_TYPE_GEODISTANCE,       NETWORK_TYPE_BOTH, NETWORK_MODE_BOTH, changeGeoDistance},
+  {"logGeoDistance",    DYADIC_TYPE_GEODISTANCE,       NETWORK_TYPE_BOTH, NETWORK_MODE_BOTH, changeLogGeoDistance},
+  {"EuclideanDistance", DYADIC_TYPE_EUCLIDEANDISTANCE, NETWORK_TYPE_BOTH, NETWORK_MODE_BOTH, changeEuclideanDistance}
 };
 static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
   sizeof(DYADIC_PARAMS[0]);
@@ -142,7 +142,7 @@ static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
  */
 static const attr_interaction_param_t ATTR_INTERACTION_PARAMS[] =
 {
-  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH, changeMatchingInteraction},
+  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH, NETWORK_MODE_BOTH, changeMatchingInteraction},
 };
 static const uint_t NUM_ATTR_INTERACTION_PARAMS =
   sizeof(ATTR_INTERACTION_PARAMS) / sizeof(ATTR_INTERACTION_PARAMS[0]);
@@ -1867,6 +1867,82 @@ network_type_e get_attr_interaction_param_network_type(const char
 
 
 /*
+ * Given name of structural parameter, returns its network mode, by searching
+ * in the STRUCT_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_mode_e get_struct_param_network_mode(const char *structParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
+    if (strcasecmp(STRUCT_PARAMS[i].name, structParamName) == 0) {
+      return STRUCT_PARAMS[i].network_mode;
+    }
+  }
+  return NETWORK_MODE_INVALID;
+}
+
+
+
+/*
+ * Given name of attribute parameter, returns its network mode, by searching
+ * in the ATTR_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_mode_e get_attr_param_network_mode(const char *attrParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_ATTR_PARAMS; i++) {
+    if (strcasecmp(ATTR_PARAMS[i].name, attrParamName) == 0) {
+      return ATTR_PARAMS[i].network_mode;
+    }
+  }
+  return NETWORK_MODE_INVALID;
+}
+
+/*
+ * Given name of dyadic covariate parameter, returns its network mode, 
+ * by searching
+ * in the DYADIC_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_mode_e get_dyadic_param_network_mode(const char *dyadicParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
+    if (strcasecmp(DYADIC_PARAMS[i].name, dyadicParamName) == 0) {
+      return DYADIC_PARAMS[i].network_mode;
+    }
+  }
+  return NETWORK_MODE_INVALID;
+}
+
+/*
+ * Given name of attribute interaction parameter, returns its network mode,
+ * by searching
+ * in the ATTR_INTERACTION_PARAMS const array. Note this is a linear search but
+ * does not matter as a small hand-coded array anyway.
+ */
+network_mode_e get_attr_interaction_param_network_mode(const char
+						       *attrInteractionParamName)
+{
+  uint_t i;
+
+  for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
+    if (strcasecmp(ATTR_INTERACTION_PARAMS[i].name,
+                   attrInteractionParamName) == 0) {
+      return ATTR_INTERACTION_PARAMS[i].network_mode;
+    }
+  }
+  return NETWORK_MODE_INVALID;
+}
+
+
+
+/*
  * Return string describing network type
  */
 const char *network_type_str(network_type_e net_type)
@@ -1881,6 +1957,29 @@ const char *network_type_str(network_type_e net_type)
       break;
 
     case NETWORK_TYPE_BOTH:
+      return "Both";
+
+    default:
+      return "*UNKNOWN*";
+      break;
+  }
+}
+
+/*
+ * Return string describing network mode
+ */
+const char *network_mode_str(network_mode_e net_mode)
+{
+  switch(net_mode) {
+    case NETWORK_MODE_ONEMODE:
+      return "One-mode";
+      break;
+
+    case NETWORK_MODE_TWOMODE:
+      return "Two-mode";
+      break;
+
+    case NETWORK_MODE_BOTH:
       return "Both";
 
     default:
@@ -1913,17 +2012,44 @@ bool is_allowed_network_type(network_type_e net_type, const graph_t *g)
       break;
   }
 }
- 
+
+/*
+ * Return TRUE if network mode (used to label ERGM parameters, i.e. change
+ * statistics functions) is allowed with the given graph  else FALSE
+ */
+bool is_allowed_network_mode(network_mode_e net_mode, const graph_t *g)
+{
+  switch(net_mode) {
+    case NETWORK_MODE_ONEMODE:
+      return !g->is_bipartite;
+      break;
+
+    case NETWORK_MODE_TWOMODE:
+      return g->is_bipartite;
+      break;
+
+    case NETWORK_MODE_BOTH:
+      return TRUE;
+
+    default:
+      fprintf(stderr, "ERROR (internal): Unknown network mode %d\n", net_mode);
+      return FALSE;
+      break;
+  }
+}
+
 
 
 /*
- * Check all the ERGM paramters are allowed for the network type.
+ * Check all the ERGM paramters are allowed for the network type
+ * (directed / undirected) and mode (one-mode / two-mode)
  * Return nonzero on error.
  */
 int check_param_network_type(param_config_t *pconfig, const graph_t *g)
 {
   uint_t         i;
   network_type_e net_type;
+  network_mode_e net_mode;
 
   /* structural parameters */
   for (i = 0; i < pconfig->num_change_stats_funcs; i++) {
@@ -1934,6 +2060,16 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
 	      STRUCT_PARAMS_STR,
 	      pconfig->param_names[i],
 	      network_type_str(net_type));
+
+      return 1;
+    }
+    net_mode = get_struct_param_network_mode(pconfig->param_names[i]);
+    if (!(is_allowed_network_mode(net_mode, g))) {
+      fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
+              g->is_bipartite ? "Two-mode" : "One-mode",
+	      STRUCT_PARAMS_STR,
+	      pconfig->param_names[i],
+	      network_mode_str(net_mode));
 
       return 1;
     }
@@ -1951,6 +2087,16 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
 
       return 1;
     }
+    net_mode = get_attr_param_network_mode(pconfig->attr_param_names[i]);
+    if (!(is_allowed_network_mode(net_mode, g))) {
+      fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
+              g->is_bipartite ? "Two-mode" : "One-mode",
+	      ATTR_PARAMS_STR,
+	      pconfig->attr_param_names[i],
+	      network_mode_str(net_mode));
+
+      return 1;
+    }
   }
 
   /* dyadic parameters */
@@ -1964,6 +2110,15 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
 	      network_type_str(net_type));
       return 1;
     }
+    net_mode = get_dyadic_param_network_mode(pconfig->dyadic_param_names[i]);
+    if (!(is_allowed_network_mode(net_mode, g))) {
+      fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
+              g->is_bipartite ? "Two-mode" : "One-mode",
+	      DYADIC_PARAMS_STR,
+	      pconfig->dyadic_param_names[i],
+	      network_mode_str(net_mode));
+      return 1;
+    }
   }
 
   /* attribute interaction parameters */
@@ -1975,6 +2130,15 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
 	      ATTR_INTERACTION_PARAMS_STR,
 	      pconfig->attr_interaction_param_names[i],
 	      network_type_str(net_type));
+      return 1;
+    }
+    net_mode = get_attr_interaction_param_network_mode(pconfig->attr_interaction_param_names[i]);
+    if (!(is_allowed_network_mode(net_mode, g))) {
+      fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
+              g->is_bipartite ? "Two-mode" : "One-mode",
+	      ATTR_INTERACTION_PARAMS_STR,
+	      pconfig->attr_interaction_param_names[i],
+	      network_mode_str(net_mode));
       return 1;
     }
   }
