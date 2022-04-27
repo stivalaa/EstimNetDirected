@@ -972,7 +972,7 @@ double num_graph_dyads(const graph_t *g, bool allowLoops)
   if (g->is_bipartite) {
     assert(!allowLoops);
     assert(!g->is_directed); /* directed bipartite not supported yet */
-    return ((double)g->num_A_nodes * g->num_B_nodes)/2.0;
+    return (double)g->num_A_nodes * g->num_B_nodes;
   } else {
     if (g->is_directed) {
       if (allowLoops)
