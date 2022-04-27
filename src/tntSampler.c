@@ -175,6 +175,8 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
   assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
+  assert(!(useConditionalEstimation && g->is_bipartite)); /* snowball conditional estimation for two-mode networks is not implemented */
+  assert(!(g->is_bipartite && g->is_directed)); /* two-mode directed networks not supported yet */
 
   if (g->is_directed && forbidReciprocity) {
     if (allowLoops) {
@@ -298,14 +300,22 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         /* Add move. Find two nodes i, j without arc i->j uniformly at
            random. Because graph is sparse, it is not too inefficient
            to just pick random nodes until such a pair is found */
-        do {
-          do {
-            i = int_urand(g->num_nodes);
-            do {
-              j = int_urand(g->num_nodes);
-            } while (!allowLoops && i == j);
-          } while (isArcOrEdge(g, i, j));
-        } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
+	if (g->is_bipartite) {
+	  do {
+	    i = int_urand(g->num_A_nodes);
+	    j = g->num_A_nodes + int_urand(g->num_B_nodes);
+	  } while (isEdge(g, i, j)); /* undirected bipartite only for now */
+	} else {
+	  /* one-mode network */
+	  do {
+	    do {
+	      i = int_urand(g->num_nodes);
+	      do {
+		j = int_urand(g->num_nodes);
+	      } while (!allowLoops && i == j);
+	    } while (isArcOrEdge(g, i, j));
+	  } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
+	}
       }
     }
     
