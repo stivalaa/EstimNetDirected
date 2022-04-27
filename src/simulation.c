@@ -507,8 +507,11 @@ int do_simulation(sim_config_t * config)
     fprintf(stderr, "ERROR: statistics output filename statsFile not set\n");
     return -1;
   }
+
+  assert(!config->isBipartite); /* TODO bipartite */
   
-  g = allocate_graph(config->numNodes, config->isDirected);
+  g = allocate_graph(config->numNodes, config->isDirected, config->isBipartite,
+		     0 /* TODO bipartite */);
   if (load_attributes(g, config->binattr_filename,
                       config->catattr_filename,
                       config->contattr_filename,

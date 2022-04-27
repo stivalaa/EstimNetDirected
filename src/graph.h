@@ -301,7 +301,7 @@ void insertArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j); /* add ar
 void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx); /* delete arc i->j from g */
 
 
-graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite);
+graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite, uint_t num_A_vertices);
 void free_graph(graph_t *g);
 void dump_graph_arclist(const graph_t *g);
 void print_data_summary(const graph_t *g, bool allowLoops);
@@ -322,6 +322,7 @@ int load_attributes(graph_t *g,
                     const char *setattr_filename);
 
 uint_t get_num_vertices_from_arclist_file(FILE *pajek_file);
+void get_num_vertices_from_bipartite_pajek_file(FILE *pajek_file, uint_t *num_nodes, uint_t *num_A_nodes);
 
 int add_cergm_terms_to_digraph(graph_t *g, const char *term_filename);
 void dump_term_info(const graph_t *g);

@@ -1637,11 +1637,12 @@ void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arc
  *    num_vertices - number of nodes in graph/digraph
  *    is_directed  - TRUE for directed graph else undirected
  *    is_bipartite - TRUE for two-mode graph else one-mode
+ *    num_A_vertices-Number of mode A nodes, for is_bipartite=TRUE only
  *
  * Return values:
  *    Allocated and initizlied to empty graph or digraph
  */
-graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite)
+graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite, uint_t num_A_vertices)
 {
   graph_t *g = (graph_t *)safe_calloc(1, sizeof(graph_t));
   g->is_directed = is_directed;
@@ -1696,29 +1697,64 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite
     g->degree = (uint_t *)safe_calloc((size_t)num_vertices, sizeof(uint_t));
     g->edgelist = (uint_t **)safe_calloc((size_t)num_vertices, sizeof(uint_t *));
     g->alledges = NULL;
-    
+
+    if (is_bipartite) {
+      /* bipartite (two-mode) */
+      assert(num_A_vertices < g->num_nodes);
+      g->num_A_nodes = num_A_vertices;
+      g->num_B_nodes = g->num_nodes - g->num_A_nodes;
+      
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
-    g->twoPathHashTab = NULL;
+    g->twoPathHashTabA = NULL;
+    g->twoPathHashTabB = NULL;    
     
     assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
 #ifdef DEBUG_MEMUSAGE
 #ifdef HASH_BLOOM
     /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
-    MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
+    MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (twice)\n",
                           HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
-    g->twoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-                                                sizeof(uint_t));
+    g->twoPathMatrixA = (uint_t *)safe_calloc((size_t)g->num_A_nodes * g->num_A_nodes, sizeof(uint_t));
+    g->twoPathMatrixB = (uint_t *)safe_calloc((size_t)g->num_B_nodes * g->num_B_nodes, sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
-    MEMUSAGE_DEBUG_PRINT(("twoPathMatrix size %f MB\n", 
-                          (double)num_vertices*num_vertices*sizeof(uint_t)/
+    MEMUSAGE_DEBUG_PRINT(("twoPathMatrixA size %f MB\n", 
+                          (double)g->num_A_nodes*g->num_A_nodes*sizeof(uint_t)/
                           (1024*1024)));
+    MEMUSAGE_DEBUG_PRINT(("twoPathMatrixB size %f MB\n", 
+                          (double)g->num_B_nodes*g->num_B_nodes*sizeof(uint_t)/
+                          (1024*1024)));    
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
+    } else {
+      /* undirected (one-mode) */
+#ifdef TWOPATH_LOOKUP
+#ifdef TWOPATH_HASHTABLES
+      g->twoPathHashTab = NULL;
+      
+      assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
+#ifdef DEBUG_MEMUSAGE
+#ifdef HASH_BLOOM
+      /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
+      MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
+			    HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+#endif /* HASH_BLOOM */
+#endif /* DEBUG_MEMUSAGE */
+#else
+      g->twoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
+					       sizeof(uint_t));
+#ifdef DEBUG_MEMUSAGE
+      MEMUSAGE_DEBUG_PRINT(("twoPathMatrix size %f MB\n", 
+			    (double)num_vertices*num_vertices*sizeof(uint_t)/
+			    (1024*1024)));
+#endif /*DEBUG_MEMUSAGE*/
+#endif /* TWOPATH_HASHTABLES */
+#endif /* TWOPATH_LOOKUP */
+    }
   }
   
   g->num_binattr = 0;
@@ -1865,6 +1901,65 @@ uint_t get_num_vertices_from_arclist_file(FILE *pajek_file)
 }
 
 
+/*
+ * Get number of nodes and number of nodes in mode A from bipartite
+ * Pajek network file.
+ *
+ * the first lines should be e.g.
+ * *vertices 36 10
+ * first number is total number of nodes
+ * second number is number of type P nodes ['people'].
+ * the rest are type A ['affiliation'] - conventionally in the affiliation
+ * matrix the rows are people (P) and the columns affiliations (A).
+ * They must be numbered 1 ... N where N = num_vP + num_vA
+ * so nodes 1 .. num_vP are type P and num_vP+1 .. N are type A
+ * see e.g. http://www.pfeffer.at/txt2pajek/txt2pajek.pdf
+ *
+ *
+ * Parameters:
+ *    pajek_file   - Pajek format arclist file handle (open read).
+ *                   Closed by this function at end.
+ *    num_nodes    - (OUTPUT) number of nodes
+ *    num_A_nodes  - (OUTPUT) number of nodes in mode A
+ *
+ * Return value:
+ *    number of vertices as read from Pajek file.
+ *
+ * Note this function calls exit() on error.
+ */
+void get_num_vertices_from_bipartite_pajek_file(FILE *pajek_file, uint_t *num_nodes, uint_t *num_A_nodes)
+{
+  char *p;
+  int num_vertices = 0;
+  int num_A_vertices = 0;
+
+  char buf[BUFSIZE];
+  /* the first lines should be e.g.
+   * *vertices 36 10
+   * for Pajek format two-mode network
+   */
+  fgets(buf, sizeof(buf)-1, pajek_file);
+  for (p = buf; *p !='\0'; p++) {
+    *p = tolower(*p);
+  }
+  if (sscanf(buf, "*vertices %d %d\n", &num_vertices, &num_A_vertices) != 2) {
+    fprintf(stderr, "ERROR: expected *vertices n n_A line but didn't find it\n");
+    exit(1);
+  }
+  if (num_vertices < 1) {
+    fprintf(stderr, "ERROR: number of vertices is %d\n", num_vertices);
+    exit(1);
+  }
+  if (num_A_vertices < 1) {
+    fprintf(stderr, "ERROR: number of mode A vertices is %d\n", num_A_vertices);
+    exit(1);
+  }    
+  fclose(pajek_file);
+  *num_nodes = (uint_t)num_vertices;
+  *num_A_nodes = (uint_t)num_A_vertices;
+}
+
+
 
 /*
  * Write arc list or edge list to stdout
@@ -1889,7 +1984,8 @@ void print_data_summary(const graph_t * g, bool allowLoops)
   uint_t i,j;
   uint_t num_na_values;
   
-  printf("%s with %u vertices and %u %s (density %g) [%s]\n",
+  printf("%s %s with %u vertices and %u %s (density %g) [%s]\n",
+	 g->is_bipartite ? "Two-mode" : "One-mode",
          g->is_directed ? "Digraph" : "Graph",
          g->num_nodes,
          g->is_directed ? g->num_arcs : g->num_edges,

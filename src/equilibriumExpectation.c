@@ -752,7 +752,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   int            etime;
   FILE          *arclist_file;
   graph_t     *g;
-  uint_t         num_nodes;
+  uint_t         num_nodes, num_A_nodes;
   uint_t         i;
   FILE          *theta_outfile;
   FILE          *dzA_outfile;
@@ -784,8 +784,25 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
             config->arclist_filename, strerror(errno));
     return -1;
   }
-  num_nodes = get_num_vertices_from_arclist_file(arclist_file);/* closes file */
-  g = allocate_graph(num_nodes, config->isDirected, config->isBipartite);
+  if (!config->isBipartite) {
+    num_nodes = get_num_vertices_from_arclist_file(arclist_file);/* closes file */
+  } else {
+    /* bipartite (two-mode) network */
+    if (config->allowLoops) {
+      fprintf(stderr, "ERROR: cannot allow loops in bipartite graph\n");
+      return -1;
+    }
+    if (config->isDirected) {
+      fprintf(stderr, "ERROR: directed bipartite graphs not suported\n");
+      return -1;
+    }
+    
+    get_num_vertices_from_bipartite_pajek_file(arclist_file,
+					       &num_nodes,
+					       &num_A_nodes);/* closes file */
+  }
+  g = allocate_graph(num_nodes, config->isDirected, config->isBipartite,
+		     num_A_nodes);
 
   if (check_param_network_type(&config->param_config, g)) {
     fprintf(stderr, "ERROR: parameter not compatible with network type\n");

@@ -33,13 +33,13 @@ SIM_COMMON_C_OBJS =  utils.o graph.o \
                  changeStatisticsGeneral.o changeStatisticsDirected.o \
                  changeStatisticsUndirected.o \
                  basicSampler.o \
-                 configparser.o simconfigparser.o ifdSampler.o simulation.o \
+                 configparser.o simconfigparser.o ifdSampler.o  \
                  tntSampler.o loadGraph.o
 
 ESTIM_MPI_C_OBJS    = EstimNetDirectedMPImain.o
 ESTIM_NONMPI_C_OBJS = EstimNetDirectedMain.o
 
-SIM_C_OBJS = SimulateERGMmain.o
+SIM_C_OBJS = SimulateERGMmain.o simulation.o
 
 ESTIM_COMMON_C_SRCS = $(ESTIM_COMMON_C_OBJS:.o=.c)
 ESTIM_MPI_C_SRCS    = $(ESTIM_MPI_C_OBJS:.o=.c)
@@ -54,6 +54,7 @@ SIM_COMMON_ARRAY_C_OBJS = $(SIM_COMMON_C_OBJS:.o=_array.o)
 
 
 OBJS = $(ESTIM_COMMON_C_OBJS) $(ESTIM_MPI_C_OBJS) $(ESTIM_NONMPI_C_OBJS) $(ESTIM_COMMON_HASH_C_OBJS) $(SIM_COMMON_C_OBJS) $(SIM_COMMON_HASH_C_OBJS) $(ESTIM_COMMON_ARRAY_C_OBJS) $(SIM_COMMON_ARRAY_C_OBJS) $(SIM_C_OBJS)
+
 SRCS = $(ESTIM_COMMON_C_SRCS) $(ESTIM_MPI_C_SRCS) $(ESTIM_NONMPI_C_SRCS) $(SIM_C_SRCS)
 
 all: EstimNetDirected EstimNetDirected_mpi EstimNetDirected_hashtables EstimNetDirected_mpi_hashtables SimulateERGM SimulateERGM_hashtables EstimNetDirected_mpi_arrays EstimNetDirected_arrays SimulateERGM_arrays

@@ -41,3 +41,7 @@ EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h \
 SimulateERGMmain.o: SimulateERGMmain.c utils.h simconfigparser.h \
  configparser.h changeStatisticsGeneral.h graph.h changeStatisticsTypes.h \
  changeStatisticsDirected.h changeStatisticsUndirected.h simulation.h
+simulation.o: simulation.c utils.h graph.h basicSampler.h \
+ changeStatisticsDirected.h changeStatisticsTypes.h ifdSampler.h \
+ tntSampler.h simulation.h simconfigparser.h configparser.h \
+ changeStatisticsGeneral.h changeStatisticsUndirected.h loadGraph.h
