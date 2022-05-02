@@ -7,9 +7,8 @@
  * Functions to compute graph change statistics for undirected
  * bipartite (two-mode) graphs. Each function takes a pointer to a
  * graph struct, and two node numbers i and j and returns the value of
- * the change statistic for adding the edge i -- j where i and j are
- * nodes of differring types (modes), i.e. one is a node of MODE_A and
- * the other of MODE_B.
+ * the change statistic for adding the edge i -- j where i is a node
+ * of MODE_A and j is a node of MODE_B.
  *
  * Also takes lambda (decay) parameter which is only used for
  * some statistics ("alternating" statistics).
@@ -89,13 +88,9 @@
  *
  ****************************************************************************/
 
-#include "utils.h"
-#include "graph.h"
-#include "changeStatisticsTypes.h"
-
 #include <math.h>
 #include <assert.h>
-#include "changeStatisticsUndirected.h"
+#include "changeStatisticsBipartiteUndirected.h"
 
 /*****************************************************************************
  *
@@ -111,6 +106,12 @@
  */
 double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
+  assert(lambda > 1);
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  return lambda * (1 - POW_LOOKUP(1-1/lambda, g->degree[i]));
 }
 
 /*
@@ -118,4 +119,10 @@ double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
+  assert(lambda > 1);
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  return lambda * (1 - POW_LOOKUP(1-1/lambda, g->degree[j]));
 }
