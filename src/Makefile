@@ -25,6 +25,7 @@ DEPENDFILE = .depend
 ESTIM_COMMON_C_OBJS =  utils.o graph.o \
                  changeStatisticsGeneral.o changeStatisticsDirected.o \
                  changeStatisticsUndirected.o \
+                 changeStatisticsBipartiteUndirected.o \
                  basicSampler.o \
                  equilibriumExpectation.o configparser.o estimconfigparser.o \
                  ifdSampler.o loadGraph.o tntSampler.o
@@ -32,6 +33,7 @@ ESTIM_COMMON_C_OBJS =  utils.o graph.o \
 SIM_COMMON_C_OBJS =  utils.o graph.o \
                  changeStatisticsGeneral.o changeStatisticsDirected.o \
                  changeStatisticsUndirected.o \
+                 changeStatisticsBipartiteUndirected.o \
                  basicSampler.o \
                  configparser.o simconfigparser.o ifdSampler.o  \
                  tntSampler.o loadGraph.o
