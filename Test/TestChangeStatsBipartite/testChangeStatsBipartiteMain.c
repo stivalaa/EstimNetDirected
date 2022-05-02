@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
       j = g->num_A_nodes + rand() % g->num_B_nodes;
     }
 
-    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g\n", i, j,
+    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g\n", i, j - g->num_A_nodes,
 	   changeBipartiteFourCycle(g, i, j, lambda),
            changeAltStarsA(g, i, j, lambda),
            changeAltStarsB(g, i, j, lambda),
@@ -267,10 +267,10 @@ int main(int argc, char *argv[])
     insertEdge(g, i, j);
     /* insertEdge() called updateTwoPathsMatrices() itself */
 #ifdef TWOPATH_LOOKUP
-    printf("i = %d, j = %d, num_edges = %d, ", i, j, g->num_edges);
+    printf("i = %d, j = %d, num_edges = %d, ", i, j - g->num_A_nodes, g->num_edges);
     dumpTwoPathTable(g);
 #else
-    printf("i = %d, j = %d, num_edges = %d\n", i, j, g->num_edges);
+    printf("i = %d, j = %d, num_edges = %d\n", i, j - g->num_A_nodes, g->num_edges);
 #endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
@@ -324,10 +324,10 @@ int main(int argc, char *argv[])
     removeEdge(g, i, j);
     /* removeEdge() calles updateTwoPathsMatrices() itself */
 #ifdef TWOPATH_LOOKUP
-    printf("i = %d, j = %d, num_edge = %d, ", i, j, g->num_edges);
+    printf("i = %d, j = %d, num_edge = %d, ", i, j - g->num_A_nodes, g->num_edges);
     dumpTwoPathTable(g);
     #else
-    printf("i = %d, j = %d, num_edge = %d\n", i, j, g->num_edges);
+    printf("i = %d, j = %d, num_edge = %d\n", i, j - g->num_A_nodes, g->num_edges);
 #endif /*TWOPATH_LOOKUP*/
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
