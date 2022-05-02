@@ -106,6 +106,7 @@
  */
 double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
 {
+  /* FIXME failing change stats regression test*/
   uint_t v,k;
   uint_t delta = 0;
   assert(lambda > 1);
