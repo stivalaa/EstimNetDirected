@@ -381,18 +381,20 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
         fprintf(theta_outfile, "%u ", t);
         fprintf(dzA_outfile, "%u ", t);
 #ifdef TWOPATH_HASHTABLES
-        MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB)\n",
-                        HASH_COUNT(g->mixTwoPathHashTab),
-                        (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
-                                 sizeof(twopath_record_t))/(1024*1024)));
-        MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB)\n",
-                              HASH_COUNT(g->inTwoPathHashTab),
-                              (double)(HASH_COUNT(g->inTwoPathHashTab)*
-                                       (sizeof(twopath_record_t)))/(1024*1024)));
-        MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB)\n",
-                              HASH_COUNT(g->outTwoPathHashTab),
-                              (double)(HASH_COUNT(g->outTwoPathHashTab)*2*
-                                       sizeof(twopath_record_t))/(1024*1024)));
+	if (g->is_directed) {
+	  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB)\n",
+				HASH_COUNT(g->mixTwoPathHashTab),
+				(double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
+					 sizeof(twopath_record_t))/(1024*1024)));
+	  MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB)\n",
+				HASH_COUNT(g->inTwoPathHashTab),
+				(double)(HASH_COUNT(g->inTwoPathHashTab)*
+					 (sizeof(twopath_record_t)))/(1024*1024)));
+	  MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB)\n",
+				HASH_COUNT(g->outTwoPathHashTab),
+				(double)(HASH_COUNT(g->outTwoPathHashTab)*2*
+					 sizeof(twopath_record_t))/(1024*1024)));
+	}
 #endif /* DEBUG_MEMUSAGE */
       }
       if (useIFDsampler) {

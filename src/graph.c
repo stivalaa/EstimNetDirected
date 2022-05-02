@@ -276,16 +276,16 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
         continue;
       /* Note subtracting num_A_nodes as B nodes are numbered
 	 num_A_nodes .. num_nodes */
-      g->twoPathMatrixB[INDEX2D(j-g->num_A_nodes, v-g->num_A_nodes, g->num_nodes)]+=incval;
-      g->twoPathMatrixB[INDEX2D(v-g->num_A_nodes, j-g->num_A_nodes, g->num_nodes)]+=incval;
+      g->twoPathMatrixB[INDEX2D(j-g->num_A_nodes, v-g->num_A_nodes, g->num_B_nodes)]+=incval;
+      g->twoPathMatrixB[INDEX2D(v-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)]+=incval;
     }
     for (k = 0; k < g->degree[j]; k++)  {
       v = g->edgelist[j][k];
       assert(bipartite_node_mode(g, v) == MODE_A);
       if (v == i)
         continue;
-      g->twoPathMatrixA[INDEX2D(i, v, g->num_nodes)]+=incval;
-      g->twoPathMatrixA[INDEX2D(v, i, g->num_nodes)]+=incval;
+      g->twoPathMatrixA[INDEX2D(i, v, g->num_A_nodes)]+=incval;
+      g->twoPathMatrixA[INDEX2D(v, i, g->num_A_nodes)]+=incval;
     }
   } else {
     /* undirected (one-mode) */
