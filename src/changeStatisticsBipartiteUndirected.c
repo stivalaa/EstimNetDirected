@@ -106,6 +106,16 @@
 
 /************************* Structural ****************************************/
 
-double changeSa2(graph_t *g, uint_t i, uint_t j, double lambda)
+/*
+ * Change statistic for alternating k-stars for type A nodes
+ */
+double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+}
+
+/*
+ * Change statistic for alternating k-stars for type B nodes
+ */
+double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
 }

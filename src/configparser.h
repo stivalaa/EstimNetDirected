@@ -24,6 +24,7 @@
 #include "changeStatisticsGeneral.h"
 #include "changeStatisticsDirected.h"
 #include "changeStatisticsUndirected.h"
+#include "changeStatisticsBipartiteUndirected.h"
 
 /* These must be macros not const to use in initializer  */
 /* not case sensitive */

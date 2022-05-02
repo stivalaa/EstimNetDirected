@@ -19,14 +19,15 @@ equilibriumExpectation.o: equilibriumExpectation.c utils.h graph.h \
  loadGraph.h changeStatisticsGeneral.h changeStatisticsTypes.h \
  basicSampler.h changeStatisticsDirected.h ifdSampler.h tntSampler.h \
  equilibriumExpectation.h estimconfigparser.h configparser.h \
- changeStatisticsUndirected.h
+ changeStatisticsUndirected.h changeStatisticsBipartiteUndirected.h
 configparser.o: configparser.c configparser.h utils.h \
  changeStatisticsGeneral.h graph.h changeStatisticsTypes.h \
- changeStatisticsDirected.h changeStatisticsUndirected.h
+ changeStatisticsDirected.h changeStatisticsUndirected.h \
+ changeStatisticsBipartiteUndirected.h
 estimconfigparser.o: estimconfigparser.c estimconfigparser.h \
  configparser.h utils.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h \
- changeStatisticsUndirected.h
+ changeStatisticsUndirected.h changeStatisticsBipartiteUndirected.h
 ifdSampler.o: ifdSampler.c utils.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h ifdSampler.h
 loadGraph.o: loadGraph.c utils.h loadGraph.h graph.h \
@@ -36,15 +37,19 @@ tntSampler.o: tntSampler.c utils.h changeStatisticsGeneral.h graph.h \
 EstimNetDirectedMPImain.o: EstimNetDirectedMPImain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h \
- changeStatisticsUndirected.h equilibriumExpectation.h
+ changeStatisticsUndirected.h changeStatisticsBipartiteUndirected.h \
+ equilibriumExpectation.h
 EstimNetDirectedMain.o: EstimNetDirectedMain.c utils.h \
  estimconfigparser.h configparser.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h \
- changeStatisticsUndirected.h equilibriumExpectation.h
+ changeStatisticsUndirected.h changeStatisticsBipartiteUndirected.h \
+ equilibriumExpectation.h
 SimulateERGMmain.o: SimulateERGMmain.c utils.h simconfigparser.h \
  configparser.h changeStatisticsGeneral.h graph.h changeStatisticsTypes.h \
- changeStatisticsDirected.h changeStatisticsUndirected.h simulation.h
+ changeStatisticsDirected.h changeStatisticsUndirected.h \
+ changeStatisticsBipartiteUndirected.h simulation.h
 simulation.o: simulation.c utils.h graph.h basicSampler.h \
  changeStatisticsDirected.h changeStatisticsTypes.h ifdSampler.h \
  tntSampler.h simulation.h simconfigparser.h configparser.h \
- changeStatisticsGeneral.h changeStatisticsUndirected.h loadGraph.h
+ changeStatisticsGeneral.h changeStatisticsUndirected.h \
+ changeStatisticsBipartiteUndirected.h loadGraph.h

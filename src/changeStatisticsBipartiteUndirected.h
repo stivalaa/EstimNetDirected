@@ -86,6 +86,8 @@
  * in BPNet [note this seems to be the other way around in the MPNet
  * naming convention, where e.g. Sa2 in BPNet seems to correspond to
  * XStar2A and Sp2 to XStar2B].
+ * So e.g. alternating k-star for for P (k-P-star) is called KSp in BPNet,
+ * and changeAltStarsA here (and KSa is changeAltStarsB),
  *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
  *
@@ -97,7 +99,8 @@
 
 /************************* Structural ****************************************/
 
-double changeSa2(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
 
 
 
