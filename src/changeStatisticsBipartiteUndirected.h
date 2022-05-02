@@ -98,10 +98,11 @@
 
 /************************* Structural ****************************************/
 
+double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
-
-
+double changeAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
 

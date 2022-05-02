@@ -102,6 +102,27 @@
 /************************* Structural ****************************************/
 
 /*
+ * Change statistic for bipartite 4-cycle
+ */
+double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t v,k;
+  uint_t delta = 0;
+  assert(lambda > 1);
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (isEdge(g, j, v) && GET_A2PATH_ENTRY(g, v, i)) {
+      delta += GET_A2PATH_ENTRY(g, v, i);
+    }
+  }
+  return (double)delta;
+}
+
+/*
  * Change statistic for alternating k-stars for type A nodes
  */
 double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
@@ -125,4 +146,47 @@ double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   return lambda * (1 - POW_LOOKUP(1-1/lambda, g->degree[j]));
+}
+
+/*
+ * Change statistic for alternating k-cycles for type A nodes
+ */
+double changeAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t k,v;
+  double delta = 0;
+  assert(lambda > 1);
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    if (v != i) {
+      delta += POW_LOOKUP(1-1/lambda, GET_A2PATH_ENTRY(g, i, v));
+    }
+  }
+  return delta;
+}
+
+
+/*
+ * Change statistic for alternating k-cycles for type B nodes
+ */
+double changeAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t k,v;
+  double delta = 0;
+  assert(lambda > 1);
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (v != j) {
+      delta += POW_LOOKUP(1-1/lambda, GET_B2PATH_ENTRY(g, j, v));
+    }
+  }
+  return delta;
 }
