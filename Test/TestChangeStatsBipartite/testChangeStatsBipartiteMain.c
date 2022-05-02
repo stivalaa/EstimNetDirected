@@ -254,13 +254,14 @@ int main(int argc, char *argv[])
         fprintf(stderr, "bad j node num %d\n", j);
         exit(1);
       }
+      j += g->num_A_nodes; /* in file is 0 .. N-Np-1 but we number Np .. N-1 */      
     } else {
       do {
-        i = rand() % g->num_nodes;
-        j = rand() % g->num_nodes;
-      } while (i == j || isEdge(g, i, j));
+	i = rand() % g->num_A_nodes;
+	j = g->num_A_nodes + rand() % g->num_B_nodes;
+      } while (isEdge(g, i, j));
     }
-    if (i == j || isEdge(g, i, j)) {
+    if (isEdge(g, i, j)) {
       continue;
     }
     insertEdge(g, i, j);
@@ -310,13 +311,14 @@ int main(int argc, char *argv[])
         fprintf(stderr, "bad j node num %d\n", j);
         exit(1);
       }
+      j += g->num_A_nodes; /* in file is 0 .. N-Np-1 but we number Np .. N-1 */      
     } else {
       do {
-        i = rand() % g->num_nodes;
-        j = rand() % g->num_nodes;
-      } while (i == j || !isEdge(g, i, j));
+	i = rand() % g->num_A_nodes;
+	j = g->num_A_nodes + rand() % g->num_B_nodes;
+      } while (!isEdge(g, i, j));
     }
-    if (i == j || !isEdge(g, i, j)) {
+    if (!isEdge(g, i, j)) {
       continue;
     }
     removeEdge(g, i, j);
