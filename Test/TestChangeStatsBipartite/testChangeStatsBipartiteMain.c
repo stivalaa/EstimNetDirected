@@ -91,9 +91,9 @@ static void dumpTwoPathTable(const graph_t *g) {
 
   printf("vP2p sum = %u, max = %u\n", sumA, maxA);
   printf("vA2p sum = %u, max = %u\n", sumB, maxB);
-  printf("vP2p = %u (%.4f%%)\n", nnzA,
+  printf("vP2p nnz = %u (%.4f%%)\n", nnzA,
          100*(double)nnzA/(g->num_A_nodes*g->num_A_nodes));
-  printf("vA2p = %u (%.4f%%)\n", nnzB,
+  printf("vA2p nnz = %u (%.4f%%)\n", nnzB,
          100*(double)nnzB/(g->num_B_nodes*g->num_B_nodes));
 }
 #endif /*TWOPATH_LOOKUP*/
