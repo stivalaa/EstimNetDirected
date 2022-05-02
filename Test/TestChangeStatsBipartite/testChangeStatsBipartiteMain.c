@@ -46,7 +46,7 @@ static void dumpTwoPathTable(const graph_t *g) {
 
 #ifdef TWOPATH_HASHTABLES
   nnzA = HASH_COUNT(g->twoPathHashTabA);
-  nnzA = HASH_COUNT(g->twoPathHashTabB);
+  nnzB = HASH_COUNT(g->twoPathHashTabB);
 
   for (r = g->twoPathHashTabA; r !=NULL; r = r->hh.next) {
     val = r->value;
