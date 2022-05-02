@@ -45,8 +45,8 @@ static void dumpTwoPathTable(const graph_t *g) {
   nnzA = nnzB = 0;
 
 #ifdef TWOPATH_HASHTABLES
-  nnzA = HASH_COUNT(g->twoPathHashTab);
-  nnzA = HASH_COUNT(g->twoPathHashTab);
+  nnzA = HASH_COUNT(g->twoPathHashTabA);
+  nnzA = HASH_COUNT(g->twoPathHashTabB);
 
   for (r = g->twoPathHashTabA; r !=NULL; r = r->hh.next) {
     val = r->value;
@@ -63,25 +63,27 @@ static void dumpTwoPathTable(const graph_t *g) {
     }
   }
 #else
- for (i = 0; i < g->num_nodes; i++) {
-    for (j = 0; j < g->num_nodes; j++) {
-      sumA += g->twoPathMatrixA[INDEX2D(i, j, g->num_nodes)];
-      if (g->twoPathMatrixA[INDEX2D(i, j, g->num_nodes)] > 0) {
+ for (i = 0; i < g->num_A_nodes; i++) {
+    for (j = 0; j < g->num_A_nodes; j++) {
+      sumA += g->twoPathMatrixA[INDEX2D(i, j, g->num_A_nodes)];
+      if (g->twoPathMatrixA[INDEX2D(i, j, g->num_A_nodes)] > 0) {
         nnzA++;
       }
-      if (g->twoPathMatrixA[INDEX2D(i, j, g->num_nodes)] > maxA) {
-        maxA = g->twoPathMatrixA[INDEX2D(i, j, g->num_nodes)];
+      if (g->twoPathMatrixA[INDEX2D(i, j, g->num_A_nodes)] > maxA) {
+        maxA = g->twoPathMatrixA[INDEX2D(i, j, g->num_A_nodes)];
       }
     }
   }
- for (i = 0; i < g->num_nodes; i++) {
-    for (j = 0; j < g->num_nodes; j++) {
-      sumB += g->twoPathMatrixB[INDEX2D(i, j, g->num_nodes)];
-      if (g->twoPathMatrixB[INDEX2D(i, j, g->num_nodes)] > 0) {
+ for (i = g->num_A_nodes; i < g->num_A_nodes + g->num_B_nodes; i++) {
+    for (j = g->num_A_nodes; j < g->num_A_nodes + g->num_B_nodes; j++) {
+      /* Note subtracting num_A_nodes as B nodes are numbered
+	 num_A_nodes .. num_nodes */
+      sumB += g->twoPathMatrixB[INDEX2D(i-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)];
+      if (g->twoPathMatrixB[INDEX2D(i-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)] > 0) {
         nnzB++;
       }
-      if (g->twoPathMatrixB[INDEX2D(i, j, g->num_nodes)] > maxB) {
-        maxB = g->twoPathMatrixB[INDEX2D(i, j, g->num_nodes)];
+      if (g->twoPathMatrixB[INDEX2D(i-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)] > maxB) {
+        maxB = g->twoPathMatrixB[INDEX2D(i-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)];
       }
     }
   }
