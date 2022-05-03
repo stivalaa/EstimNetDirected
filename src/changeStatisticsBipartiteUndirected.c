@@ -114,24 +114,21 @@ double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
 
-  /*
+
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
-    if (GET_A2PATH_ENTRY(g, v, i) > 0) {
+    if (v != i){
       delta += GET_A2PATH_ENTRY(g, v, i);
     }
   }
-  */
-
-  /* FIXME commented out above fails regression test, below is inefficient */
 
   
-  for (v = 0; v < g->num_A_nodes; v++) {
-    if (isEdge(g, j, v) && GET_A2PATH_ENTRY(g, v, i) > 0 && v != i) {
-      assert(bipartite_node_mode(g, v) == MODE_A);
-      delta += GET_A2PATH_ENTRY(g, v, i);
-    }
-  }
+  /* for (v = 0; v < g->num_A_nodes; v++) { */
+  /*   if (isEdge(g, j, v) && GET_A2PATH_ENTRY(g, v, i) > 0 && v != i) { */
+  /*     assert(bipartite_node_mode(g, v) == MODE_A); */
+  /*     delta += GET_A2PATH_ENTRY(g, v, i); */
+  /*   } */
+  /* } */
   
   return (double)delta;
 }
