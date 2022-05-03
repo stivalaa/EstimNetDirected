@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
          edgelist_filename);
 #endif
   num_nodes = get_num_vertices_from_arclist_file(file); /* closes file */
-  g = allocate_graph(num_nodes, FALSE/*undirected*/);
+  g = allocate_graph(num_nodes, FALSE/*undirected*/, FALSE/*one-mode*/, 0);
   if (!(file = fopen(edgelist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
             edgelist_filename, strerror(errno));

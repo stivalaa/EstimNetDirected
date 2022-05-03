@@ -234,7 +234,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
   int incval = isAdd ? 1 : -1;
 
   if (g->is_directed) {
-    assert(!g->is_directed); /* directed bipartite not handled yet */
+    assert(!g->is_bipartite); /* directed bipartite not handled yet */
     for (k = 0; k < g->outdegree[i]; k++) {
       v = g->arclist[i][k];
       if (v == i || v == j)

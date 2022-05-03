@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
          arclist_filename);
 #endif
   num_nodes = get_num_vertices_from_arclist_file(file); /* closes file */
-  g = allocate_graph(num_nodes, TRUE);
+  g = allocate_graph(num_nodes, TRUE/*directed*/, FALSE/*one-mode*/, 0);
   if (!(file = fopen(arclist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
             arclist_filename, strerror(errno));
