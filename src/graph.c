@@ -1706,27 +1706,27 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite
       
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
-    g->twoPathHashTabA = NULL;
-    g->twoPathHashTabB = NULL;    
+      g->twoPathHashTabA = NULL;
+      g->twoPathHashTabB = NULL;    
     
-    assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
+      assert(sizeof(void *) == 8); /* require 64 bit addressing for large uthash */
 #ifdef DEBUG_MEMUSAGE
 #ifdef HASH_BLOOM
-    /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
-    MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (twice)\n",
-                          HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+      /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
+      MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (twice)\n",
+			    HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
-    g->twoPathMatrixA = (uint_t *)safe_calloc((size_t)g->num_A_nodes * g->num_A_nodes, sizeof(uint_t));
-    g->twoPathMatrixB = (uint_t *)safe_calloc((size_t)g->num_B_nodes * g->num_B_nodes, sizeof(uint_t));
+      g->twoPathMatrixA = (uint_t *)safe_calloc((size_t)g->num_A_nodes * g->num_A_nodes, sizeof(uint_t));
+      g->twoPathMatrixB = (uint_t *)safe_calloc((size_t)g->num_B_nodes * g->num_B_nodes, sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
-    MEMUSAGE_DEBUG_PRINT(("twoPathMatrixA size %f MB\n", 
-                          (double)g->num_A_nodes*g->num_A_nodes*sizeof(uint_t)/
-                          (1024*1024)));
-    MEMUSAGE_DEBUG_PRINT(("twoPathMatrixB size %f MB\n", 
-                          (double)g->num_B_nodes*g->num_B_nodes*sizeof(uint_t)/
-                          (1024*1024)));    
+      MEMUSAGE_DEBUG_PRINT(("twoPathMatrixA size %f MB\n", 
+			    (double)g->num_A_nodes*g->num_A_nodes*sizeof(uint_t)/
+			    (1024*1024)));
+      MEMUSAGE_DEBUG_PRINT(("twoPathMatrixB size %f MB\n", 
+			    (double)g->num_B_nodes*g->num_B_nodes*sizeof(uint_t)/
+			    (1024*1024)));    
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */

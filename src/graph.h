@@ -79,7 +79,7 @@ typedef struct {
 #define GET_IN2PATH_ENTRY(g, i, j) ((g)->inTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_OUT2PATH_ENTRY(g, i, j) ((g)->outTwoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)])
 #define GET_2PATH_ENTRY(g, i, j) ((g)->twoPathMatrix[INDEX2D((i), (j), (g)->num_nodes)]) /* undirected */
-#define GET_A2PATH_ENTRY(g, i, j) ((g)->twoPathMatrixA[INDEX2D((i), (j), (g)->num_B_nodes)]) /* bipartite */
+#define GET_A2PATH_ENTRY(g, i, j) ((g)->twoPathMatrixA[INDEX2D((i), (j), (g)->num_A_nodes)]) /* bipartite */
 #define GET_B2PATH_ENTRY(g, i, j) ((g)->twoPathMatrixB[INDEX2D((i)-(g)->num_A_nodes, (j)-(g)->num_A_nodes, (g)->num_B_nodes)]) /* bipartite */ /* Note subtracting num_A_nodes as B nodes are numbered num_A_nodes .. num_nodes */
 #endif /* TWOPATH_HASHTABLES */
 #else /* not using two-path lookup tables (either arrays or hashtables) */
