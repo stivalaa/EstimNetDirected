@@ -255,13 +255,17 @@ typedef struct graph_s
 #ifdef TWOPATH_HASHTABLES
 uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j);
 #endif /*TWOPATH_HASHTABLES */
-#else /* not using two-path lookup tables (either arrays or hashtables) */
+#endif /*TWOPATH_LOOKUP */
+
+/* functions for when not using two-path lookup tables (either arrays
+   or hashtables) - defined even when lookup is being, for regression
+   testing only */
 uint_t mixTwoPaths(const graph_t *g, uint_t i, uint_t j);
 uint_t outTwoPaths(const graph_t *g, uint_t i, uint_t j);
 uint_t inTwoPaths(const graph_t *g, uint_t i, uint_t j);
 uint_t twoPaths(const graph_t *g, uint_t i, uint_t j);
-#endif /*TWOPATH_LOOKUP */
-  
+/** end of two-path functions **/
+
 double num_graph_dyads(const graph_t *g, bool allowLoops); /*max possible edges in g*/
 double num_graph_inner_dyads(const graph_t *g); /*max edges beteen inner nodes*/
 uint_t num_arcs_or_edges(const graph_t *g); /* number of arcs or edges in g */

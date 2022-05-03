@@ -143,6 +143,14 @@ int main(int argc, char *argv[])
 
 #ifdef TWOPATH_LOOKUP
   dumpTwoPathTable(g);
+  for (i = 0; i < g->num_nodes; i++)
+    {
+      for (j = 0; j < g->num_nodes; j++) {
+	if (i != j) {
+	  assert(GET_2PATH_ENTRY(g, i, j) == twoPaths(g, i, j));
+	}
+      }
+    }
 #endif /*TWOPATH_LOOKUP*/
 
   /* just change stats (no changes to graph) */

@@ -797,7 +797,13 @@ uint_t get_twopath_entry(twopath_record_t *h, uint_t i, uint_t j)
   return (p ? p->value : 0);
 }
 #endif /*TWOPATH_HASHTABLES*/
-#else /* not using two-path lookup tables (either arrays or hashtables) */
+
+#endif /*TWOPATH_LOOKUP*/
+
+
+/* functions for when not using two-path lookup tables (either arrays
+   or hashtables) - defined even when lookup is being, for regression
+   testing only */
 
 /* In these functions we have to count paths i -- v -- j for different
    directions (i.e -- can be <- or ->) depending on the function. So we
@@ -954,8 +960,7 @@ uint_t twoPaths(const graph_t *g, uint_t i, uint_t j)
   return count;
 }
 
-
-#endif /*TWOPATH_LOOKUP*/
+/** end of two-path functions **/
 
 /*
  * Return number of potential arcs or edges in a graph
