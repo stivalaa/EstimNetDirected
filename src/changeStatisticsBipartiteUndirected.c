@@ -127,7 +127,7 @@ double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
 
   
   for (v = 0; v < g->num_A_nodes; v++) {
-    if (isEdge(g, j, v) && GET_A2PATH_ENTRY(g, v, i) > 0) {
+    if (isEdge(g, j, v) && GET_A2PATH_ENTRY(g, v, i) > 0 && v != i) {
       assert(bipartite_node_mode(g, v) == MODE_A);
       delta += GET_A2PATH_ENTRY(g, v, i);
     }
