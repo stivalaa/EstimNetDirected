@@ -356,5 +356,6 @@ int main(int argc, char *argv[])
   if (readNodeNums) {
     fclose(nodenumfile);
   }
+  free_graph(g);
   exit(0);
 }

@@ -1844,9 +1844,28 @@ void free_graph(graph_t *g)
   free(g->degree);
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
-  deleteAllHashTable(g->twoPathHashTab);
+  if (g->is_directed) {
+    assert(!g->is_bipartite); /* directed two-mode network not supported yet */
+    deleteAllHashTable(g->mixTwoPathHashTab);
+    deleteAllHashTable(g->inTwoPathHashTab);
+    deleteAllHashTable(g->outTwoPathHashTab);
+  } else {
+    /* undirected */
+    if (g->is_bipartite) {
+      deleteAllHashTable(g->twoPathHashTabA);
+      deleteAllHashTable(g->twoPathHashTabB);
+    } else {
+      deleteAllHashTable(g->twoPathHashTab);
+    }
+  }
 #else /* using arrays not hash tables for two-path lookup */
+  /* unused matrices are NULL so ok to free */
   free(g->twoPathMatrix);
+  free(g->mixTwoPathMatrix);
+  free(g->inTwoPathMatrix);
+  free(g->outTwoPathMatrix);
+  free(g->twoPathMatrixA);
+  free(g->twoPathMatrixB);
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
   free(g->zone);
