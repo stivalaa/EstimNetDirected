@@ -1,0 +1,16 @@
+inouye_pyke_pollinators_bipartite.net is the Inouye & Pyke (1988)
+pollination network from:
+
+  D.W. Inouye and G.H. Pyke, "Pollination biology in the Snowy Mountains of Australia: comparisons with montane Colorado, USA." Australian Journal of Ecology 13, 191-210 (1988)
+
+with 91 pollinators and 42 plants
+converted from the original data in the data/ subdirectory downloaded from
+the Interaction Web DataBase (IWDB) in June 2018, and converted to Pajek
+.net bipartite format with the 
+
+  convert_inouye_pike_matrix_to_pajek.R
+
+script.
+
+ADS
+Wed May  4 10:46:38 AEST 2022

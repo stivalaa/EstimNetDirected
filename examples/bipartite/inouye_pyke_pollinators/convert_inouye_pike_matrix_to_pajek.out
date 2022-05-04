@@ -1,0 +1,8 @@
+m =  91 
+n =  42 
+IGRAPH 263e312 UN-B 133 281 -- 
++ attr: name (v/c), type (v/l)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   1.000   2.000   3.088   3.000  22.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1.00    2.00    5.00    6.69   10.00   25.00 
