@@ -1,0 +1,21 @@
+Examples of running on bipartite networks.
+
+
+Test data is Robertson (1929) pollinator network 
+ robertson_pollinators_bipartite.net
+converted from original data in ../../Test/TestChangeStatsBipartite/data/
+directory:
+
+  Original data: Robertson, C. 1929. Flowers and insects: lists of visitors to four hundred and fifty-three flowers. Carlinville, IL, USA, C. Robertson.
+
+ Sampling methods: Marlin, J. C. & LaBerge, W. E. 2001. The native bee fauna of Carlinville, Illinois, revisited after 75 years: a case for persistence. Conserv. Ecol. 5.
+
+  Downloaded from the Interaction Web Database 
+  (IWDB) [http://www.ecologia.ib.usp.br/iwdb/index.html] 19 April 2022.
+
+converted to Pajek bipartite .net format with the
+convert_robertson_matrix_to_pajek.R script.
+
+
+ADS
+Thu 05 May 2022 10:21:30 AEST
