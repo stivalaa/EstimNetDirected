@@ -1,7 +1,7 @@
 ##############################################################################
 #
 # example setting file for EstimNetDirected
-# with conditional estimation of snowball sampled data
+# with citation ERGM (cERGM) model
 #
 # note parameter and attribute names are not case sensitive (but filenames are)
 #
@@ -22,7 +22,7 @@ outputSimulatedNetworks = True  # write the simulated networks to file
 
 
 
-citationERGM = True
+citationERGM = True # cERGM model
 
 ################## Input filenames ###########################################
 
