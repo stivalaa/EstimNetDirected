@@ -62,7 +62,7 @@ const config_param_t ESTIM_CONFIG_PARAMS[] = {
    "inner iterations of Algorithm EE"},
 
   {"outputAllSteps", PARAM_TYPE_BOOL,    offsetof(estim_config_t, outputAllSteps),
-   "output theta and dzA values on every iteration of EE algorithm)"},
+   "output theta and dzA values on every iteration of EE algorithm"},
 
   {"useIFDsampler", PARAM_TYPE_BOOL,    offsetof(estim_config_t, useIFDsampler),
    "use Improved Fixed Density sampler instead of basic sampler"},
