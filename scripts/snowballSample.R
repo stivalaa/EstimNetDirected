@@ -39,7 +39,6 @@ read_graph_file <- function(filename, directed=TRUE) {
       ## remove extra lines written by PNet or BPNet
       if (!is.null(endline)) {
           pajek_text <- alltext[1:(endline-1)]
-print(endline)#XXX
       }
       if (any(grepl('^[*]arcs', alltext, fixed=FALSE, ignore.case=TRUE))) {
         directed = TRUE
