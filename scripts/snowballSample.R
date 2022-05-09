@@ -37,7 +37,7 @@ read_graph_file <- function(filename, directed=TRUE) {
       pajek_text <- alltext
       endline <- Position(function(x) x, grepl('This graph contains:', alltext, fixed=FALSE))
       ## remove extra lines written by PNet or BPNet
-      if (!is.null(endline)) {
+      if (!is.na(endline)) {
           pajek_text <- alltext[1:(endline-1)]
       }
       if (any(grepl('^[*]arcs', alltext, fixed=FALSE, ignore.case=TRUE))) {
