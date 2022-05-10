@@ -1,0 +1,18 @@
+bpnet_A2000_B250_sim5450000000.net is bipartite network with 2000 mode A and
+250 mode B vertices simulated from BPNet with parameters:
+
+  * Simulation started for graph with
+   2000 vertices1
+  * 250 vertices2
+  * Parameter Values:
+  L	      -8
+  Ksa	  -0.200
+  Ksp	   2.000
+  Kca	  -0.100
+  Kcp	   0.020
+  * There are 10000000000 proposed graphs.
+  * Samples are picked up at 1 per 10000000 graphs.
+  * Accepted 199002269 proposed graphs.
+
+ADS
+Tue May 10 03:18:37 CEST 2022

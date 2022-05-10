@@ -10,3 +10,5 @@ EstimNetDirected_*.out
 EstimNetDirected_*.err
 .Rhistory
 .RData
+*.bak
+estimation_*.txt
