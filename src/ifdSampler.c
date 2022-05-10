@@ -93,16 +93,11 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
   double num_dyads = num_graph_dyads(g, allowLoops);
   double num_arcs  = (double)num_arcs_or_edges(g);
 
-  /* for conditional estimation on snowball sample */
-  double       num_inner_dyads =  num_graph_inner_dyads(g);
-  uint_t       num_inner_arcs  =  num_inner_arcs_or_edges(g);
-
-  /* for citation ERGM */
-  double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
-    
   assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
   assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
+  assert(!(useConditionalEstimation && g->is_bipartite)); /* snowball conditional estimation for two-mode networks is not implemented */
+  assert(!(g->is_bipartite && g->is_directed)); /* two-mode directed networks not supported yet */
 
   if (g->is_directed && forbidReciprocity) {
     if (allowLoops) {
@@ -113,8 +108,13 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
   }
 
   if (useConditionalEstimation) {
+    /* for conditional estimation on snowball sample */
+    double       num_inner_dyads =  num_graph_inner_dyads(g);
+    uint_t       num_inner_arcs  =  num_inner_arcs_or_edges(g);
     return log((num_inner_dyads - num_inner_arcs) / (double)(num_inner_arcs + 1));
-  } else if (citationERGM) {
+  } else if (citationERGM) { 
+    /* for citation ERGM */
+    double       num_maxtermsender_dyads = g->num_maxterm_nodes*(g->num_nodes-1)/2; /* divided by 2 as the dyads can only be i->j where i has max term value, not both i->j and j->i */
     return log((num_maxtermsender_dyads - g->num_maxtermsender_arcs) / (double)(g->num_maxtermsender_arcs + 1));
   } else {
     return log((num_dyads - num_arcs) / (num_arcs + 1));
@@ -217,7 +217,13 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   uint_t  i,j,l;
   ulong_t k;
   uint_t  arcidx = 0;
-  
+
+  assert(!(useConditionalEstimation && citationERGM)); /* can't do both */
+  assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
+  assert(!(useConditionalEstimation && g->is_bipartite)); /* snowball conditional estimation for two-mode networks is not implemented */
+  assert(!(g->is_bipartite && g->is_directed)); /* two-mode directed networks not supported yet */
+
   for (i = 0; i < n; i++) {
     addChangeStats[i] = delChangeStats[i] = 0;
   }
@@ -227,6 +233,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     if (useConditionalEstimation) {
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
       assert(!allowLoops);
+      assert(!g->is_bipartite);  /* snowball conditional estimation for two-mode networks is not implemented */
       if (isDelete) {
         /* Delete move for conditional estimation. Find an existing
            arc between nodes in inner waves (i.e. fixing ties in
@@ -273,6 +280,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     } else if (citationERGM) {
       assert(g->is_directed); /* cERGM only for digraphs */
       assert(!allowLoops);
+      assert(!g->is_bipartite); /* cERGM not for two-mode */
       if (isDelete && g->num_maxtermsender_arcs == 0) {
         fprintf(stderr, "WARNING: IFD sampler num_maxtermsender_arcs == 0\n");
         isDelete = FALSE; /* force add move since no arcs to delete */
@@ -322,14 +330,22 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
         /* Add move. Find two nodes i, j without arc i->j uniformly at
            random. Because graph is sparse, it is not too inefficient
            to just pick random nodes until such a pair is found */
-        do {
-          do {
-            i = int_urand(g->num_nodes);
-            do {
-              j = int_urand(g->num_nodes);
-            } while (!allowLoops && i == j);
-          } while (isArcOrEdge(g, i, j));
-        } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
+	if (g->is_bipartite) {
+	  do {
+	    i = int_urand(g->num_A_nodes);
+	    j = g->num_A_nodes + int_urand(g->num_B_nodes);
+	  } while (isEdge(g, i, j)); /* undirected bipartite only for now */
+	} else {
+	  /* one-mode network */
+	  do {
+	    do {
+	      i = int_urand(g->num_nodes);
+	      do {
+		j = int_urand(g->num_nodes);
+	      } while (!allowLoops && i == j);
+	    } while (isArcOrEdge(g, i, j));
+	  } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
+	}
       }
     }
     
