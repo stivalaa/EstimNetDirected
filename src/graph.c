@@ -2109,7 +2109,11 @@ void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
 {
   uint_t i, j, count=0;
 
-  fprintf(fp, "*vertices %u\n", g->num_nodes);
+  if (g->is_bipartite) {
+    fprintf(fp, "*vertices %u %u\n", g->num_nodes, g->num_A_nodes);
+  } else {
+    fprintf(fp, "*vertices %u\n", g->num_nodes);
+  }
   for (i = 0; i < g->num_nodes; i++)
     fprintf(fp, "%u\n", i+1);
   if (g->is_directed) {
