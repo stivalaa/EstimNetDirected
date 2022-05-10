@@ -150,7 +150,9 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   assert(!(citationERGM && useConditionalEstimation)); /* cannot do both */
   assert(!(allowLoops && (useConditionalEstimation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
-  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */  
+  assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
+  assert(!(useConditionalEstimation && g->is_bipartite)); /* snowball conditional estimation for two-mode networks is not implemented */
+  assert(!(g->is_bipartite && g->is_directed)); /* two-mode directed networks not supported yet */
 
   for (i = 0; i < n; i++)
     addChangeStats[i] = delChangeStats[i] = 0;
@@ -168,6 +170,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
          here as assumed snowball sample ignored arc directions. */
       assert(!forbidReciprocity); /* TODO not implemented for snowball */
       assert(!allowLoops);
+      assert(!g->is_bipartite);  /* snowball conditional estimation for two-mode networks is not implemented */
       do {
         i = g->inner_nodes[int_urand(g->num_inner_nodes)];
         do {
@@ -188,6 +191,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
        * and we only create citations from nodes in the last term. */
       assert(g->is_directed);
       assert(!allowLoops);
+      assert(!g->is_bipartite); /* cERGM not for two-mode */
       do {
         i = g->maxterm_nodes[int_urand(g->num_maxterm_nodes)];
         do {
@@ -200,13 +204,20 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* Basic sampler (no conditional estimation): select two
          nodes i and j uniformly at random and toggle arc between
          them. */
-      do {
-        i = int_urand(g->num_nodes);
-        do {
-          j = int_urand(g->num_nodes);
-        } while (!allowLoops && i == j);
-        isDelete = isArcOrEdge(g, i ,j);
-      } while (g->is_directed && forbidReciprocity && !isDelete && isArc(g, j, i));
+      if (g->is_bipartite) {
+	i = int_urand(g->num_A_nodes);
+	j = g->num_A_nodes + int_urand(g->num_B_nodes);
+	isDelete = isEdge(g, i, j); /* bipartite only for undirected for now */
+      } else {
+	/* one-mode network */
+	do {
+	  i = int_urand(g->num_nodes);
+	  do {
+	    j = int_urand(g->num_nodes);
+	  } while (!allowLoops && i == j);
+	  isDelete = isArcOrEdge(g, i ,j);
+	} while (g->is_directed && forbidReciprocity && !isDelete && isArc(g, j, i));
+      }
     }
     
     /* The change statistics are all computed on the basis of adding arc i->j
