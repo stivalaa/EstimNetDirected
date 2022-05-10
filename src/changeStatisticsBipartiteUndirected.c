@@ -81,11 +81,13 @@
  * we are going to use just name the node types A and B, where the
  * type A ndoes correspond to the 'P' in BPNet and type B to the 'A'
  * in BPNet [note this seems to be the other way around in the MPNet
- * naming convention according to the MPNet manual, where e.g. Sa2 in
- * BPNet seems to correspond to XStar2A and Sp2 to XStar2B, however
- * acutally using MPNet shows that, by comparing the observed
- * statistics to confirm, XACB corresponds to Kcp, XASA corresponds to
- * KSa, and XASB corresponds to Ksp ].
+ * naming convention according to the MPNet manual, as, confusingly,
+ * in the MPNet manual, type 'A' nodes are shown as blue squares and
+ * type 'B' as red circles.  Actually using MPNet shows that, by
+ * comparing the observed statistics to confirm, XACB corresponds to
+ * Kcp, XASA corresponds to KSa, and XASB corresponds to Ksp - so
+ * the names used here are consistent with MPNet e.g. XACB in MPNet
+ * is AltKCyclesB here].
  *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
  *
