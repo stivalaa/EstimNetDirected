@@ -10,6 +10,7 @@ echo -n "started at: "; date
 
 ROOT=../../..
 
+module purge
 module load openmpi
 
 #cannot do this here on upgraded system as loding R module causes many things (and specifically anything using MPI) to fail: module load r
