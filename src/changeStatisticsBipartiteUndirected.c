@@ -79,7 +79,7 @@
  * directors on boards) where in the affiliation matrix, the people
  * (P) are rows and their affiliations (A) the columns. However here
  * we are going to use just name the node types A and B, where the
- * type A ndoes correspond to the 'P' in BPNet and type B to the 'A'
+ * type A ndoes correspond to the 'A' in BPNet and type B to the 'P'
  * in BPNet [note this seems to be the other way around in the MPNet
  * naming convention according to the MPNet manual, as, confusingly,
  * in the MPNet manual, type 'A' nodes are shown as blue squares and
