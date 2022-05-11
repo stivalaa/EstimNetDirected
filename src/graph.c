@@ -1978,7 +1978,12 @@ void get_num_vertices_from_bipartite_pajek_file(FILE *pajek_file, uint_t *num_no
   if (num_A_vertices < 1) {
     fprintf(stderr, "ERROR: number of mode A vertices is %d\n", num_A_vertices);
     exit(1);
-  }    
+  }
+  if (num_A_vertices >= num_vertices) {
+    fprintf(stderr, "ERROR: number of mode A vertices (%d) is >= number of vertices(%d)\n",
+            num_A_vertices, num_vertices);
+    exit(1);
+  }
   fclose(pajek_file);
   *num_nodes = (uint_t)num_vertices;
   *num_A_nodes = (uint_t)num_A_vertices;

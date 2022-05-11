@@ -528,6 +528,11 @@ int do_simulation(sim_config_t * config)
       fprintf(stderr, "ERROR: numNodesA must be nonzero for bipartite graphs\n");
       return -1;
     }
+    if (config->numNodesA >= config->numNodes) {
+      fprintf(stderr, "ERROR: numNodesA (%u) is >= numNodes (%u)\n",
+              config->numNodesA, config->numNodes);
+      return -1;
+    }
   } else {
     /* one-mode network */
     if (config->numNodesA != 0) {
