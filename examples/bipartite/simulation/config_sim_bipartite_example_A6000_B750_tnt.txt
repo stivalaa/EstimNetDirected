@@ -17,9 +17,9 @@ numNodesA = 6000 # Number type A nodes for bipartite (rest are type B)
 sampleSize = 100 #number of network samples to take from simulation
 
  
-interval = 1000000 # interval (iterations) between samples
+interval = 100000 # interval (iterations) between samples
  
-burnin = 10000000 # number of iterations to throw away before first sample
+burnin = 1000000 # number of iterations to throw away before first sample
 
 outputSimulatedNetworks = True  # write the simulated networks to file
 
