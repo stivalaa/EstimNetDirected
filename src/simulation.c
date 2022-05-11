@@ -299,6 +299,9 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
   assert(!(citationERGM && useConditionalSimulation));  
   assert(!(citationERGM && !g->is_directed)); /* cERGM only for digraphs */
   assert(!(allowLoops && (useConditionalSimulation || citationERGM))); /* no loops for snowball sampling or citation ERGM */
+  assert(!(useConditionalSimulation && g->is_bipartite)); /* snowball conditional simulation for two-mode networks is not implemented */
+  assert(!(g->is_bipartite && g->is_directed)); /* two-mode directed networks not supported yet */
+
   
   if (useIFDsampler)
     ifd_aux_param = theta[arc_param_index] +
@@ -501,14 +504,11 @@ int do_simulation(sim_config_t * config)
   double        *changeStats     = NULL;
   uint_t         obs_maxtermsender_arcs;
   const char    *arc_param_str   = NULL;
-    
 
   if (!config->stats_filename) {
     fprintf(stderr, "ERROR: statistics output filename statsFile not set\n");
     return -1;
   }
-
-  assert(!config->isBipartite); /* TODO bipartite */
 
   if (config->isBipartite) {
     /* bipartite (two-mode) network */
@@ -524,10 +524,20 @@ int do_simulation(sim_config_t * config)
       fprintf(stderr, "ERROR: conditional simulation with bipartite graphs not supported\n");
       return -1;
     }
+    if (config->numNodesA == 0) {
+      fprintf(stderr, "ERROR: numNodesA must be nonzero for bipartite graphs\n");
+      return -1;
+    }
+  } else {
+    /* one-mode network */
+    if (config->numNodesA != 0) {
+      fprintf(stderr, "ERROR: numNodesA is only for bipartite graphs\n");
+      return -1;
+    }
   }
   
   g = allocate_graph(config->numNodes, config->isDirected, config->isBipartite,
-		     0 /* TODO bipartite */);
+		     config->numNodesA);
   if (load_attributes(g, config->binattr_filename,
                       config->catattr_filename,
                       config->contattr_filename,

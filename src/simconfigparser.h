@@ -61,6 +61,7 @@ typedef struct sim_config_s {
   bool allowLoops;         /* allow self-edges (loops) */
   bool isDirected;         /* directed graph (else undirected) */  
   bool isBipartite;        /* two-mode graph (else one-mode) */
+  uint_t numNodesA;        /* number of type A nodes is isBipartite is TRUE */
   
   /*
    * values built by confiparser.c functions from parsed config settings

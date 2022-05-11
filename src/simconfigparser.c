@@ -125,6 +125,10 @@ const config_param_t SIM_CONFIG_PARAMS[] = {
    offsetof(sim_config_t, isBipartite),
    "bipartite (two-mode) graph"},
 
+  {"numNodesA",    PARAM_TYPE_UINT,
+   offsetof(sim_config_t, numNodesA),
+   "number of type A nodes for bipartite (two-mode) graph"},
+
   {STRUCT_PARAMS_STR,  PARAM_TYPE_SET,      0, /*no offset, coded explicitly*/
   "structural parameters to to simulate from"},
 
@@ -180,6 +184,7 @@ sim_config_t SIM_CONFIG = {
   FALSE, /* allowLoops */
   TRUE,  /* isDirected */
   FALSE, /* isBipartite */
+  0,     /* numNodesA */
   {
     0,     /* num_change_stats_funcs */
     NULL,  /* change_stats_funcs */
@@ -252,6 +257,7 @@ static bool SIM_CONFIG_IS_SET[] = {
   FALSE, /* allowLoops */
   FALSE, /* isDirected */
   FALSE, /* isBipartite */
+  FALSE, /* numNodesA */
   FALSE, /* (NOT USED) structParams */
   FALSE, /* (NOT USED) attrParams */
   FALSE, /* (NOT USED) dyadicParams */
