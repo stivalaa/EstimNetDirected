@@ -874,6 +874,7 @@ int do_simulation(sim_config_t * config)
     assert(g->num_maxtermsender_arcs == 0);
     free(changeStats);
     if (config->useIFDsampler) {
+      assert(!config->isBipartite); /* TODO IFD simulation for bipartite */
       /* Initialize the graph to random graph with
          specified number of arcs, conditional on the citation ERGM structure,
          for fixed density simulation (IFD sampler),
