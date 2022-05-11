@@ -432,7 +432,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
   
   /* update the IFD auxiliary parameter */
   ifd_aux_param_step = ifd_K * (Ndel - Nadd) * (Ndel - Nadd) / ((Ndel+Nadd)*(Ndel+Nadd));
-  SAMPLER_DEBUG_PRINT(("accepted = %u, Nadd = %u, Ndel = %u, ifd_aux_param_step = %g\n",
+  SAMPLER_DEBUG_PRINT(("accepted = %lu, Nadd = %u, Ndel = %u, ifd_aux_param_step = %g\n",
                        accepted, Nadd, Ndel, ifd_aux_param_step));
   if (Ndel - Nadd > 0) {
     *ifd_aux_param -= ifd_aux_param_step;
