@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name="EstimNetDirected_mpi_ifd_bpnet_A6000_B750_sim"
-#SBATCH --ntasks=32
+#SBATCH --ntasks=64
 #SBATCH --time=0-0:20:00
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --output=EstimNetDirected_ifd_bpnet_A6000_B750_sim-%j.out
