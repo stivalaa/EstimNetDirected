@@ -1,11 +1,11 @@
-bpnet_A2000_B250_sim5450000000.net is bipartite network with 2000 mode A and
-250 mode B vertices simulated from BPNet with parameters:
+bpnet_A6000_B750_sparse_sim100000000.net is a bipartite network with
+6000 mode A and 750 mode B vertices simulated from BPNet with parameters:
 
   L         -8.500
   Ksa       -0.200
-  Ksp        2.000
+  Ksp        1.200
   Kca       -0.100
   Kcp        0.020
 
 ADS
-Tue May 10 03:18:37 CEST 2022
+Thu 12 May 2022 12:17:35 AEST
