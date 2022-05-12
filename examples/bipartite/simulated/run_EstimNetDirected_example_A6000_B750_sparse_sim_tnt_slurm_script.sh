@@ -2,7 +2,8 @@
 
 #SBATCH --job-name="EstimNetDirected_mpi_tnt_bpnet_A6000_B750_sim"
 #SBATCH --ntasks=32
-#SBATCH --time=0-2:00:00
+#SBATCH --time=0-0:20:00
+#SBATCH --mem-per-cpu=1GB
 #SBATCH --output=EstimNetDirected_tnt_bpnet_A6000_B750_sim-%j.out
 #SBATCH --error=EstimNetDirected_tnt_bpnet_A6000_B750_sim-%j.err
 
