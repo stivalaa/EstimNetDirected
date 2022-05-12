@@ -11,7 +11,7 @@ isDirected  = False
 numNodes  = 6750 # Total number of nodes
 numNodesA = 6000 # Number type A nodes for bipartite (rest are type B)
 
-numArcs = 52710 # number of arcs in graph for IFD simulation
+numArcs = 8957  # number of arcs in graph for IFD simulation
 
 ################## Simulation settings #######################################
 
@@ -75,7 +75,7 @@ simNetFilePrefix = simulation_sim_bipartite_A6000_B750_sampler_ifd
 
 structParams =  {Edge           = -8.50,
                  AltStarsA      = -0.20,
-                 AltStarsB      =  2.00,
+                 AltStarsB      =  1.20,
                  AltKCyclesA    = -0.10, 
                  AltKCyclesB    =  0.02}
 

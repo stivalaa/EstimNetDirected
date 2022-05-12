@@ -74,7 +74,7 @@ simNetFilePrefix = simulation_sim_bipartite_A6000_B750_sampler_tnt
 
 structParams =  {Edge           = -8.50,
                  AltStarsA      = -0.20,
-                 AltStarsB      =  2.00,
+                 AltStarsB      =  1.20,
                  AltKCyclesA    = -0.10, 
                  AltKCyclesB    =  0.02}
 
