@@ -1,3 +1,4 @@
 stats_sim_*.txt
 stats_sim_*-plots.eps
 simulation_sim_*.net
+.pyhistory
