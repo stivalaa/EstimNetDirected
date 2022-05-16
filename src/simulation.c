@@ -310,7 +310,9 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
 
   printf("sampleSize = %u, interval = %lu burnin = %lu\n",
          sample_size, interval, burnin);
-  printf("%s graph\n", g->is_directed ? "Directed" : "Undirected");
+  printf("%s %s graph\n", 
+         g->is_bipartite ? "Two-mode" : "One-mode",
+         g->is_directed ? "Directed" : "Undirected");
   if (useIFDsampler)
     printf("IFD sampler ifd_K = %g initial auxiliary parameter V = %g\n",
            ifd_K, ifd_aux_param);
