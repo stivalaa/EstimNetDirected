@@ -215,16 +215,16 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
            ignored arc directions.
          */
         do {
-	  if (g->is_directed) {
-	    arcidx = int_urand(g->num_inner_arcs);
-	    i = g->allinnerarcs[arcidx].i;
-	    j = g->allinnerarcs[arcidx].j;
-	  }
-	  else {
-	    arcidx = int_urand(g->num_inner_edges);
-	    i = g->allinneredges[arcidx].i;
-	    j = g->allinneredges[arcidx].j;
-	  }
+          if (g->is_directed) {
+            arcidx = int_urand(g->num_inner_arcs);
+            i = g->allinnerarcs[arcidx].i;
+            j = g->allinnerarcs[arcidx].j;
+          }
+          else {
+            arcidx = int_urand(g->num_inner_edges);
+            i = g->allinneredges[arcidx].i;
+            j = g->allinneredges[arcidx].j;
+          }
           SAMPLER_DEBUG_PRINT(("conditional del arcidx %u (%u -> %u) zones %u %u\n", arcidx, i, j, g->zone[i], g->zone[j]));
           assert(g->zone[i] < g->max_zone && g->zone[j] < g->max_zone);
           /* any tie must be within same zone or between adjacent zones */
@@ -284,38 +284,38 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
       /* not using snowball or citation ERGM conditional estimation */
       if (isDelete) {
         /* Delete move. Find an existing arc uniformly at random to delete. */
-	if (g->is_directed) {
-	  arcidx = int_urand(g->num_arcs);
-	  i = g->allarcs[arcidx].i;
-	  j = g->allarcs[arcidx].j;
-	  /*removed as slows significantly: assert(isArc(g, i, j));*/
-	  /* no need to condsider forbidReciprocity on delete move */
-	} else {
-	  /* undirected */
-	  arcidx = int_urand(g->num_edges);
-	  i = g->alledges[arcidx].i;
-	  j = g->alledges[arcidx].j;
-	}
+        if (g->is_directed) {
+          arcidx = int_urand(g->num_arcs);
+          i = g->allarcs[arcidx].i;
+          j = g->allarcs[arcidx].j;
+          /*removed as slows significantly: assert(isArc(g, i, j));*/
+          /* no need to condsider forbidReciprocity on delete move */
+        } else {
+          /* undirected */
+          arcidx = int_urand(g->num_edges);
+          i = g->alledges[arcidx].i;
+          j = g->alledges[arcidx].j;
+        }
       } else {
         /* Add move. Find two nodes i, j without arc i->j uniformly at
            random. Because graph is sparse, it is not too inefficient
            to just pick random nodes until such a pair is found */
-	if (g->is_bipartite) {
-	  do {
-	    i = int_urand(g->num_A_nodes);
-	    j = g->num_A_nodes + int_urand(g->num_B_nodes);
-	  } while (isEdge(g, i, j)); /* undirected bipartite only for now */
-	} else {
-	  /* one-mode network */
-	  do {
-	    do {
-	      i = int_urand(g->num_nodes);
-	      do {
-		j = int_urand(g->num_nodes);
-	      } while (!allowLoops && i == j);
-	    } while (isArcOrEdge(g, i, j));
-	  } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
-	}
+        if (g->is_bipartite) {
+          do {
+            i = int_urand(g->num_A_nodes);
+            j = g->num_A_nodes + int_urand(g->num_B_nodes);
+          } while (isEdge(g, i, j)); /* undirected bipartite only for now */
+        } else {
+          /* one-mode network */
+          do {
+            do {
+              i = int_urand(g->num_nodes);
+              do {
+                j = int_urand(g->num_nodes);
+              } while (!allowLoops && i == j);
+            } while (isArcOrEdge(g, i, j));
+          } while (g->is_directed && forbidReciprocity && isArc(g, j, i));
+        }
       }
     }
     
@@ -367,10 +367,10 @@ double tntSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     } else {
       if (isDelete) {
         total += log( num_arcs_or_edges(g) == 1 ? 1.0 / (prob * num_dyads + (1 - prob)) :
-		      num_arcs_or_edges(g) / (odds * num_dyads + num_arcs_or_edges(g)) );
+                      num_arcs_or_edges(g) / (odds * num_dyads + num_arcs_or_edges(g)) );
       } else {
         total += log( num_arcs_or_edges(g) == 0 ? prob * num_dyads + (1 - prob) :
-		      1 + (odds * num_dyads) / (num_arcs_or_edges(g) + 1) );
+                      1 + (odds * num_dyads) / (num_arcs_or_edges(g) + 1) );
       }
     }
   

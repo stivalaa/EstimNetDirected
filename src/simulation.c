@@ -553,7 +553,7 @@ int do_simulation(sim_config_t * config)
   }
   
   g = allocate_graph(config->numNodes, config->isDirected, config->isBipartite,
-		     config->numNodesA);
+                     config->numNodesA);
   if (load_attributes(g, config->binattr_filename,
                       config->catattr_filename,
                       config->contattr_filename,
@@ -645,7 +645,7 @@ int do_simulation(sim_config_t * config)
     }
     if (config->isBipartite) {
       fprintf(stderr, "ERROR: citation ERGM simulation requires one-mode"
-	      "graph not two-mode\n");
+              "graph not two-mode\n");
       return -1;
     }
     if (config->useConditionalSimulation) {
@@ -683,7 +683,7 @@ int do_simulation(sim_config_t * config)
 
   if (config->forbidReciprocity && !config->isDirected) {
     fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
-	    "undirected graph\n");
+            "undirected graph\n");
     return -1;
   }
   

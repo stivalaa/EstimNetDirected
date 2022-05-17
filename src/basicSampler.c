@@ -205,20 +205,20 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
          nodes i and j uniformly at random and toggle arc between
          them. */
       if (g->is_bipartite) {
-	i = int_urand(g->num_A_nodes);
-	j = g->num_A_nodes + int_urand(g->num_B_nodes);
+        i = int_urand(g->num_A_nodes);
+        j = g->num_A_nodes + int_urand(g->num_B_nodes);
         assert(bipartite_node_mode(g, i) == MODE_A);
         assert(bipartite_node_mode(g, j) == MODE_B);
-	isDelete = isEdge(g, i, j); /* bipartite only for undirected for now */
+        isDelete = isEdge(g, i, j); /* bipartite only for undirected for now */
       } else {
-	/* one-mode network */
-	do {
-	  i = int_urand(g->num_nodes);
-	  do {
-	    j = int_urand(g->num_nodes);
-	  } while (!allowLoops && i == j);
-	  isDelete = isArcOrEdge(g, i ,j);
-	} while (g->is_directed && forbidReciprocity && !isDelete && isArc(g, j, i));
+        /* one-mode network */
+        do {
+          i = int_urand(g->num_nodes);
+          do {
+            j = int_urand(g->num_nodes);
+          } while (!allowLoops && i == j);
+          isDelete = isArcOrEdge(g, i ,j);
+        } while (g->is_directed && forbidReciprocity && !isDelete && isArc(g, j, i));
       }
     }
     

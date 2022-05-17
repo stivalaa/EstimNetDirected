@@ -94,8 +94,8 @@ double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(lambda > 1);
   assert(!g->is_directed);
   return lambda * (2 -
-		   POW_LOOKUP(1-1/lambda, g->degree[i]) -
-		   POW_LOOKUP(1-1/lambda, g->degree[j]));
+                   POW_LOOKUP(1-1/lambda, g->degree[i]) -
+                   POW_LOOKUP(1-1/lambda, g->degree[j]));
 }
 
 
@@ -155,7 +155,7 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
       continue;
     if (isEdge(g, i, v))
       delta += POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, i, v)) +
-	POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, v, j));
+        POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, v, j));
   }
   delta += lambda * (1 - POW_LOOKUP(1-1/lambda, GET_2PATH_ENTRY(g, i, j)));
   return delta;
@@ -173,7 +173,7 @@ double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
   (void)isDelete; /*unused parameters*/
   assert(!g->is_directed);
   return ((g->binattr[a][i] == BIN_NA ? 0 : g->binattr[a][i]) +
-	  (g->binattr[a][j] == BIN_NA ? 0 : g->binattr[a][j]));
+          (g->binattr[a][j] == BIN_NA ? 0 : g->binattr[a][j]));
 
 
 }

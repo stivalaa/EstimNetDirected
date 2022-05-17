@@ -381,20 +381,20 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
         fprintf(theta_outfile, "%u ", t);
         fprintf(dzA_outfile, "%u ", t);
 #ifdef TWOPATH_HASHTABLES
-	if (g->is_directed) {
-	  MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB)\n",
-				HASH_COUNT(g->mixTwoPathHashTab),
-				(double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
-					 sizeof(twopath_record_t))/(1024*1024)));
-	  MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB)\n",
-				HASH_COUNT(g->inTwoPathHashTab),
-				(double)(HASH_COUNT(g->inTwoPathHashTab)*
-					 (sizeof(twopath_record_t)))/(1024*1024)));
-	  MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB)\n",
-				HASH_COUNT(g->outTwoPathHashTab),
-				(double)(HASH_COUNT(g->outTwoPathHashTab)*2*
-					 sizeof(twopath_record_t))/(1024*1024)));
-	}
+        if (g->is_directed) {
+          MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB)\n",
+                                HASH_COUNT(g->mixTwoPathHashTab),
+                                (double)(HASH_COUNT(g->mixTwoPathHashTab)*2*
+                                         sizeof(twopath_record_t))/(1024*1024)));
+          MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB)\n",
+                                HASH_COUNT(g->inTwoPathHashTab),
+                                (double)(HASH_COUNT(g->inTwoPathHashTab)*
+                                         (sizeof(twopath_record_t)))/(1024*1024)));
+          MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB)\n",
+                                HASH_COUNT(g->outTwoPathHashTab),
+                                (double)(HASH_COUNT(g->outTwoPathHashTab)*2*
+                                         sizeof(twopath_record_t))/(1024*1024)));
+        }
 #endif /* DEBUG_MEMUSAGE */
       }
       if (useIFDsampler) {
@@ -804,11 +804,11 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     }
     
     get_num_vertices_from_bipartite_pajek_file(arclist_file,
-					       &num_nodes,
-					       &num_A_nodes);/* closes file */
+                                               &num_nodes,
+                                               &num_A_nodes);/* closes file */
   }
   g = allocate_graph(num_nodes, config->isDirected, config->isBipartite,
-		     num_A_nodes);
+                     num_A_nodes);
 
   if (check_param_network_type(&config->param_config, g)) {
     fprintf(stderr, "ERROR: parameter not compatible with network type\n");
@@ -978,7 +978,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
          fprintf(stderr, 
                  "ERROR: cannot include %s parameter when using IFD sampler.\n"
                  "Either unset useIFDsampler or remove %s from %s.\n",
-		 arc_param_str, arc_param_str, STRUCT_PARAMS_STR);
+                 arc_param_str, arc_param_str, STRUCT_PARAMS_STR);
          return -1;
        }
      }
@@ -1039,12 +1039,12 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    if (config->citationERGM) {
      if (!config->isDirected) {
        fprintf(stderr, "ERROR: citation ERGM estimation requires directed"
-	       "graph\n");
+               "graph\n");
        return -1;
      }
      if (config->isBipartite) {
        fprintf(stderr, "ERROR: citation ERGM estimation requires one-mode"
-	       "graph not two-mode\n");
+               "graph not two-mode\n");
        return -1;
      }
      if (config->useConditionalEstimation) {
@@ -1081,7 +1081,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
 
    if (config->forbidReciprocity && !config->isDirected) {
      fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
-	     "undirected graph\n");
+             "undirected graph\n");
      return -1;
    }
    

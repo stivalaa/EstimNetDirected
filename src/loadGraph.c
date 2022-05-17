@@ -247,7 +247,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
 
     if (g->is_bipartite) {
       if (bipartite_node_mode(g, i) == bipartite_node_mode(g, j)) {
-	fprintf(stderr, "ERROR: network is two-mode but edge %d,%d is between two nodes of the same mode\n", i, j);
+        fprintf(stderr, "ERROR: network is two-mode but edge %d,%d is between two nodes of the same mode\n", i, j);
       }
     }
 
@@ -273,12 +273,12 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
        adjacency list structures). */
     if (g->is_directed) {
       if (!isArc(g, i, j)){
-	insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
+        insertArc_allarcs(g, i, j); /* also update flat arclist allarcs */
       }
     } else {
       /* undirected */
       if (!isEdge(g, i, j)){
-	insertEdge_alledges(g, i, j); /* also update flat edgelist alledges */
+        insertEdge_alledges(g, i, j); /* also update flat edgelist alledges */
       }
     }
 
@@ -315,35 +315,35 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
       total_degree += g->outdegree[k];
     }
     MEMUSAGE_DEBUG_PRINT(("Allocated additional %f MB (twice) for %u arcs\n",
-			  ((double)sizeof(uint_t) * total_degree) / (1024*1024),
-			  g->num_arcs));
+                          ((double)sizeof(uint_t) * total_degree) / (1024*1024),
+                          g->num_arcs));
 #ifdef TWOPATH_HASHTABLES
     MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
-			  HASH_COUNT(g->mixTwoPathHashTab),
-			  ((double)HASH_COUNT(g->mixTwoPathHashTab)*2*
-			   sizeof(twopath_record_t))/(1024*1024),
-			  100*(double)HASH_COUNT(g->mixTwoPathHashTab) /
-			  ((double)g->num_nodes*g->num_nodes),
-			  ((double)sizeof(uint_t)*num_vertices*num_vertices) /
-			  (1024*1024)));
+                          HASH_COUNT(g->mixTwoPathHashTab),
+                          ((double)HASH_COUNT(g->mixTwoPathHashTab)*2*
+                           sizeof(twopath_record_t))/(1024*1024),
+                          100*(double)HASH_COUNT(g->mixTwoPathHashTab) /
+                          ((double)g->num_nodes*g->num_nodes),
+                          ((double)sizeof(uint_t)*num_vertices*num_vertices) /
+                          (1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("MixTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->mixTwoPathHashTab)/(1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
-			  HASH_COUNT(g->inTwoPathHashTab),
-			  ((double)HASH_COUNT(g->inTwoPathHashTab)*
-			   (sizeof(twopath_record_t)))/(1024*1024),
-			  100*(double)HASH_COUNT(g->inTwoPathHashTab) /
-			  ((double)g->num_nodes*g->num_nodes),
-			  ((double)sizeof(uint_t)*num_vertices*num_vertices) /
-			  (1024*1024)));
+                          HASH_COUNT(g->inTwoPathHashTab),
+                          ((double)HASH_COUNT(g->inTwoPathHashTab)*
+                           (sizeof(twopath_record_t)))/(1024*1024),
+                          100*(double)HASH_COUNT(g->inTwoPathHashTab) /
+                          ((double)g->num_nodes*g->num_nodes),
+                          ((double)sizeof(uint_t)*num_vertices*num_vertices) /
+                          (1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("InTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->inTwoPathHashTab)/(1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table has %u entries (%f MB) which is %f%% nonzero in dense matrix (which would have taken %f MB)\n",
-			  HASH_COUNT(g->outTwoPathHashTab),
-			  ((double)HASH_COUNT(g->outTwoPathHashTab)*2*
-			   sizeof(twopath_record_t))/(1024*1024),
-			  100*(double)HASH_COUNT(g->outTwoPathHashTab) /
-			  ((double)g->num_nodes*g->num_nodes),
-			  ((double)sizeof(uint_t)*num_vertices*num_vertices) /
-			  (1024*1024)));
+                          HASH_COUNT(g->outTwoPathHashTab),
+                          ((double)HASH_COUNT(g->outTwoPathHashTab)*2*
+                           sizeof(twopath_record_t))/(1024*1024),
+                          100*(double)HASH_COUNT(g->outTwoPathHashTab) /
+                          ((double)g->num_nodes*g->num_nodes),
+                          ((double)sizeof(uint_t)*num_vertices*num_vertices) /
+                          (1024*1024)));
     MEMUSAGE_DEBUG_PRINT(("OutTwoPath hash table overhead %f MB\n", (double)HASH_OVERHEAD(hh, g->outTwoPathHashTab)/(1024*1024)));
 #endif /* TWOPATH_HASHTABLES */
   }

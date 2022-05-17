@@ -1079,14 +1079,14 @@ void dump_parameter_names(void)
   fprintf(stderr, "Structural parameters (%s):\n", STRUCT_PARAMS_STR);
   for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
     fprintf(stderr, "  %s (%s, %s)\n", STRUCT_PARAMS[i].name,
-	    network_type_str(STRUCT_PARAMS[i].network_type),
-	    network_mode_str(STRUCT_PARAMS[i].network_mode));
+            network_type_str(STRUCT_PARAMS[i].network_type),
+            network_mode_str(STRUCT_PARAMS[i].network_mode));
   }
   fprintf(stderr, "Attribute parameters (%s):\n", ATTR_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_PARAMS; i++) {
     fprintf(stderr, "  %s (%s, %s) (%s)\n", ATTR_PARAMS[i].name,
-	    network_type_str(ATTR_PARAMS[i].network_type),
-	    network_mode_str(ATTR_PARAMS[i].network_mode),
+            network_type_str(ATTR_PARAMS[i].network_type),
+            network_mode_str(ATTR_PARAMS[i].network_mode),
             ATTR_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
@@ -1096,8 +1096,8 @@ void dump_parameter_names(void)
   fprintf(stderr, "Dyadic covariate parameters (%s):\n", DYADIC_PARAMS_STR);
   for (i = 0; i < NUM_DYADIC_PARAMS; i++) {
     fprintf(stderr, " %s (%s, %s) (%s)\n", DYADIC_PARAMS[i].name,
-	    network_type_str(DYADIC_PARAMS[i].network_type),
-	    network_mode_str(DYADIC_PARAMS[i].network_mode),
+            network_type_str(DYADIC_PARAMS[i].network_type),
+            network_mode_str(DYADIC_PARAMS[i].network_mode),
             DYADIC_PARAMS[i].type == DYADIC_TYPE_GEODISTANCE ?
             "latitude,longitude" :
             (DYADIC_PARAMS[i].type == DYADIC_TYPE_EUCLIDEANDISTANCE ?
@@ -1107,8 +1107,8 @@ void dump_parameter_names(void)
           ATTR_INTERACTION_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_INTERACTION_PARAMS; i++) {
     fprintf(stderr, " %s (%s,%s) (%s)\n", ATTR_INTERACTION_PARAMS[i].name,
-	    network_type_str(ATTR_INTERACTION_PARAMS[i].network_type),
-	    network_mode_str(ATTR_INTERACTION_PARAMS[i].network_mode),
+            network_type_str(ATTR_INTERACTION_PARAMS[i].network_type),
+            network_mode_str(ATTR_INTERACTION_PARAMS[i].network_mode),
             ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_INTERACTION_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
@@ -1860,7 +1860,7 @@ network_type_e get_dyadic_param_network_type(const char *dyadicParamName)
  * does not matter as a small hand-coded array anyway.
  */
 network_type_e get_attr_interaction_param_network_type(const char
-						       *attrInteractionParamName)
+                                                       *attrInteractionParamName)
 {
   uint_t i;
 
@@ -1936,7 +1936,7 @@ network_mode_e get_dyadic_param_network_mode(const char *dyadicParamName)
  * does not matter as a small hand-coded array anyway.
  */
 network_mode_e get_attr_interaction_param_network_mode(const char
-						       *attrInteractionParamName)
+                                                       *attrInteractionParamName)
 {
   uint_t i;
 
@@ -2066,9 +2066,9 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
     if (!(is_allowed_network_type(net_type, g))) {
       fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
               g->is_directed ? "Directed" : "Undirected",
-	      STRUCT_PARAMS_STR,
-	      pconfig->param_names[i],
-	      network_type_str(net_type));
+              STRUCT_PARAMS_STR,
+              pconfig->param_names[i],
+              network_type_str(net_type));
 
       return 1;
     }
@@ -2076,9 +2076,9 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
     if (!(is_allowed_network_mode(net_mode, g))) {
       fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
               g->is_bipartite ? "Two-mode" : "One-mode",
-	      STRUCT_PARAMS_STR,
-	      pconfig->param_names[i],
-	      network_mode_str(net_mode));
+              STRUCT_PARAMS_STR,
+              pconfig->param_names[i],
+              network_mode_str(net_mode));
 
       return 1;
     }
@@ -2090,9 +2090,9 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
     if (!(is_allowed_network_type(net_type, g))) {
       fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
               g->is_directed ? "Directed" : "Undirected",
-	      ATTR_PARAMS_STR,
-	      pconfig->attr_param_names[i],
-	      network_type_str(net_type));
+              ATTR_PARAMS_STR,
+              pconfig->attr_param_names[i],
+              network_type_str(net_type));
 
       return 1;
     }
@@ -2100,9 +2100,9 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
     if (!(is_allowed_network_mode(net_mode, g))) {
       fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
               g->is_bipartite ? "Two-mode" : "One-mode",
-	      ATTR_PARAMS_STR,
-	      pconfig->attr_param_names[i],
-	      network_mode_str(net_mode));
+              ATTR_PARAMS_STR,
+              pconfig->attr_param_names[i],
+              network_mode_str(net_mode));
 
       return 1;
     }
@@ -2114,18 +2114,18 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
     if (!(is_allowed_network_type(net_type, g))) {
       fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
               g->is_directed ? "Directed" : "Undirected",
-	      DYADIC_PARAMS_STR,
-	      pconfig->dyadic_param_names[i],
-	      network_type_str(net_type));
+              DYADIC_PARAMS_STR,
+              pconfig->dyadic_param_names[i],
+              network_type_str(net_type));
       return 1;
     }
     net_mode = get_dyadic_param_network_mode(pconfig->dyadic_param_names[i]);
     if (!(is_allowed_network_mode(net_mode, g))) {
       fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
               g->is_bipartite ? "Two-mode" : "One-mode",
-	      DYADIC_PARAMS_STR,
-	      pconfig->dyadic_param_names[i],
-	      network_mode_str(net_mode));
+              DYADIC_PARAMS_STR,
+              pconfig->dyadic_param_names[i],
+              network_mode_str(net_mode));
       return 1;
     }
   }
@@ -2136,18 +2136,18 @@ int check_param_network_type(param_config_t *pconfig, const graph_t *g)
     if (!(is_allowed_network_type(net_type, g))) {
       fprintf(stderr, "Bad network type (%s) for %s %s (%s)\n",
               g->is_directed ? "Directed" : "Undirected",
-	      ATTR_INTERACTION_PARAMS_STR,
-	      pconfig->attr_interaction_param_names[i],
-	      network_type_str(net_type));
+              ATTR_INTERACTION_PARAMS_STR,
+              pconfig->attr_interaction_param_names[i],
+              network_type_str(net_type));
       return 1;
     }
     net_mode = get_attr_interaction_param_network_mode(pconfig->attr_interaction_param_names[i]);
     if (!(is_allowed_network_mode(net_mode, g))) {
       fprintf(stderr, "Bad network mode (%s) for %s %s (%s)\n",
               g->is_bipartite ? "Two-mode" : "One-mode",
-	      ATTR_INTERACTION_PARAMS_STR,
-	      pconfig->attr_interaction_param_names[i],
-	      network_mode_str(net_mode));
+              ATTR_INTERACTION_PARAMS_STR,
+              pconfig->attr_interaction_param_names[i],
+              network_mode_str(net_mode));
       return 1;
     }
   }

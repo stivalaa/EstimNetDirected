@@ -176,7 +176,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
     /* bipartite */
     assert(!g->is_directed); /* directed bipartite not handled yet */
     assert(bipartite_node_mode(g, i) == MODE_A &&
-	   bipartite_node_mode(g, j) == MODE_B);
+           bipartite_node_mode(g, j) == MODE_B);
     for (k = 0; k < g->degree[i]; k++)  {
       v = g->edgelist[i][k];
       assert(bipartite_node_mode(g, v) == MODE_B);
@@ -268,14 +268,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
   } else if (g->is_bipartite) {
     assert(!g->is_directed); /* directed bipartite not handled yet */
     assert(bipartite_node_mode(g, i) == MODE_A &&
-	   bipartite_node_mode(g, j) == MODE_B);
+           bipartite_node_mode(g, j) == MODE_B);
     for (k = 0; k < g->degree[i]; k++)  {
       v = g->edgelist[i][k];
       assert(bipartite_node_mode(g, v) == MODE_B);
       if (v == j)
         continue;
       /* Note subtracting num_A_nodes as B nodes are numbered
-	 num_A_nodes .. num_nodes */
+         num_A_nodes .. num_nodes */
       g->twoPathMatrixB[INDEX2D(j-g->num_A_nodes, v-g->num_A_nodes, g->num_B_nodes)]+=incval;
       g->twoPathMatrixB[INDEX2D(v-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)]+=incval;
     }
@@ -981,14 +981,14 @@ double num_graph_dyads(const graph_t *g, bool allowLoops)
   } else {
     if (g->is_directed) {
       if (allowLoops)
-	return (double)g->num_nodes * g->num_nodes;
+        return (double)g->num_nodes * g->num_nodes;
       else
-	return (double)g->num_nodes * (g->num_nodes - 1);
+        return (double)g->num_nodes * (g->num_nodes - 1);
     } else {
       if (allowLoops)
-	return ((double)g->num_nodes * g->num_nodes)/2.0;
+        return ((double)g->num_nodes * g->num_nodes)/2.0;
       else
-	return ((double)g->num_nodes * (g->num_nodes - 1))/2.0;
+        return ((double)g->num_nodes * (g->num_nodes - 1))/2.0;
     }
   }
 }
@@ -1719,7 +1719,7 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite
 #ifdef HASH_BLOOM
       /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
       MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (twice)\n",
-			    HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+                            HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
@@ -1727,11 +1727,11 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite
       g->twoPathMatrixB = (uint_t *)safe_calloc((size_t)g->num_B_nodes * g->num_B_nodes, sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
       MEMUSAGE_DEBUG_PRINT(("twoPathMatrixA size %f MB\n", 
-			    (double)g->num_A_nodes*g->num_A_nodes*sizeof(uint_t)/
-			    (1024*1024)));
+                            (double)g->num_A_nodes*g->num_A_nodes*sizeof(uint_t)/
+                            (1024*1024)));
       MEMUSAGE_DEBUG_PRINT(("twoPathMatrixB size %f MB\n", 
-			    (double)g->num_B_nodes*g->num_B_nodes*sizeof(uint_t)/
-			    (1024*1024)));    
+                            (double)g->num_B_nodes*g->num_B_nodes*sizeof(uint_t)/
+                            (1024*1024)));    
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
@@ -1746,16 +1746,16 @@ graph_t *allocate_graph(uint_t num_vertices, bool is_directed, bool is_bipartite
 #ifdef HASH_BLOOM
       /* https://troydhanson.github.io/uthash/userguide.html#_bloom_filter_faster_misses */
       MEMUSAGE_DEBUG_PRINT(("Bloom filter n = %u overhead %f MB (three times)\n",
-			    HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
+                            HASH_BLOOM, (pow(2, HASH_BLOOM)/8192)/(1024)));
 #endif /* HASH_BLOOM */
 #endif /* DEBUG_MEMUSAGE */
 #else
       g->twoPathMatrix = (uint_t *)safe_calloc((size_t)num_vertices * num_vertices,
-					       sizeof(uint_t));
+                                               sizeof(uint_t));
 #ifdef DEBUG_MEMUSAGE
       MEMUSAGE_DEBUG_PRINT(("twoPathMatrix size %f MB\n", 
-			    (double)num_vertices*num_vertices*sizeof(uint_t)/
-			    (1024*1024)));
+                            (double)num_vertices*num_vertices*sizeof(uint_t)/
+                            (1024*1024)));
 #endif /*DEBUG_MEMUSAGE*/
 #endif /* TWOPATH_HASHTABLES */
 #endif /* TWOPATH_LOOKUP */
@@ -2015,11 +2015,11 @@ void print_data_summary(const graph_t * g, bool allowLoops)
   uint_t num_na_values;
   
   printf("%s %s with %u vertices (%u mode A, %u mode B) and %u %s (density %g) [%s]\n",
-	 g->is_bipartite ? "Two-mode" : "One-mode",
+         g->is_bipartite ? "Two-mode" : "One-mode",
          g->is_directed ? "Digraph" : "Graph",
          g->num_nodes,
-	 g->is_bipartite ? g->num_A_nodes : g->num_nodes,
-	 g->is_bipartite ? g->num_B_nodes : 0,
+         g->is_bipartite ? g->num_A_nodes : g->num_nodes,
+         g->is_bipartite ? g->num_B_nodes : 0,
          g->is_directed ? g->num_arcs : g->num_edges,
          g->is_directed ? "arcs" : "edges",
          density(g, allowLoops),
@@ -2136,10 +2136,10 @@ void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
     fprintf(fp, "*edges\n");
     for (i = 0; i < g->num_nodes; i++)  {
       for (j = 0; j < g->degree[i]; j++) {
-	if (i <= g->edgelist[i][j]) {
-	  count++;
-	  fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
-	}
+        if (i <= g->edgelist[i][j]) {
+          count++;
+          fprintf(fp, "%u %u\n", i+1, g->edgelist[i][j]+1); /* output is 1 based */
+        }
       }
     }
     assert(count == g->num_edges);
