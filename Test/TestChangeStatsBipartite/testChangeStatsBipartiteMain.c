@@ -223,10 +223,10 @@ int main(int argc, char *argv[])
 
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g\n", i, j - g->num_A_nodes,
 	   changeBipartiteFourCycle(g, i, j, lambda),
-           changeAltStarsA(g, i, j, lambda),
-           changeAltStarsB(g, i, j, lambda),
-           changeAltKCyclesB(g, i, j, lambda),
-           changeAltKCyclesA(g, i, j, lambda));
+           changeBipartiteAltStarsA(g, i, j, lambda),
+           changeBipartiteAltStarsB(g, i, j, lambda),
+           changeBipartiteAltKCyclesB(g, i, j, lambda),
+           changeBipartiteAltKCyclesA(g, i, j, lambda));
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;

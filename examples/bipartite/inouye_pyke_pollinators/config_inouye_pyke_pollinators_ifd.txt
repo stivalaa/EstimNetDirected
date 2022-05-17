@@ -90,7 +90,7 @@ observedStatsFilePrefix = obs_stats_ifd_inouye_pyke_pollinators
 #
 
 # Does not coverge: dzA not zero.
-structParams =  {       AltStarsA, AltStarsB, AltKCyclesB }
+structParams =  {       BipartiteAltStarsA, BipartiteAltStarsB, BipartiteAltKCyclesB }
 
 #
 # Attribute parameters

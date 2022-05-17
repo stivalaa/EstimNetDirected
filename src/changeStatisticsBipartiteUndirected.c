@@ -131,7 +131,7 @@ double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for alternating k-stars for type A nodes
  */
-double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
+double changeBipartiteAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   assert(lambda > 1);
   assert(g->is_bipartite);
@@ -144,7 +144,7 @@ double changeAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for alternating k-stars for type B nodes
  */
-double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
+double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   assert(lambda > 1);
   assert(g->is_bipartite);
@@ -158,7 +158,7 @@ double changeAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for alternating k-cycles for type A nodes
  */
-double changeAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
+double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t k,v;
   double delta = 0;
@@ -179,7 +179,7 @@ double changeAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for alternating k-cycles for type B nodes
  */
-double changeAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
+double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t k,v;
   double delta = 0;

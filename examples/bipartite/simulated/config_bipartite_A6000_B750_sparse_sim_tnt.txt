@@ -88,7 +88,7 @@ observedStatsFilePrefix = obs_stats_tnt_bpnet_A6000_B750_sim
 # Structural parameters
 #
 
-structParams =  { Edge, AltStarsA, AltStarsB, AltKCyclesA, AltKCyclesB }
+structParams =  { Edge, BipartiteAltStarsA, BipartiteAltStarsB, BipartiteAltKCyclesA, BipartiteAltKCyclesB }
 
 #
 # Attribute parameters

@@ -88,7 +88,7 @@ observedStatsFilePrefix = obs_stats_ifd_bpnet_A12000_B4000_sim
 # Structural parameters
 #
 
-structParams =  {       AltStarsA, AltStarsB, AltKCyclesA, AltKCyclesB }
+structParams =  {       BipartiteAltStarsA, BipartiteAltStarsB, BipartiteAltKCyclesA, BipartiteAltKCyclesB }
 
 #
 # Attribute parameters

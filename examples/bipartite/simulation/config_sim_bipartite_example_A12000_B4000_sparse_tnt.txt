@@ -74,10 +74,10 @@ simNetFilePrefix = simulation_sim_bipartite_A12000_B4000_sparse_sampler_tnt
 
 
 
-structParams =  {Edge           = -6.00,
-                 AltStarsA      = -0.20,
-                 AltStarsB      =  0.50,
-                 AltKCyclesA    = -3.00, 
-                 AltKCyclesB    =  0.02}
+structParams =  {Edge                    = -6.00,
+                 BipartiteAltStarsA      = -0.20,
+                 BipartiteAltStarsB      =  0.50,
+                 BipartiteAltKCyclesA    = -3.00, 
+                 BipartiteAltKCyclesB    =  0.02}
 
 

@@ -89,7 +89,7 @@ observedStatsFilePrefix = obs_stats_tnt_robertson_pollinators
 # Structural parameters
 #
 
-structParams =  { Edge, AltStarsA, AltStarsB, AltKCyclesA, AltKCyclesB, BipartiteFourCycle }
+structParams =  { Edge, BipartiteAltStarsA, BipartiteAltStarsB, BipartiteAltKCyclesA, BipartiteAltKCyclesB, BipartiteFourCycle }
 
 #
 # Attribute parameters
