@@ -7,5 +7,14 @@ bpnet_A6000_B750_sparse_sim100000000.net is a bipartite network with
   Kca       -0.100
   Kcp        0.020
 
+bpnet_A12000_B4000_sparse_sim770000000.net is a bipartite network with
+12000 mode A and 4000 mode B vertices simulated from BPNet with parameters:
+
+L	  -6.000
+Ksa	  -0.200
+Ksp	   0.500
+Kca	  -3.000
+Kcp	   0.020
+
 ADS
 Thu 12 May 2022 12:17:35 AEST
