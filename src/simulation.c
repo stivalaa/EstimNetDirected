@@ -144,8 +144,17 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
         } while  (isArc(g, i, j));
       } while (forbidReciprocity && isArc(g, j, i));
       assert(g->term[i] == g->max_term);
+    } else if (g->is_bipartite) {
+      /* two-mode graph not using conditional estimation */
+      assert(!g->is_directed); /* directed bipartite not supported yet */
+      do {
+        i = int_urand(g->num_A_nodes);
+        j = g->num_A_nodes + int_urand(g->num_B_nodes);
+        assert(bipartite_node_mode(g, i) == MODE_A);
+        assert(bipartite_node_mode(g, j) == MODE_B);
+      } while (isEdge(g, i, j));
     } else {
-      /* not using conditional estimation */
+      /* one-mode graph not using conditional estimation */
       /* Add move. Find two nodes i, j without arc i->j uniformly at
          random. Because graph is sparse, it is not too inefficient
          to just pick random nodes until such a pair is found */

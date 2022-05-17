@@ -18,9 +18,9 @@ numArcs = 8957  # number of arcs in graph for IFD simulation
 sampleSize = 100 #number of network samples to take from simulation
 
  
-interval = 1000000 # interval (iterations) between samples
+interval = 100000 # interval (iterations) between samples
  
-burnin = 10000000 # number of iterations to throw away before first sample
+burnin = 100000 # number of iterations to throw away before first sample
 
 outputSimulatedNetworks = True  # write the simulated networks to file
 
