@@ -132,8 +132,8 @@ typedef struct graph_s
   uint_t  *degree;     /* for each node, number of nodes it has an edge to */
   uint_t **edgelist;   /* edge adjacency lists: for each node i, array of
                           degree[i] nodes it has an arc to.
-			  Note that for each edge i--j there will be two
-			  entries, one for i and one for j */
+                          Note that for each edge i--j there will be two
+                          entries, one for i and one for j */
   nodepair_t *alledges;/* list of all edges specified as i--j for each. */
 
 #ifdef TWOPATH_LOOKUP
@@ -161,7 +161,7 @@ typedef struct graph_s
   */
   uint_t num_A_nodes; /* number of mode A nodes. */
   uint_t num_B_nodes; /* number of mode B nodes.
-			 num_B_nodes = num_nodes - num_A_nodes */
+                         num_B_nodes = num_nodes - num_A_nodes */
 
 #ifdef TWOPATH_LOOKUP
 #ifdef TWOPATH_HASHTABLES
@@ -241,12 +241,12 @@ typedef struct graph_s
   uint_t max_term;  /* highest term number (time period) 0 ... max_term */
   uint_t num_maxterm_nodes; /* number of nodes in last (latest) term */
   uint_t *maxterm_nodes; /* id of each of the num_maxterm_nodes in the
-			    latest term i.e. with term == max_term */
+                            latest term i.e. with term == max_term */
   uint_t num_maxtermsender_arcs;  /* number of arcs with sender in max. term,
-				     length of all_maxtermsender_arcs list */
+                                     length of all_maxtermsender_arcs list */
   nodepair_t *all_maxtermsender_arcs; /* list of all arcs where i->j where
-					 i has maximum term value max_term,
-					 specified as i->j for each. */
+                                         i has maximum term value max_term,
+                                         specified as i->j for each. */
   
   
 } graph_t;

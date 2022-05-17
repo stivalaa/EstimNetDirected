@@ -67,7 +67,7 @@
 
 double arcCorrection(const graph_t *g, bool useConditionEstimation,
                      bool citationERGM, bool forbidReciprocity,
-		     bool allowLoops);
+                     bool allowLoops);
 
 double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   uint_t n_attr_interaction,
@@ -86,7 +86,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   double ifd_K, double *dzArc, double *ifd_aux_param,
                   bool useConditionalEstimation,
                   bool forbidReciprocity, bool citationERGM,
-		  bool allowLoops);
+                  bool allowLoops);
 
 #endif /* IFDSAMPLER_H */
 

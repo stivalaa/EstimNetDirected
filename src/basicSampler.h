@@ -77,7 +77,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     bool performMove,
                     bool useConditionalEstimation,
                     bool forbidReciprocity, bool citationERGM,
-		    bool allowLoops);
+                    bool allowLoops);
 
 #endif /* BASICSAMPLER_H */
 
