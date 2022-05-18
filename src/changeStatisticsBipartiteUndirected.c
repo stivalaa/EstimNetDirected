@@ -214,6 +214,8 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
   /* TODO make more efficient. This is very inefficient, iterating
      over all mode B nodes */
 
+#define L3_ITERATE_OVER_B_NODES
+#ifdef L3_ITERATE_OVER_B_NODES
   for (v = g->num_A_nodes; v < g->num_nodes; v++) {
     assert(bipartite_node_mode(g, v) == MODE_B);
     if (v == j) {
@@ -224,23 +226,24 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
     }
     delta += GET_B2PATH_ENTRY(g, j, v);
   }
-
+#else
   /* FIXME not convinced this change statistic is correct as above
      (iterating over B nodes) passes regression tests against BPNet
      code, but the version below (iterating over A nodes) fails on
      some; but they should have the same result. */
      
-  /* for (v = 0; v < g->num_A_nodes; v++) { */
-  /*   assert(bipartite_node_mode(g, v) == MODE_A); */
-  /*   if (v == i) { */
-  /*     continue; */
-  /*   } */
-  /*   if (isEdge(g, v, j) && g->degree[v] > 1) { */
-  /*     delta += g->degree[v] - 1; */
-  /*   } */
-  /*   delta += GET_A2PATH_ENTRY(g, i, v); */
-  /* } */
-
+  for (v = 0; v < g->num_A_nodes; v++) {
+    assert(bipartite_node_mode(g, v) == MODE_A);
+    if (v == i) {
+      continue;
+    }
+    if (isEdge(g, v, j) && g->degree[v] > 1) {
+      delta += g->degree[v] - 1;
+    }
+    delta += GET_A2PATH_ENTRY(g, i, v);
+  }
+#endif /*L3_ITERATE_OVER_B_NODES*/
+  
   delta += g->degree[j] * g->degree[i];
   return delta;
 }
