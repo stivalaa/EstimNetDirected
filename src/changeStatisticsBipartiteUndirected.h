@@ -97,7 +97,10 @@
 #include "changeStatisticsTypes.h"
 
 /************************* Structural ****************************************/
-
+double changeBipartiteTwoStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartiteTwoStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartiteThreeStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda);

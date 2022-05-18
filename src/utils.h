@@ -180,6 +180,8 @@ int timeval_subtract (struct timeval *result, struct timeval *x,
                        struct timeval *y);
 char *rstrip(char *s);
 
+ulong_t factorial(ulong_t n);
+  
 void init_powtable(double x);
 
 #ifdef __cplusplus

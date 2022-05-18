@@ -206,6 +206,12 @@ double mean_and_sd(double values[], uint_t nvalues, double *sd)
   return mean;
 }
 
+/*****************************************************************************
+ *
+ * simple stats functions
+ *
+ ****************************************************************************/
+
 
 /*
  * iDivUp(a,b) = ceil(a / b) 
@@ -282,6 +288,19 @@ double euclidean_distance(double x1, double y1, double z1,
   return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
 }
 
+
+/*
+ * factorial(n)
+ */
+ulong_t factorial(ulong_t n)
+{
+  ulong_t fact = 1;
+  while(n > 0) {
+    fact *= n;
+    fact--;
+  }
+  return fact;
+}
 
 /*
  * Initialize the integer power y of double x lookup table

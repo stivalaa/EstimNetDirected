@@ -221,12 +221,17 @@ int main(int argc, char *argv[])
       j = g->num_A_nodes + rand() % g->num_B_nodes;
     }
 
-    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g\n", i, j - g->num_A_nodes,
+    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g\n", i, j - g->num_A_nodes,
 	   changeBipartiteFourCycle(g, i, j, lambda),
            changeBipartiteAltStarsA(g, i, j, lambda),
            changeBipartiteAltStarsB(g, i, j, lambda),
            changeBipartiteAltKCyclesB(g, i, j, lambda),
-           changeBipartiteAltKCyclesA(g, i, j, lambda));
+           changeBipartiteAltKCyclesA(g, i, j, lambda),
+	   changeBipartiteTwoStarsB(g, i, j, lambda),
+	   changeBipartiteTwoStarsA(g, i, j, lambda),
+	   changeBipartiteThreeStarsB(g, i, j, lambda),
+	   changeBipartiteThreeStarsA(g, i, j, lambda),
+	   99999.99 /*XXX changeL3*/);
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
