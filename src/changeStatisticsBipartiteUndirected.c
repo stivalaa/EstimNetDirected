@@ -225,11 +225,10 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
     delta += GET_B2PATH_ENTRY(g, j, v);
   }
 
-  /* FIXME not convinced this change statistic is correct (even in
-     original BPNet code) as above (iterating over B nodes) passes
-     regression tests against BPNet code, but the version below
-     (iterating over A nodes) fails on some; but they should have the
-     same result. */
+  /* FIXME not convinced this change statistic is correct as above
+     (iterating over B nodes) passes regression tests against BPNet
+     code, but the version below (iterating over A nodes) fails on
+     some; but they should have the same result. */
      
   /* for (v = 0; v < g->num_A_nodes; v++) { */
   /*   assert(bipartite_node_mode(g, v) == MODE_A); */
