@@ -242,7 +242,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
   /* } */
 
   delta += g->degree[j] * g->degree[i];
-  return (double)delta;
+  return delta;
 }
 
 /*
