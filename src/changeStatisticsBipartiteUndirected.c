@@ -232,9 +232,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
     if (isEdge(g, v, i) && g->degree[v] > 1) {
       delta += g->degree[v] - 1;
     }
-    if (GET_B2PATH_ENTRY(g, j, v) > 0) {
-      delta += GET_B2PATH_ENTRY(g, j, v);
-    }
+    delta += GET_B2PATH_ENTRY(g, j, v);
   }
   
   delta += g->degree[j] * g->degree[i];
