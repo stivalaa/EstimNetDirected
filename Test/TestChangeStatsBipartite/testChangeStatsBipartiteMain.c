@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 	   changeBipartiteTwoStarsA(g, i, j, lambda),
 	   changeBipartiteThreeStarsB(g, i, j, lambda),
 	   changeBipartiteThreeStarsA(g, i, j, lambda),
-	   99999.99 /*XXX changeL3*/);
+	   changeBipartiteThreePath(g, i, j, lambda));
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;

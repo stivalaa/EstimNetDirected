@@ -156,7 +156,7 @@ double changeBipartiteTwoStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
-  return change_s_stars(g, i, 2);
+  return (double)change_s_stars(g, i, 2);
 }
 
 /*
@@ -169,7 +169,7 @@ double changeBipartiteTwoStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
-  return change_s_stars(g, j, 2);
+  return (double)change_s_stars(g, j, 2);
 }
 
 /*
@@ -182,7 +182,7 @@ double changeBipartiteThreeStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
-  return change_s_stars(g, i, 3);
+  return (double)change_s_stars(g, i, 3);
 }
 
 /*
@@ -195,13 +195,46 @@ double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
-  return change_s_stars(g, j, 3);
+  return (double)change_s_stars(g, j, 3);
 }
 
+/*
+ * Change statistic for bipartite 3-path (L3 in BPNet, X3Path in MPNet)
+ */
+double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t delta = 0;
+  uint_t k, v;
+  (void)lambda; /* unused parameters */
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
 
+  /* for (k = 0; k < g->degree[j]; k++) { */
+  /*   v = g->edgelist[j][k]; */
+  /*   if (v != i) { */
+  /*     if (g->degree[v] > 1) { */
+  /* 	delta += g->degree[v] - 1; */
+  /*     } */
+  /*   } */
+  /* } */
+  /* TODO make more efficient. This is very inefficient, iterating
+     over all mode A nodes */
+  for (v = 0; v < g->num_A_nodes; v++) {
+    if (v != i) {
+      if (isEdge(g, v, j) && g->degree[v] > 1) {
+	delta += g->degree[v] - 1;
+      }
+      if (GET_A2PATH_ENTRY(g, i, v) > 0) {
+	delta += GET_A2PATH_ENTRY(g, i, v);
+      }
+    }
+  }
+  delta += g->degree[j] * g->degree[i];
+  return (double)delta;
+}
 
 /*
- * Change statistic for bipartite 4-cycle
+ * Change statistic for bipartite 4-cycle (C4 in BPNet, X4Cycle in MPNet))
  */
 double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
 {
