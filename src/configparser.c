@@ -72,7 +72,7 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"TwoPaths",             STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_BOTH,       NETWORK_MODE_ONEMODE, changeTwoPath},
   {"InTwoStars",           STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeInTwoStars},
   {"OutTwoStars",          STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeOutTwoStars},
-  {"TransitiveTriangles",  STRUCT_PARAM_TYPE_NONE,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeTransitiveTriad},
+  {"TransitiveTriangles",  STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeTransitiveTriad},
   {"CyclicTriangles",      STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeCyclicTriad},
   {"AltInStars",           STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltInStars},
   {"AltOutStars",          STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeAltOutStars},
@@ -90,6 +90,11 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"AltStars",             STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_ONEMODE, changeAltStars},
   {"AltTwoPaths",          STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_ONEMODE, changeAltTwoPaths},
   {"AltKTriangles",        STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_ONEMODE, changeAltKTriangles},
+  {"BipariteTwoStarsA",    STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoStarsA},
+  {"BipariteTwoStarsB",    STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoStarsB},
+  {"BipariteThreeStarsA",  STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteThreeStarsA},
+  {"BipariteThreeStarsB",  STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteThreeStarsB},
+  /*  {"BipariteThreePath",    STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteThreePath},*/ /* TODO commented out as not sure change statistic correct */
   {"BipartiteAltStarsA",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltStarsA},
   {"BipartiteAltStarsB",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltStarsB},
   {"BipartiteFourCycle",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteFourCycle},
@@ -98,6 +103,7 @@ static const struct_param_t STRUCT_PARAMS[] =
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
+
 
 /*
  * Attribute parameters allowed as the names in the set for the 
