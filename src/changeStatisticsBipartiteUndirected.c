@@ -211,18 +211,8 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
 
-  /* for (k = 0; k < g->degree[j]; k++) { */
-  /*   v = g->edgelist[j][k]; */
-  /*   if (v != i) { */
-  /*     if (g->degree[v] > 1) { */
-  /* 	delta += g->degree[v] - 1; */
-  /*     } */
-  /*   } */
-  /* } */
-
-  
   /* TODO make more efficient. This is very inefficient, iterating
-     over all mode A nodes */
+     over all mode B nodes */
 
   for (v = g->num_A_nodes; v < g->num_nodes; v++) {
     assert(bipartite_node_mode(g, v) == MODE_B);
@@ -234,7 +224,24 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
     }
     delta += GET_B2PATH_ENTRY(g, j, v);
   }
-  
+
+  /* FIXME not convinced this change statistic is correct (even in
+     original BPNet code) as above (iterating over B nodes) passes
+     regression tests against BPNet code, but the version below
+     (iterating over A nodes) fails on some; but they should have the
+     same result. */
+     
+  /* for (v = 0; v < g->num_A_nodes; v++) { */
+  /*   assert(bipartite_node_mode(g, v) == MODE_A); */
+  /*   if (v == i) { */
+  /*     continue; */
+  /*   } */
+  /*   if (isEdge(g, v, j) && g->degree[v] > 1) { */
+  /*     delta += g->degree[v] - 1; */
+  /*   } */
+  /*   delta += GET_A2PATH_ENTRY(g, i, v); */
+  /* } */
+
   delta += g->degree[j] * g->degree[i];
   return (double)delta;
 }
