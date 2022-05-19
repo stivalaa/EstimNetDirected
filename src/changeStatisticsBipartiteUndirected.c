@@ -203,7 +203,7 @@ double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  double delta = 0;
+  ulong_t delta = 0;
   uint_t k, v;
   (void)lambda; /* unused parameters */
   assert(g->is_bipartite);
@@ -245,7 +245,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
 #endif /*L3_ITERATE_OVER_B_NODES*/
   
   delta += g->degree[j] * g->degree[i];
-  return delta;
+  return (double)delta;
 }
 
 /*
