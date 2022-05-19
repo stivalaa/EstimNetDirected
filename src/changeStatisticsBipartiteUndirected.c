@@ -214,7 +214,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
   /* TODO make more efficient. This is very inefficient, iterating
      over all mode B nodes */
 
-#undef L3_ITERATE_OVER_B_NODES
+#define L3_ITERATE_OVER_B_NODES
 #ifdef L3_ITERATE_OVER_B_NODES
   for (v = g->num_A_nodes; v < g->num_nodes; v++) {
     assert(bipartite_node_mode(g, v) == MODE_B);
