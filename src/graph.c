@@ -275,7 +275,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       if (v == j)
         continue;
       /* Note subtracting num_A_nodes as B nodes are numbered
-         num_A_nodes .. num_nodes */
+         num_A_nodes .. num_nodes-1 */
       g->twoPathMatrixB[INDEX2D(j-g->num_A_nodes, v-g->num_A_nodes, g->num_B_nodes)]+=incval;
       g->twoPathMatrixB[INDEX2D(v-g->num_A_nodes, j-g->num_A_nodes, g->num_B_nodes)]+=incval;
     }
