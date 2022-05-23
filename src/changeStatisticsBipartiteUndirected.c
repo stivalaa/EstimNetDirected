@@ -203,7 +203,7 @@ double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  double delta = 0;
+  ulong_t delta = 0;
   uint_t k, v;
   (void)lambda; /* unused parameters */
   assert(g->is_bipartite);
@@ -245,7 +245,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
 #endif /*L3_ITERATE_OVER_B_NODES*/
   
   delta += g->degree[j] * g->degree[i];
-  return delta;
+  return (double)delta;
 }
 
 /*
@@ -261,12 +261,26 @@ double changeBipartiteFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
 
+#define C4_ITERATE_OVER_B_NODES
+#ifdef C4_ITERATE_OVER_B_NODES
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
-    if (v != i){
+    assert(bipartite_node_mode(g, v) == MODE_A);
+    if (v != i) {
       delta += GET_A2PATH_ENTRY(g, v, i);
     }
   }
+#else
+  /* FIXME similar to L3, the above passes all tests, but this does not,
+     but they should get the same result */
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(bipartite_node_mode(g, v) == MODE_B);
+    if (v != j) {
+      delta += GET_B2PATH_ENTRY(g, v, j);
+    }
+  }
+#endif /*C4_ITERATE_OVER_B_NODES*/
   return (double)delta;
 }
 
