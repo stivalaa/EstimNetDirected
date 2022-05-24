@@ -222,6 +222,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
       continue;
     }
     if (isEdge(g, v, i) && g->degree[v] > 1) {
+      assert(isEdge(g, i,v));
       delta += g->degree[v] - 1;
     }
     delta += GET_B2PATH_ENTRY(g, j, v);
@@ -238,6 +239,7 @@ double changeBipartiteThreePath(graph_t *g, uint_t i, uint_t j, double lambda)
       continue;
     }
     if (isEdge(g, v, j) && g->degree[v] > 1) {
+      assert(isEdge(g, v, j));
       delta += g->degree[v] - 1;
     }
     delta += GET_A2PATH_ENTRY(g, i, v);
