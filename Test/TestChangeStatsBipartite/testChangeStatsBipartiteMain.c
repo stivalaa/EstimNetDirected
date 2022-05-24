@@ -191,6 +191,14 @@ int main(int argc, char *argv[])
   }
 #endif /*TWOPATH_LOOKUP*/
 
+  for (i = 0; i < g->num_A_nodes; i++) {
+    for (j = 0; j < g->num_B_nodes; j++) {
+      if (i != j) {
+        assert(isEdge(g, i, j) == isEdge(g, j, i));
+      }
+    }
+  }
+
   /* just change stats (no changes to graph) */
   printf("testing change stats\n");
   gettimeofday(&start_timeval, NULL);

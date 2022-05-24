@@ -10,6 +10,4 @@
 (cd TestChangeStatsDirected && ./run_test_polblogs.sh)
 (cd TestChangeStatsUndirected && ./run_test_netscience.sh)
 (cd TestSetFunctions && ./run_test_sets.sh)
-(cd TestChangeStatsBipartite && ./run_test_bpnet_A6000_B750.sh)
-(cd TestChangeStatsBipartite && ./run_test_robertson_pollinators.sh)
-(cd TestChangeStatsBipartite && ./run_test_inouye_pyke_pollinators.sh)
+(cd TestChangeStatsBipartite && ./run_all_bipartite_tests.sh)
