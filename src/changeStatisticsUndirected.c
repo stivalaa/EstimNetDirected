@@ -178,7 +178,7 @@ double changeFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
   }
 
   /* iterate over neighbours of node with smaller degree */
-  if (g->degree[i] < g->degree[j]) {
+  if (TRUE){ //XXX if (g->degree[i] < g->degree[j]) {
     tmp = i;
     i = j;
     j = tmp;
