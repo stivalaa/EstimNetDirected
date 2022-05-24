@@ -163,11 +163,11 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
 
 
 /*
- * Change statistic for 4-cycle (4-cycle in PNet, Cycle4A or Cycle4B
+ * Change statistic for 4-cycles (4-cycle in PNet, Cycle4A or Cycle4B
  * in MPNet). Note can also be used as for bipartite 4-cycle (C4 in
  * BPNet, X4Cycle in MPNet)
  */
-double changeFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
+double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t v,k,tmp;
   ulong_t delta = 0;
@@ -178,7 +178,7 @@ double changeFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
   }
 
   /* iterate over neighbours of node with smaller degree */
-  if (TRUE){ //XXX if (g->degree[i] < g->degree[j]) {
+  if (TRUE){//XXX (g->degree[i] < g->degree[j]) {
     tmp = i;
     i = j;
     j = tmp;

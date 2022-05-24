@@ -98,6 +98,7 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"BipartiteAltStarsA",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltStarsA},
   {"BipartiteAltStarsB",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltStarsB},
   /* {"BipartiteFourCycle",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteFourCycle},*/ /* TODO commented out a snot sure change statistic correct */
+  {"FourCycles",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH, changeFourCycles},
   {"BipartiteAltKCyclesA", STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltKCyclesA},
   {"BipartiteAltKCyclesB", STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltKCyclesB}
 };
