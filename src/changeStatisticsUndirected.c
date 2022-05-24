@@ -169,9 +169,20 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  uint_t v,k;
+  uint_t v,k,tmp;
   ulong_t delta = 0;
   (void)lambda; /* unused parameters */
+
+  if (i == j) {
+    return 0;
+  }
+
+  /* iterate over neighbours of node with smaller degree */
+  if (g->degree[i] < g->degree[j]) {
+    tmp = i;
+    i = j;
+    j = tmp;
+  }
 
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
