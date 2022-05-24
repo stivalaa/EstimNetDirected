@@ -74,6 +74,7 @@ double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPaths(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeFourCycle(graph_t *g, uint_t i, uint_t j, double lambda);
 
 
 /************************* Actor attribute (binary) **************************/

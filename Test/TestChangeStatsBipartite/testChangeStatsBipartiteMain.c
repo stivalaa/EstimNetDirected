@@ -24,6 +24,7 @@
 #include <time.h>
 #include <assert.h>
 #include "graph.h"
+#include "changeStatisticsUndirected.h"
 #include "changeStatisticsBipartiteUndirected.h"
 #include "loadGraph.h"
 
@@ -230,7 +231,7 @@ int main(int argc, char *argv[])
     }
 
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g\n", i, j - g->num_A_nodes,
-	   changeBipartiteFourCycle(g, i, j, lambda),
+	   changeFourCycle(g, i, j, lambda), //XXX changeBipartiteFourCycle(g, i, j, lambda),
            changeBipartiteAltStarsA(g, i, j, lambda),
            changeBipartiteAltStarsB(g, i, j, lambda),
            changeBipartiteAltKCyclesB(g, i, j, lambda),

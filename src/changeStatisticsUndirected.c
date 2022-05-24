@@ -162,6 +162,39 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
 }
 
 
+/*
+ * Change statistic for 4-cycle (4-cycle in PNet, Cycle4A or Cycle4B
+ * in MPNet). Note can also be used as for bipartite 4-cycle (C4 in
+ * BPNet, X4Cycle in MPNet)
+ */
+double changeFourCycle(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t v,k;
+  ulong_t delta = 0;
+  (void)lambda; /* unused parameters */
+
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    if (v == i || v == j) {
+      continue;
+    }
+    if (g->is_bipartite) {
+      if (bipartite_node_mode(g, j) == MODE_A) {
+	assert(bipartite_node_mode(g, v) == MODE_B);
+	delta += GET_B2PATH_ENTRY(g, i, v);
+      } else {
+	assert(bipartite_node_mode(g, v) == MODE_A);
+	delta += GET_A2PATH_ENTRY(g, i, v);
+      }
+    } else {
+      delta += GET_2PATH_ENTRY(g, i, v);
+    }
+  }
+  
+  return (double)delta;
+}
+
+
 /************************* Actor attribute (binary) **************************/
 
 
