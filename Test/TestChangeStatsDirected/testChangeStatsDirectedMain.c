@@ -223,7 +223,12 @@ int main(int argc, char *argv[])
     }
     if (i == j) {
       continue;
+    } 
+    if (isArc(g, i, j)) {
+      fprintf(stderr, "edge %u -- %u already exists\n", i, j);
+      continue;
     }
+   
     printf("i = %d, j = %d, changeOutKStars = %g, changeInKStars = %g, changeDiTKTriangles = %g, changeA2pTD = %g, changeDiCKTriangles = %g, changeDiUKTriangles = %g, changeDiDKTriangles = %g, changeDiUAltTwoPaths = %g, changeSource = %g, changeSink = %g, changeDiIso = %g, changeTwoMixStar = %g, change030c = %g, change030t = %g, changeIn2star = %g, changeOut2star = %g\n", i, j,
            changeAltOutStars(g, i, j, lambda),
            changeAltInStars(g, i, j, lambda),
