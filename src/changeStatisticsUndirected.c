@@ -66,6 +66,44 @@
 #include <assert.h>
 #include "changeStatisticsUndirected.h"
 
+
+/*****************************************************************************
+ *
+ * utility functions
+ *
+ ****************************************************************************/
+
+/*
+ * number of s-stars (s >=2) for a vertex v
+ */
+ulong_t num_s_stars(const graph_t *g, uint_t v, ulong_t s)
+{
+  ulong_t d, num, i;
+  ulong_t count = 0;
+  assert(s >= 2);
+  d = g->degree[v];
+  if (s == 2) {
+    return d * (d - 1) / 2;
+  } else if (d >= s) {
+    num = d;
+    for (i = 1; i < s; i++) {
+      num *= (d - i);
+    }
+    count += num / factorial(s);
+    return count;
+  }
+  return count;
+}
+
+/*
+ * change statistic for an s-star (s >= 2) for a vertex v
+ */
+ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s)
+{
+  assert(s >= 2);
+  return s == 2 ? g->degree[v] : num_s_stars(g, v, s - 1);
+}
+
 /*****************************************************************************
  *
  * change statistics functions
@@ -177,8 +215,15 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     return 0;
   }
 
+
+  /* FIXME not convinced this change statistic is correct as 
+     if FALSE below (always iterate over j neighbours) passes all tests,
+     but if TRUE (always iterate over i neighbours) or the commented
+     out version (iterate over smaller neighbour list), fails some tests */
+
+
   /* iterate over neighbours of node with smaller degree */
-  if ( TRUE){//XXX (g->degree[i] < g->degree[j]) {
+  if (FALSE){//XXX (g->degree[i] < g->degree[j]) {
     tmp = i;
     i = j;
     j = tmp;

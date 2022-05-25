@@ -95,45 +95,9 @@
 
 #include <math.h>
 #include <assert.h>
+#include "changeStatisticsUndirected.h"
 #include "changeStatisticsBipartiteUndirected.h"
 
-
-/*****************************************************************************
- *
- * local functions
- *
- ****************************************************************************/
-
-/*
- * number of s-stars (s >=2) for a vertex v
- */
-static ulong_t num_s_stars(const graph_t *g, uint_t v, ulong_t s)
-{
-  ulong_t d, num, i;
-  ulong_t count = 0;
-  assert(s >= 2);
-  d = g->degree[v];
-  if (s == 2) {
-    return d * (d - 1) / 2;
-  } else if (d >= s) {
-    num = d;
-    for (i = 1; i < s; i++) {
-      num *= (d - i);
-    }
-    count += num / factorial(s);
-    return count;
-  }
-  return count;
-}
-
-/*
- * change statistic for an s-star (s >= 2) for a vertex v
- */
-static ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s)
-{
-  assert(s >= 2);
-  return s == 2 ? g->degree[v] : num_s_stars(g, v, s - 1);
-}
 
 
 /*****************************************************************************

@@ -68,6 +68,11 @@
 #include "graph.h"
 #include "changeStatisticsTypes.h"
 
+/************************* Utility functions *********************************/
+ulong_t num_s_stars(const graph_t *g, uint_t v, ulong_t s);
+ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s);
+
+  
 /************************* Structural ****************************************/
 
 double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda);
