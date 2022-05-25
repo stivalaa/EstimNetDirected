@@ -178,7 +178,7 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   }
 
   /* iterate over neighbours of node with smaller degree */
-  if (TRUE){//XXX (g->degree[i] < g->degree[j]) {
+  if (FALSE){//XXX (g->degree[i] < g->degree[j]) {
     tmp = i;
     i = j;
     j = tmp;
@@ -205,6 +205,36 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   return (double)delta;
 }
 
+/*
+ * Change statistic for  3-paths (3-path or D3 in PNet).
+ * Note can also be used for bipartite 3-path (L3 in BPNet, X3Path in MPNet)
+ */
+double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t  v;
+  ulong_t delta = g->degree[i] * g->degree[j];
+  (void)lambda; /* unused parameters */
+
+  if (i == j) {
+    return 0;
+  }
+
+  /* TODO make more efficient. This is very inefficient, iterating
+     over all  nodes */
+
+  for (v = 0; v < g->num_nodes; v++) {
+    if (v == i || v == j) {
+      continue;
+    }
+    if (isEdge(g, v, j)) {
+      delta += g->degree[v] - 1;
+    }
+    if (isEdge(g, v, i)) {
+      delta += g->degree[v] - 1;
+    }
+  }
+  return (double)delta;
+}
 
 /************************* Actor attribute (binary) **************************/
 

@@ -184,10 +184,12 @@ int main(int argc, char *argv[])
     if (i == j) {
       continue;
     }
-    printf("i = %d, j = %d, changeKStars = %g, changeKTriangles = %g ,changeAltTwoPaths = %g\n", i, j,
+    printf("i = %d, j = %d, changeKStars = %g, changeKTriangles = %g ,changeAltTwoPaths = %g, changeD3 = %g, change4cycle = %g\n", i, j,
            changeAltStars(g, i, j, lambda),
            changeAltKTriangles(g, i, j, lambda),
-           changeAltTwoPaths(g, i, j, lambda)
+           changeAltTwoPaths(g, i, j, lambda),
+	   changeThreePaths(g, i, j, lambda),
+	   changeFourCycles(g, i, j, lambda)
       );
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
