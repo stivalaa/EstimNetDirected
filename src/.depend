@@ -11,8 +11,9 @@ changeStatisticsDirected.o: changeStatisticsDirected.c \
 changeStatisticsUndirected.o: changeStatisticsUndirected.c \
  changeStatisticsUndirected.h utils.h graph.h changeStatisticsTypes.h
 changeStatisticsBipartiteUndirected.o: \
- changeStatisticsBipartiteUndirected.c utils.h graph.h \
- changeStatisticsTypes.h changeStatisticsUndirected.h
+ changeStatisticsBipartiteUndirected.c changeStatisticsUndirected.h \
+ utils.h graph.h changeStatisticsTypes.h \
+ changeStatisticsBipartiteUndirected.h
 basicSampler.o: basicSampler.c utils.h changeStatisticsGeneral.h graph.h \
  changeStatisticsTypes.h changeStatisticsDirected.h basicSampler.h
 equilibriumExpectation.o: equilibriumExpectation.c utils.h graph.h \
