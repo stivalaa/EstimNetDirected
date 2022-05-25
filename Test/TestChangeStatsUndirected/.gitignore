@@ -17,3 +17,5 @@ testChangeStatsUndirected_array.exe
 testChangeStatsUndirected_array
 netscience_test_results_baseline_no2pathtables.txt
 *.bak
+.RData
+.Rhistory
