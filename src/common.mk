@@ -33,7 +33,7 @@ WARNFLAGS  += -Wextra -Wfloat-equal  \
 
 CDEBUG = -g -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBUG_SNOWBALL -DDEBUG_MEMUSAGE -DDEBUG_SIMULATE -DDEBUG_CERGM
 # Do NOT use -ffast-math as we depend on IEEE handling of NaN
-OPTFLAGS = -O3  #-pg
+OPTFLAGS = -O3 -DNDEBUG_SLOW  #-pg
 CFLAGS     = $(OPTFLAGS) $(WARNFLAGS)
 
 # Use the Random123 library

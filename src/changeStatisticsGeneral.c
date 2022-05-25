@@ -8,7 +8,7 @@
  * directed and undirected graphs. Each
  * function takes a pointer to a digraph struct, and two node numbers
  * i and j and returns the value of the change statistic for adding
- * the edge i -- j or arc i -> j.
+ * the edge i -- j or arc i -> j (which must not already exist in the graph).
  *
  * Also takes lambda (decay) parameter which is only used for
  * some statistics ("alternating" statistics).

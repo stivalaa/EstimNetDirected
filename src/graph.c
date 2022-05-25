@@ -146,7 +146,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->arclist[i][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,i,v)); */
+      slow_assert(isArc(g,i,v));
       update_twopath_entry(&g->outTwoPathHashTab, v, j, incval);
       update_twopath_entry(&g->outTwoPathHashTab, j, v, incval);
     }
@@ -154,7 +154,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->revarclist[j][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,v,j)); */
+      slow_assert(isArc(g,v,j));
       update_twopath_entry(&g->inTwoPathHashTab, v, i, incval);
       update_twopath_entry(&g->inTwoPathHashTab, i, v, incval);
     }
@@ -162,14 +162,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->revarclist[i][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,v,i));*/
+      slow_assert(isArc(g,v,i));
       update_twopath_entry(&g->mixTwoPathHashTab, v, j, incval);
     }
     for (k = 0; k < g->outdegree[j]; k++) {
       v = g->arclist[j][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,j,v));*/
+      slow_assert(isArc(g,j,v));
       update_twopath_entry(&g->mixTwoPathHashTab, i, v, incval);
     }
   } else if (g->is_bipartite) {
@@ -239,7 +239,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->arclist[i][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,i,v)); */
+      slow_assert(isArc(g,i,v));
       g->outTwoPathMatrix[INDEX2D(v, j, g->num_nodes)] += incval;
       g->outTwoPathMatrix[INDEX2D(j, v, g->num_nodes)] += incval;
     }
@@ -247,7 +247,7 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->revarclist[j][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,v,j)); */
+      slow_assert(isArc(g,v,j));
       g->inTwoPathMatrix[INDEX2D(v, i, g->num_nodes)] += incval;
       g->inTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
     }
@@ -255,14 +255,14 @@ static void updateTwoPathsMatrices(graph_t *g, uint_t i, uint_t j, bool isAdd)
       v = g->revarclist[i][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,v,i));*/
+      slow_assert(isArc(g,v,i));
       g->mixTwoPathMatrix[INDEX2D(v, j, g->num_nodes)]+=incval;
     }
     for (k = 0; k < g->outdegree[j]; k++) {
       v = g->arclist[j][k];
       if (v == i || v == j)
         continue;
-      /*removed as slows significantly: assert(isArc(g,j,v));*/
+      slow_assert(isArc(g,j,v));
       g->mixTwoPathMatrix[INDEX2D(i, v, g->num_nodes)] += incval;
     }
   } else if (g->is_bipartite) {
@@ -1190,7 +1190,7 @@ void insertArc(graph_t *g, uint_t i, uint_t j)
   updateTwoPathsMatrices(g, i, j, TRUE);
 #endif /* TWOPATH_LOOKUP */
   GRAPH_DEBUG_PRINT(("insertArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
-  /*removed as slows significantly: assert(isArc(g, i, j));*/
+  slow_assert(isArc(g, i, j));
 
   /* update zone information for snowball conditional estimation */
   if (g->zone[i] > g->zone[j]) {
@@ -1259,7 +1259,7 @@ void removeArc(graph_t *g, uint_t i, uint_t j)
   uint_t k;
   assert(g->is_directed);
   GRAPH_DEBUG_PRINT(("removeArc %u -> %u indegree(%u) = %u outdegre(%u) = %u\n", i, j, j, g->indegree[j], i, g->outdegree[i]));
-  /*removed as slows significantly: assert(isArc(g, i, j));*/
+  slow_assert(isArc(g, i, j));
   assert(i < g->num_nodes);
   assert(j < g->num_nodes);
   assert(g->num_arcs > 0);
@@ -2127,7 +2127,7 @@ void write_graph_arclist_to_file(FILE *fp, const graph_t *g)
       for (j = 0; j < g->outdegree[i]; j++) {
         count++;
         fprintf(fp, "%u %u\n", i+1, g->arclist[i][j]+1); /* output is 1 based */
-        /*removed as slows significantly: assert(isArc(g, i, g->arclist[i][j]));*/
+        slow_assert(isArc(g, i, g->arclist[i][j]));
       }
     }
     assert(count == g->num_arcs);

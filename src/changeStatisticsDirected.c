@@ -312,7 +312,7 @@ double changeAltKTrianglesC(graph_t *g, uint_t i, uint_t j, double lambda)
 
   for (k = 0; k < g->indegree[i]; k++) {
     v = g->revarclist[i][k];
-    /*removed as slows significantly: assert(isArc(g, v, i));*/
+    slow_assert(isArc(g, v, i));
     if (v == i || v == j)
       continue;
     if (isArc(g, j, v)) {

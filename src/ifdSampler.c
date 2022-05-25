@@ -318,7 +318,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
           arcidx = int_urand(g->num_arcs);
           i = g->allarcs[arcidx].i;
           j = g->allarcs[arcidx].j;
-          /*removed as slows significantly: assert(isArc(g, i, j));*/
+          slow_assert(isArc(g, i, j));
           /* no need to condsider forbidReciprocity on delete move */
         } else {
           /* undirected */

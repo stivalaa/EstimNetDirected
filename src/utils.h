@@ -11,6 +11,8 @@
  * Preprocessor defines used:
  *
  *    USE_POW_LOOKUP      - use lookup table for pow()
+ *    DEBUG_CONFIG_<x>    - debugging output enabled for <x> e.g. CONFIG, GRAPH
+ *    NDEBUG_SLOW         - slow_assert() disabled instead of calling assert()
  *
  ****************************************************************************/
 
@@ -23,11 +25,18 @@
 extern "C" {
 #endif
 
+
 /*****************************************************************************
  *
  * Macros for debugging
  *
  ****************************************************************************/
+
+#ifdef NDEBUG_SLOW
+#define slow_assert(x) /* nothing */
+#else
+#define slow_assert(x) assert(x)
+#endif
   
 #ifdef DEBUG_CONFIG
 #define CONFIG_DEBUG_PRINT(x) printf("DEBUG CONFIG: "); printf x
