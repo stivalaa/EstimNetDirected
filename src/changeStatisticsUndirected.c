@@ -233,7 +233,7 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 
 
   /* iterate over neighbours of node with smaller degree */
-  if (FALSE){//XXX (g->degree[i] < g->degree[j]) {
+  if (TRUE){//XXX (g->degree[i] < g->degree[j]) {
     tmp = i;
     i = j;
     j = tmp;
@@ -253,6 +253,7 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 	delta += GET_A2PATH_ENTRY(g, i, v);
       }
     } else {
+      assert(GET_2PATH_ENTRY(g, i, v) == GET_2PATH_ENTRY(g, v, i));
       delta += GET_2PATH_ENTRY(g, i, v);
     }
   }
