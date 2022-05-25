@@ -125,6 +125,16 @@ double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda)
 }
 
 /*
+ * Change statistic for 2-stars
+ */
+double changeTwoStars(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  (void)lambda; /* unused parameters */
+  assert(!g->is_directed);
+  return (double)(change_s_stars(g, i, 2) + change_s_stars(g, j, 2));
+}
+
+/*
  * Change statistic for alternating k-stars (AS)
  */
 double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda)

@@ -76,6 +76,7 @@ ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s);
 /************************* Structural ****************************************/
 
 double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeTwoStars(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltTwoPaths(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda);
