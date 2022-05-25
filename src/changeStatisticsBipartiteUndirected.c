@@ -121,6 +121,7 @@ double changeBipartiteTwoStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   return (double)change_s_stars(g, i, 2);
 }
 
@@ -134,6 +135,7 @@ double changeBipartiteTwoStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   return (double)change_s_stars(g, j, 2);
 }
 
@@ -147,6 +149,7 @@ double changeBipartiteThreeStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   return (double)change_s_stars(g, i, 3);
 }
 
@@ -160,6 +163,7 @@ double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   return (double)change_s_stars(g, j, 3);
 }
 
@@ -174,6 +178,7 @@ double changeBipartiteAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   return lambda * (1 - POW_LOOKUP(1-1/lambda, g->degree[i]));
 }
 
@@ -187,6 +192,7 @@ double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   return lambda * (1 - POW_LOOKUP(1-1/lambda, g->degree[j]));
 }
 
@@ -203,6 +209,7 @@ double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   for (k = 0; k < g->degree[i]; k++) {
     v = g->edgelist[i][k];
     if (v != j) {
@@ -224,6 +231,7 @@ double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
     if (v != i) {

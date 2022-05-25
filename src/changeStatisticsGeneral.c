@@ -170,6 +170,7 @@ double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   double delta = 0;
   (void)lambda; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
   if (g->is_directed) {
     if (g->indegree[i] == 0 && g->outdegree[i] == 0) {
       delta--;
@@ -200,6 +201,7 @@ double changeIsolates(graph_t *g, uint_t i, uint_t j, double lambda)
 double changeTwoPath(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
 
   if (g->is_directed) {
     if (i == j) {
@@ -226,6 +228,7 @@ double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)g;      /* unused parameter*/
   (void)lambda; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
 
   return i == j;
 }
@@ -252,6 +255,7 @@ double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] == g->catattr[a][j];
 }
@@ -262,6 +266,7 @@ double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] != g->catattr[a][j];
 }
@@ -275,6 +280,7 @@ double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else
@@ -292,6 +298,7 @@ double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */    
+  slow_assert(!isArcOrEdge(g, i, j));
   /* For NA values all elements of set are set to NA so just check first */
   if (g->setattr[a][i][0] == SET_ELEM_NA || g->setattr[a][j][0] == SET_ELEM_NA)
     return 0;
@@ -311,6 +318,7 @@ double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool is
 double changeGeoDistance(graph_t *g, uint_t i, uint_t j)
 {
   double dist, lati, longi, latj, longj;
+  slow_assert(!isArcOrEdge(g, i, j));
 
   lati  = g->contattr[g->latitude_index][i];
   longi = g->contattr[g->longitude_index][i];
@@ -334,6 +342,7 @@ double changeGeoDistance(graph_t *g, uint_t i, uint_t j)
 double changeLogGeoDistance(graph_t *g, uint_t i, uint_t j)
 {
   double dist;
+  slow_assert(!isArcOrEdge(g, i, j));
 
   dist = changeGeoDistance(g, i, j);
   if (dist > 0) {
@@ -352,6 +361,7 @@ double changeLogGeoDistance(graph_t *g, uint_t i, uint_t j)
 double changeEuclideanDistance(graph_t *g, uint_t i, uint_t j)
 {
   double dist, xi, xj, yi, yj, zi, zj;
+  slow_assert(!isArcOrEdge(g, i, j));
 
   xi  = g->contattr[g->x_index][i];
   xj  = g->contattr[g->x_index][j];
@@ -385,6 +395,7 @@ double changeEuclideanDistance(graph_t *g, uint_t i, uint_t j)
 double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
                                  uint_t a, uint_t b)
 {
+  slow_assert(!isArcOrEdge(g, i, j));
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
     g->catattr[b][i] != CAT_NA && g->catattr[b][j] != CAT_NA &&
     g->catattr[a][i] == g->catattr[a][j] &&
@@ -410,6 +421,10 @@ double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
  *   g      - digraph object. Modifed if performMove is true.
  *   i      - node source of arc being added (or deleted)
  *   j      - node dest of arc being added (or deleted)
+ *            (Note that the edge or arc i-j must NOT exist in g passed
+ *            to this function - deletion is in the context of removing
+ *            the edge before calling this [it will be added back in
+ *            the sampler if the delete move is rejected])
  *   n      - number of parameters (length of theta vector and total
  *            number of change statistic functions)
  *   n_attr - number of attribute change stats functions

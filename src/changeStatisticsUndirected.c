@@ -121,6 +121,7 @@ double changeEdge(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)g; (void)i; (void)j; (void)lambda; /* unused parameters */
   assert(!g->is_directed);
+  slow_assert(!isEdge(g, i, j));
   return 1;
 }
 
@@ -131,6 +132,7 @@ double changeTwoStars(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameters */
   assert(!g->is_directed);
+  slow_assert(!isEdge(g, i, j));
   return (double)(change_s_stars(g, i, 2) + change_s_stars(g, j, 2));
 }
 
@@ -141,6 +143,7 @@ double changeAltStars(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   assert(lambda > 1);
   assert(!g->is_directed);
+  slow_assert(!isEdge(g, i, j));
   return lambda * (2 -
                    POW_LOOKUP(1-1/lambda, g->degree[i]) -
                    POW_LOOKUP(1-1/lambda, g->degree[j]));
@@ -156,6 +159,7 @@ double changeAltTwoPaths(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
   assert(!g->is_directed);
+  slow_assert(!isEdge(g, i, j));
 
   if (i == j) {
     return 0;
@@ -187,6 +191,7 @@ double changeAltKTriangles(graph_t *g, uint_t i, uint_t j, double lambda)
   double  delta = 0;
   assert(lambda > 1);
   assert(!g->is_directed);
+  slow_assert(!isEdge(g, i, j));
   
   if (i == j) {
     return 0;
@@ -220,6 +225,7 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t v,k,tmp;
   ulong_t delta = 0;
   (void)lambda; /* unused parameters */
+  slow_assert(!isEdge(g, i, j));
 
   if (i == j) {
     return 0;
@@ -263,6 +269,7 @@ double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t  v;
   ulong_t delta = g->degree[i] * g->degree[j];
   (void)lambda; /* unused parameters */
+  slow_assert(!isEdge(g, i, j));
 
   if (i == j) {
     return 0;
@@ -295,6 +302,7 @@ double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /*unused parameters*/
   assert(!g->is_directed);
+  slow_assert(!isEdge(g, i, j));
   return ((g->binattr[a][i] == BIN_NA ? 0 : g->binattr[a][i]) +
           (g->binattr[a][j] == BIN_NA ? 0 : g->binattr[a][j]));
 

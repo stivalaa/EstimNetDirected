@@ -101,6 +101,7 @@ double changeArc(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)g; (void)i; (void)j; (void)lambda; /* unused parameters */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   return 1;
 }
 
@@ -111,6 +112,7 @@ double changeReciprocity(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   (void)lambda; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i == j) {
     return 0;
   } else {
@@ -126,6 +128,7 @@ double changeSink(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   (void)lambda; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (g->outdegree[i] == 0 && g->indegree[i] != 0) {
     delta--;
   }
@@ -143,6 +146,7 @@ double changeSource(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   (void)lambda; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i != j && g->outdegree[i] == 0 && g->indegree[i] == 0) {
     delta++;
   }
@@ -165,6 +169,7 @@ double changeInTwoStars(graph_t *g, uint_t i, uint_t j, double lambda)
   (void)lambda; /* unused parameter */
   (void)i; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   return g->indegree[j];
 }
 
@@ -192,6 +197,7 @@ double changeTransitiveTriad(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t  delta = 0;
   (void)lambda; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i == j) {
     return 0;
   }
@@ -223,6 +229,7 @@ double changeCyclicTriad(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t  delta = 0;
   (void)lambda; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i == j) {
     return 0;
   }
@@ -245,6 +252,7 @@ double changeAltInStars(graph_t *g, uint_t i, uint_t j, double lambda)
   (void)i; /*unused parameter*/
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   return lambda * (1 - POW_LOOKUP(1-1/lambda, jindegree));
 }
 
@@ -257,6 +265,7 @@ double changeAltOutStars(graph_t *g, uint_t i, uint_t j, double lambda)
   (void)j;/*unused parameter*/
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   return lambda * (1 - POW_LOOKUP(1-1/lambda, ioutdegree));
 }
 
@@ -269,6 +278,7 @@ double changeAltKTrianglesT(graph_t *g, uint_t i, uint_t j, double lambda)
   double  delta = 0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   
   if (i == j) {
     return 0;
@@ -305,6 +315,7 @@ double changeAltKTrianglesC(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta =0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   if (i == j) {
     return 0;
@@ -336,6 +347,7 @@ double changeAltKTrianglesD(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   if (i == j) {
     return 0;
@@ -370,6 +382,7 @@ double changeAltKTrianglesU(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   if (i == j) {
     return 0;
@@ -403,6 +416,7 @@ double changeAltTwoPathsT(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   if (i == j) {
     return 0;
@@ -433,6 +447,7 @@ double changeAltTwoPathsD(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   if (i == j) {
     return 0;
@@ -456,6 +471,7 @@ double changeAltTwoPathsU(graph_t *g, uint_t i, uint_t j, double lambda)
   double delta = 0;
   assert(lambda > 1);
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   if (i == j) {
     return 0;
@@ -477,6 +493,7 @@ double changeAltTwoPathsU(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeAltTwoPathsTD(graph_t *g, uint_t i, uint_t j, double lambda)
 {
+  slow_assert(!isArc(g, i, j));
   return 0.5 * (changeAltTwoPathsT(g, i, j, lambda) +
                 changeAltTwoPathsD(g, i, j, lambda));
 }
@@ -493,6 +510,7 @@ double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda)
   uint_t delta = 0;
   uint_t k;
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
 
   /* first case, adding an arc between two nodes that both have self-edges */
   if (i != j && has_loop(g, i) && has_loop(g, j)) {
@@ -524,6 +542,7 @@ double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda)
 double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete) 
 {
   (void)j; (void)isDelete; /*unused parameters*/
+  slow_assert(!isArc(g, i, j));
   assert(g->is_directed);
   return g->binattr[a][i] != BIN_NA && g->binattr[a][i];
 }
@@ -535,6 +554,7 @@ double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)i; (void)isDelete; /*unused parameters*/
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   return g->binattr[a][j] != BIN_NA && g->binattr[a][j];
 }
 
@@ -549,6 +569,7 @@ double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool 
 {
   (void)isDelete; /* unused parameter*/
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i == j) {
     return 0;
   } else {
@@ -565,6 +586,7 @@ double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bo
 {
   (void)isDelete; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i == j) {
     return 0;
   } else {
@@ -587,6 +609,7 @@ double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a
   uint_t  delta = 0;
   (void)isDelete; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   
   if (i == j) {
     return 0;
@@ -742,6 +765,7 @@ double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
 {
   (void)j; (void)isDelete; /*unused parameters*/
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]))
     return 0;
   else
@@ -755,6 +779,7 @@ double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 {
   (void)i; (void)isDelete; /*unused parameters*/
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][j]))
     return 0;
   else
@@ -771,6 +796,7 @@ double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDe
 {
   (void)isDelete; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (i == j)
     return 0;
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
@@ -789,6 +815,7 @@ double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else
@@ -809,6 +836,7 @@ double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
   {
     return 0;
@@ -834,6 +862,7 @@ double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   (void)isDelete; /* unused parameter */
   assert(g->is_directed);
+  slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
   {
     return 0;
