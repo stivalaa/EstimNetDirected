@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 
     if (isEdge(g, i, j)) {
       fprintf(stderr, "edge %u -- %u already exists\n", i, j);
-      //continue;
+      continue;
     }
 
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g\n", i, j - g->num_A_nodes,
