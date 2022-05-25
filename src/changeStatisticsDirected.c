@@ -7,7 +7,7 @@
  * Functions to compute directed graph change statistics. Each
  * function takes a pointer to a digraph struct, and two node numbers
  * i and j and returns the value of the change statistic for adding
- * the arc i -> j.
+ * the arc i -> j (which must not already exist in the graph).
  *
  * Also takes lambda (decay) parameter which is only used for
  * some statistics ("alternating" statistics).

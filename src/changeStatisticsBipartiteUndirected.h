@@ -9,8 +9,9 @@
  * Functions to compute graph change statistics for undirected
  * bipartite (two-mode) graphs. Each function takes a pointer to a
  * graph struct, and two node numbers i and j and returns the value of
- * the change statistic for adding the edge i -- j where i is a node
- * of MODE_A and j is a node of MODE_B.
+ * the change statistic for adding the edge i -- j (which must not
+ * already exist in the graph) where i is a node of MODE_A and j is a
+ * node of MODE_B.
  *
  * Also takes lambda (decay) parameter which is only used for
  * some statistics ("alternating" statistics).
