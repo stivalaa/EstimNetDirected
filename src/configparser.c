@@ -95,12 +95,10 @@ static const struct_param_t STRUCT_PARAMS[] =
   {"BipariteTwoStarsB",    STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoStarsB},
   {"BipariteThreeStarsA",  STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteThreeStarsA},
   {"BipariteThreeStarsB",  STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteThreeStarsB},
-  /*  {"BipariteThreePath",    STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteThreePath},*/ /* TODO commented out as not sure change statistic correct */
   {"BipartiteAltStarsA",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltStarsA},
   {"BipartiteAltStarsB",   STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltStarsB},
-  /* {"BipartiteFourCycle",   STRUCT_PARAM_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteFourCycle},*/ /* TODO commented out a snot sure change statistic correct */
-  {"FourCycles",   STRUCT_PARAM_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH, changeFourCycles},
-  {"ThreePaths",   STRUCT_PARAM_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH, changeThreePaths},
+  {"FourCycles"        ,   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH, changeFourCycles},
+  {"ThreePaths",           STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH, changeThreePaths},
   {"BipartiteAltKCyclesA", STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltKCyclesA},
   {"BipartiteAltKCyclesB", STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltKCyclesB}
 };

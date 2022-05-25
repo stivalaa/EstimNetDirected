@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
       continue;
     } 
     if (isArc(g, i, j)) {
-      fprintf(stderr, "edge %u -- %u already exists\n", i, j);
+      //fprintf(stderr, "arc %u -> %u already exists\n", i, j);
       continue;
     }
    

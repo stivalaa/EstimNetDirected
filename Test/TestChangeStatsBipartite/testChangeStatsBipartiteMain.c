@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 	   changeBipartiteTwoStarsA(g, i, j, lambda),
 	   changeBipartiteThreeStarsB(g, i, j, lambda),
 	   changeBipartiteThreeStarsA(g, i, j, lambda),
-	   changeBipartiteThreePath(g, i, j, lambda));
+	   changeThreePaths(g, i, j, lambda));
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
