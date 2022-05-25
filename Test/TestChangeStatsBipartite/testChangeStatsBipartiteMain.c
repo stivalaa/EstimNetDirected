@@ -230,6 +230,11 @@ int main(int argc, char *argv[])
       j = g->num_A_nodes + rand() % g->num_B_nodes;
     }
 
+    if (isEdge(g, i, j)) {
+      fprintf(stderr, "edge %u -- %u already exists\n", i, j);
+      //continue;
+    }
+
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g\n", i, j - g->num_A_nodes,
 	   changeFourCycles(g, i, j, lambda), //XXX changeBipartiteFourCycle(g, i, j, lambda),
            changeBipartiteAltStarsA(g, i, j, lambda),

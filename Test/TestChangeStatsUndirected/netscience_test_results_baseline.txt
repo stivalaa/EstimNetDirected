@@ -161,7 +161,6 @@ i = 1279, j = 1080, changeKStars = 1.75, changeKTriangles = 0 ,changeAltTwoPaths
 i = 636, j = 1090, changeKStars = 1.5, changeKTriangles = 0 ,changeAltTwoPaths = 2, changeD3 = 2, change4cycle = 0, changeTwoStars = 2
 i = 651, j = 1574, changeKStars = 3.25, changeKTriangles = 0 ,changeAltTwoPaths = 5, changeD3 = 26, change4cycle = 0, changeTwoStars = 5
 i = 583, j = 871, changeKStars = 2.875, changeKTriangles = 0 ,changeAltTwoPaths = 5, changeD3 = 17, change4cycle = 0, changeTwoStars = 5
-i = 1436, j = 1446, changeKStars = 3.99999, changeKTriangles = 2.00013 ,changeAltTwoPaths = 0.000137329, changeD3 = 1015, change4cycle = 324, changeTwoStars = 38
 i = 140, j = 1023, changeKStars = 3.87109, changeKTriangles = 0 ,changeAltTwoPaths = 13, changeD3 = 129, change4cycle = 0, changeTwoStars = 13
 i = 1027, j = 1194, changeKStars = 2, changeKTriangles = 0 ,changeAltTwoPaths = 2, changeD3 = 4, change4cycle = 0, changeTwoStars = 2
 i = 269, j = 749, changeKStars = 1.98438, changeKTriangles = 0 ,changeAltTwoPaths = 7, changeD3 = 56, change4cycle = 0, changeTwoStars = 7
@@ -986,7 +985,6 @@ i = 439, j = 164, changeKStars = 2.75, changeKTriangles = 0 ,changeAltTwoPaths =
 i = 1405, j = 1135, changeKStars = 3.90625, changeKTriangles = 0 ,changeAltTwoPaths = 11, changeD3 = 94, change4cycle = 0, changeTwoStars = 11
 i = 826, j = 1455, changeKStars = 2.99609, changeKTriangles = 0 ,changeAltTwoPaths = 10, changeD3 = 89, change4cycle = 0, changeTwoStars = 10
 i = 1348, j = 165, changeKStars = 2.5, changeKTriangles = 0 ,changeAltTwoPaths = 3, changeD3 = 10, change4cycle = 0, changeTwoStars = 3
-i = 523, j = 746, changeKStars = 3.95312, changeKTriangles = 2.375 ,changeAltTwoPaths = 4.125, changeD3 = 114, change4cycle = 8, changeTwoStars = 13
 i = 439, j = 1182, changeKStars = 2.75, changeKTriangles = 0 ,changeAltTwoPaths = 4, changeD3 = 10, change4cycle = 0, changeTwoStars = 4
 i = 1510, j = 1478, changeKStars = 1.5, changeKTriangles = 0 ,changeAltTwoPaths = 2, changeD3 = 4, change4cycle = 0, changeTwoStars = 2
 i = 1247, j = 181, changeKStars = 3.375, changeKTriangles = 0 ,changeAltTwoPaths = 6, changeD3 = 27, change4cycle = 0, changeTwoStars = 6
@@ -997,7 +995,6 @@ i = 319, j = 613, changeKStars = 1.5, changeKTriangles = 0 ,changeAltTwoPaths = 
 i = 1068, j = 257, changeKStars = 1.99609, changeKTriangles = 0 ,changeAltTwoPaths = 9, changeD3 = 73, change4cycle = 0, changeTwoStars = 9
 i = 466, j = 1066, changeKStars = 3.49609, changeKTriangles = 0 ,changeAltTwoPaths = 11, changeD3 = 94, change4cycle = 0, changeTwoStars = 11
 i = 974, j = 802, changeKStars = 3.4375, changeKTriangles = 0 ,changeAltTwoPaths = 7, changeD3 = 34, change4cycle = 0, changeTwoStars = 7
-i = 68, j = 66, changeKStars = 3, changeKTriangles = 2 ,changeAltTwoPaths = 1, changeD3 = 6, change4cycle = 1, changeTwoStars = 4
 i = 1192, j = 492, changeKStars = 1, changeKTriangles = 0 ,changeAltTwoPaths = 1, changeD3 = 4, change4cycle = 0, changeTwoStars = 1
 i = 649, j = 964, changeKStars = 1.75, changeKTriangles = 0 ,changeAltTwoPaths = 3, changeD3 = 26, change4cycle = 0, changeTwoStars = 3
 testing add edges

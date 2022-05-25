@@ -184,6 +184,10 @@ int main(int argc, char *argv[])
     if (i == j) {
       continue;
     }
+    if (isEdge(g, i, j)) {
+      //fprintf(stderr, "edge %u -- %u already exists\n", i, j);
+      continue;
+    }
     printf("i = %d, j = %d, changeKStars = %g, changeKTriangles = %g ,changeAltTwoPaths = %g, changeD3 = %g, change4cycle = %g, changeTwoStars = %g\n", i, j,
            changeAltStars(g, i, j, lambda),
            changeAltKTriangles(g, i, j, lambda),
