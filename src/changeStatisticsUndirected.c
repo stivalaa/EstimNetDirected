@@ -225,15 +225,8 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     return 0;
   }
 
-
-  /* FIXME not convinced this change statistic is correct as 
-     if FALSE below (always iterate over j neighbours) passes all tests,
-     but if TRUE (always iterate over i neighbours) or the commented
-     out version (iterate over smaller neighbour list), fails some tests */
-
-
   /* iterate over neighbours of node with smaller degree */
-  if (TRUE){//XXX (g->degree[i] < g->degree[j]) {
+  if (g->degree[i] < g->degree[j]) {
     tmp = i;
     i = j;
     j = tmp;
