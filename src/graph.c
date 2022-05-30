@@ -2012,7 +2012,7 @@ void dump_graph_arclist(const graph_t *g)
 void print_data_summary(const graph_t * g, bool allowLoops)
 {
   uint_t i,j;
-  uint_t num_na_values;
+  uint_t num_na_values, num_A_NA_values, num_B_NA_values;
   
   printf("%s %s with %u vertices (%u mode A, %u mode B) and %u %s (density %g) [%s]\n",
          g->is_bipartite ? "Two-mode" : "One-mode",
@@ -2028,45 +2028,101 @@ void print_data_summary(const graph_t * g, bool allowLoops)
   for (i = 0; i < g->num_binattr; i++) {
     printf("  %s", g->binattr_names[i]);
     num_na_values = 0;
+    num_A_NA_values = 0;
+    num_B_NA_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
       if (g->binattr[i][j] == BIN_NA) {
         num_na_values++;
+	if (g->is_bipartite) {
+	  if (bipartite_node_mode(g, j) == MODE_A) {
+	    num_A_NA_values++;
+	  } else {
+	    num_B_NA_values++;
+	  }
+	}
       }
     }
-    printf(" has %u NA values\n", num_na_values);
+    printf(" has %u NA values", num_na_values);
+    if (g->is_bipartite) {
+      printf(" (%u in mode A and %u in mode B)", num_A_NA_values,
+	     num_B_NA_values);
+    }
+    printf("\n");
   }
   printf("%u categorical attributes\n", g->num_catattr);
   for (i = 0; i < g->num_catattr; i++) {
     printf("  %s", g->catattr_names[i]);
     num_na_values = 0;
+    num_A_NA_values = 0;
+    num_B_NA_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
       if (g->catattr[i][j] == CAT_NA) {
         num_na_values++;
+	if (g->is_bipartite) {
+	  if (bipartite_node_mode(g, j) == MODE_A) {
+	    num_A_NA_values++;
+	  } else {
+	    num_B_NA_values++;
+	  }
+	}
       }
     }
-    printf(" has %u NA values\n", num_na_values);
+    printf(" has %u NA values", num_na_values);
+    if (g->is_bipartite) {
+      printf(" (%u in mode A and %u in mode B)", num_A_NA_values,
+	     num_B_NA_values);
+    }
+    printf("\n");
   }
   printf("%u continuous attributes\n", g->num_contattr);
   for (i = 0; i < g->num_contattr; i++) {
     printf("  %s", g->contattr_names[i]);
     num_na_values = 0;
+    num_A_NA_values = 0;
+    num_B_NA_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
       if (isnan(g->contattr[i][j])) {
         num_na_values++;
+	if (g->is_bipartite) {
+	  if (bipartite_node_mode(g, j) == MODE_A) {
+	    num_A_NA_values++;
+	  } else {
+	    num_B_NA_values++;
+	  }
+	}
       }
     }
-    printf(" has %u NA values\n", num_na_values);
+    printf(" has %u NA values", num_na_values);
+    if (g->is_bipartite) {
+      printf(" (%u in mode A and %u in mode B)", num_A_NA_values,
+	     num_B_NA_values);
+    }
+    printf("\n");
   }
   printf("%u set attributes\n", g->num_setattr);
   for (i = 0; i < g->num_setattr; i++) {
     printf("  %s (size %u)", g->setattr_names[i], g->setattr_lengths[i]);
     num_na_values = 0;
+    num_A_NA_values = 0;
+    num_B_NA_values = 0;
     for (j = 0; j < g->num_nodes; j++) {
       if (g->setattr[i][j][0] == SET_ELEM_NA) {
         num_na_values++;
+	if (g->is_bipartite) {
+	  if (bipartite_node_mode(g, j) == MODE_A) {
+	    num_A_NA_values++;
+	  } else {
+	    num_B_NA_values++;
+	  }
+	}
       }
     }
-    printf(" has %u NA values\n", num_na_values);
+    printf(" has %u NA values", num_na_values);
+    if (g->is_bipartite) {
+      printf(" (%u in mode A and %u in mode B)", num_A_NA_values,
+	     num_B_NA_values);
+    }
+    printf("\n");
   }
 }
 
