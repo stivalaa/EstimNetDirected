@@ -1,0 +1,83 @@
+##############################################################################
+#
+# example setting file for SimulateERGM for bipartite network
+#
+#   note parameter and attribute names are not case sensitive (but filenames are)
+#
+
+# takes about 7 minutes (on good PC, Intel Core i5-10400 CPU @ 2.90 GHz)
+
+isBipartite = True
+isDirected  = False
+
+numNodes  = 16000 # Total number of nodes
+numNodesA = 12000 # Number type A nodes for bipartite (rest are type B)
+
+
+################## Simulation settings #######################################
+
+sampleSize = 100 #number of network samples to take from simulation
+
+ 
+interval = 10000000 # interval (iterations) between samples
+ 
+burnin = 100000000 # number of iterations to throw away before first sample
+
+outputSimulatedNetworks = True  # write the simulated networks to file
+
+useTNTsampler = True # use the TNT sampler
+
+
+
+
+################## Input filenames ###########################################
+
+
+# Attribute files
+# binattr_file for binary attributes (0 or 1 only)
+# catattr_file for categorical attributes (any integer)
+# The format of the file is a header line with whitespace
+# delimited attribute names, and each subsequent line
+# the attribute values for each attribute.
+# The first line (after the header) has the values for
+# node 0, then the next line node 1, and so on.
+# 
+# E.g.:
+#
+# gender class
+# 0      1
+# 1      2
+# 1      3
+
+binattrFile = binattr_all.txt
+catattrFile = catattr_all.txt
+contattrFile = conattr_all.txt
+
+################## Output filenames ##########################################
+
+# Filename of file to write statistics to
+
+statsFile = stats_sim_bipartite_A12000_B4000_attrs_sampler_tnt.txt
+
+# Pajek .net file prefix for simulatd networks
+# Output filenames are constructed from the prefix specified here,
+# with _<i>.net added, where <i> is the iteration
+# So e.g. if simNetFilePrefix = sim then the output files are sim_10000.net etc.
+
+simNetFilePrefix = simulation_sim_bipartite_A12000_B4000_attrs_sampler_tnt
+
+################## Parameters to estimate ####################################
+
+#
+# Structural parameters
+#
+
+
+
+structParams =  {Edge                    = -6.00,
+                 BipartiteAltStarsA      = -0.20,
+                 BipartiteAltStarsB      =  0.50,
+                 BipartiteAltKCyclesA    = -3.00, 
+                 BipartiteAltKCyclesB    =  0.02}
+
+
