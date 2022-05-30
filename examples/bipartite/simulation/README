@@ -1,0 +1,31 @@
+Config files and node data to simulate bipartite networks, including
+simulated bipartite networks with node attribute parameters.
+
+For nodal attributes, there are 12000 nodes in mode A, 4000 in mode P (BPNet
+terminology)
+
+Random node attributes generated with:
+
+ ~/EstimNetDirected/scripts/genrandomCategoricalAttributes.sh  binattrA 12000 2 > binattrA.txt 
+ ~/EstimNetDirected/scripts/genrandomCategoricalAttributes.sh  binattrP 4000 2 > binattrP.txt 
+ ~/EstimNetDirected/scripts/genrandomCategoricalAttributes.sh  catattrA 12000 10 > catattrA.txt 
+ ~/EstimNetDirected/scripts/genrandomCategoricalAttributes.sh  catattrP 4000 3 > catattrP.txt 
+ ~/EstimNetDirected/scripts/genrandomCategoricalAttributes.sh  binattrAP 16000 2 > binattrAP.txt 
+ ~/EstimNetDirected/scripts/genrandomCategoricalAttributes.sh  catattrAP 16000 5 > catattrAP.txt 
+ python2 ~/EstimNetDirected/scripts/genrandomContinuousAttributes.py  conattrA 12000 > conattrA.txt 
+ python2 ~/EstimNetDirected/scripts/genrandomContinuousAttributes.py  conattrP 4000 > conattrP.txt 
+ python2 ~/EstimNetDirected/scripts/genrandomContinuousAttributes.py  conattrAP 16000 > conattrAP.txt 
+
+
+and converted to EstimNetDirected format in files:
+
+ binattr_all.txt
+ catattr_all.txt
+ conattr_all.txt
+
+with script:
+
+  convert_bpnet_attrs_to_estimnetdirected_format.R
+
+ADS
+Mon May 30 17:57:35 AEST 2022
