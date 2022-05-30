@@ -5,8 +5,10 @@
 # Generate random categorical attributes, uniformly distributed.
 #
 # Usage:
-#    genrandomCategoricalAttributes N q
+#    genrandomCategoricalAttributes name N q
 #
+#
+#   name is the name of the attribute to output as first line
 #      N is the number of attributes to generate
 #      q is the number of different categories (generated as 0..q-1)
 #
@@ -16,14 +18,15 @@
 #
 # Uses GNU utils seq, shuf etc.
 #
-if [ $# -ne 2 ]; then
-  echo "Usage: $0 N q" >&2
+if [ $# -ne 3 ]; then
+  echo "Usage: $0 name N q" >&2
   exit 1
 fi
-N=$1
-q=$2
+name=$1
+N=$2
+q=$3
 
-echo "categoricalAttribute"
+echo ${name}
 for i in `seq $N`
 do
   echo `expr $i \% $q`
