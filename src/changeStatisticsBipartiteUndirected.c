@@ -255,7 +255,7 @@ double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for Bipartite Activity for type A nodes
- * (RA in BPNet, XEdgeA in MPNet)
+ * (RA in BPNet, XEdgeA (binary) in MPNet)
  */
 double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
@@ -270,7 +270,7 @@ double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 
 /*
  * Change statistic for Bipartite Activity for type B nodes
- * (RP in BPNet, XEdgeB in MPNet)
+ * (RP in BPNet, XEdgeB (binary) in MPNet)
  */
 double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
@@ -285,6 +285,47 @@ double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 
 
 /*
- * Change statistic for Bipartite Interaction for type A nodes
+ * Change statistic for Bipartite Interaction
  * (rAP in BPNet, ??? in MPNet) - not needed, just use changeInteraction()
  */
+
+
+/*********************** Actor attribute (continuous) ************************/
+
+/*
+ * Change statistic for Bipartite Continuous Activity for type A nodes
+ * (RAC in BPNet, XEdgeA (continuous) in MPNet)
+ */
+double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  return g->contattr[a][i];
+}
+
+/*
+ * Change statistic for Bipartite Continuous Activity for type B nodes
+ * (RPC in BPNet, XEdgeB (continuous) in MPNet)
+ */
+double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  return g->contattr[a][j];
+}
+
+
+/*
+ * Change statistic for Bipartite Continuous Sum
+ * (RAPC in BPNet, ??? in MPNet) - not needed, just use changeSum()
+ */
+
+/*********************** Actor attribute (categorical) ************************/

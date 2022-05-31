@@ -275,7 +275,7 @@ double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 /********************* Actor attribute (continuous) *************************/
 
 /*
- * Change statistic for continuous diff (absolute difference of attribute)
+ * Change statistic for continuous diff (absolute difference of attributes)
  */
 double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
@@ -285,6 +285,20 @@ double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
     return 0;
   else
     return fabs(g->contattr[a][i] - g->contattr[a][j]);
+}
+
+
+/*
+ * Change statistic for continuous sum (sum of attributes)
+ */
+double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /* unused parameter */
+  slow_assert(!isArcOrEdge(g, i, j));
+  if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
+    return 0;
+  else
+    return fabs(g->contattr[a][i] + g->contattr[a][j]);
 }
 
 

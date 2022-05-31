@@ -126,6 +126,7 @@ static const attr_param_t ATTR_PARAMS[] =
   {"ContinuousSender",           ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousSender},
   {"ContinuousReceiver",         ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousReceiver},
   {"Diff",                       ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeDiff},
+  {"Sum",                        ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeSum},
   {"DiffReciprocity",            ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffReciprocity},
   {"DiffSign",                   ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffSign},
   {"DiffDirSR",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirSR},
@@ -133,7 +134,9 @@ static const attr_param_t ATTR_PARAMS[] =
   {"JaccardSimilarity",          ATTR_TYPE_SET,         NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeJaccardSimilarity},
   {"Activity",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeActivity},
   {"BipartiteActivityA",         ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityA},
-  {"BipartiteActivityB",         ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityB}
+  {"BipartiteActivityB",         ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityB},
+  {"BipartiteContinuousActivityA",ATTR_TYPE_CONTINUOUS, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteContinuousActivityA},
+  {"BipartiteContinuousActivityB",ATTR_TYPE_CONTINUOUS, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteContinuousActivityB}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
