@@ -119,6 +119,11 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
 
 /*********************** Actor attribute (categorical) ************************/
 
+double changeTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
+
 
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
-

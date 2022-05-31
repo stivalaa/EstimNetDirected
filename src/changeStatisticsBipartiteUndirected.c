@@ -329,3 +329,117 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
  */
 
 /*********************** Actor attribute (categorical) ************************/
+
+/*
+ * Change statistic for Bipartite 2-path matching for type A nodes
+ * (2path_match_A in BPNet, X2StarAMatch in MPNet)
+ */
+double changeTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (g->catattr[a][i] != CAT_NA &&
+	  g->catattr[a][v] != CAT_NA &&
+	  g->catattr[a][i] == g->catattr[a][v]) {
+	delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for Bipartite 2-path mismatching for type B nodes
+ * (2path_mismatch_P in BPNet, X2StarBMismatch in MPNet)
+ */
+double changeTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (g->catattr[a][i] != CAT_NA &&
+	  g->catattr[a][v] != CAT_NA &&
+	  g->catattr[a][j] == g->catattr[a][v]) {
+	delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
+
+/*
+ * Change statistic for Bipartite 2-path mismatching for type A nodes
+ * (2path_mismatch_A in BPNet, X2StarAMismatch in MPNet)
+ */
+double changeTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (g->catattr[a][i] != CAT_NA &&
+	  g->catattr[a][v] != CAT_NA &&
+	  g->catattr[a][i] != g->catattr[a][v]) {
+	delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for Bipartite 2-path matching for type B nodes
+ * (2path_match_P in BPNet, X2StarBMatch in MPNet)
+ */
+double changeTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (g->catattr[a][i] != CAT_NA &&
+	  g->catattr[a][v] != CAT_NA &&
+	  g->catattr[a][j] != g->catattr[a][v]) {
+	delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
