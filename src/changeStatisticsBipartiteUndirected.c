@@ -349,9 +349,9 @@ double changeTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
     assert(v != j);
     if (v != i) {
       if (g->catattr[a][i] != CAT_NA &&
-	  g->catattr[a][v] != CAT_NA &&
-	  g->catattr[a][i] == g->catattr[a][v]) {
-	delta++;
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][i] == g->catattr[a][v]) {
+        delta++;
       }
     }
   }
@@ -378,9 +378,9 @@ double changeTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
     assert(v != i);
     if (v != j) {
       if (g->catattr[a][i] != CAT_NA &&
-	  g->catattr[a][v] != CAT_NA &&
-	  g->catattr[a][j] == g->catattr[a][v]) {
-	delta++;
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][j] == g->catattr[a][v]) {
+        delta++;
       }
     }
   }
@@ -406,9 +406,9 @@ double changeTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool 
     assert(v != j);
     if (v != i) {
       if (g->catattr[a][i] != CAT_NA &&
-	  g->catattr[a][v] != CAT_NA &&
-	  g->catattr[a][i] != g->catattr[a][v]) {
-	delta++;
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][i] != g->catattr[a][v]) {
+        delta++;
       }
     }
   }
@@ -435,9 +435,9 @@ double changeTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool 
     assert(v != i);
     if (v != j) {
       if (g->catattr[a][i] != CAT_NA &&
-	  g->catattr[a][v] != CAT_NA &&
-	  g->catattr[a][j] != g->catattr[a][v]) {
-	delta++;
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][j] != g->catattr[a][v]) {
+        delta++;
       }
     }
   }
