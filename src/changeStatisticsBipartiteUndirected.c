@@ -334,7 +334,7 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
  * Change statistic for Bipartite 2-path matching for type A nodes
  * (2path_match_A in BPNet, X2StarAMatch in MPNet)
  */
-double changeTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t k,v;
   uint_t delta = 0;
@@ -363,7 +363,7 @@ double changeTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
  * Change statistic for Bipartite 2-path mismatching for type B nodes
  * (2path_mismatch_P in BPNet, X2StarBMismatch in MPNet)
  */
-double changeTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t k,v;
   uint_t delta = 0;
@@ -391,7 +391,7 @@ double changeTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
  * Change statistic for Bipartite 2-path mismatching for type A nodes
  * (2path_mismatch_A in BPNet, X2StarAMismatch in MPNet)
  */
-double changeTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t k,v;
   uint_t delta = 0;
@@ -420,7 +420,7 @@ double changeTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool 
  * Change statistic for Bipartite 2-path matching for type B nodes
  * (2path_match_P in BPNet, X2StarBMatch in MPNet)
  */
-double changeTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 {
   uint_t k,v;
   uint_t delta = 0;
