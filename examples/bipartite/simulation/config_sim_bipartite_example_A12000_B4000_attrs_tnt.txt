@@ -81,3 +81,11 @@ structParams =  {Edge                    = -6.00,
                  BipartiteAltKCyclesB    =  0.02}
 
 
+#
+# Attribute parameters
+#
+
+attrParams = {BipartiteActivityA(binattrA  =  0.50),
+              BipartiteActivityB(binattrP  = -0.20),
+              Interaction(binattrAP        =  0.70)}
+

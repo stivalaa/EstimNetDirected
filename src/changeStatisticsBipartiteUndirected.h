@@ -107,5 +107,8 @@ double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
+double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
 

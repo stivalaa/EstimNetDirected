@@ -58,6 +58,8 @@ static const char *TRUE_STR = "true";
 static const char *FALSE_STR = "false";
 
 
+/*** wide tables, edit in 132 column terminal window  ***/
+
 /*
  * Structural parameters allowed as the names in the set for the 
  * structParams parameter. Names are not case sensitive 
@@ -129,7 +131,9 @@ static const attr_param_t ATTR_PARAMS[] =
   {"DiffDirSR",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirSR},
   {"DiffDirRS",                  ATTR_TYPE_CONTINUOUS,  NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirRS},
   {"JaccardSimilarity",          ATTR_TYPE_SET,         NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeJaccardSimilarity},
-  {"Activity",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeActivity}
+  {"Activity",                   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeActivity},
+  {"BipartiteActivityA",         ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityA},
+  {"BipartiteActivityB",         ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityB}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
