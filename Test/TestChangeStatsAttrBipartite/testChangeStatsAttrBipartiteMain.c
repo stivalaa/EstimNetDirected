@@ -280,25 +280,25 @@ int main(int argc, char *argv[])
 
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g  changera = %g, changerp = %g, changerap = %g, changerac = %g, changerpc = %g, changerapc = %g, changematch2pa = %g, changematch2pc = %g, changemismatch2pa = %g, changemismatch2pc = %g\n", i, j - g->num_A_nodes,
 	   changeFourCycles(g, i, j, lambda),
-           changeBipartiteAltStarsA(g, i, j, lambda),
            changeBipartiteAltStarsB(g, i, j, lambda),
-           changeBipartiteAltKCyclesB(g, i, j, lambda),
+           changeBipartiteAltStarsA(g, i, j, lambda),
            changeBipartiteAltKCyclesA(g, i, j, lambda),
-	   changeBipartiteTwoStarsB(g, i, j, lambda),
+           changeBipartiteAltKCyclesB(g, i, j, lambda),
 	   changeBipartiteTwoStarsA(g, i, j, lambda),
-	   changeBipartiteThreeStarsB(g, i, j, lambda),
+	   changeBipartiteTwoStarsB(g, i, j, lambda),
 	   changeBipartiteThreeStarsA(g, i, j, lambda),
+	   changeBipartiteThreeStarsB(g, i, j, lambda),
 	   changeThreePaths(g, i, j, lambda),
-	   changeBipartiteActivityB(g, i, j, binattrP_index, FALSE),
 	   changeBipartiteActivityA(g, i, j, binattrA_index, FALSE),
+	   changeBipartiteActivityB(g, i, j, binattrP_index, FALSE),
 	   changeInteraction(g, i, j, binattrAP_index, FALSE),
-	   changeBipartiteContinuousActivityB(g, i, j, conattrP_index, FALSE),
 	   changeBipartiteContinuousActivityA(g, i, j, conattrA_index, FALSE),
+	   changeBipartiteContinuousActivityB(g, i, j, conattrP_index, FALSE),
 	   changeSum(g, i, j, conattrAP_index, FALSE),
-	   changeBipartiteTwoPathMatchingB(g, i, j, catattrP_index, FALSE),
 	   changeBipartiteTwoPathMatchingA(g, i, j, catattrA_index, FALSE),
-	   changeBipartiteTwoPathMismatchingB(g, i, j, catattrP_index, FALSE),
-	   changeBipartiteTwoPathMismatchingA(g, i, j, catattrA_index, FALSE));
+	   changeBipartiteTwoPathMatchingB(g, i, j, catattrP_index, FALSE),
+	   changeBipartiteTwoPathMismatchingA(g, i, j, catattrA_index, FALSE),
+	   changeBipartiteTwoPathMismatchingB(g, i, j, catattrP_index, FALSE));
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
