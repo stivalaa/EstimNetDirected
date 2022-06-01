@@ -298,7 +298,7 @@ double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
   else
-    return fabs(g->contattr[a][i] + g->contattr[a][j]);
+    return g->contattr[a][i] + g->contattr[a][j];
 }
 
 
