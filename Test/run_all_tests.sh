@@ -11,3 +11,4 @@
 (cd TestChangeStatsUndirected && ./run_test_netscience.sh)
 (cd TestSetFunctions && ./run_test_sets.sh)
 (cd TestChangeStatsBipartite && ./run_all_bipartite_tests.sh)
+(cd TestChangeStatsAttrBipartite && ./run_test_bpnet_A12000_B4000_attr.sh)
