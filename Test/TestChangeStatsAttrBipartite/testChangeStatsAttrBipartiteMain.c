@@ -184,6 +184,9 @@ int main(int argc, char *argv[])
     fprintf(stderr, "ERRROR: load node attributes failed\n");
     exit(1);
   }
+
+  print_data_summary(g, FALSE); //XXX
+
 #ifdef TWOPATH_LOOKUP
   dumpTwoPathTable(g);
   for (i = 0; i < g->num_A_nodes; i++) {
@@ -271,16 +274,16 @@ int main(int argc, char *argv[])
 	   changeBipartiteThreeStarsB(g, i, j, lambda),
 	   changeBipartiteThreeStarsA(g, i, j, lambda),
 	   changeThreePaths(g, i, j, lambda),
-	   changeBipartiteActivityA(g, i, j, binattrA_index, FALSE),
 	   changeBipartiteActivityB(g, i, j, binattrP_index, FALSE),
+	   changeBipartiteActivityA(g, i, j, binattrA_index, FALSE),
 	   changeInteraction(g, i, j, binattrAP_index, FALSE),
-	   changeBipartiteContinuousActivityA(g, i, j, conattrA_index, FALSE),
 	   changeBipartiteContinuousActivityB(g, i, j, conattrP_index, FALSE),
+	   changeBipartiteContinuousActivityA(g, i, j, conattrA_index, FALSE),
 	   changeSum(g, i, j, conattrAP_index, FALSE),
-	   changeBipartiteTwoPathMatchingA(g, i, j, catattrA_index, FALSE),
 	   changeBipartiteTwoPathMatchingB(g, i, j, catattrP_index, FALSE),
-	   changeBipartiteTwoPathMismatchingA(g, i, j, catattrA_index, FALSE),
-	   changeBipartiteTwoPathMismatchingB(g, i, j, catattrP_index, FALSE));
+	   changeBipartiteTwoPathMatchingA(g, i, j, catattrA_index, FALSE),
+	   changeBipartiteTwoPathMismatchingB(g, i, j, catattrP_index, FALSE),
+	   changeBipartiteTwoPathMismatchingA(g, i, j, catattrA_index, FALSE));
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
