@@ -185,6 +185,16 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  /* debug attributes reading */
+  for (i = 0; i < g->num_binattr; i++) {
+    printf("DEBUG: binattr %u %s\n", i, g->binattr_names[i]);
+  }
+  for (i = 0; i < g->num_contattr; i++) {
+    printf("DEBUG: contattr %u %s\n", i, g->contattr_names[i]);
+  }
+  for (i = 0; i < g->num_catattr; i++) {
+    printf("DEBUG: catattr %u %s\n", i, g->catattr_names[i]);
+  }
   print_data_summary(g, FALSE); //XXX
 
 #ifdef TWOPATH_LOOKUP
@@ -214,6 +224,8 @@ int main(int argc, char *argv[])
     }
   }
 
+
+  
   /* just change stats (no changes to graph) */
   printf("testing change stats\n");
   gettimeofday(&start_timeval, NULL);
