@@ -377,7 +377,7 @@ double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a,
     v = g->edgelist[i][k];
     assert(v != i);
     if (v != j) {
-      if (g->catattr[a][i] != CAT_NA &&
+      if (g->catattr[a][j] != CAT_NA &&
           g->catattr[a][v] != CAT_NA &&
           g->catattr[a][j] == g->catattr[a][v]) {
         delta++;
