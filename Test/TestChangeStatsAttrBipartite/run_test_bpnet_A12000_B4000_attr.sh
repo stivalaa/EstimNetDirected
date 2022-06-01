@@ -53,7 +53,7 @@ OUTPUT=bpnet_A12000_B4000_attr_test_results_hash.out
 DIFFILE=bpnet_A12000_B4000_attr_test_results_hash.diff
 
 time ./testChangeStatsAttrBipartite_hash bpnet_A12000_B4000_sparse_sim870000000.net ../../examples/bipartite/simulation/binattr_all.txt  ../../examples/bipartite/simulation/conattr_all.txt  ../../examples/bipartite/simulation/catattr_all.txt bpnet_A12000_B4000_nodepairs.txt | fgrep -v nnz | fgrep -v DEBUG  > ${OUTPUT}
-_hash
+
 diff ${BASELINE} ${OUTPUT} > ${DIFFILE}
 
 if [ $? -eq 0 ]; then
