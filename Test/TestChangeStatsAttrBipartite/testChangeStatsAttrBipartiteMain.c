@@ -162,22 +162,6 @@ int main(int argc, char *argv[])
   
   g = allocate_graph(num_nodes, FALSE/*undirected*/, TRUE/*bipartite*/,
 		     num_A_nodes);
-  if (!(file = fopen(edgelist_filename, "r"))) {
-    fprintf(stderr, "error opening file %s (%s)\n", 
-            edgelist_filename, strerror(errno));
-    return -1;
-  }
-  g = load_graph_from_arclist_file(file, g, FALSE,
-                                     0, 0, 0, 0, NULL, NULL, NULL, NULL,
-                                     NULL, NULL, NULL, NULL, NULL);
-  gettimeofday(&end_timeval, NULL);
-  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
-  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-  fprintf(stderr, "%.2f s\n", (double)etime/1000);
-#ifdef DEBUG_DIGRAPH
-  dump_graph_arclist(g);
-#endif /*DEBUG_DIGRAPH*/
-
 
   if (load_attributes(g, binattr_filename, catattr_filename, conattr_filename,
 		      NULL) != 0) {
@@ -195,6 +179,23 @@ int main(int argc, char *argv[])
   for (i = 0; i < g->num_catattr; i++) {
     printf("DEBUG: catattr %u %s\n", i, g->catattr_names[i]);
   }
+  if (!(file = fopen(edgelist_filename, "r"))) {
+    fprintf(stderr, "error opening file %s (%s)\n", 
+            edgelist_filename, strerror(errno));
+    return -1;
+  }
+  g = load_graph_from_arclist_file(file, g, FALSE,
+                                     0, 0, 0, 0, NULL, NULL, NULL, NULL,
+                                     NULL, NULL, NULL, NULL, NULL);
+  gettimeofday(&end_timeval, NULL);
+  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
+  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
+  fprintf(stderr, "%.2f s\n", (double)etime/1000);
+#ifdef DEBUG_DIGRAPH
+  dump_graph_arclist(g);
+#endif /*DEBUG_DIGRAPH*/
+
+
   print_data_summary(g, FALSE); //XXX
 
 #ifdef TWOPATH_LOOKUP
@@ -274,7 +275,9 @@ int main(int argc, char *argv[])
     uint_t catattrA_index = 0;
     uint_t catattrP_index = 1;
     uint_t catattrAP_index = 2;
-      
+     
+    printf("DEBUG: i = %u, j = %u, contattrAP[i] = %g, contattrAP[j] = %g\n", i, j, g->contattr[conattrAP_index][i], g->contattr[conattrAP_index][j]);
+
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g  changera = %g, changerp = %g, changerap = %g, changerac = %g, changerpc = %g, changerapc = %g, changematch2pa = %g, changematch2pc = %g, changemismatch2pa = %g, changemismatch2pc = %g\n", i, j - g->num_A_nodes,
 	   changeFourCycles(g, i, j, lambda),
            changeBipartiteAltStarsA(g, i, j, lambda),
