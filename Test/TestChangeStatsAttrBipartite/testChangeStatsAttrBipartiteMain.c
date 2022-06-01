@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 #endif /*DEBUG_DIGRAPH*/
 
 
-  print_data_summary(g, FALSE); //XXX
+  /*print_data_summary(g, FALSE); */
 
 #ifdef TWOPATH_LOOKUP
   dumpTwoPathTable(g);
