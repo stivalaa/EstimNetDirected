@@ -325,7 +325,7 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
 
 /*
  * Change statistic for Bipartite Continuous Sum
- * (RAPC in BPNet, ??? in MPNet) - not needed, just use changeSum()
+ * (RAPC in BPNet, XEdgeABSum in MPNet) - not needed, just use changeSum()
  */
 
 /*********************** Actor attribute (categorical) ************************/

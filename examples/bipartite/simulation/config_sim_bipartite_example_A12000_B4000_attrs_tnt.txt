@@ -85,7 +85,10 @@ structParams =  {Edge                    = -6.00,
 # Attribute parameters
 #
 
-attrParams = {BipartiteActivityA(binattrA  =  0.50),
-              BipartiteActivityB(binattrP  = -0.20),
-              Interaction(binattrAP        =  0.70)}
+attrParams = {BipartiteActivityA(binattrA           =  0.50),
+              BipartiteActivityB(binattrP           = -0.20),
+              Interaction(binattrAP                 =  0.10),
+              BipartiteContinuousActivityA(conattrA = -0.80),
+              BipartiteContinuousActivityB(conattrP =  0.30),
+              Sum(conattrAP                         =  0.20)}
 
