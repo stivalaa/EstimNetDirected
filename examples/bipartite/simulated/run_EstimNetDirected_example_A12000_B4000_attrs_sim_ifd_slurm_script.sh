@@ -16,7 +16,7 @@ module load openmpi
 
 #cannot do this here on upgraded system as loding R module causes many things (and specifically anything using MPI) to fail: module load r
 
-time mpirun ${ROOT}/src/EstimNetDirected_mpi config_bipartite_A12000_B4000_sparse_sim_ifd.txt
+time mpirun ${ROOT}/src/EstimNetDirected_mpi config_bipartite_A12000_B4000_attrs_sim_ifd.txt
 
 module load r # have to do this AFTER running MPI progams on 'upgraded' cluster (also not 'r' not 'R')
 
