@@ -113,6 +113,7 @@
 
 /*
  * Change statistic for 2-stars for type A nodes
+ * (Sa2 in BPNet, XStar2A in MPNet)
  */
 double changeBipartiteTwoStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -127,6 +128,7 @@ double changeBipartiteTwoStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for 2-stars for type B nodes
+ * (Sp2 in BPNet, XStar2B in MPNet)
  */
 double changeBipartiteTwoStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -141,6 +143,7 @@ double changeBipartiteTwoStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for 3-stars for type A nodes
+ * (Sa3 in BPNet, XStar3A in MPNet)
  */
 double changeBipartiteThreeStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -155,6 +158,7 @@ double changeBipartiteThreeStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for 3-stars for type B nodes
+ * (Sp3 in BPNet, XStar3B in MPNet)
  */
 double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -170,6 +174,7 @@ double changeBipartiteThreeStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for alternating k-stars for type A nodes
+ * (K-Sa in BPNet, ASA in MPNet)
  */
 double changeBipartiteAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -184,6 +189,7 @@ double changeBipartiteAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for alternating k-stars for type B nodes
+ * (K-Sp in BPNet, ASB in MPNet)
  */
 double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -199,6 +205,7 @@ double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for alternating k-cycles for type A nodes
+ * (K-Ca in BPNet, XACA in MPNet)
  */
 double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -221,6 +228,8 @@ double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for alternating k-cycles for type B nodes
+ * (K-Cp in BPNet, XACB in MPNet)
+ * 
  */
 double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -239,4 +248,198 @@ double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
     }
   }
   return delta;
+}
+
+/************************* Actor attribute (binary) **************************/
+
+
+/*
+ * Change statistic for Bipartite Activity for type A nodes
+ * (RA in BPNet, XEdgeA (binary) in MPNet)
+ */
+double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  return (g->binattr[a][i] == BIN_NA ? 0 : g->binattr[a][i]);
+}
+
+/*
+ * Change statistic for Bipartite Activity for type B nodes
+ * (RP in BPNet, XEdgeB (binary) in MPNet)
+ */
+double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  return (g->binattr[a][j] == BIN_NA ? 0 : g->binattr[a][j]);
+}
+
+
+/*
+ * Change statistic for Bipartite Interaction
+ * (rAP in BPNet, ??? in MPNet) - not needed, just use changeInteraction()
+ */
+
+
+/*********************** Actor attribute (continuous) ************************/
+
+/*
+ * Change statistic for Bipartite Continuous Activity for type A nodes
+ * (RAC in BPNet, XEdgeA (continuous) in MPNet)
+ */
+double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  return g->contattr[a][i];
+}
+
+/*
+ * Change statistic for Bipartite Continuous Activity for type B nodes
+ * (RPC in BPNet, XEdgeB (continuous) in MPNet)
+ */
+double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  return g->contattr[a][j];
+}
+
+
+/*
+ * Change statistic for Bipartite Continuous Sum
+ * (RAPC in BPNet, XEdgeABSum in MPNet) - not needed, just use changeSum()
+ */
+
+/*********************** Actor attribute (categorical) ************************/
+
+/*
+ * Change statistic for Bipartite 2-path matching for type A nodes
+ * (2path_match_A in BPNet, X2StarAMatch in MPNet)
+ */
+double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (g->catattr[a][i] != CAT_NA &&
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][i] == g->catattr[a][v]) {
+        delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for Bipartite 2-path mismatching for type B nodes
+ * (2path_mismatch_P in BPNet, X2StarBMismatch in MPNet)
+ */
+double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (g->catattr[a][j] != CAT_NA &&
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][j] == g->catattr[a][v]) {
+        delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
+
+/*
+ * Change statistic for Bipartite 2-path mismatching for type A nodes
+ * (2path_mismatch_A in BPNet, X2StarAMismatch in MPNet)
+ */
+double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (g->catattr[a][i] != CAT_NA &&
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][i] != g->catattr[a][v]) {
+        delta++;
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for Bipartite 2-path matching for type B nodes
+ * (2path_match_P in BPNet, X2StarBMatch in MPNet)
+ */
+double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (g->catattr[a][j] != CAT_NA &&
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][j] != g->catattr[a][v]) {
+        delta++;
+      }
+    }
+  }
+  return (double)delta;
 }

@@ -107,5 +107,23 @@ double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
-#endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
+/************************* Actor attribute (binary) **************************/
 
+double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
+/*********************** Actor attribute (continuous) ************************/
+
+double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
+/*********************** Actor attribute (categorical) ************************/
+
+double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
+
+
+#endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */

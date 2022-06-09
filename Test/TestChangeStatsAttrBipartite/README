@@ -1,0 +1,36 @@
+Test program for nodal attribute change stats in bipartite network, baseline
+is output test program from original BPNet change statistics functions.
+
+
+Test bpnet_A12000_B4000_sparse_sim870000000.net
+is simulated bipartite network with node attribute parameters.
+12000 nodes in mode A, 4000 in mode P, with BPNet parameters:
+
+* Simulation started for graph with
+ 12000 vertices1
+* 4000 vertices2
+* Parameter Values:
+L	      -6
+Ksa	  -0.200
+Ksp	   0.500
+Kca	  -3.000
+Kcp	   0.020
+* There are 1000000000 proposed graphs.
+* Samples are picked up at 1 per 10000000 graphs.
+* Accepted 655311 proposed graphs.
+
+
+Random node attributes from  ../../examples/bipartite/simulation/
+(see README in that directory).
+
+bpnet_A12000_B4000_nodepairs.txt was generated with:
+
+../TestChangeStatsBipartite/genRandomNodeNumsBipartite.py  10000 16000 12000 > bpnet_A12000_B4000_nodepairs.txt
+
+
+and copied from the BPNetChangeStatistics/TestChangeStatsAttrBipartite/
+directory where it was generated, so we run with the same input
+to do regression tests.
+
+ADS
+Wed Jun  1 10:20:42 AEST 2022

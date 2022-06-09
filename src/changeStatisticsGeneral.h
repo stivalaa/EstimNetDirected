@@ -88,6 +88,8 @@ double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 /********************* Actor attribute (continuous) *************************/
 
 double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+
 
 /********************* Actor attribute (set of categorical) *******************/
 
