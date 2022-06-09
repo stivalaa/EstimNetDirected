@@ -1083,11 +1083,17 @@ attr_type_e get_attr_interaction_param_type(const char
 void dump_parameter_names(void)
 {
   uint_t i;
+  char   default_lambda_str[128];
+
+  snprintf(default_lambda_str, sizeof(default_lambda_str), " [allows lambda, default %.2f]", DEFAULT_LAMBDA);
+
   fprintf(stderr, "Structural parameters (%s):\n", STRUCT_PARAMS_STR);
   for (i = 0; i < NUM_STRUCT_PARAMS; i++) {
-    fprintf(stderr, "  %s (%s, %s)\n", STRUCT_PARAMS[i].name,
+    fprintf(stderr, "  %s (%s, %s)%s\n", STRUCT_PARAMS[i].name,
             network_type_str(STRUCT_PARAMS[i].network_type),
-            network_mode_str(STRUCT_PARAMS[i].network_mode));
+            network_mode_str(STRUCT_PARAMS[i].network_mode),
+            STRUCT_PARAMS[i].struct_param_type == STRUCT_PARAM_TYPE_LAMBDA ?
+              default_lambda_str : "");
   }
   fprintf(stderr, "Attribute parameters (%s):\n", ATTR_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_PARAMS; i++) {
