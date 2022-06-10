@@ -66,7 +66,7 @@ void init_prng(int tasknum)
   assert(sizeof(ctr.v[0]) == sizeof(unsigned long long));
   key.v[0] = time(NULL) + tasknum*123;
 #else
-  srand(time(NULL) + tasknum*123); 
+#error "Must use a good pseudorandom number generator"
 #endif
 }
 
@@ -93,7 +93,7 @@ double urand(void)
   r = (double)randv.v[0]/ULLONG_MAX;
   return r;
 #else
-  return (double)rand()/RAND_MAX; 
+#error "Must use a good pseudorandom number generator"
 #endif
 }
 
@@ -102,16 +102,22 @@ double urand(void)
  */
 uint_t int_urand(uint_t n)
 {
-/* TODO using modulo here introdues bias; this is not really a uniform
-   distirbutin at all. Should fix this by using rejection sampling,
-   but not as important as having a large period on the PRNG
-   (probably) */
 #ifdef USE_RANDOM123
+  /* Make sure it is not biased
+   * See https://petterhol.me/2020/09/01/common-mistakes-in-network-code/
+   * https://www.pcg-random.org/posts/bounded-rands.html
+   */
+  ulonglong_t        threshold = -n % n;
+  threefry2x64_ctr_t randv;
+  ulonglong_t        r;
   ctr.v[0]++;
-  threefry2x64_ctr_t randv = threefry2x64(ctr, key);
-  return randv.v[0] % n;
+  do {
+    randv = threefry2x64(ctr, key);
+    r =  randv.v[0];
+  } while (r < threshold);
+  return r % n;
 #else
-  return rand() % n; 
+#error "Must use a good pseudorandom number generator"
 #endif
 }
 
