@@ -1,5 +1,5 @@
 
-SUBDIRS = TestChangeStatsDirected TestChangeStatsUndirected TestSetFunctions TestChangeStatsBipartite TestChangeStatsAttrBipartite
+SUBDIRS = TestChangeStatsDirected TestChangeStatsUndirected TestSetFunctions TestChangeStatsBipartite TestChangeStatsAttrBipartite TestRandom
 
 all:
 	for dir in $(SUBDIRS); do \

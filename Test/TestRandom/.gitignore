@@ -1,0 +1,5 @@
+.Rhistory
+.RData
+testRandom
+*.o
+random_test_results.out
