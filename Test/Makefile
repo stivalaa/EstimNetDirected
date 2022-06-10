@@ -1,5 +1,5 @@
 
-SUBDIRS = TestChangeStatsDirected TestChangeStatsUndirected TestSetFunctions
+SUBDIRS = TestChangeStatsDirected TestChangeStatsUndirected TestSetFunctions TestRandom
 
 all:
 	for dir in $(SUBDIRS); do \
