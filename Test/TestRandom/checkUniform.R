@@ -16,7 +16,8 @@
 #
 ##############################################################################
 
-x <- scan(file("stdin"))
+con <- file("stdin")
+x <- scan(con)
 testresult <- chisq.test(table(x))
 print(testresult)
 if (testresult$p.value < 0.05) {
@@ -25,5 +26,6 @@ if (testresult$p.value < 0.05) {
 } else {
   print("Consistent with uniform distribution")
 }
+close(con) # stop warning 1: In q : closing unused connection 3 (stdin)
 quit(status = 0)
 
