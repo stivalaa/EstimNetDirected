@@ -13,7 +13,7 @@
 rc=0
 
 OUTPUT=random_test_results.out
-SAMPLE_SIZE=10000000
+SAMPLE_SIZE=1000000
 
 echo "Running tests on set parsing and set similarity functions..."
 echo -n > ${OUTPUT}
