@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
   for (i = 0; i < num; i++) {
     r = int_urand(n);
-    assert(r >= 0 && r < n);
+    assert(r < n); /* unsigned so no need to test r >= 0 */
     printf("%u\n", r);
   }
   exit(0);
