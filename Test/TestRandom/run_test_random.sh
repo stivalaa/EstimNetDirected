@@ -19,14 +19,7 @@ echo "Running tests on set parsing and set similarity functions..."
 echo -n > ${OUTPUT}
 for n in 1000 10000 1000000 10000000
 do
-  time ./testRandom ${n} ${SAMPLE_SIZE} | Rscript checkUniform.R | tee -a ${OUTPUT}
-  if [ $? -ne 0 ]; then
-    echo
-    echo "**** FAILED ****"
-    exit 1
-  fi
+  time ./testRandom ${n} ${SAMPLE_SIZE} | Rscript checkUniform.R ${n} | tee -a ${OUTPUT}
 done
-echo
-echo "PASSSED"
 exit 0
 
