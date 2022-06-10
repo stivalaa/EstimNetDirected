@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 ##############################################################################
 #
 # checkUniform.py - use chi-squared test to check for uniform distribution
