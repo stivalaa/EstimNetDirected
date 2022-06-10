@@ -36,12 +36,10 @@ testresult <- chisq.test(frequencies)
 print(testresult)
 if (testresult$p.value < 0.05) {
   print("Rejected uniform distribution")
-  cat("*** FAILED ***\n")
   quit(status = 1)
 } else {
   print("Consistent with uniform distribution")
 }
 close(con) # stop warning 1: In q : closing unused connection 3 (stdin)
-cat("PASSED\n")
 quit(status = 0)
 
