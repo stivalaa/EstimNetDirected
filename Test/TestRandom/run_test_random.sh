@@ -15,7 +15,7 @@ set -o pipefail
 OUTPUT=random_test_results.out
 SAMPLE_SIZE=1000000
 
-echo "Running tests on set parsing and set similarity functions..."
+echo "Running tests on random integer generation..."
 echo -n > ${OUTPUT}
 for n in 1000 10000 1000000 10000000
 do
