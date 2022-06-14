@@ -948,16 +948,29 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   arc_param_str = g->is_directed ? ARC_PARAM_STR : EDGE_PARAM_STR;
 
    /* Ensure that for the IFD sampler there is no Arc parameter included 
-      as the IFD sampler computes this itself from the auxiliary parameter */
+      as the IFD sampler computes this itself from the auxiliary parameter.
+      If the user includes the Arc (or Edge for undirected) parameter,
+      then remove it: its estimated parameter value, computed from the IFD
+      sampler auxiliary parameter, will be output anyway. */
    if (config->useIFDsampler) {
-     for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
+     bool found = FALSE;
+     for (i = 0; i < config->param_config.num_change_stats_funcs && !found; i++) {
        if (strcasecmp(config->param_config.param_names[i], arc_param_str) == 0) {
-         fprintf(stderr, 
-                 "ERROR: cannot include %s parameter when using IFD sampler.\n"
-                 "Either unset useIFDsampler or remove %s from %s.\n",
-		 arc_param_str, arc_param_str, STRUCT_PARAMS_STR);
-         return -1;
+	 found = TRUE;
        }
+     }
+     if (found) {
+       /* remove Arc/Edge parameter by replacing it with last entry
+	  (which changes nothing if it is the last entry) and
+	  shrinking lists by one */
+       config->param_config.param_names[i] = config->param_config.param_names[config->param_config.num_change_stats_funcs-1];
+       config->param_config.param_lambdas[i] = config->param_config.param_lambdas[config->param_config.num_change_stats_funcs-1];
+       assert(!config->param_config.param_values);
+       config->param_config.param_names = safe_realloc(config->param_config.param_names, (config->param_config.num_change_stats_funcs - 1) * sizeof(const char *));
+       config->param_config.param_lambdas = safe_realloc(config->param_config.param_lambdas, (config->param_config.num_change_stats_funcs - 1) * sizeof(double));
+       config->param_config.num_change_stats_funcs--;
+       CONFIG_DEBUG_PRINT(("%s parameter (index %u) automatically removed as using IFD sampler.\n", arc_param_str, i));
+       
      }
    }
 
