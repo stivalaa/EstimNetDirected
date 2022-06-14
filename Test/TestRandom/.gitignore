@@ -1,5 +1,6 @@
 .Rhistory
 .RData
 testRandom
+testRandom.exe
 *.o
 random_test_results.out
