@@ -16,5 +16,27 @@ Ksp	   0.500
 Kca	  -3.000
 Kcp	   0.020
 
+
+bpnet_A12000_B4000_attrs_sim830000000.net is a bipartite network with
+nodal covariates (see README in ../simulation, where the nodal attributes
+are stored) with 12000 mode A and 4000 mode B vertices simulated with BPNet
+with parameters:
+
+
+L	           -7.000
+Ksa   	           -0.200
+Ksp	           -0.100
+Kca	           -3.000
+Kcp	            0.020
+binattrA_rA	    0.500
+conattrA_rAc	   -0.800
+catattrA_match_2pA  0.100
+binattrP_rP	   -0.200
+conattrP_rPc	    0.300
+catattrP_match_2pP -0.400
+binattrAP_rAP	    0.100
+conattrAP_rAPc	    0.200
+
+
 ADS
 Thu 12 May 2022 12:17:35 AEST

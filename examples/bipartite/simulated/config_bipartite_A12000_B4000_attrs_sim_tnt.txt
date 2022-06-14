@@ -35,7 +35,7 @@ computeStats = True # compute observed sufficient statistics
 # [note this part is optional for EstimeNetDirected] then *edges
 # followed by edges list one per line.
 
-arclistFile = ../simulation/simulation_sim_bipartite_A12000_B4000_bin_cont_cat_attrs_sampler_tnt_670000000.net
+arclistFile = bpnet_A12000_B4000_attrs_sim830000000.net
 
 # Attribute files
 # binattr_file for binary attributes (0 or 1 only)
