@@ -956,13 +956,13 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
      bool found = FALSE;
      for (i = 0; i < config->param_config.num_change_stats_funcs && !found; i++) {
        if (strcasecmp(config->param_config.param_names[i], arc_param_str) == 0) {
-	 found = TRUE;
+         found = TRUE;
        }
      }
      if (found) {
        /* remove Arc/Edge parameter by replacing it with last entry
-	  (which changes nothing if it is the last entry) and
-	  shrinking lists by one */
+          (which changes nothing if it is the last entry) and
+          shrinking lists by one */
        config->param_config.param_names[i] = config->param_config.param_names[config->param_config.num_change_stats_funcs-1];
        config->param_config.param_lambdas[i] = config->param_config.param_lambdas[config->param_config.num_change_stats_funcs-1];
        assert(!config->param_config.param_values);
@@ -1029,7 +1029,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
    if (config->citationERGM) {
      if (!config->isDirected) {
        fprintf(stderr, "ERROR: citation ERGM estimation required directed"
-	       "graph\n");
+               "graph\n");
        return -1;
      }
      if (config->useConditionalEstimation) {
@@ -1066,7 +1066,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
 
    if (config->forbidReciprocity && !config->isDirected) {
      fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
-	     "undirected graph\n");
+             "undirected graph\n");
      return -1;
    }
    
