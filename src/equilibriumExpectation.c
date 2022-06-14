@@ -792,14 +792,45 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     return -1;
   }
 
+  arc_param_str = g->is_directed ? ARC_PARAM_STR : EDGE_PARAM_STR;
+
+  /* Ensure that for the IFD sampler there is no Arc parameter included 
+     as the IFD sampler computes this itself from the auxiliary parameter.
+     If the user includes the Arc (or Edge for undirected) parameter,
+     then remove it: its estimated parameter value, computed from the IFD
+     sampler auxiliary parameter, will be output anyway. */
+  if (config->useIFDsampler) {
+    bool found = FALSE;
+    for (i = 0; i < config->param_config.num_change_stats_funcs &&
+           strcasecmp(config->param_config.param_names[i], arc_param_str) != 0;
+         i++)
+      /*nothing*/;
+    found = i < config->param_config.num_change_stats_funcs;
+    if (found) {
+      /* remove Arc/Edge parameter by replacing it with last entry
+         (which changes nothing if it is the last entry) and
+         shrinking lists by one */
+      config->param_config.change_stats_funcs[i] = config->param_config.change_stats_funcs[config->param_config.num_change_stats_funcs-1];
+      config->param_config.param_names[i] = config->param_config.param_names[config->param_config.num_change_stats_funcs-1];
+      config->param_config.param_lambdas[i] = config->param_config.param_lambdas[config->param_config.num_change_stats_funcs-1];
+      assert(!config->param_config.param_values);
+      config->param_config.change_stats_funcs = (change_stats_func_t **)safe_realloc(config->param_config.change_stats_funcs, (config->param_config.num_change_stats_funcs - 1) * sizeof(change_stats_func_t *));
+      config->param_config.param_names = (const char **)safe_realloc(config->param_config.param_names, (config->param_config.num_change_stats_funcs - 1) * sizeof(const char *));
+      config->param_config.param_lambdas = (double *)safe_realloc(config->param_config.param_lambdas, (config->param_config.num_change_stats_funcs - 1) * sizeof(double));
+      CONFIG_DEBUG_PRINT(("%s parameter (index %u) removed as using IFD sampler.\n", arc_param_str, i));
+      config->param_config.num_change_stats_funcs--;
+    }
+  }
+   
+  
   if (load_attributes(g, config->binattr_filename,
-                      config->catattr_filename,
+                       config->catattr_filename,
                       config->contattr_filename,
                       config->setattr_filename)) {
     fprintf(stderr, "ERROR: loading node attributes failed\n");
     return -1;
   }
-
+  
 
   /* now that we have attributes loaded in g, build the attr_indices
      array in the config struct */
@@ -945,144 +976,116 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
     }
   }
 
-  arc_param_str = g->is_directed ? ARC_PARAM_STR : EDGE_PARAM_STR;
-
-   /* Ensure that for the IFD sampler there is no Arc parameter included 
-      as the IFD sampler computes this itself from the auxiliary parameter.
-      If the user includes the Arc (or Edge for undirected) parameter,
-      then remove it: its estimated parameter value, computed from the IFD
-      sampler auxiliary parameter, will be output anyway. */
-   if (config->useIFDsampler) {
-     bool found = FALSE;
-     for (i = 0; i < config->param_config.num_change_stats_funcs && !found; i++) {
-       if (strcasecmp(config->param_config.param_names[i], arc_param_str) == 0) {
-         found = TRUE;
-       }
-     }
-     if (found) {
-       /* remove Arc/Edge parameter by replacing it with last entry
-          (which changes nothing if it is the last entry) and
-          shrinking lists by one */
-       config->param_config.param_names[i] = config->param_config.param_names[config->param_config.num_change_stats_funcs-1];
-       config->param_config.param_lambdas[i] = config->param_config.param_lambdas[config->param_config.num_change_stats_funcs-1];
-       assert(!config->param_config.param_values);
-       config->param_config.param_names = safe_realloc(config->param_config.param_names, (config->param_config.num_change_stats_funcs - 1) * sizeof(const char *));
-       config->param_config.param_lambdas = safe_realloc(config->param_config.param_lambdas, (config->param_config.num_change_stats_funcs - 1) * sizeof(double));
-       config->param_config.num_change_stats_funcs--;
-       CONFIG_DEBUG_PRINT(("%s parameter (index %u) automatically removed as using IFD sampler.\n", arc_param_str, i));
-       
-     }
-   }
 
    
-   /* Give warnings if parameters set that are not used in selected
-      algorithm variation */
-   if (!config->useIFDsampler &&
+  /* Give warnings if parameters set that are not used in selected
+     algorithm variation */
+  if (!config->useIFDsampler &&
        !DOUBLE_APPROX_EQ(config->ifd_K, DEFAULT_IFD_K)) {
-     fprintf(stderr,
-             "WARNING: ifd_K is set to %g not default value"
-             " but IFD sampler not used\n", config->ifd_K);
-   }
-
-   if (config->useBorisenkoUpdate) {
-     if (!DOUBLE_APPROX_EQ(config->ACA_EE, DEFAULT_ACA_EE)) {
-       fprintf(stderr, "WARNING: ACA_EE is set to %g not default value"
-               " but useBorisenkoUpdate is True so not used\n", config->ACA_EE);
-     }
-     if (!DOUBLE_APPROX_EQ(config->compC, DEFAULT_COMPC)) {
-       fprintf(stderr, "WARNING: compC is set to %g not default value "
-               "but useBorisenkoUpdate is True so not used\n", config->compC);
-     }
-   } else {
-     if (!DOUBLE_APPROX_EQ(config->learningRate, DEFAULT_LEARNING_RATE)) {
-       fprintf(stderr, "WARNING: learningRate is set to %g not default value"
-               " but useBorisenkoUpdate is not True\n", config->learningRate);
-     }
-     if (!DOUBLE_APPROX_EQ(config->minTheta, DEFAULT_MIN_THETA)) {
-       fprintf(stderr, "WARNING: minTheta is set to %g not default value"
-               " but useBorisenkoUpdate is not True\n", config->minTheta);
-     }
-   }
+    fprintf(stderr,
+            "WARNING: ifd_K is set to %g not default value"
+            " but IFD sampler not used\n", config->ifd_K);
+  }
+  
+  if (config->useBorisenkoUpdate) {
+    if (!DOUBLE_APPROX_EQ(config->ACA_EE, DEFAULT_ACA_EE)) {
+      fprintf(stderr, "WARNING: ACA_EE is set to %g not default value"
+              " but useBorisenkoUpdate is True so not used\n", config->ACA_EE);
+    }
+    if (!DOUBLE_APPROX_EQ(config->compC, DEFAULT_COMPC)) {
+      fprintf(stderr, "WARNING: compC is set to %g not default value "
+              "but useBorisenkoUpdate is True so not used\n", config->compC);
+    }
+  } else {
+    if (!DOUBLE_APPROX_EQ(config->learningRate, DEFAULT_LEARNING_RATE)) {
+      fprintf(stderr, "WARNING: learningRate is set to %g not default value"
+              " but useBorisenkoUpdate is not True\n", config->learningRate);
+    }
+    if (!DOUBLE_APPROX_EQ(config->minTheta, DEFAULT_MIN_THETA)) {
+      fprintf(stderr, "WARNING: minTheta is set to %g not default value"
+              " but useBorisenkoUpdate is not True\n", config->minTheta);
+    }
+  }
    
-
-   /* Ensure that if conditional estimation is to be used, the snowball
-      sampling zone structure was specified */
-   if (config->useConditionalEstimation) {
-     if (!config->zone_filename) {
-       fprintf(stderr,
-           "ERROR: conditional estimation requested but no zones specified\n");
+  
+  /* Ensure that if conditional estimation is to be used, the snowball
+     sampling zone structure was specified */
+  if (config->useConditionalEstimation) {
+    if (!config->zone_filename) {
+      fprintf(stderr,
+              "ERROR: conditional estimation requested but no zones specified\n");
        return -1;
-     }
-     if (g->max_zone < 1) {
-       fprintf(stderr,
-               "ERROR: conditional estimation requested but only one zone\n");
-       return -1;
-     }
-   }  else {
-     if (config->zone_filename)
-       fprintf(stderr, "WARNING: snowball sampling zones are specified"
-               " but conditional estimation is not being used\n");
-   }
-
-   /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
-      values were specified, and other requirements for cERGM */
-   if (config->citationERGM) {
-     if (!config->isDirected) {
-       fprintf(stderr, "ERROR: citation ERGM estimation required directed"
-               "graph\n");
-       return -1;
-     }
-     if (config->useConditionalEstimation) {
-       fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
-               " estimation and citation ERGM\n");
-         return -1;
-     }
-     if (!config->term_filename) {
-       fprintf(stderr,
-           "ERROR: citation ERGM estimation requested but no term file\n");
-       return -1;
-     }
-     if (g->max_term < 1) {
-       fprintf(stderr,
-               "ERROR: citation ERGM estimation requested but only one time period\n");
-       return -1;
-     }
-   }
+    }
+    if (g->max_zone < 1) {
+      fprintf(stderr,
+              "ERROR: conditional estimation requested but only one zone\n");
+      return -1;
+    }
+  }  else {
+    if (config->zone_filename)
+      fprintf(stderr, "WARNING: snowball sampling zones are specified"
+              " but conditional estimation is not being used\n");
+  }
+  
+  /* Ensure that if citation ERGM cERGM is to be used, the time period (term)
+     values were specified, and other requirements for cERGM */
+  if (config->citationERGM) {
+    if (!config->isDirected) {
+      fprintf(stderr, "ERROR: citation ERGM estimation required directed"
+              "graph\n");
+      return -1;
+    }
+    if (config->useConditionalEstimation) {
+      fprintf(stderr, "ERROR: cannot use both snowball sample conditional"
+              " estimation and citation ERGM\n");
+      return -1;
+    }
+    if (!config->term_filename) {
+      fprintf(stderr,
+              "ERROR: citation ERGM estimation requested but no term file\n");
+      return -1;
+    }
+    if (g->max_term < 1) {
+      fprintf(stderr,
+              "ERROR: citation ERGM estimation requested but only one time period\n");
+      return -1;
+    }
+  }
    
-   if (config->allowLoops) {
-     if (!config->isDirected) {
-       fprintf(stderr, "ERROR: cannot use allowLoops with undirected graph\n");
-       return -1;
-     }
-     if (config->useConditionalEstimation) {
-       fprintf(stderr, "ERROR: cannot use allowLoops in conditional estimation\n");
-       return -1;
-     }
-     if (config->citationERGM) {
-       fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
-       return -1;
-     }
-   }
+  if (config->allowLoops) {
+    if (!config->isDirected) {
+      fprintf(stderr, "ERROR: cannot use allowLoops with undirected graph\n");
+      return -1;
+    }
+    if (config->useConditionalEstimation) {
+      fprintf(stderr, "ERROR: cannot use allowLoops in conditional estimation\n");
+      return -1;
+    }
+    if (config->citationERGM) {
+      fprintf(stderr, "ERROR: cannot use allowLoops with citation ERGM\n");
+      return -1;
+    }
+  }
 
-   if (config->forbidReciprocity && !config->isDirected) {
-     fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
-             "undirected graph\n");
-     return -1;
-   }
+  if (config->forbidReciprocity && !config->isDirected) {
+    fprintf(stderr, "ERROR: cannot have forbidReciprocity TRUE for "
+            "undirected graph\n");
+    return -1;
+  }
    
-   if (tasknum == 0) {
-     print_data_summary(g, config->allowLoops);
-     loop_count = num_loops(g);
-     printf("%s has %u self-edges (loops)\n", 
+  if (tasknum == 0) {
+    print_data_summary(g, config->allowLoops);
+    loop_count = num_loops(g);
+    printf("%s has %u self-edges (loops)\n", 
            g->is_directed ? "Digraph" : "Graph", loop_count);
-     if (loop_count > 0) {
-       if (!config->allowLoops) {
-         fprintf(stderr, "WARNING: graph has self-edges but allowLoops is not true\n");
-       }
-     }
-     print_zone_summary(g);
-     print_term_summary(g);
-   }
+    if (loop_count > 0) {
+      if (!config->allowLoops) {
+        fprintf(stderr, "WARNING: graph has self-edges but allowLoops is not true\n");
+      }
+    }
+    print_zone_summary(g);
+    print_term_summary(g);
+  }
    
   if (!(dzA_outfile = fopen(dzA_outfilename, "w"))) {
     fprintf(stderr, "ERROR: task %d could not open file %s for writing "
