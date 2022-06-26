@@ -110,8 +110,10 @@ uint_t int_urand(uint_t n)
   ulonglong_t        threshold = -n % n;
   threefry2x64_ctr_t randv;
   ulonglong_t        r;
-  ctr.v[0]++;
   do {
+    ctr.v[0]++;
+    if (ctr.v[0] == 0) /* just in case we actually wrap 64 bit counter */
+      ctr.v[1]++;
     randv = threefry2x64(ctr, key);
     r =  randv.v[0];
   } while (r < threshold);
