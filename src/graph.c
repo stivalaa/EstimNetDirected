@@ -1573,10 +1573,15 @@ void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arc
 {
   assert(g->is_directed);
   assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+  assert(arcidx < g->num_maxtermsender_arcs);
   removeArc(g, i, j);
   /* remove entry from the flat all arcs list */
   assert(g->all_maxtermsender_arcs[arcidx].i == i && g->all_maxtermsender_arcs[arcidx].j == j);
   /* replace deleted entry with last entry */
+  /* (as with all this replacing deleted entry with last entry code,
+     if it is the last entry being deleted, then this does nothing since,
+     in this case, arcidx == g->num_maxtermsedner_arcs - 1
+     before it is decremented in the following line) */
   g->num_maxtermsender_arcs--;
   g->all_maxtermsender_arcs[arcidx].i = g->all_maxtermsender_arcs[g->num_maxtermsender_arcs].i;
   g->all_maxtermsender_arcs[arcidx].j = g->all_maxtermsender_arcs[g->num_maxtermsender_arcs].j;

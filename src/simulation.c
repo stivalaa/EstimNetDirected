@@ -489,7 +489,8 @@ int do_simulation(sim_config_t * config)
   graph_t     *g;
   uint_t         n_struct, n_attr, n_dyadic, n_attr_interaction, num_param;
   double        *theta;
-  uint_t         i, theta_i, j, k, m;
+  uint_t         i, theta_i, j, m;
+  int            k;
   FILE          *dzA_outfile;
 #define HEADER_MAX 65536
   char           fileheader[HEADER_MAX];
@@ -801,7 +802,11 @@ int do_simulation(sim_config_t * config)
        these non-fixed potential arcs (all the other arcs and
        non-arcs, from nodes in previous terms, are fixed). */
     changeStats = (double *)safe_calloc(num_param, sizeof(double));     
-    for (k = 0; k < obs_maxtermsender_arcs; k++) {
+    /* iterate from obs_maxtermsender_arcs down to 0 (not from 0 up)
+       since we are doing removeArc_all_maxtermsender_arcs() in this loop,
+       so list size is decrementing each iteration */
+    for (k = obs_maxtermsender_arcs - 1; k >= 0; k--) {
+      SIMULATE_DEBUG_PRINT(("k = %u, g->num_maxtermsender_arcs = %u\n", k, g->num_maxtermsender_arcs));
       i = g->all_maxtermsender_arcs[k].i;
       j = g->all_maxtermsender_arcs[k].j;
       assert(g->term[i] == g->max_term);
