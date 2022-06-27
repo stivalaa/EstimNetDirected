@@ -19,7 +19,7 @@ module load r
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_tnt_hippie dzA_tnt_hippie | tee estimation_tnt_hippie.txt
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_tnt_hippie dzA_tnt_hippie
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R /home/stivala/bionetworks_estimations/undirected/hippie/model2/hippie_ppi_high_edgelist.txt sim_tnt_hippie
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ../../examples/undirected/hippie_ppi_high_edgelist.txt sim_tnt_hippie
 
 echo -n "ended at: "; date
 
