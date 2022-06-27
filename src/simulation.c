@@ -806,7 +806,7 @@ int do_simulation(sim_config_t * config)
        since we are doing removeArc_all_maxtermsender_arcs() in this loop,
        so list size is decrementing each iteration */
     for (k = obs_maxtermsender_arcs - 1; k >= 0; k--) {
-      SIMULATE_DEBUG_PRINT(("k = %u, g->num_maxtermsender_arcs = %u\n", k, g->num_maxtermsender_arcs));
+      SIMULATE_DEBUG_PRINT(("k = %d, g->num_maxtermsender_arcs = %u\n", k, g->num_maxtermsender_arcs));
       i = g->all_maxtermsender_arcs[k].i;
       j = g->all_maxtermsender_arcs[k].j;
       assert(g->term[i] == g->max_term);
