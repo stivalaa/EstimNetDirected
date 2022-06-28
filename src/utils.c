@@ -159,8 +159,8 @@ void *safe_calloc(size_t nelem, size_t elsize)
 void *safe_realloc(void *ptr, size_t size)
 {
   void *p = realloc(ptr, size);
-  if (!p)  {
-    fprintf(stderr, "realloc failed\n");
+  if (size > 0 && !p)  {
+    fprintf(stderr, "realloc() failed (%s)\n", strerror(errno));
     exit(1);
   }
   return p;

@@ -1297,6 +1297,10 @@ void removeArc(graph_t *g, uint_t i, uint_t j)
   assert(g->revarclist[j][k] == i);
   g->revarclist[j][k] = g->revarclist[j][g->indegree[j]-1];
 #endif
+  g->arclist[i] = (uint_t *)safe_realloc(g->arclist[i],
+                                         (g->outdegree[i]-1) * sizeof(uint_t));
+  g->revarclist[j] = (uint_t *)safe_realloc(g->revarclist[j],
+                                            (g->indegree[j]-1) * sizeof(uint_t));
 
   g->num_arcs--;
   g->outdegree[i]--;
@@ -1348,6 +1352,10 @@ void removeEdge(graph_t *g, uint_t i, uint_t j)
   assert(g->edgelist[j][k] == i);
   g->edgelist[j][k] = g->edgelist[j][g->degree[j]-1];
 
+  g->edgelist[i] = (uint_t *)safe_realloc(g->edgelist[i],
+                                         (g->degree[i]-1) * sizeof(uint_t));
+  g->edgelist[j] = (uint_t *)safe_realloc(g->edgelist[j],
+                                            (g->degree[j]-1) * sizeof(uint_t));
   g->num_edges--;
   g->degree[i]--;
   g->degree[j]--;
@@ -1431,6 +1439,8 @@ void removeArc_allarcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx)
   /* g->num_arcs already decremented by removeArc() */
   g->allarcs[arcidx].i = g->allarcs[g->num_arcs].i;
   g->allarcs[arcidx].j = g->allarcs[g->num_arcs].j;
+  g->allarcs = (nodepair_t *)safe_realloc(g->allarcs,
+                                          g->num_arcs * sizeof(nodepair_t));
 }
 
 /*
@@ -1457,6 +1467,8 @@ void removeEdge_alledges(graph_t *g, uint_t i, uint_t j, uint_t edgeidx)
   /* g->num_edges already decremented by removeEdge() */
   g->alledges[edgeidx].i = g->alledges[g->num_edges].i;
   g->alledges[edgeidx].j = g->alledges[g->num_edges].j;
+  g->alledges = (nodepair_t *)safe_realloc(g->alledges,
+                                          g->num_edges * sizeof(nodepair_t));
 }
 
 
@@ -1544,6 +1556,9 @@ void removeArc_allinnerarcs(graph_t *g, uint_t i, uint_t j, uint_t arcidx)
   g->num_inner_arcs--;
   g->allinnerarcs[arcidx].i = g->allinnerarcs[g->num_inner_arcs].i;
   g->allinnerarcs[arcidx].j = g->allinnerarcs[g->num_inner_arcs].j;
+  g->allinnerarcs = (nodepair_t *)safe_realloc(g->allinnerarcs,
+                                               g->num_inner_arcs *
+                                               sizeof(nodepair_t));
 }
 
 /*
@@ -1574,6 +1589,9 @@ void removeEdge_allinneredges(graph_t *g, uint_t i, uint_t j, uint_t edgeidx)
   g->num_inner_edges--;
   g->allinneredges[edgeidx].i = g->allinneredges[g->num_inner_edges].i;
   g->allinneredges[edgeidx].j = g->allinneredges[g->num_inner_edges].j;
+  g->allinneredges = (nodepair_t *)safe_realloc(g->allinneredges,
+                                               g->num_inner_edges *
+                                               sizeof(nodepair_t));
 }
 
 
@@ -1624,13 +1642,21 @@ void removeArc_all_maxtermsender_arcs(graph_t *g, uint_t i, uint_t j, uint_t arc
 {
   assert(g->is_directed);
   assert(g->term[i] == g->max_term && g->term[j] <= g->max_term);
+  assert(arcidx < g->num_maxtermsender_arcs);
   removeArc(g, i, j);
   /* remove entry from the flat all arcs list */
   assert(g->all_maxtermsender_arcs[arcidx].i == i && g->all_maxtermsender_arcs[arcidx].j == j);
   /* replace deleted entry with last entry */
+  /* (as with all this replacing deleted entry with last entry code,
+     if it is the last entry being deleted, then this does nothing since,
+     in this case, arcidx == g->num_maxtermsedner_arcs - 1
+     before it is decremented in the following line) */
   g->num_maxtermsender_arcs--;
   g->all_maxtermsender_arcs[arcidx].i = g->all_maxtermsender_arcs[g->num_maxtermsender_arcs].i;
   g->all_maxtermsender_arcs[arcidx].j = g->all_maxtermsender_arcs[g->num_maxtermsender_arcs].j;
+  g->all_maxtermsender_arcs = (nodepair_t *)safe_realloc(g->all_maxtermsender_arcs,
+                                               g->num_maxtermsender_arcs *
+                                               sizeof(nodepair_t));
 }
 
 
