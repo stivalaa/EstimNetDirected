@@ -22,7 +22,7 @@ module load r # have to do this AFTER running MPI progams on 'upgraded' cluster 
 
 time Rscript ${ROOT}/scripts/computeEstimNetDirectedCovariance.R theta_ifd_bpnet_A12000_B4000_attrs_sim dzA_ifd_bpnet_A12000_B4000_attrs_sim | tee estimation_ifd_bpnet_A12000_B4000_attrs_sim.txt
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedResults.R theta_ifd_bpnet_A12000_B4000_attrs_sim dzA_ifd_bpnet_A12000_B4000_attrs_sim
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ../simulation/simulation_sim_bipartite_A12000_B4000_bin_cont_cat_attrs_sampler_tnt_670000000.net sim_ifd_bpnet_A12000_B4000_attrs_sim
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ../simulated/bpnet_A12000_B4000_attrs_sim830000000.net   sim_ifd_bpnet_A12000_B4000_attrs_sim
 
 echo -n "ended at: "; date
 
