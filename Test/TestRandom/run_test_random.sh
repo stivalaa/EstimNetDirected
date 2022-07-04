@@ -13,7 +13,7 @@
 set -o pipefail
 
 OUTPUT=random_test_results.out
-SAMPLE_SIZE=1000000
+SAMPLE_SIZE=100000000
 
 echo "Running tests on random integer generation..."
 echo -n > ${OUTPUT}
