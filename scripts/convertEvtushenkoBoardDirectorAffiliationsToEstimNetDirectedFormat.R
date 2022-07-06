@@ -144,6 +144,17 @@ contattr <- data.frame(age = ifelse(V(g)$age == "NA", NA, as.numeric(V(g)$age)),
                      employeesnum = ifelse(V(g)$employeesnum == "NA", NA, as.numeric(V(g)$employeesnum)))
 summary(contattr)
 
+###
+### convert type to logical so Pajek bipartite format output works
+###
+# have to do it this cumbersome way as if do not delete type attr it always
+# remains character not logical
+V(g)$ltype <- (V(g)$type == 'Company') # TRUE for company, FALSE for person
+g <- remove.vertex.attribute(g, 'type')
+V(g)$type <- V(g)$ltype
+summary(g)
+stopifnot(typeof(V(g)$type) == 'logical')
+stopifnot(sum(V(g)$type) == num_Companies)
 
 ###
 ### write graph
