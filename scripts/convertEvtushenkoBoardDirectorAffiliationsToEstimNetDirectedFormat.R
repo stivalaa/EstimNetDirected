@@ -5,7 +5,7 @@
 ## Created: July 2022
 ##
 ## Read the network and attributes data in GML format for the 
-## Evtushenko & Gatner (2019) company director network 
+## Evtushenko & Gastner (2019) company director network 
 ## and convert to Pajek bipartite format for EstimNetDirected. 
 ##
 ## 
