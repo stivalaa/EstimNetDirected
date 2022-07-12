@@ -304,7 +304,11 @@ double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  return g->contattr[a][i];
+  if (isnan(g->contattr[a][i])) {
+    return 0;
+  } else {
+    return g->contattr[a][i];
+  }
 }
 
 /*
@@ -319,7 +323,11 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  return g->contattr[a][j];
+  if (isnan(g->contattr[a][j])) {
+    return 0;
+  } else {
+    return g->contattr[a][j];
+  }
 }
 
 
