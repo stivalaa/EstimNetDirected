@@ -67,8 +67,15 @@ fi
 echo "# observedStatsFilePrefix = ${observedStatsFilePrefix}"
 
 numNodes=`cat ${arclistFile} | grep -i '^*Vertices'| awk '{print $2}'`
-
 echo "numNodes = ${numNodes}"
+
+# for bipartite graphs have *Vertices numNodes numNodesA
+numNodesA=`cat ${arclistFile} | grep -i '^*Vertices'| awk '{print $3}'`
+if [ ! -z ${numNodesA} ]; then
+  echo "numNodesA = ${numNodesA}"
+fi
+
+
 
 cat <<EOF
 useTNTsampler = True # use the tie-no-tie sampler
@@ -85,6 +92,7 @@ grep -i contattrFile ${estimationconfig}
 grep -i setattrFile ${estimationconfig}
 
 # options that need to be same in simulation as estimation
+grep -wi isbipartite ${estimationconfig}
 grep -wi isdirected ${estimationconfig}
 grep -wi forbidreciprocity ${estimationconfig}
 grep -wi allowloops ${estimationconfig}
