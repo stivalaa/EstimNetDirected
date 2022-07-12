@@ -225,12 +225,21 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
 ##    sim_graphs:  simulated graphs list of igraph objects
 ##    do_subplots: if TRUE, do subplots of triad census on separate .eps file 
 ##                 also (default FALSE)
+##    do_geodesic: if TRUE, include geodesic distance distribution plot
+##                 otherwise do not (default TRUE); useful as this can
+##                 be unusuably slow especially on large networks
+##    do_dsp :     if TRUE, include dyadwise shared partner distribution
+##                 otherwise do not (default TRUE); useful as this can use
+##                 huge amounts of memory and be unsuably slow, even on
+##                 bipartite networks (no ESP as always zero) that aren't even
+##                 that big (few hundred thousand nodes)
 ##
 ## Return value:
 ##    list of ggplot2 objects
 ##
 ##
-build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
+build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
+                                do_geodesic=TRUE, do_dsp=TRUE) {
 
   num_sim <- length(sim_graphs)
   plotlist <- list()
@@ -336,7 +345,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ##
   ## Transitivity (global clustering coefficient and avg. local clustering coef.)
   ##
-
+  
   cctypes <- c('average local', 'global') # must be in alphabetical order!
   system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
   system.time(cc_obs <- transitivity(g_obs, type='global'))
@@ -347,20 +356,29 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   system.time(cc_localavg_obs <- transitivity(g_obs, type='localaverage'))
   cat('obs avg local cc: ', cc_localavg_obs, '\n')
   cat('sim avg local cc: ', ccs_localavg, '\n')
-  p <- ggplot() + geom_boxplot(aes(x = factor('global', levels=cctypes), y = ccs))
-  p <- p + geom_point(aes(x = as.numeric(factor('global', levels=cctypes)),
-                          y = cc_obs,
-                          colour = obscolour))
-  p <- p + geom_boxplot(aes(x = factor('average local', levels=cctypes),
-                            y = ccs_localavg))
-  p <- p + geom_point(aes(x = as.numeric(factor('average local', levels=cctypes)),
-                          y = cc_localavg_obs,
-                          colour = obscolour))
-  p <- p + ylab('clustering coefficient') + ptheme +
-    theme(axis.title.x = element_blank())
-  ##p <- p + ylim(0, 1)
-  plotlist <- c(plotlist, list(p))
-
+  if (is.bipartite(g_obs)) {
+    cat('bipartite graph, not plotting clustering coefficients\n')
+    # clustering coefficients must all be zero for bipartite graphs
+    stopifnot(cc_obs == 0)
+    stopifnot(all(ccs == 0))
+    stopifnot(cc_localavg_obs == 0)
+    stopifnot(all(ccs_localavg  == 0))
+    
+  } else {
+    p <- ggplot() + geom_boxplot(aes(x = factor('global', levels=cctypes), y = ccs))
+    p <- p + geom_point(aes(x = as.numeric(factor('global', levels=cctypes)),
+                            y = cc_obs,
+                            colour = obscolour))
+    p <- p + geom_boxplot(aes(x = factor('average local', levels=cctypes),
+                              y = ccs_localavg))
+    p <- p + geom_point(aes(x = as.numeric(factor('average local', levels=cctypes)),
+                            y = cc_localavg_obs,
+                            colour = obscolour))
+    p <- p + ylab('clustering coefficient') + ptheme +
+      theme(axis.title.x = element_blank())
+    ##p <- p + ylim(0, 1)
+    plotlist <- c(plotlist, list(p))
+  }
 
   ##
   ## Triad census
@@ -502,7 +520,9 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ##
   ## geodesics (shortest paths)
   ##
-  if (vcount(g_obs) > MAX_SIZE_GEODESIC) {
+  if (!do_geodesic) {
+    cat("Not doing geodesic distance plot\n")
+  } else if (vcount(g_obs) > MAX_SIZE_GEODESIC) {
     cat("WARNING: graph with ", vcount(g_obs),
         " too large to do geodesic fit, skipping\n")
   } else {
@@ -565,7 +585,10 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ## edgewise shared partners
   ##
 
-  if (vcount(g_obs) > MAX_SIZE_ESP_DSP) {
+  if (is.bipartite(g_obs)) {
+    cat("bipartite graph, not doing edgewise shared partners\n")
+    # since ESP is always zero for bipartite graphs
+  } else if (vcount(g_obs) > MAX_SIZE_ESP_DSP) {
     cat("WARNING: graph with ", vcount(g_obs),
         "nodes too large to do edgewise shared partners, skipping\n")
   } else {
@@ -624,10 +647,15 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE) {
   ## dyadwise shared partners
   ##
 
-  if (vcount(g_obs) > MAX_SIZE_ESP_DSP) {
+  if (!do_dsp) {
+    cat("Not doing dyadwise shared partners distribution\n")
+  } else if (vcount(g_obs) > MAX_SIZE_ESP_DSP) {
     cat("WARNING: graph with ", vcount(g_obs),
         "nodes too large to do dyadwise shared partners, skipping\n")
   } else {
+    library(statnet)   
+    library(intergraph)
+
     system.time(net_obs <- asNetwork(g_obs))
     system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
 

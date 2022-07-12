@@ -42,6 +42,14 @@
 ##       to get the induced subgraphs for the MAREC patent data, versus
 ##       about 1 minute with Pyton and SNAP in extractcERGM2subgraphs.py
 ##
+##  -g : do NOT do geodesic distance distribution plot (useful as this can
+##       be unusuably slow, especially on large networks)
+##
+##  -d : do NOT do dyadwise shared partners plot (useful as even on bipartite
+##       graph where edgewise shared partners not done [always zero], the dsp
+##       can take vast amounts of memory (has to be killed on node with "only"
+##       64 GB) so unusuably slow / too much resoureces.
+##
 ## Output file is simfitPrefix.pdf (where Prefix is the simNetFilePrefix).
 ## WARNING: output file is overwritten
 ##
@@ -115,7 +123,7 @@ source_local('simFitPlots.R')
 args <- commandArgs(trailingOnly=TRUE)
 
 usage <- function() {
-  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] netfilename simNetFilePrefix\n")
+  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] [-c] [-g] [-d] netfilename simNetFilePrefix\n")
   quit(save="no")
 }
 is_opt <- function(s) substr(s, 1, 1) == '-' # options start with '-'
@@ -125,12 +133,18 @@ opts <- Filter(is_opt, args)
 args <- Filter(Negate(is_opt), args)
 
 do_subplots <- FALSE
+do_geodesic <- TRUE
+do_dsp <- TRUE
 cergm_mode  <- FALSE
 for (opt in opts) {
   if (opt == "-s") {
     do_subplots <- TRUE
    } else if (opt == "-c") {
      cergm_mode <- TRUE
+   } else if (opt == "-g") {
+     do_geodesic <- FALSE
+   } else if (opt == "-d") {
+     do_dsp <- FALSE
    } else {
     usage()
    }
@@ -160,6 +174,10 @@ system.time(sim_graphs <- sapply(sim_files,
                                  FUN = function(f) read_graph_file(f),
                                  simplify = FALSE))
 
+if (is.bipartite(g_obs)) {
+  cat("bipartite graph\n")
+  stopifnot(all(sapply(sim_graphs, FUN = function(g) is.bipartite(g))))
+}
 
 if (cergm_mode) {
   cat("cERGM mode\n")
@@ -177,7 +195,8 @@ num_sim <- length(sim_graphs)
 
 
 ## build the list of plots
-plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots)
+plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots, do_geodesic,
+                                do_dsp)
 
 if (cergm_mode) {
   ## add plot for number of nodes in each induced subgraph, with
