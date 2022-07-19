@@ -193,24 +193,41 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode, btype=NULL) {
 ##    mode:       'in' or 'out' for indegree or outdegree respectively
 ##                 or all for undirected
 ##    use_log:    TRUE to do log degree
+##    btype:      igraph bipartite node type FALSE or TRUE, or NULL
+##                if not bipartite. (Default NULL)
 ##
 ## Return value:
 ##    ggplot2 object to add to plot list
 ##
-deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
+deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 #    print('in deg_hist_plot...')#XXX seems to be only way to debug in R...
     start <- Sys.time()
     if (use_log) {
+      if (is.bipartite(g_obs)) {
+        dobs <- data.frame(degree = log(degree(g_obs, V(g_obs)[which(V(g_obs)$type == btype)], mode=mode)),
+                           group = 'obs')
+      } else {
         dobs <- data.frame(degree = log(degree(g_obs, mode=mode)),
                            group = 'obs')
+      }        
     } else {
+      if (is.bipartite(g_obs)) {
+        dobs <- data.frame(degree = degree(g_obs, V(g_obs)[which(V(g_obs)$type == btype)], mode=mode),
+                           group = 'obs')
+      } else {
         dobs <- data.frame(degree = degree(g_obs, mode=mode),
                            group = 'obs')
+      }          
     }
 #    print(names(dobs))#XXX
 #    print('about to get simdegrees...')#XXX seems to be only way to debug in R...
-    ## get degrees of all simulated graphs in one histogram
-    simdegrees <- as.vector(unlist(sapply(sim_graphs, function(g) degree(g, mode=mode)))) ## as.vector() and unlist() BOTH seems to be required, otherwise rbind() below crashes with error about wrong number of columns
+  ## get degrees of all simulated graphs in one histogram
+  if (is.bipartite(g_obs)) {
+    ## as.vector() and unlist() BOTH seems to be required, otherwise rbind() below crashes with error about wrong number of columns
+    simdegrees <- as.vector(unlist(sapply(sim_graphs, function(g) degree(g, V(g)[which(V(g)$type == btype)], mode=mode))))
+    } else {
+      simdegrees <- as.vector(unlist(sapply(sim_graphs, function(g) degree(g, mode=mode))))
+    }
     if (use_log) {
         dsim <- data.frame(degree = log(simdegrees), group = 'sim')
     } else {
@@ -227,7 +244,11 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log) {
     p <- ggplot(dat, aes(degree, fill = group, colour = group)) +
         geom_histogram(aes(y = ..density..),
                        alpha = 0.4, position = 'identity', lwd = 0.2)
-    degreetype <- 'degree'
+    if (is.bipartite(g_obs)) {
+      degreetype <- ifelse(btype, 'mode B degree', 'mode A degree')
+    } else {
+      degreetype <- 'degree'
+    }
     if (mode == 'in' || mode =='out') {
       degreetype <- paste(mode, 'degree', sep='-')
     }
@@ -320,14 +341,25 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                                 list(deg_distr_plot(g_obs, sim_graphs, 'all'))))
     }
 
-    system.time(plotlist <- c(plotlist,
-                              list(deg_hist_plot(g_obs, sim_graphs, 'all', FALSE))))
+    if (is.bipartite(g_obs)) {
+      system.time(plotlist <- c(plotlist,
+                                list(deg_hist_plot(g_obs, sim_graphs, 'all', FALSE, FALSE))))
 
-    system.time(plotlist <- c(plotlist,
-                              list(deg_hist_plot(g_obs, sim_graphs, 'all', TRUE))))
+      system.time(plotlist <- c(plotlist,
+                                list(deg_hist_plot(g_obs, sim_graphs, 'all', TRUE, FALSE))))
+      system.time(plotlist <- c(plotlist,
+                                list(deg_hist_plot(g_obs, sim_graphs, 'all', FALSE, TRUE))))
+
+      system.time(plotlist <- c(plotlist,
+                                list(deg_hist_plot(g_obs, sim_graphs, 'all', TRUE, TRUE))))
+    } else {
+      system.time(plotlist <- c(plotlist,
+                                list(deg_hist_plot(g_obs, sim_graphs, 'all', FALSE))))
+
+      system.time(plotlist <- c(plotlist,
+                                list(deg_hist_plot(g_obs, sim_graphs, 'all', TRUE))))
+    }
   }
-
-
 
   ##
   ## Reciprocity
