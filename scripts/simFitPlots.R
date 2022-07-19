@@ -83,16 +83,25 @@ giant.component <- function(graph) {
 ##    sim_graphs:  simulated graphs list of igraph objects
 ##    mode:       'in' or 'out' for indegree or outdegree respectively
 ##                or 'all' for undirected graph
+##    btype:      igraph bipartite node type FALSE or TRUE, or NULL
+##                if not bipartite. (Default NULL)
 ##
 ## Return value:
 ##    ggplot2 object to add to plot list
 ##
 ##
-deg_distr_plot <- function(g_obs, sim_graphs, mode) {
+deg_distr_plot <- function(g_obs, sim_graphs, mode, btype=NULL) {
     num_sim <- length(sim_graphs)
     start = Sys.time()
-    maxdeg <- max(unlist(sapply(sim_graphs, function(g) degree(g, mode=mode))),
-                  degree(g_obs, mode=mode))
+    if (is.bipartite(g_obs)) {
+      maxdeg <- max(unlist(sapply(sim_graphs,
+           function(g) degree(g, V(g)[which(V(g)$type == btype)], mode=mode))),
+           degree(g_obs, V(g_obs)[which(V(g_obs)$type == btype)], mode=mode))
+    } else {
+      maxdeg <- max(unlist(sapply(sim_graphs,
+                                  function(g) degree(g, mode=mode))),
+                    degree(g_obs, mode=mode))
+    }
     cat("Max ", mode, " degree is ", maxdeg, "\n")
     deg_df <- data.frame(sim = rep(1:num_sim, each=(maxdeg+1)),
                            degree = rep(0:maxdeg, num_sim),
@@ -101,10 +110,16 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     cat(mode, "-degree init took ", as.numeric(difftime(end, start, unit="secs")),"s\n")
     start = Sys.time()
     for (i in 1:num_sim) {
-        ## https://stackoverflow.com/questions/1617061/include-levels-of-zero-count-in-result-of-table
+      ## https://stackoverflow.com/questions/1617061/include-levels-of-zero-count-in-result-of-table
+      if (is.bipartite(g_obs)) {
+        deg_table <- table(factor(degree(sim_graphs[[i]],
+    V(sim_graphs[[i]])[which(V(sim_graphs[[i]])$type == btype)], mode = mode),
+                                  levels=0:maxdeg))
+      } else {
         deg_table <- table(factor(degree(sim_graphs[[i]], mode = mode),
                                   levels=0:maxdeg))
-        deg_df[which(deg_df[,"sim"] == i), "count"] <- deg_table
+      }
+      deg_df[which(deg_df[,"sim"] == i), "count"] <- deg_table
     }
     deg_df$degree <- as.factor(deg_df$degree)
     deg_df$count[which(is.na(deg_df$count))] <- 0
@@ -115,7 +130,13 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     start = Sys.time()
     obs_deg_df <- data.frame(degree = rep(0:maxdeg),
                                count = NA)
-    obs_deg_table <- table(factor(degree(g_obs, mode=mode), levels=0:maxdeg))
+    if (is.bipartite(g_obs)) {
+      obs_deg_table <- table(factor(degree(g_obs,
+                          V(g_obs)[which(V(g_obs)$type == btype)], mode=mode),
+         levels=0:maxdeg))
+    } else {
+      obs_deg_table <- table(factor(degree(g_obs, mode=mode), levels=0:maxdeg))
+    }
     obs_deg_df$count <- as.numeric(obs_deg_table)
     ## without as.numeric() above get error "Error: geom_line requires
     ## the following missing aesthetics: y" when the plot is finally
@@ -140,7 +161,11 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode) {
     ## need to adjust the group aesthetic?" and it does not work.
     ## https://stackoverflow.com/questions/27082601/ggplot2-line-chart-gives-geom-path-each-group-consist-of-only-one-observation
     p <- p + ptheme
-    degreetype <- 'degree'
+    if (is.bipartite(g_obs)) {
+      degreetype <- ifelse(btype, 'mode B degree', 'mode A degree')
+    } else {
+      degreetype <- 'degree'
+    }
     if (mode == 'in' || mode =='out') {
       degreetype <- paste(mode, 'degree', sep='-')
     }
@@ -283,8 +308,17 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     ## Degree
     ##
 
-    system.time(plotlist <- c(plotlist,
-                              list(deg_distr_plot(g_obs, sim_graphs, 'all'))))
+    if (is.bipartite(g_obs)) {
+      system.time(plotlist <- c(plotlist,
+                                list(deg_distr_plot(g_obs, sim_graphs,
+                                                    'all', FALSE))))
+      system.time(plotlist <- c(plotlist,
+                                list(deg_distr_plot(g_obs, sim_graphs,
+                                                    'all', TRUE))))      
+    } else {
+      system.time(plotlist <- c(plotlist,
+                                list(deg_distr_plot(g_obs, sim_graphs, 'all'))))
+    }
 
     system.time(plotlist <- c(plotlist,
                               list(deg_hist_plot(g_obs, sim_graphs, 'all', FALSE))))
