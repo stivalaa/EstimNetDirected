@@ -9,17 +9,20 @@
 ## and convert to Pajek bipartite format for EstimNetDirected. 
 ##
 ## 
-## Usage: Rscript convertEvtushenkoBoardDirectorAffiliationsToEstimNetDirectedFormat.R  board_director.gml.gz
+## Usage: Rscript convertEvtushenkoBoardDirectorAffiliationsToEstimNetDirectedFormat.R [-g] board_director.gml.gz
 ## where board_director.gml.gz is the file downloaded from 
 ## https://zenodo.org/record/3553442
 ## (publication date November 26, 2019; downloaded 28 June 2020)
-#
+## If -g is specified then gets giant omponent of network.
+##
 ## Output files in cwd (WARNING overwritten):
 ##     evtushenko_directors_bipartite.net
 ##     evtushenko_directors_binattr.txt
 ##     evtushenko_directors_catattr.txt
 ##     evtushenko_directors_contattr.txt
 ##
+## If -g (giant component) is specified, then filenames hae _gc appended before
+## .txt suffix.
 ##
 ## Citation for publication of data:
 ##
@@ -59,16 +62,42 @@
 
 library(igraph)
 
+##
+## giant_component() - return largest connected component of the graph
+## 
+## Paramters:
+##    graph - igraph to get giant componetn of
+##
+## Return value:
+##    largest connected component of graph
+##
+giant.component <- function(graph) {
+  cl <- clusters(graph)
+  return(induced.subgraph(graph, which(cl$membership == which.max(cl$csize))))
+}
+
+###########################################################################
+##
+## main
+##
+###########################################################################
+
+get_giantcomponent <- FALSE
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) != 1) {
-  cat("Usage: convertEvtushenkoBoardDirectorAffiliationsToEstimNetDirectedFormat.R board_director.gml.gz\n")
+if (length(args) < 1 || length(args) > 2 ||
+    (length(args) == 2 && args[1] != "-g")) {
+  cat("Usage: convertEvtushenkoBoardDirectorAffiliationsToEstimNetDirectedFormat.R [-g] board_director.gml.gz\n")
   quit(save="no")
+} else if (length(args) == 2) {
+  get_giantcomponent <- TRUE
+  infile <- args[2]
+} else {
+  infile <- args[1]
 }
 
 ##
 ## network
 ##
-infile <- args[1]
 
 cat("reading ", infile, "...\n")
 system.time(g <- read.graph(gzfile(infile), format='gml'))
@@ -96,6 +125,23 @@ cat('num_Persons = ', num_Persons, '\n')
 cat('num_Companies = ', num_Companies, '\n')
 stopifnot(num_Persons + num_Companies == vcount(g))
 stopifnot(all(V(g)$type[1:num_Persons] == 'Person'))
+
+##
+## get giant component if specified
+##
+if (get_giantcomponent) {
+  cat('getting giant component\n')
+  g <- giant.component(g)
+  summary(g)
+
+  stopifnot(all(V(g)$type %in% c('Person', 'Company')))
+  num_Persons <- length(which(V(g)$type == 'Person'))
+  num_Companies <- length(which(V(g)$type == 'Company'))
+  cat('num_Persons = ', num_Persons, '\n')
+  cat('num_Companies = ', num_Companies, '\n')
+  stopifnot(num_Persons + num_Companies == vcount(g))
+  stopifnot(all(V(g)$type[1:num_Persons] == 'Person'))
+}
 
 ##
 ## get binary attributes
@@ -162,6 +208,9 @@ stopifnot(sum(V(g)$type) == num_Companies)
 
 
 outfilename <- 'evtushenko_directors_bipartite.net'
+if (get_giantcomponent) {
+  outfilename <- 'evtushenko_directors_bipartite_gc.net'
+}
 write.graph(g, outfilename, format="pajek")
 
 
@@ -169,21 +218,30 @@ write.graph(g, outfilename, format="pajek")
 ## write binary attributes
 ##
 
-write.table(binattr, file = "evtushenko_directors_binattr.txt",
+write.table(binattr,
+            file = ifelse(get_giantcomponent,
+                          "evtushenko_directors_binattr_gc.txt", 
+                          "evtushenko_directors_binattr.txt"),
             row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 ##
 ## write categorical attributes
 ##
 
-write.table(catattr, file = "evtushenko_directors_catattr.txt",
+write.table(catattr,
+            file = ifelse(get_giantcomponent,
+                          "evtushenko_directors_catattr_gc.txt", 
+                          "evtushenko_directors_catattr.txt"),
             row.names = FALSE, col.names = TRUE, quote=FALSE)
 
 ##
 ## write continuous attributes
 ##
 
-write.table(contattr, file = "evtushenko_directors_contattr.txt",
+write.table(contattr,
+            file = ifelse(get_giantcomponent,
+                          "evtushenko_directors_contattr_gc.txt", 
+                          "evtushenko_directors_contattr.txt"),
             row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 ## end
