@@ -311,10 +311,10 @@ double changeIsolateEdges(graph_t *g, uint_t i, uint_t j, double lambda)
   if (g->degree[i] == 0 && g->degree[j] == 0) {
     return 1;
   }
- 
+
   /* if i has degree 1 and its (therefore only) neighbour v also has degree 1 
    * then adding an edge to i changes the isolated edge i--v to a
-   * non-isolated edge. (Similarly for j). 
+   * non-isolated edge. (Similarly for j).
    */
   if (g->degree[i] == 1) {
     v = g->edgelist[i][0];
