@@ -299,7 +299,7 @@ double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
 double changeIsolateEdges(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t  v;
-  uint_t  delta = 0;
+  long    delta = 0; /* signed as can be negative */
   (void)lambda; /* unused parameters */
   slow_assert(!isEdge(g, i, j));
 
