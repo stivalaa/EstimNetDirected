@@ -292,6 +292,41 @@ double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
   return (double)delta;
 }
 
+/*
+ * Change statistic for isolated edges.
+ * An isolated edge is an edge connecting two nodes each of which has degree 1.
+ */
+double changeIsolateEdges(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t  v;
+  uint_t  delta = 0;
+  (void)lambda; /* unused parameters */
+  slow_assert(!isEdge(g, i, j));
+
+  if (i == j) {
+    return 0;
+  }
+
+  if (g->degree[i] == 0 && g->degree[j] == 0) {
+    return 1;
+  }
+  
+  if (g->degree[i] == 1) {
+    v = g->edgelist[i][0];
+    if (v != i && v != j && g->degree[v] == 1) {
+      delta--;
+    }
+  }
+  if (g->degree[j] == 1) {
+    v = g->edgelist[j][0];
+    if (v != i && v != j && g->degree[v] == 1) {
+      delta--;
+    }
+    
+  }
+  return (double)delta;
+}
+
 /************************* Actor attribute (binary) **************************/
 
 
