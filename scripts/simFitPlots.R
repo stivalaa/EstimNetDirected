@@ -403,6 +403,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                           colour = obscolour))
   p <- p + ylab('fraction of nodes')
   p <- p + ptheme +   theme(axis.title.x = element_blank())
+  p <- p + theme(axis.text = element_text(colour = "black", size = rel(1.0))) # stop 'giant component' being light gray and smaller than other axis labels
   ##p <- p + ylim(0, 1)
   plotlist <- c(plotlist, list(p))
 
@@ -832,6 +833,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                             colour = obscolour))
     p <- p + ylab('count') + ptheme +
       theme(axis.title.x = element_blank())
+  p <- p + theme(axis.text = element_text(colour = "black", size = rel(1.0))) # stop 'four-cycles' being light gray and smaller than other axis labels
     plotlist <- c(plotlist, list(p))
 
   }
