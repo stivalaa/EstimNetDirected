@@ -781,5 +781,42 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
       theme(axis.title.x = element_blank())
     plotlist <- c(plotlist, list(p))
   }
+
+
+  ##
+  ## Four-cycles, for bipartite graphs only.
+  ## Note that in a bipartite graph there are no 3-cycles, so 4-cycles
+  ## are all chordless (induced) cycles.
+  ##
+  if (is.bipartite(g_obs)) {
+    ## count_subgraph_isomorphisms() overcouts n-cycles by 2n as there are 2n
+    ## automorphisms of an n-cycle.
+    ## in igraph 1.3.0 could also use (faster) motifs(), but only have 
+    ## igraph 1.2.10 installed and not going through pain of 'updatings' just
+    ## for this. See:
+    ## https://stackoverflow.com/questions/71771349/counting-4-and-6-cycles-in-bipartite-r-igraph
+    ## Note could also use statnet summary(g ~ cycle(4)) but that involves
+    ## attaching statnet package which can cause huge memory probelems and
+    ## also needing intergraph to convert (as required for ESP and DSP, see 
+    ## code above, which can be too slow and/or too much memory to work
+    ## on large graphs).
+    cat("bipartrite graph, counting four-cycles...")
+    system.time(obs_4cycles <- count_subgraph_isomorphisms(make_ring(4), g_obs)/
+                               (2*4))
+    system.time(sim_4cycles <- sapply(sim_graphs, function(g)
+                   count_subgraph_isomorphisms(make_ring(4), g) / (2*4)))
+                                   
+    cat('obs 4-cycles: ', obs_4cycles, '\n')
+    cat('sim 4-cycles: ', sim_4cycles, '\n')
+    p <- ggplot() + geom_boxplot(aes(x = 'four-cycles', y = sim_4cycles))
+    p <- p + geom_point(aes(x = as.numeric(ordered('four-cycles')),
+                            y = obs_4cycles,
+                            colour = obscolour))
+    p <- p + ylab('count') + ptheme +
+      theme(axis.title.x = element_blank())
+    plotlist <- c(plotlist, list(p))
+
+  }
+
   return(plotlist)
 }
