@@ -166,7 +166,8 @@ static const uint_t NUM_DYADIC_PARAMS = sizeof(DYADIC_PARAMS) /
  */
 static const attr_interaction_param_t ATTR_INTERACTION_PARAMS[] =
 {
-  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH, NETWORK_MODE_BOTH, changeMatchingInteraction},
+  {"MatchingInteraction",     ATTR_TYPE_CATEGORICAL, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH, changeMatchingInteraction},
+  {"BinaryPairInteraction",   ATTR_TYPE_BINARY,      NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH, changeBinaryPairInteraction}
 };
 static const uint_t NUM_ATTR_INTERACTION_PARAMS =
   sizeof(ATTR_INTERACTION_PARAMS) / sizeof(ATTR_INTERACTION_PARAMS[0]);

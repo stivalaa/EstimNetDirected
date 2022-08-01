@@ -348,3 +348,34 @@ double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 
 
 }
+
+/******************Attribute interaction (binary) ***********************/
+
+/*
+ * Change statistic for interaction effect of two different binary attributes:
+ * adding an arc i->j increase the statistic by 1 when binary attribute a
+ * on node i is true AND binary attribute b on node j is true.
+ *
+ * Note that this is particularly useful on bipartite (two-mode) networks,
+ * where the two different modes have different attributes. In the bipartite
+ * case, attribute a is for mode A nodes, and attribute B is for mode B nodes.
+ */
+double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
+                                   uint_t a, uint_t b)
+{
+  uint_t tmp;
+  assert(!g->is_directed);
+  slow_assert(!isArcOrEdge(g, i, j));
+  if (g->is_bipartite) {
+    if (bipartite_node_mode(g, i) == MODE_B) {
+      assert(bipartite_node_mode(g, j) == MODE_A);
+      /* i is mode B node, so swap a and b,
+         so that b is used for i and a for node j*/
+      tmp = b;
+      b = a;
+      a = tmp;
+    }
+  }
+  return g->binattr[a][i] != BIN_NA && g->binattr[b][j] != BIN_NA &&
+    g->binattr[a][i] && g->binattr[b][j];
+}

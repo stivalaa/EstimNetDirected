@@ -88,6 +88,11 @@ double changeIsolateEdges(graph_t *g, uint_t i, uint_t j, double lambda);
 
 double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
+/************ Actor attribute interaction (binary) *********************/
+
+double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
+                                   uint_t a, uint_t b);
+
 
 #endif /* CHANGESTATISTICSUNDIRECTED_H */
 
