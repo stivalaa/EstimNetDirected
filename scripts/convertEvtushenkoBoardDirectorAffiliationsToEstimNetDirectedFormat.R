@@ -61,6 +61,7 @@
 ##   network research.. InterJournal, Complex Systems, 1695. https://igraph.org.
 
 library(igraph)
+library(reshape2) # for dcast to do "one-hot" binary coding of categorical vars
 
 ##
 ## giant_component() - return largest connected component of the graph
@@ -161,6 +162,7 @@ catattr <- data.frame(gender  = ifelse(V(g)$gender == "NA", NA, V(g)$gender),
                       country = ifelse(V(g)$country == "NA", NA, V(g)$country),
                       sector  = ifelse(V(g)$sector == "NA", NA, V(g)$sector),
                       industry= ifelse(V(g)$industry == "NA", NA, V(g)$industry))
+## print the factor levels to stdout for future reference (codebook)
 print("gender")
 catattr$gender <- factor(catattr$gender)
 print(levels(catattr$gender))
@@ -174,6 +176,24 @@ print("industry")
 catattr$industry <- factor(catattr$industry)
 print(levels(catattr$industry))
 
+
+##
+## make binary ("one-hot") version of gender and sector attributes,
+## and add to binary attributes
+##
+
+catattr_recoded <- catattr
+catattr_recoded$ID <- seq(1:nrow(catattr_recoded))
+catattr_recoded <- dcast(data = melt(catattr_recoded, id.vars = "ID"),
+                         ID ~ variable + value, fun.aggregate = length)
+catattr_recoded$ID <- NULL
+binattr <- cbind(binattr, catattr_recoded)
+
+
+
+##
+## convert categorical attributes to integer values (as written to stdout above)
+##
 summary(catattr)
 catattr$gender <- as.numeric(catattr$gender)
 catattr$country <- as.numeric(catattr$country)
