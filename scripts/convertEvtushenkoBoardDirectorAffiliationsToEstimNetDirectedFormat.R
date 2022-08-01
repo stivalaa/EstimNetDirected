@@ -145,6 +145,18 @@ if (get_giantcomponent) {
 }
 
 ##
+## Replace spaces and '&' in strings with underscore and 'and' to
+## prevent problems with header column names etc. (E.g. "Oil & gas" is 
+## changed to "Oil_and_Gas"
+##
+
+V(g)$sector <- sapply(V(g)$sector, FUN = function(s) gsub(" ", "_", s))
+V(g)$sector <- sapply(V(g)$sector, FUN = function(s) gsub("&", "and", s))
+V(g)$industry <- sapply(V(g)$sector, FUN = function(s) gsub(" ", "_", s))
+V(g)$industry <- sapply(V(g)$sector, FUN = function(s) gsub("&", "and", s))
+
+## 
+##
 ## get binary attributes
 ##
 
