@@ -1532,7 +1532,25 @@ int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
       switch (get_attr_interaction_param_type(
                 pconfig->attr_interaction_param_names[i])) {
         case ATTR_TYPE_BINARY:
-          assert(FALSE); /* TODO binary attribute interaction */
+          for (j = 0; j < g->num_binattr; j++) {
+            if (strcasecmp(attrname, g->binattr_names[j]) == 0) {
+              found = TRUE;
+              if (attrnum == 0) {
+                pconfig->attr_interaction_pair_indices[i].first = j;
+              } else {
+                pconfig->attr_interaction_pair_indices[i].second = j;
+              }
+              CONFIG_DEBUG_PRINT(("binattr interaction [%s] %s(%s) index %u\n",
+                                  attrnum == 0 ? "first" : "second",
+                                  pconfig->attr_interaction_param_names[i],
+                                  attrname, j));
+            }
+          }
+          if (!found) {
+            fprintf(stderr, "ERROR: binary attribute %s not found\n",
+                    attrname);
+            return 1;
+          }
           break;
 
         case ATTR_TYPE_CATEGORICAL:
@@ -1542,7 +1560,7 @@ int build_attr_interaction_pair_indices_from_names(param_config_t *pconfig,
               if (attrnum == 0) {
                 pconfig->attr_interaction_pair_indices[i].first = j;
               } else {
-                pconfig->attr_interaction_pair_indices[i].second = j;         
+                pconfig->attr_interaction_pair_indices[i].second = j;
               }
               CONFIG_DEBUG_PRINT(("catattr interaction [%s] %s(%s) index %u\n",
                                   attrnum == 0 ? "first" : "second",
