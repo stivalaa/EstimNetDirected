@@ -203,13 +203,21 @@ catattr_recoded <- dcast(data = melt(catattr_recoded, id.vars = "ID"),
 catattr_recoded$ID <- NULL
 binattr <- cbind(binattr, catattr_recoded)
 
-## One-hot encoding above with melt and dcast adds an _NA dummy variable, 
-## and has 0 for for values that were NA. Use the _NA dummy to recode 
+## One-hot encoding above with melt and dcast adds an _NA dummy variable,
+## and has 0 for for values that were NA. Use the _NA dummy to recode
 ## all dummy variables that were for an NA value back to NA
 
-gender_NA_idx <- which(binattr$gender_NA == 1)
-binattr$gender_Female[gender_NA_idx] <- NA
-binattr$gender_Male[gender_NA_idx] <- NA
+for (colname in c("gender", "sector", "industry", "country")) {
+  NA_idx <- which(binattr[, paste(colname, "NA", sep="_")] == 1)
+  dummyvarnames <- Filter(function(s) substr(s, 1, nchar(colname)+1) == paste(colname, '_', sep='') && s != paste(colname, "NA", sep="_"), names(binattr))
+  for (varname in dummyvarnames) {
+    binattr[NA_idx, varname] <- NA
+  }
+}
+
+
+# compare auto encoding to original gender binary coding to check
+stopifnot(all(binattr$female == binattr$gender_Female, na.rm=TRUE))
 
 
 ##
