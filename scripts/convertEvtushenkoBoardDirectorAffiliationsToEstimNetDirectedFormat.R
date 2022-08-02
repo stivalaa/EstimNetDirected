@@ -150,13 +150,15 @@ if (get_giantcomponent) {
 ## changed to "Oil_and_Gas"
 ##
 
-V(g)$sector <- sapply(V(g)$sector, FUN = function(s) gsub(" ", "_", s))
-V(g)$sector <- sapply(V(g)$sector, FUN = function(s) gsub("&", "and", s))
-V(g)$industry <- sapply(V(g)$sector, FUN = function(s) gsub(" ", "_", s))
-V(g)$industry <- sapply(V(g)$sector, FUN = function(s) gsub("&", "and", s))
-
+for (colname in c("sector", "industry", "country")) {
+  g <- set.vertex.attribute(g, colname,
+                            value = sapply(get.vertex.attribute(g, colname),
+                                           function(s) gsub(" ", "_", s)))
+  g <- set.vertex.attribute(g, colname,
+                            value = sapply(get.vertex.attribute(g, colname),
+                                           function(s) gsub("&", "and", s)))
+}
 ## 
-##
 ## get binary attributes
 ##
 
@@ -201,6 +203,13 @@ catattr_recoded <- dcast(data = melt(catattr_recoded, id.vars = "ID"),
 catattr_recoded$ID <- NULL
 binattr <- cbind(binattr, catattr_recoded)
 
+## One-hot encoding above with melt and dcast adds an _NA dummy variable, 
+## and has 0 for for values that were NA. Use the _NA dummy to recode 
+## all dummy variables that were for an NA value back to NA
+
+gender_NA_idx <- which(binattr$gender_NA == 1)
+binattr$gender_Female[gender_NA_idx] <- NA
+binattr$gender_Male[gender_NA_idx] <- NA
 
 
 ##
