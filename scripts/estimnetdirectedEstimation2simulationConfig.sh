@@ -143,7 +143,7 @@ if [ $? -eq 0 ]; then
   # to "MatchingReciprocity(value = -1.712176)"
   # Do not do attribute interaction parameters (just check for Interaction
   # in name)
-  cat ${estimnet_tmpfile2} | fgrep -vi interaction | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9_]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
+  cat ${estimnet_tmpfile2} | fgrep -vi interaction | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9.]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
   echo
 
   fgrep -qi interaction ${estimnet_tmpfile2}
