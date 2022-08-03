@@ -216,9 +216,13 @@ for (colname in c("gender", "sector", "industry", "country")) {
 }
 
 
+## Have to replace '_' with '.' in column names as reshape2 melt/dcast above
+## introduces '_' 
+colnames(binattr) <- sapply(colnames(binattr), function(s) gsub("_", ".", s))
+
 # compare auto encoding to original gender binary coding to check
-stopifnot(all(is.na(catattr$gender) == as.logical(binattr$gender_NA)))
-stopifnot(all(binattr$female == binattr$gender_Female, na.rm=TRUE))
+stopifnot(all(is.na(catattr$gender) == as.logical(binattr$gender.NA)))
+stopifnot(all(binattr$female == binattr$gender.Female, na.rm=TRUE))
 
 
 ##
