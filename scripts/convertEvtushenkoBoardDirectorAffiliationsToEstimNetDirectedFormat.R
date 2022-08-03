@@ -145,15 +145,15 @@ if (get_giantcomponent) {
 }
 
 ##
-## Replace spaces and '&' in strings with underscore and 'and' to
+## Replace spaces and '&' in strings with '.' and 'and' to
 ## prevent problems with header column names etc. (E.g. "Oil & gas" is 
-## changed to "Oil_and_Gas"
+## changed to "Oil.and.Gas"
 ##
 
 for (colname in c("sector", "industry", "country")) {
   g <- set.vertex.attribute(g, colname,
                             value = sapply(get.vertex.attribute(g, colname),
-                                           function(s) gsub(" ", "_", s)))
+                                           function(s) gsub(" ", ".", s)))
   g <- set.vertex.attribute(g, colname,
                             value = sapply(get.vertex.attribute(g, colname),
                                            function(s) gsub("&", "and", s)))
