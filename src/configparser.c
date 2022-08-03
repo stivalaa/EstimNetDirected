@@ -747,6 +747,24 @@ static int parse_dyadic_params(FILE *infile, param_config_t *pconfig,
  * If requireErgmValue is TRUE then ERGM parameters require a value
  * (supplied with name = value format) for use in simulation (otherwise
  * no value allowed, used for estimation).
+ *
+ * For estimation, these parameters have a syntax like this example:
+ *
+ *   attrInteractionParams = { BinaryPairInteraction(gender_Female, industry_Personal_Goods),
+ *                             BinaryPairInteraction(gender_Male, sector_Oil_and_Gas)
+ *                           }
+ *
+ * and for simulation, like this example:
+ *
+ *  attrInteractionParams = { BinaryPairInteraction(gender_Female, industry_Personal_Goods = 0.1042966),
+ *                            BinaryPairInteraction(gender_Male, sector_Oil_and_Gas = 0.4022389)
+ *                          }
+ *
+ * Note that the value applies to the whole parameter (including pair
+ * of attributes), despite the syntax making it look like it belongs
+ * to the second attribute - this is just an artifact of the way the
+ * parser was retrofitted to include values.
+
  */
 static int parse_one_attr_interaction_param(const char *paramName,
                   attr_interaction_change_stats_func_t *attr_interaction_change_stats_func,
@@ -817,12 +835,12 @@ static int parse_one_attr_interaction_param(const char *paramName,
 
           if (requireErgmValue) {
             if (!(token = get_token(infile, tokenbuf))) {
-              fprintf(stderr, "ERROR: attrInteractionParams expecting 'name1, name2 = value' pairs separated by comma (%s)\n", paramName);
+              fprintf(stderr, "ERROR: attrInteractionParams expecting 'name1, name2 = value' pairs separated by comma (%s(%s, ?)\n", paramName, pconfig->attr_interaction_pair_names[pconfig->num_attr_interaction_change_stats_funcs].first);
               return -1;
             }
-            CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+            CONFIG_DEBUG_PRINT(("parse_one_attr_interaction_param token '%s'\n", token));        
             if (strcmp(token, "=") != 0) {
-              fprintf(stderr, "ERROR: attrInteractionParams expecting 'name1, name2 = value' pairs separated by comma (%s)\n", paramName);
+              fprintf(stderr, "ERROR: attrInteractionParams expecting 'name1, name2 = value' pairs separated by comma (%s(%s, ?)\n", paramName, pconfig->attr_interaction_pair_names[pconfig->num_attr_interaction_change_stats_funcs].first);
               return 1;
             }
             if (!(token = get_token(infile, tokenbuf))) {
@@ -830,13 +848,13 @@ static int parse_one_attr_interaction_param(const char *paramName,
                       paramName);
               return -1;
             }
-            CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+            CONFIG_DEBUG_PRINT(("parse_one_attr_interaction_param token '%s'\n", token));        
             value = strtod(token, &endptr);
             if (*endptr != '\0') {
-              fprintf(stderr, "ERROR: expecting floating point value for attrInteractionParams %s but got '%s'\n", paramName, token);
+              fprintf(stderr, "ERROR: expecting floating point value for attrInteractionParams %s(%s, %s) but got '%s'\n", paramName, pconfig->attr_interaction_pair_names[pconfig->num_attr_interaction_change_stats_funcs].first, pconfig->attr_interaction_pair_names[pconfig->num_attr_interaction_change_stats_funcs].second, token);
               return 1;
             }
-          CONFIG_DEBUG_PRINT(("attrParam value %g\n", value));
+          CONFIG_DEBUG_PRINT(("attrInteractionParam value %g\n", value));
 
           pconfig->attr_interaction_param_values =
             (double *)safe_realloc(pconfig->attr_interaction_param_values,

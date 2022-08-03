@@ -245,7 +245,8 @@ estim_config_t ESTIM_CONFIG = {
     NULL,  /* attr_attr_interaction_change_stats_funcs */
     NULL,  /* attr_interaction_names */
     NULL,  /* attr_interaction_indices */
-    NULL   /* attr_interaction_param_names */
+    NULL,  /* attr_interaction_param_names */
+    NULL   /* attr_interaction_param_values */
   } /* param_config */
 };
 
