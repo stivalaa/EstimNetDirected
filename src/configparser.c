@@ -758,12 +758,9 @@ static int parse_one_attr_interaction_param(const char *paramName,
   bool      last_token_was_attrname = FALSE;
   bool      opening = TRUE; /* true for first iteration only to expect '(' */
   uint_t    num_attr_names = 0;
+  double    value = 0;
+  char     *endptr; /* for strtod() */
 
-  if (requireErgmValue) {
-    fprintf(stderr, "Value specification for attr interaction parameter not implemented\n");
-    return -1;
-  }
-  
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for attrInteractionParam %s\n",
             paramName);
@@ -817,7 +814,38 @@ static int parse_one_attr_interaction_param(const char *paramName,
           pconfig->attr_interaction_pair_names[
             pconfig->num_attr_interaction_change_stats_funcs].second = safe_strdup(token);
           num_attr_names++;
+
+          if (requireErgmValue) {
+            if (!(token = get_token(infile, tokenbuf))) {
+              fprintf(stderr, "ERROR: attrInteractionParams expecting 'name1, name2 = value' pairs separated by comma (%s)\n", paramName);
+              return -1;
+            }
+            CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+            if (strcmp(token, "=") != 0) {
+              fprintf(stderr, "ERROR: attrInteractionParams expecting 'name1, name2 = value' pairs separated by comma (%s)\n", paramName);
+              return 1;
+            }
+            if (!(token = get_token(infile, tokenbuf))) {
+              fprintf(stderr, "ERROR: Did not find value for attrInteractionParams %s\n",
+                      paramName);
+              return -1;
+            }
+            CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+            value = strtod(token, &endptr);
+            if (*endptr != '\0') {
+              fprintf(stderr, "ERROR: expecting floating point value for attrInteractionParams %s but got '%s'\n", paramName, token);
+              return 1;
+            }
+          CONFIG_DEBUG_PRINT(("attrParam value %g\n", value));
+
+          pconfig->attr_interaction_param_values =
+            (double *)safe_realloc(pconfig->attr_interaction_param_values,
+                                   (pconfig->num_attr_interaction_change_stats_funcs + 1) * sizeof(double));
+          pconfig->attr_interaction_param_values[pconfig->num_attr_interaction_change_stats_funcs]
+            = value;
+          }
           pconfig->num_attr_interaction_change_stats_funcs++;
+          
         } else {
           fprintf(stderr, "ERROR: attrInteractionParams %s expecting "
                   "exactly two parameter names "

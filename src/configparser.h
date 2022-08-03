@@ -181,6 +181,7 @@ typedef struct param_config_s {
   string_pair_t *attr_interaction_pair_names; /* names of pairs of attributes for above */
   uint_pair_t  *attr_interaction_pair_indices;   /* pairs of indices into digraph binattr/cattr/contattr for above */
   const char **attr_interaction_param_names; /* names corresponding to above two */
+  double      *attr_interaction_param_values; /* initial values corr. to above */  
 } param_config_t;
 
 

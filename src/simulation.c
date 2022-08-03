@@ -722,8 +722,7 @@ int do_simulation(sim_config_t * config)
    
   for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs;
        i++, theta_i++)  {
-    fprintf(stderr, "TODO: initial values not implemented for interaction effects yet\n");assert(FALSE);     
-    /*TODO: theta_theta[i] = config->param_config.attr_interaction_param_values[i]; */
+    theta[theta_i] = config->param_config.attr_interaction_param_values[i];
     printf("%s_%s_%s = %g\n",
            config->param_config.attr_interaction_param_names[i],
            config->param_config.attr_interaction_pair_names[i].first,
