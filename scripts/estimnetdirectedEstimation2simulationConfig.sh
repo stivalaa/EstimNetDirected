@@ -141,8 +141,20 @@ if [ $? -eq 0 ]; then
   echo 'attrParams = {'
   # convert e.g. "MatchingReciprocity_value = -1.712176"
   # to "MatchingReciprocity(value = -1.712176)"
-  cat ${estimnet_tmpfile2} | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9_]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
+  # Do not do attribute interaction parameters (just check for Interaction
+  # in name)
+  cat ${estimnet_tmpfile2} | fgrep -vi interaction | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9_]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
   echo
+
+  fgrep -qi interaction ${estimnet_tmpfile2}
+  if [ $? -eq 0 ]; then
+    echo 'attrInteractionParams = {'
+    # Attribute interaction parameters
+    # convert e.g.
+    #  "BinaryPairInteraction_gender.Female_industry.Personal.Goods = 0.1136838"
+    # to "BinaryPairInteraction(gender.Female, industry.Personal.Goods = 0.1136838)"
+    cat ${estimnet_tmpfile2} | fgrep -i interaction | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9.]*\)_\([a-zA-Z0-9.]*\) = \([0-9.e-]*\)/\1(\2, \3 = \4)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' 
+  fi
 fi
 
 rm ${estimnet_tmpfile} ${estimnet_tmpfile2}
