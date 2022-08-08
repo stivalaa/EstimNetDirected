@@ -447,7 +447,7 @@ static int load_integer_attributes(const char *attr_filename,
   token = strtok_r(buf, delims, &saveptr);
   while(token) {
     if (!valid_attribute_name(token)) {
-      fprintf(stderr, "ERROR: invalid attribute name '%s\n", token);
+      fprintf(stderr, "ERROR: invalid attribute name '%s'\n", token);
       return -1;
     }
     attr_names = (char **)safe_realloc(attr_names, 
@@ -577,7 +577,7 @@ static int load_float_attributes(const char *attr_filename,
   token = strtok_r(buf, delims, &saveptr);
   while(token) {
     if (!valid_attribute_name(token)) {
-      fprintf(stderr, "ERROR: invalid attribute name '%s\n", token);
+      fprintf(stderr, "ERROR: invalid attribute name '%s'\n", token);
       return -1;
     }
     attr_names = (char **)safe_realloc(attr_names, 
