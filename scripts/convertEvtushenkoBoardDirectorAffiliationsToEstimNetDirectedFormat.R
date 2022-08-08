@@ -148,6 +148,7 @@ if (get_giantcomponent) {
 ## Replace spaces and '&' in strings with '.' and 'and' to
 ## prevent problems with header column names etc. (E.g. "Oil & gas" is 
 ## changed to "Oil.and.Gas"
+## Also replace '-' with '.'
 ##
 
 for (colname in c("sector", "industry", "country")) {
@@ -157,6 +158,9 @@ for (colname in c("sector", "industry", "country")) {
   g <- set.vertex.attribute(g, colname,
                             value = sapply(get.vertex.attribute(g, colname),
                                            function(s) gsub("&", "and", s)))
+  g <- set.vertex.attribute(g, colname,
+                            value = sapply(get.vertex.attribute(g, colname),
+                                           function(s) gsub("-", ".", s)))
 }
 ## 
 ## get binary attributes
