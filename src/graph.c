@@ -360,15 +360,15 @@ static void deleteAllHashTable(twopath_record_t *h)
  * Return value:
  *   TRUE if str is a valid attribute name, else FALSE
  */
-static bool valid_attribute_name(char *str)
+static bool valid_attribute_name(const char *str)
 {
-  const char *p;
-  bool       has_underscore = FALSE;
+  const unsigned char *p = (const unsigned char *)str;
+  bool                 has_underscore = FALSE;
 
-  if (!isalpha(str[0])) {
+  if (!isalpha(*p)) {
     return FALSE;
   }
-  for (p = str; *p != '\0'; p++) {
+  for (/*nothing*/; *p != '\0'; p++) {
     if (!isalpha(*p) && !isdigit(*p) && *p != '.' && *p != '_') {
       return FALSE;
     }
