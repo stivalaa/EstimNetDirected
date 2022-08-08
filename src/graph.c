@@ -337,6 +337,51 @@ static void deleteAllHashTable(twopath_record_t *h)
 #endif /*TWOPATH_HASHTABLES*/
 #endif /*TWOPATH_LOOKUP*/
 
+
+/*
+ * Check if str is a valid attribute name.
+ * Attribute names are allowed to contain alphanumeric characters and
+ * the symbols '_' and '.' and must start with an alphabetic character.
+ *
+ * Note however we issue a warning message for underscore ('_') as it
+ * can interfere with the operation of some shell and R scripts used
+ * for processing the output, and in particular
+ * estimnetdirectedEstimation2simulationConfig.sh
+ * so it is recommended to use '.' instead e.g. "gender.Male" not "gender_Male"
+ * as is often done in R.
+ *
+ * It is probably good practice to make sure names are not reserved
+ * words in R, however, since we use R scripts widely for processing the
+ * output.
+ *
+ * Parameters:
+ *   str - attribute name string to check
+ *
+ * Return value:
+ *   TRUE if str is a valid attribute name, else FALSE
+ */
+static bool valid_attribute_name(char *str)
+{
+  const char *p;
+  bool       has_underscore = FALSE;
+
+  if (!isalpha(str[0])) {
+    return FALSE;
+  }
+  for (p = str; *p != '\0'; p++) {
+    if (!isalpha(*p) && !isdigit(*p) && *p != '.' && *p != '_') {
+      return FALSE;
+    }
+    if (*p == '_') {
+      has_underscore = TRUE;
+    }
+  }
+  if (has_underscore) {
+    fprintf(stderr, "WARNING; attribute name '%s' contains underscore, which could interfere with scripts, consider uising '.' instead\n", str);
+  }
+  return TRUE;
+}
+
 /*
  * Load integer (binary or categorical) attributes from file.
  * The format of the file is a header line with whitespace
@@ -401,6 +446,10 @@ static int load_integer_attributes(const char *attr_filename,
   }
   token = strtok_r(buf, delims, &saveptr);
   while(token) {
+    if (!valid_attribute_name(token)) {
+      fprintf(stderr, "ERROR: invalid attribute name '%s\n", token);
+      return -1;
+    }
     attr_names = (char **)safe_realloc(attr_names, 
                                        (num_attributes + 1) * sizeof(char *));
     attr_names[num_attributes++] = safe_strdup(token);
@@ -527,6 +576,10 @@ static int load_float_attributes(const char *attr_filename,
   }
   token = strtok_r(buf, delims, &saveptr);
   while(token) {
+    if (!valid_attribute_name(token)) {
+      fprintf(stderr, "ERROR: invalid attribute name '%s\n", token);
+      return -1;
+    }
     attr_names = (char **)safe_realloc(attr_names, 
                                        (num_attributes + 1) * sizeof(char *));
     attr_names[num_attributes++] = safe_strdup(token);
