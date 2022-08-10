@@ -1,6 +1,6 @@
 /*****************************************************************************
  * 
- * File:    digraph.c
+ * File:    graph.c
  * Author:  Alex Stivala, Maksym Byshkin
  * Created: October 2017
  *
