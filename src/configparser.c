@@ -37,7 +37,7 @@
  *
  ****************************************************************************/
 
-const size_t TOKSIZE = 1024;   /* maximum size of a token */
+const size_t TOKSIZE = 8192;   /* maximum size of a token */
 
 /*****************************************************************************
  *
@@ -51,7 +51,7 @@ static const char   OPEN_SET_CHAR = '{';  /* set of parameter vals open */
 static const char   CLOSE_SET_CHAR = '}'; /* set of parameter vals close */
 static const char   OPEN_PAREN_CHAR = '(';
 static const char   CLOSE_PAREN_CHAR = ')';
-
+static const char   QUOTE_STR_CHAR   = '"'; /* string literal open/close */
 
 /* True and False values for Boolean config value type. Not case sensitive */
 static const char *TRUE_STR = "true";
@@ -1036,6 +1036,15 @@ char *get_token(FILE *infile, char *token)
     token[i] = '\0';
     return token;
   }
+  if (c == QUOTE_STR_CHAR) { /* quoted string e.g. "string literal" */
+    c = fgetc(infile);
+    while (c != EOF && c != QUOTE_STR_CHAR && i < (int)TOKSIZE-1) {
+      token[i++] = c;
+      token[i] = '\0';
+      c = fgetc(infile);
+    }
+    return token;
+  }
   while (c != EOF && istokenchar(c) && i < (int)TOKSIZE-1) {
     token[i++] = c;
     c = fgetc(infile);
@@ -1822,7 +1831,6 @@ int check_and_set_param_value(const char *paramname,
       *(char **)((char *)config + config_params[i].offset) =
         safe_strdup(valuestr);
       CONFIG_DEBUG_PRINT(("%s = %s\n", paramname, valuestr));
-      /* TODO handle quoted string */
       break;
       
     case PARAM_TYPE_SET:
