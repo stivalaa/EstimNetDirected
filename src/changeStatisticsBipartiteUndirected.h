@@ -116,6 +116,10 @@ double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 
 double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
 /*********************** Actor attribute (categorical) ************************/
 

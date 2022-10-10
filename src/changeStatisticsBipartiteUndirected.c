@@ -332,6 +332,117 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
 
 
 /*
+ * Change statistic for Bipartite 2-path sum for type A nodes
+ * (TSOACS in BPNet, X2StarASum in MPNet)
+ */
+double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  double delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (!isnan(g->contattr[a][i]) &&
+          !isnan(g->contattr[a][v])) {
+        delta += g->contattr[a][i] + g->contattr[a][v];
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for Bipartite 2-path sum for type B nodes
+ * (TSOPCS in BPNet, X2StarBSum in MPNet)
+ */
+double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  double delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (!isnan(g->contattr[a][j]) &&
+          !isnan(g->contattr[a][v])) {
+        delta += g->contattr[a][j] + g->contattr[a][v];
+      }
+    }
+  }
+  return (double)delta;
+}
+
+/*
+ * Change statistic for Bipartite 2-path abs difference for type A nodes
+ * (TSOACD in BPNet, X2StarADifference in MPNet)
+ */
+double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  double delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (!isnan(g->contattr[a][i]) &&
+          !isnan(g->contattr[a][v])) {
+        delta += fabs(g->contattr[a][i] - g->contattr[a][v]);
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
+ * Change statistic for Bipartite 2-path abs diff for type B nodes
+ * (TSOPCD in BPNet, X2StarBDifference in MPNet)
+ */
+double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+{
+  uint_t k,v;
+  double delta = 0;
+  (void)isDelete; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (!isnan(g->contattr[a][j]) &&
+          !isnan(g->contattr[a][v])) {
+        delta += fabs(g->contattr[a][j] - g->contattr[a][v]);
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+/*
  * Change statistic for Bipartite Continuous Sum
  * (RAPC in BPNet, XEdgeABSum in MPNet) - not needed, just use changeSum()
  */
