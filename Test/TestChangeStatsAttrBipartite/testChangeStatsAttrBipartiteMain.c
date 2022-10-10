@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
      
     printf("DEBUG: i = %u, j = %u, contattrAP[i] = %g, contattrAP[j] = %g\n", i, j, g->contattr[conattrAP_index][i], g->contattr[conattrAP_index][j]);
 
-    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g changera = %g, changerp = %g, changerap = %g, changerac = %.1f, changerpc = %.2f, changerapc = %.2f, changematch2pa = %g, changematch2pp = %g, changemismatch2pa = %g, changemismatch2pp = %g changetsoacs = %g changetsoacd = %g changetsopcs = %g changetsopcd = %g\n", i, j - g->num_A_nodes,
+    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g changera = %g, changerp = %g, changerap = %g, changerac = %.1f, changerpc = %.2f, changerapc = %.2f, changematch2pa = %g, changematch2pp = %g, changemismatch2pa = %g, changemismatch2pp = %g changetsoacs = %.4f changetsoacd = %.4f changetsopcs = %.4f changetsopcd = %.4f\n", i, j - g->num_A_nodes,
 	   changeFourCycles(g, i, j, lambda),
            changeBipartiteAltStarsB(g, i, j, lambda),
            changeBipartiteAltStarsA(g, i, j, lambda),
