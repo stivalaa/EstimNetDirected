@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # File:    reorderEstimnetTextable.sh
 # Author:  Alex Stivala
