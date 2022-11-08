@@ -275,25 +275,13 @@ double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
     return 0;
   }
 
-  for (k = 0; k < g->degree[i]; k++) {
-    u = g->edgelist[i][k];
-    for (l = 0; l < g->degree[u]; l++) {
-      v = g->edgelist[u][l];
-      if (v == u || v == i || v == j) {
-        continue;
-      }
-      delta++;
-    }
-  }
   for (k = 0; k < g->degree[j]; k++) {
-    u = g->edgelist[j][k];
-    for (l = 0; l < g->degree[u]; l++) {
-      v = g->edgelist[u][l];
-      if (v == u || v == i || v == j) {
-        continue;
-      }
-      delta++;
-    }
+    v = g->edgelist[j][k];
+    delta += g->degree[v] - 1;
+  }
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    delta += g->degree[v] - 1;
   }
 
   return (double)delta;
