@@ -266,7 +266,7 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  uint_t  u,v,k,l;
+  uint_t  v,k;
   ulong_t delta = g->degree[i] * g->degree[j];
   (void)lambda; /* unused parameters */
   slow_assert(!isEdge(g, i, j));
