@@ -266,7 +266,7 @@ double changeFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
  */
 double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  uint_t  v;
+  uint_t  u,v,k,l;
   ulong_t delta = g->degree[i] * g->degree[j];
   (void)lambda; /* unused parameters */
   slow_assert(!isEdge(g, i, j));
@@ -275,20 +275,27 @@ double changeThreePaths(graph_t *g, uint_t i, uint_t j, double lambda)
     return 0;
   }
 
-  /* TODO make more efficient. This is very inefficient, iterating
-     over all  nodes */
-
-  for (v = 0; v < g->num_nodes; v++) {
-    if (v == i || v == j) {
-      continue;
-    }
-    if (isEdge(g, v, j)) {
-      delta += g->degree[v] - 1;
-    }
-    if (isEdge(g, v, i)) {
-      delta += g->degree[v] - 1;
+  for (k = 0; k < g->degree[i]; k++) {
+    u = g->edgelist[i][k];
+    for (l = 0; l < g->degree[u]; l++) {
+      v = g->edgelist[u][l];
+      if (v == u || v == i || v == j) {
+        continue;
+      }
+      delta++;
     }
   }
+  for (k = 0; k < g->degree[j]; k++) {
+    u = g->edgelist[j][k];
+    for (l = 0; l < g->degree[u]; l++) {
+      v = g->edgelist[u][l];
+      if (v == u || v == i || v == j) {
+        continue;
+      }
+      delta++;
+    }
+  }
+
   return (double)delta;
 }
 
