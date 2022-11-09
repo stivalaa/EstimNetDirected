@@ -1,0 +1,13 @@
+EstimNetDirected-*.err
+EstimNetDirected-*.out
+EstimNetDirected_mpi
+PlotEstimNetDirectedSimFit-*.err
+PlotEstimNetDirectedSimFit-*.out
+PlotGofSimFit-*.err
+PlotGofSimFit-*.out
+config_gof_inouye_pyke_pollinators.txt
+config_gof_*.OLD
+stats_gof_inouye_pyke_pollinators-plots.eps
+stats_gof_inouye_pyke_pollinators.txt
+SimulateERGM-*.err
+SimulateERGM-*.out
