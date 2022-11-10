@@ -38,5 +38,14 @@ binattrAP_rAP	    0.100
 conattrAP_rAPc	    0.200
 
 
+bpnet_A750_B250_sim777000000.net is a bipartite network with
+740 mode A and 250mode B nodes simulated with BPNET with parameters:
+
+L         -8.500
+Ksa       -0.200
+Ksp        2.000
+Kca       -0.100
+Kcp        0.020
+
 ADS
 Thu 12 May 2022 12:17:35 AEST
