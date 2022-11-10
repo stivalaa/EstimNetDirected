@@ -10,3 +10,9 @@ config_gof_ifd_bpnet_A6000_B750_sim.txt
 config_gof_ifd_bpnet_A6000_B750_sim.txt.OLD
 stats_ifd_bpnet_A6000_B750_sim-plots.eps
 stats_ifd_bpnet_A6000_B750_sim.txt
+SimulationGoF_ifd_bpnet_A750_B250_sim-*.err
+SimulationGoF_ifd_bpnet_A750_B250_sim-*.out
+config_gof_ifd_bpnet_A750_B250_sim.txt
+stats_ifd_bpnet_A750_B250_sim-plots.eps
+stats_ifd_bpnet_A750_B250_sim.txt
+
