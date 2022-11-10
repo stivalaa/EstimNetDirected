@@ -249,6 +249,22 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
       if (bipartite_node_mode(g, i) == bipartite_node_mode(g, j)) {
         fprintf(stderr, "ERROR: network is two-mode but edge %d,%d is between two nodes of the same mode\n", i, j);
       }
+      /* We use the convention that in a bipartite network the first value i
+         is in mode A and the second value j is mode B. And Pajek fromat
+         files seem to be usually, but not always, formatted like this
+         (i.e an edge 
+           i j
+          has i < j). So we cannot rely on that (and sometimes writing in 
+          Pajek format in igraph with write.graph() for examle results in 
+          files wihere this does not hold), so to make sure we swap i and j
+          if i > j.
+       */
+       if (i > j) {
+         int tmp;
+         tmp = i;
+         i = j;
+         j = tmp;
+       }
     }
 
     if (computeStats) {
