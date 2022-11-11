@@ -15,4 +15,9 @@ SimulationGoF_ifd_bpnet_A750_B250_sim-*.out
 config_gof_ifd_bpnet_A750_B250_sim.txt
 stats_ifd_bpnet_A750_B250_sim-plots.eps
 stats_ifd_bpnet_A750_B250_sim.txt
-
+bpnet_A12000_B4000_sparse_sim770000000_gc_viz.pdf
+bpnet_A12000_B4000_sparse_sim770000000_viz.pdf
+bpnet_A6000_B750_sparse_sim100000000_gc_viz.pdf
+bpnet_A750_B250_sim777000000_gc_viz.pdf
+bpnet_A750_B250_sim777000000_gc_viz2.pdf
+bpnet_A750_B250_sim777000000_viz.pdf
