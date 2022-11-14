@@ -34,6 +34,10 @@ library(reshape)
 library(doBy)
 library(scales)
 
+## for using simplify2array(mclapply(...)) instead of
+## sapply(...) and mclapply(...) instead of lapply(...)
+library(parallel)
+
 ## some statistics are too slow to practically compute on large networks,
 ## these are just guesses (and certainly for geodesic a 1.6 million node
 ## network could not be computed in 4 hours for example).
@@ -377,7 +381,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     ## for very large graphs the triad 102 census count overflows and has to
     ## be omitted, while this does not.
     system.time( obs_reciprocity <- reciprocity(g_obs) )
-    system.time( sim_reciprocity <- sapply(sim_graphs, function(g) reciprocity(g)) )
+    system.time( sim_reciprocity <- simplify2array(mclapply(sim_graphs, function(g) reciprocity(g))) )
     cat('obs reciprocity: ', obs_reciprocity, '\n')
     cat('sim reciprocity: ', sim_reciprocity, '\n')
     p <- ggplot() + geom_boxplot(aes(x = 'reciprocity', y = sim_reciprocity))
@@ -395,8 +399,8 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
   ## giant component size
   ##
 
-  system.time(giant_component_sizes <- sapply(sim_graphs,
-                                              function(g) vcount(giant.component(g))))
+  system.time(giant_component_sizes <- simplify2array(mclapply(sim_graphs,
+                                              function(g) vcount(giant.component(g)))))
   giant_component_sizes <- giant_component_sizes / sapply(sim_graphs, vcount)
   obs_gcsize <- vcount(giant.component(g_obs)) / vcount(g_obs)
   cat('obs giant component size: ', obs_gcsize, '\n')
@@ -418,12 +422,12 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
   ##
   
   cctypes <- c('average local', 'global') # must be in alphabetical order!
-  system.time(ccs <- sapply(sim_graphs, function(g) transitivity(g, type="global")))
+  system.time(ccs <- simplify2array(mclapply(sim_graphs, function(g) transitivity(g, type="global"))))
   system.time(cc_obs <- transitivity(g_obs, type='global'))
   cat('obs global cc: ', cc_obs, '\n')
   cat('sim global cc: ', ccs, '\n')
-  system.time(ccs_localavg <- sapply(sim_graphs, function(g)
-    transitivity(g, type='localaverage')))
+  system.time(ccs_localavg <- simplify2array(mclapply(sim_graphs, function(g)
+    transitivity(g, type='localaverage'))))
   system.time(cc_localavg_obs <- transitivity(g_obs, type='localaverage'))
   cat('obs avg local cc: ', cc_localavg_obs, '\n')
   cat('sim avg local cc: ', ccs_localavg, '\n')
@@ -869,17 +873,17 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     library(tnet)
     system.time(tn_obs <- as.tnet(get.edgelist(g_obs),
                                   type="binary two-mode tnet"))
-    system.time(sim_tn <- lapply(sim_graphs,
+    system.time(sim_tn <- mclapply(sim_graphs,
                                  function(g) as.tnet(get.edgelist(g),
                                                   type="binary two-mode tnet")))
     print(system.time(obs_robinsalexander_cc <- reinforcement_tm(tn_obs)))
-    print(system.time(sim_robinsalexander_cc <- unlist(lapply(sim_tn,
+    print(system.time(sim_robinsalexander_cc <- unlist(mclapply(sim_tn,
                                              function(g) reinforcement_tm(g)))))
     cat('obs Robins-Alexander cc: ', obs_robinsalexander_cc, '\n')
     cat('sim Robins-Alexander cc: ', sim_robinsalexander_cc, '\n')
 
     print(system.time(obs_opsahl_cc <- clustering_tm(tn_obs)))
-    print(system.time(sim_opsahl_cc <- unlist(lapply(sim_tn,
+    print(system.time(sim_opsahl_cc <- unlist(mclapply(sim_tn,
                                              function(g) clustering_tm(g)))))
     cat('obs Opsahl cc: ', obs_opsahl_cc, '\n')
     cat('sim Opsahl cc: ', sim_opsahl_cc, '\n')

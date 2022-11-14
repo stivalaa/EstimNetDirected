@@ -123,6 +123,10 @@ source_local('simFitPlots.R')
 ### Main
 ###
 
+## for library(parallel) using simplify2array(mclapply(...)) instead of
+## sapply(...) and mclapply(...) instead of lapply(...)
+cat('mc.cores =', getOption("mc.cores"), '\n')
+
 args <- commandArgs(trailingOnly=TRUE)
 
 usage <- function() {
