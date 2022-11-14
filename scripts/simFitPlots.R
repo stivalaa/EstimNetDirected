@@ -279,13 +279,16 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##                 huge amounts of memory and be unsuably slow, even on
 ##                 bipartite networks (no ESP as always zero) that aren't even
 ##                 that big (few hundred thousand nodes)
+##    do_bipartite_cc : if TRUE and graph is bipartite, then do bipartite
+##                      clustering coefficients using tnet package.
 ##
 ## Return value:
 ##    list of ggplot2 objects
 ##
 ##
 build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
-                                do_geodesic=TRUE, do_dsp=TRUE) {
+                                do_geodesic=TRUE, do_dsp=TRUE,
+                                do_bipartite_cc=TRUE) {
 
   num_sim <- length(sim_graphs)
   plotlist <- list()
@@ -837,6 +840,66 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     plotlist <- c(plotlist, list(p))
 
   }
+
+  ##
+  ## Bipartite clustering coefficients, for bipartite graphs only.
+  ## This uses the tnet package, citation:
+  ##
+  ##    Opsahl, T., 2009. Structure and Evolution of Weighted Networks.
+  ##    University of London (Queen Mary College), London, UK, pp. 104-122.
+  ##    Available at http://toreopsahl.com/publications/thesis/;
+  ##    http://toreopsahl.com/tnet/
+  ##
+  ## Note that this can be very slow for large networks, so may have to be
+  ## disabled (option do_bipartite_cc=FALSE) for large networks.
+  ## Citation for Robins-Alexander bipartite clustering coefficient is:
+  ##
+  ##   Robins, G., & Alexander, M. (2004). Small worlds among interlocking 
+  ##   directors: Network structure and distance in bipartite graphs.
+  ##   Computational & Mathematical Organization Theory, 10(1), 69-94.
+  ##
+  ## and for Opsahl bipartite clustering coefficient is:
+  ##
+  ##   Opsahl, T. (2013). Triadic closure in two-mode networks:
+  ##   Redefining the global and local clustering coefficients.
+  ##   Social networks, 35(2), 159-167.
+  ##
+  if (do_bipartite_cc && igraph::is.bipartite(g_obs)) {
+    library(tnet)
+    system.time(tn_obs <- as.tnet(get.edgelist(g_obs),
+                                  type="binary two-mode tnet"))
+    system.time(sim_tn <- lapply(sim_graphs,
+                                 function(g) as.tnet(get.edgelist(g),
+                                                  type="binary two-mode tnet")))
+    print(system.time(obs_robinsalexander_cc <- reinforcement_tm(tn_obs)))
+    print(system.time(sim_robinsalexander_cc <- unlist(lapply(sim_tn,
+                                             function(g) reinforcement_tm(g)))))
+    cat('obs Robins-Alexander cc: ', obs_robinsalexander_cc, '\n')
+    cat('sim Robins-Alexander cc: ', sim_robinsalexander_cc, '\n')
+
+    print(system.time(obs_opsahl_cc <- clustering_tm(tn_obs)))
+    print(system.time(sim_opsahl_cc <- unlist(lapply(sim_tn,
+                                             function(g) clustering_tm(g)))))
+    cat('obs Opsahl cc: ', obs_opsahl_cc, '\n')
+    cat('sim Opsahl cc: ', sim_opsahl_cc, '\n')
+
+    cctypes <- c('Opsahl', 'Robins-Alexander') # must be in alphabetical order!
+    p <- ggplot() + geom_boxplot(aes(x = factor('Opsahl', levels=cctypes),
+                                     y = sim_opsahl_cc))
+    p <- p + geom_point(aes(x = as.numeric(factor('Opsahl', levels=cctypes)),
+                            y = obs_opsahl_cc,
+                            colour = obscolour))
+    p <- p + geom_boxplot(aes(x = factor('Robins-Alexander', levels=cctypes),
+                              y = sim_robinsalexander_cc))
+    p <- p + geom_point(aes(x = as.numeric(factor('Robins-Alexander', levels=cctypes)),
+                            y = obs_robinsalexander_cc,
+                            colour = obscolour))
+    p <- p + ylab('bipartite clustering coeff.') + ptheme +
+      theme(axis.title.x = element_blank())
+    ##p <- p + ylim(0, 1)
+    plotlist <- c(plotlist, list(p))
+  }
+
 
 
   return(plotlist)

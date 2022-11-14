@@ -22,7 +22,7 @@
 ## This same script is used for standard goodness-of-fit plots for
 ## networks simulated from a model with the SimulateERGM program.
 ##
-## Usage: Rscript plotEsimtNetDirectedSimFit.R [-s] netfilename simNetFilePrefix
+## Usage: Rscript plotEsimtNetDirectedSimFit.R [-s] [-c] [-g] [-d] [-t] netfilename simNetFilePrefix
 ##  netfilename is the Pajek format observed graph (the input arclistFile
 ##     for EstimNetDirected)
 ##  simNetFilePreifx is the prefix of the simulated network filenames
@@ -49,6 +49,9 @@
 ##       graph where edgewise shared partners not done [always zero], the dsp
 ##       can take vast amounts of memory (has to be killed on node with "only"
 ##       64 GB) so unusuably slow / too much resoureces.
+##
+##  -t : do NOT do bipartite clustering coefficients (computed with tnet
+##       pacakge). Useful as this can be unsuably slow on large networks.
 ##
 ## Output file is simfitPrefix.pdf (where Prefix is the simNetFilePrefix).
 ## WARNING: output file is overwritten
@@ -123,7 +126,7 @@ source_local('simFitPlots.R')
 args <- commandArgs(trailingOnly=TRUE)
 
 usage <- function() {
-  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] [-c] [-g] [-d] netfilename simNetFilePrefix\n")
+  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] [-c] [-g] [-d] [-t] netfilename simNetFilePrefix\n")
   quit(save="no")
 }
 is_opt <- function(s) substr(s, 1, 1) == '-' # options start with '-'
@@ -135,6 +138,7 @@ args <- Filter(Negate(is_opt), args)
 do_subplots <- FALSE
 do_geodesic <- TRUE
 do_dsp <- TRUE
+do_bipartite_cc <- TRUE
 cergm_mode  <- FALSE
 for (opt in opts) {
   if (opt == "-s") {
@@ -145,6 +149,8 @@ for (opt in opts) {
      do_geodesic <- FALSE
    } else if (opt == "-d") {
      do_dsp <- FALSE
+   } else if (opt == "-t") {
+     do_bipartite_cc <- FALSE
    } else {
     usage()
    }
@@ -196,7 +202,7 @@ num_sim <- length(sim_graphs)
 
 ## build the list of plots
 plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots, do_geodesic,
-                                do_dsp)
+                                do_dsp, do_bipartite_cc)
 
 if (cergm_mode) {
   ## add plot for number of nodes in each induced subgraph, with
