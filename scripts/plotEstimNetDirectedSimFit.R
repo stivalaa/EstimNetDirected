@@ -50,8 +50,8 @@
 ##       can take vast amounts of memory (has to be killed on node with "only"
 ##       64 GB) so unusuably slow / too much resoureces.
 ##
-##  -t : do NOT do bipartite clustering coefficients (computed with tnet
-##       pacakge). Useful as this can be unsuably slow on large networks.
+##  -t : do bipartite clustering coefficients (computed with tnet
+##       pacakge). Note this is not done by default as it is very slow.
 ##
 ## Output file is simfitPrefix.pdf (where Prefix is the simNetFilePrefix).
 ## WARNING: output file is overwritten
@@ -138,7 +138,7 @@ args <- Filter(Negate(is_opt), args)
 do_subplots <- FALSE
 do_geodesic <- TRUE
 do_dsp <- TRUE
-do_bipartite_cc <- TRUE
+do_bipartite_cc <- FALSE
 cergm_mode  <- FALSE
 for (opt in opts) {
   if (opt == "-s") {
@@ -150,7 +150,7 @@ for (opt in opts) {
    } else if (opt == "-d") {
      do_dsp <- FALSE
    } else if (opt == "-t") {
-     do_bipartite_cc <- FALSE
+     do_bipartite_cc <- TRUE
    } else {
     usage()
    }

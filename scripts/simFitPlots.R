@@ -281,6 +281,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##                 that big (few hundred thousand nodes)
 ##    do_bipartite_cc : if TRUE and graph is bipartite, then do bipartite
 ##                      clustering coefficients using tnet package.
+##                      Default FALSE (as is very slow)
 ##
 ## Return value:
 ##    list of ggplot2 objects
@@ -288,7 +289,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##
 build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                                 do_geodesic=TRUE, do_dsp=TRUE,
-                                do_bipartite_cc=TRUE) {
+                                do_bipartite_cc=FALSE) {
 
   num_sim <- length(sim_graphs)
   plotlist <- list()
