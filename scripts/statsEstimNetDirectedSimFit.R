@@ -99,8 +99,8 @@ deg_distr_distance <- function(g_obs, sim_graphs, mode) {
     } else {
         inverted_cov_deg_matrix <- solve(dcov) # inverse of dcov
     }
-
-    mdist <- mahalanobis(deg_matrix, colMeans(deg_matrix), inverted_cov_deg_matrix, inverted=TRUE)
+    ## mahalanobis() returns squred Mahalanobis distance so do sqrt()
+    mdist <- sqrt(mahalanobis(deg_matrix, colMeans(deg_matrix), inverted_cov_deg_matrix, inverted=TRUE))
     print(mdist)#XXX
     return(mdist[length(mdist)]) # Mahalanobis distance of observed (last in vector from mahalanobis())
 }
@@ -241,7 +241,9 @@ stats_matrix <- cbind(stats_matrix, cc_localavg_col)
 
 statscov <- cov(stats_matrix)
 inverted_cov_stats_matrix <- solve(statscov) # inverse of statscov
-mdist <- mahalanobis(stats_matrix, colMeans(stats_matrix), inverted_cov_stats_matrix, inverted=TRUE)
+
+## mahalanobis() returns squared Mahalanobis distance
+mdist <- sqrt(mahalanobis(stats_matrix, colMeans(stats_matrix), inverted_cov_stats_matrix, inverted=TRUE))
 
 #print(mdist)#XXX
 obs_mdist <- mdist[length(mdist)] # Mahalanobis distance of observed (last in vector from mahalanobis())

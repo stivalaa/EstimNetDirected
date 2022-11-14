@@ -54,7 +54,8 @@ stats_matrix <- rbind(stats_matrix, as.matrix(obsstats))
 
 covstats <- cov(stats_matrix)
 inverted_cov_stats_matrix <- solve(covstats) # inverse of covstats
-mdist <- mahalanobis(stats_matrix, colMeans(stats_matrix), inverted_cov_stats_matrix, inverted=TRUE)
+## mahalanobis() returns squred Mahalanobis distance so do sqrt()
+mdist <- sqrt(mahalanobis(stats_matrix, colMeans(stats_matrix), inverted_cov_stats_matrix, inverted=TRUE))
 #print(mdist)#XXX
 
 obs_mdist <- mdist[length(mdist)] # Mahalanobis distance of observed (last in vector from mahalanobis())
