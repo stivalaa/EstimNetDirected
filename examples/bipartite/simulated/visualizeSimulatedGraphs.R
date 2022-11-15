@@ -12,27 +12,77 @@
 library(igraph)
 library(graphlayouts)
 
-source('../../../scripts/snowballSample.R')
+##
+## giant_component_and_rest() - return largest connected component of the graph
+##                              as first element of list and the rest as
+##                              second element of list
+##
+## Paramters:
+##    graph - igraph to get giant componetn of
+##
+## Return value:
+##    largest connected component of graph
+##
+giant_component_and_rest <- function(graph) {
+  cl <- clusters(graph)
+  return(list(
+    gc = induced.subgraph(graph,
+                          which(cl$membership == which.max(cl$csize))),
+    rest = induced.subgraph(graph,
+                            which(cl$membership != which.max(cl$csize)))
+  ))
+
+}
+
+
+
+##
+## Plotting the whole graph squashes giant component and takes a lot
+## of space for the many smaller compoennts, which is messy and misleading
+## since the giant component is 86% of the network. So instead plot
+## the giant component and the rest of it separtely, but using par(mfrow(..))
+## to put on smae plot.
+##
+##
+plotgraph <- function(g) {
+  plot(g, vertex.label=NA, vertex.size=2, vertex.frame.color = NA,
+       vertex.shape=ifelse(V(g)$type,'square', 'circle'),
+       vertex.color = V(g)$type+1,
+       edge.width = 0.1,
+       edge.color = "black",
+       layout = layout_with_stress)
+}
+
 
 g <- read.graph('bpnet_A12000_B4000_sparse_sim770000000.net', format='pajek')
 pdf('bpnet_A12000_B4000_sparse_sim770000000_viz.pdf')
-system.time( plot(g, vertex.label=NA,vertex.size=2, vertex.color = V(g)$type+1, layout=layout_with_stress) )
+par(mfrow=c(1, 2))
+## reduce white space around igraph plot
+## https://lists.nongnu.org/archive/html/igraph-help/2011-07/msg00036.html
+par(mar=c(0,0,0,0)+.1)
+comps <- giant_component_and_rest(g)
+system.time(plotgraph(comps$gc))   # giant component
+system.time(plotgraph(comps$rest)) # everything else
 dev.off()
-pdf('bpnet_A12000_B4000_sparse_sim770000000_gc_viz.pdf')
-system.time( plot(giant.component(g), vertex.label=NA,vertex.size=2, vertex.color = V(giant.component(g))$type+1, layout=layout_with_stress, edge.width=.1,edge.color='black',vertex.frame.color=NA) )
 
 g <- read.graph('bpnet_A6000_B750_sparse_sim100000000.net', format='pajek')
 pdf('bpnet_A6000_B750_sparse_sim100000000_gc_viz.pdf')
-system.time( plot(giant.component(g), vertex.label=NA,vertex.size=2, vertex.color = V(giant.component(g))$type+1, layout=layout_with_stress, edge.width=.1,edge.color='black',vertex.frame.color=NA) )
-dev.off() 
+par(mfrow=c(1, 2))
+## reduce white space around igraph plot
+## https://lists.nongnu.org/archive/html/igraph-help/2011-07/msg00036.html
+par(mar=c(0,0,0,0)+.1)
+comps <- giant_component_and_rest(g)
+system.time(plotgraph(comps$gc))   # giant component
+system.time(plotgraph(comps$rest)) # everything else
+dev.off()
 
 g <- read.graph('bpnet_A750_B250_sim777000000.net', format='pajek')
 pdf('bpnet_A750_B250_sim777000000_viz.pdf')
-system.time( plot(g, vertex.label=NA,vertex.size=2, vertex.color = V(g)$type+1, layout=layout_with_stress, edge.width=.1,edge.color='black',vertex.frame.color=NA) )
-dev.off()
-pdf('bpnet_A750_B250_sim777000000_gc_viz.pdf')
-system.time( plot(giant.component(g), vertex.label=NA,vertex.size=2, vertex.color = V(giant.component(g))$type+1, layout=layout_with_stress, edge.width=.1,edge.color='black',vertex.frame.color=NA) )
-dev.off()
-pdf('bpnet_A750_B250_sim777000000_gc_viz2.pdf')
-system.time( plot(giant.component(g), vertex.label=NA,vertex.size=2, vertex.color = V(giant.component(g))$type+1, edge.width=.1,edge.color='black',vertex.frame.color=NA, layout = layout_with_centrality(giant.component(g), cent=betweenness(giant.component(g)))) )
+par(mfrow=c(1, 2))
+## reduce white space around igraph plot
+## https://lists.nongnu.org/archive/html/igraph-help/2011-07/msg00036.html
+par(mar=c(0,0,0,0)+.1)
+comps <- giant_component_and_rest(g)
+system.time(plotgraph(comps$gc))   # giant component
+system.time(plotgraph(comps$rest)) # everything else
 dev.off()
