@@ -66,7 +66,7 @@ system.time(plotgraph(comps$rest)) # everything else
 dev.off()
 
 g <- read.graph('bpnet_A6000_B750_sparse_sim100000000.net', format='pajek')
-pdf('bpnet_A6000_B750_sparse_sim100000000_gc_viz.pdf')
+pdf('bpnet_A6000_B750_sparse_sim100000000_viz.pdf')
 par(mfrow=c(1, 2))
 ## reduce white space around igraph plot
 ## https://lists.nongnu.org/archive/html/igraph-help/2011-07/msg00036.html
