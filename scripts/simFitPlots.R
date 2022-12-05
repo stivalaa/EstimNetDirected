@@ -905,12 +905,13 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
       ## too large and messay on combined plots)
       p <- p + geom_point(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
                                                      colour = obscolour, group = 1))
+      p <- p + scale_y_log10(labels = my_scientific_10) 
       cycledist_outfilename <- paste(simnetfileprefix, "_cycledist.eps", sep="")
       cat("writing cycle length distribution plot to EPS file ", cycledist_outfilename, "\n")
       postscript(cycledist_outfilename, horizontal = FALSE, onefile = FALSE,
                  paper = "special", width = 9, height = 6)
       print(p)
-      def.off()  
+      dev.off()  
     }
   }
 
