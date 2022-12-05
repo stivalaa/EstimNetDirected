@@ -47,6 +47,9 @@ library(parallel)
 MAX_SIZE_GEODESIC <- 500000 ## do not do shortest paths if more nodes than this
 MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 
+## for cycle length distribution (only used if do_cycledist = True)
+MAX_CYCLELEN <- 8
+
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
 
@@ -274,6 +277,8 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##    g_obs:       observed graph igraph object
 ##    sim_graphs:  simulated graphs list of igraph objects
 ##    do_subplots: if TRUE, do subplots of triad census on separate .eps file 
+##                 (for bipartite graph, cycle length distribution is done
+##                 on seperate .eps file, if do_cycledist is TRUE).
 ##                 also (default FALSE)
 ##    do_geodesic: if TRUE, include geodesic distance distribution plot
 ##                 otherwise do not (default TRUE); useful as this can
@@ -286,6 +291,10 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##    do_bipartite_cc : if TRUE and graph is bipartite, then do bipartite
 ##                      clustering coefficients using tnet package.
 ##                      Default FALSE (as is very slow)
+##    do_cycledist : If TRUE, do cycle length distribution (up to
+##                   MAX_CYCLEDIST). Default FALSE (as is slow).
+##                   For bipartite, this replaces four-cycle distribution
+##                   (since that it included within this).
 ##
 ## Return value:
 ##    list of ggplot2 objects
@@ -293,7 +302,7 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##
 build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                                 do_geodesic=TRUE, do_dsp=TRUE,
-                                do_bipartite_cc=FALSE) {
+                                do_bipartite_cc=FALSE, do_cycledist=FALSE) {
 
   num_sim <- length(sim_graphs)
   plotlist <- list()
@@ -800,7 +809,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
   ## Note that in a bipartite graph there are no 3-cycles, so 4-cycles
   ## are all chordless (induced) cycles.
   ##
-  if (igraph::is.bipartite(g_obs)) {
+  if (igraph::is.bipartite(g_obs) && !do_cycledist) {
     ## count_subgraph_isomorphisms() overcouts n-cycles by 2n as there are 2n
     ## automorphisms of an n-cycle.
     ## in igraph 1.3.0 could also use (faster) motifs(), but only have
@@ -844,6 +853,66 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
   p <- p + theme(axis.text = element_text(colour = "black", size = rel(1.0))) # stop 'four-cycles' being light gray and smaller than other axis labels
     plotlist <- c(plotlist, list(p))
 
+  }
+
+  ##
+  ## Cycle length distribution (up to MAX_CYCLLEN only, as then gets 
+  ## extremely slow and huge numbers of cycles).
+  ##
+  if (do_cycledist) {
+    cat('cycle length distribution, MAX_CYCLELEN = ', MAX_CYCLELEN, '\n')
+    if (!statnet_loaded) {
+      library(statnet)
+      library(intergraph)
+
+      system.time(net_obs <- asNetwork(g_obs))
+      system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
+      statnet_loaded <- TRUE # also net_obs and sim_networks built
+    }
+    if (igraph::is.bipartite(g_obs)) {
+      cyclelens <- seq(4, MAX_CYCLELEN, 2) #only even length cycles in bipartite
+    } else {
+      cyclelens <- seq(3, MAX_CYCLELEN)
+    }
+    cat('computing cycle length distirbution in observed graph...')
+    print(system.time(obs_cycledist <- summary(net_obs ~ cycle(cyclelens))))
+    cat('obs_cycledist = ', obs_cycledist, '\n')
+    cat('computing cycle length distirbution in simulated graphs...')
+    print(system.time(sim_cycledist <- mclapply(sim_networks,
+                                      function(g) summary(g ~ cycle(cyclelens)))))
+    print(sim_cycledist)
+    cyclelen_df <- data.frame(sim = rep(1:num_sim, each = length(cyclelens)),
+                               cyclelen = rep(1:length(cyclelens), num_sim),
+                               count = NA)
+    for (i in 1:num_sim) {
+      cyclelen_df[which(cyclelen_df[,"sim"] == i), "count"] <- sim_cycledist[[i]]
+    }
+    cyclelen_df$cyclelen <- as.factor(cyclelen_df$cyclelen)
+    obs_cyclelen_df <- data.frame(cyclelen = 1:length(cyclelens),
+                                  count = obs_cycledist)
+    p <- ggplot(cyclelen_df, aes(x = cyclelen, y = count)) + geom_boxplot()
+    p <- p + geom_line(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
+                                                   colour = obscolour, group = 1))
+    p <- p + ptheme + xlab('cycle length') + ylab('count')
+    p <- p + guides(x = guide_axis(check.overlap = TRUE))
+    plotlist <- c(plotlist, list(p))
+    if (do_subplots) {
+      ## also write to separate file (add points for separte plot only,
+      ## too large and messay on combined plots)
+      p <- ggplot(cyclelen_df, aes(x = cyclelen, y = count)) + geom_boxplot()
+      p <- p + geom_line(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
+                                                     colour = obscolour, group = 1))
+      p <- p + geom_point(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
+                                                     colour = obscolour, group = 1))
+      p <- p + ptheme + xlab('cycle length') + ylab('count')
+      p <- p + guides(x = guide_axis(check.overlap = TRUE))
+      cycledist_outfilename <- paste(simnetfileprefix, "_cycledist.eps", sep="")
+      cat("writing cycle length distribution plot to EPS file ", cycledist_outfilename, "\n")
+      postscript(cycledist_outfilename, horizontal = FALSE, onefile = FALSE,
+                 paper = "special", width = 9, height = 6)
+      print(p)
+      def.off()  
+    }
   }
 
   ##
