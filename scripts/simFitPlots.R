@@ -887,15 +887,18 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     for (i in 1:num_sim) {
       cyclelen_df[which(cyclelen_df[,"sim"] == i), "count"] <- sim_cycledist[[i]]
     }
-    cyclelen_df$cyclelen <- as.factor(cyclelen_df$cyclelen)
     obs_cyclelen_df <- data.frame(cyclelen = 1:length(cyclelens),
                                   count = obs_cycledist)
+    cyclelen_df$cyclelen <- as.factor(cyclelen_df$cyclelen)
+    obs_cyclelen_df$cyclelen <- as.factor(obs_cyclelen_df$cyclelen)
     p <- ggplot(cyclelen_df, aes(x = cyclelen, y = count)) + geom_boxplot()
     p <- p + geom_line(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
                                                    colour = obscolour, group = 1))
     p <- p + ptheme + xlab('cycle length') + ylab('count')
     p <- p + guides(x = guide_axis(check.overlap = TRUE))
-    plotlist <- c(plotlist, list(p))
+    plotlist <- c(plotlist, list(p)) # no logarithm
+    p <- p + scale_y_log10() + ylab("count (log scale)")
+    plotlist <- c(plotlist, list(p))  # log scale on y axis
     if (do_subplots) {
       ## also write to separate file (add points for separte plot only,
       ## too large and messay on combined plots)
