@@ -880,17 +880,18 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     cat('computing cycle length distirbution in simulated graphs...')
     print(system.time(sim_cycledist <- mclapply(sim_networks,
                                       function(g) summary(g ~ cycle(cyclelens)))))
-    print(sim_cycledist)
+    #print(sim_cycledist)
     cyclelen_df <- data.frame(sim = rep(1:num_sim, each = length(cyclelens)),
-                               cyclelen = rep(1:length(cyclelens), num_sim),
+                               cyclelen = rep(cyclelens, num_sim),
                                count = NA)
     for (i in 1:num_sim) {
       cyclelen_df[which(cyclelen_df[,"sim"] == i), "count"] <- sim_cycledist[[i]]
     }
-    obs_cyclelen_df <- data.frame(cyclelen = 1:length(cyclelens),
+    obs_cyclelen_df <- data.frame(cyclelen = cyclelens,
                                   count = obs_cycledist)
-    cyclelen_df$cyclelen <- as.factor(cyclelen_df$cyclelen)
-    obs_cyclelen_df$cyclelen <- as.factor(obs_cyclelen_df$cyclelen)
+    print(cyclelen_df)#XXX
+    cyclelen_df$cyclelen <- factor(cyclelen_df$cyclelen)
+    obs_cyclelen_df$cyclelen <- factor(obs_cyclelen_df$cyclelen)
     p <- ggplot(cyclelen_df, aes(x = cyclelen, y = count)) + geom_boxplot()
     p <- p + geom_line(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
                                                    colour = obscolour, group = 1))
@@ -900,15 +901,10 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     p <- p + scale_y_log10() + ylab("count (log scale)")
     plotlist <- c(plotlist, list(p))  # log scale on y axis
     if (do_subplots) {
-      ## also write to separate file (add points for separte plot only,
+      ## also write to separate file (add points for separate plot only,
       ## too large and messay on combined plots)
-      p <- ggplot(cyclelen_df, aes(x = cyclelen, y = count)) + geom_boxplot()
-      p <- p + geom_line(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
-                                                     colour = obscolour, group = 1))
       p <- p + geom_point(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
                                                      colour = obscolour, group = 1))
-      p <- p + ptheme + xlab('cycle length') + ylab('count')
-      p <- p + guides(x = guide_axis(check.overlap = TRUE))
       cycledist_outfilename <- paste(simnetfileprefix, "_cycledist.eps", sep="")
       cat("writing cycle length distribution plot to EPS file ", cycledist_outfilename, "\n")
       postscript(cycledist_outfilename, horizontal = FALSE, onefile = FALSE,
