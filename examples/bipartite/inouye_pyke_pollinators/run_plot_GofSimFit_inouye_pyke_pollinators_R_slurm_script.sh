@@ -19,7 +19,7 @@ module load r
 export MC_CORES=${SLURM_CPUS_ON_NODE}
 echo MC_CORES = $MC_CORES
 
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y -t  inouye_pyke_pollinators_bipartite.net sim_gof_inouye_pyke_pollinators
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y -t  -s inouye_pyke_pollinators_bipartite.net sim_gof_inouye_pyke_pollinators
 
 echo -n "ended at: "; date
 
