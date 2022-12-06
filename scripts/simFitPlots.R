@@ -48,7 +48,7 @@ MAX_SIZE_GEODESIC <- 500000 ## do not do shortest paths if more nodes than this
 MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 
 ## for cycle length distribution (only used if do_cycledist = True)
-MAX_CYCLELEN <- 8
+MAX_CYCLELEN <- 12 
 
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
