@@ -24,3 +24,4 @@ bpnet_A750_B250_sim777000000_viz.pdf
 bpnet_A6000_B750_sparse_sim100000000_viz.pdf
 visualizeSimulatedNetworks-*.err
 visualizeSimulatedNetworks-*.out
+config*.OLD
