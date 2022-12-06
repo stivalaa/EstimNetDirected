@@ -25,3 +25,4 @@ bpnet_A6000_B750_sparse_sim100000000_viz.pdf
 visualizeSimulatedNetworks-*.err
 visualizeSimulatedNetworks-*.out
 config*.OLD
+sim_gof_ifd_bpnet_A12000_B4000_sim_cycledist.eps
