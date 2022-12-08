@@ -55,8 +55,8 @@
 ##  -t : do bipartite clustering coefficients (computed with tnet
 ##       pacakge). Note this is not done by default as it is very slow.
 ##
-##  -y : do cycle length distrubition (up to MAX_CYCLLEN). Note this is
-##       not done by default as it can be ery slow
+##  -y MAX_CYCLELEN : do cycle length distrubition (up to MAX_CYCLELEN). Note this is
+##       not done by default (value 0) as it can be very slow
 ##
 ## Output file is simfitPrefix.pdf (where Prefix is the simNetFilePrefix).
 ## WARNING: output file is overwritten
@@ -100,6 +100,8 @@
 ## ending up having to rewrite in Python anyway like for snowball sampling...)
 ##
 
+library(optparse)
+
 library(igraph)
 
 library(grid)
@@ -134,45 +136,37 @@ cat('mc.cores =', getOption("mc.cores"), '\n')
 
 args <- commandArgs(trailingOnly=TRUE)
 
-usage <- function() {
-  cat("Usage: Rscript plotEstimNetDirectedSimFit.R [-s] [-c] [-g] [-d] [-t] netfilename simNetFilePrefix\n")
-  quit(save="no")
-}
-is_opt <- function(s) substr(s, 1, 1) == '-' # options start with '-'
-# get options
-opts <- Filter(is_opt, args)
-# get non-option arguments
-args <- Filter(Negate(is_opt), args)
+option_list <- list(
+  make_option(c("-s", "--subplots"), action="store_true", default=FALSE,
+                 help="Also put subplots in separate files"),
+  make_option(c("-c", "--cergm_mode"), action="store_true", default=FALSE,
+                 help="cERGM mode, use induced subgraphs from extractcERGM2subgraphs.py"),
+  make_option(c("-g", "--no_geodesics"), action="store_true", default=FALSE,
+                 help="do not do geodesic distance distribution"),
+  make_option(c("-d", "--no_dsp"), action="store_true", default=FALSE,
+                 help="do not do dyadwise shared partner distribution"),
+  make_option(c("-t", "--bipartite_cc"), action="store_true", default=FALSE,
+                 help="do bipartite clustering coefficients"),
+  make_option(c("-y", "--max_cyclelen"), type="integer", default=0,
+                help="max cycle length [default %default]")
+  )
+parser <- OptionParser(usage = "%prog [options] netfilename simNetFilePrefix",
+                       option_list = option_list)
+arguments <- parse_args(parser, positional_arguments = 2)
+opt <- arguments$options
+args <- arguments$args
 
-do_subplots <- FALSE
-do_geodesic <- TRUE
-do_dsp <- TRUE
-do_bipartite_cc <- FALSE
-do_cycledist <- FALSE
-cergm_mode  <- FALSE
-for (opt in opts) {
-  if (opt == "-s") {
-    do_subplots <- TRUE
-   } else if (opt == "-c") {
-     cergm_mode <- TRUE
-   } else if (opt == "-g") {
-     do_geodesic <- FALSE
-   } else if (opt == "-d") {
-     do_dsp <- FALSE
-   } else if (opt == "-t") {
-     do_bipartite_cc <- TRUE
-   } else if (opt == "-y") {
-     do_cycledist <- TRUE
-   } else {
-    usage()
-   }
-}
+do_subplots <- opt$subplots
+cergm_mode <- opt$cergm_mode
+do_geodesic <- !opt$no_geodesics
+do_dsp <- !opt$no_dsp
+do_bipartite_cc <- opt$bipartite_cc
+MAX_CYCLELEN <- opt$max_cyclelen
+do_cycledist <- (MAX_CYCLELEN > 0)
 
-if (length(args) > 2) usage()
 
 netfilename <- args[1]
 simnetfileprefix <- args[2]
-
 
 graph_glob <- paste(simnetfileprefix, "_[0-9]*[.]net", sep='')
 outfilename <- paste(simnetfileprefix, "pdf", sep='.')

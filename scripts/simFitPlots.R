@@ -47,8 +47,6 @@ library(parallel)
 MAX_SIZE_GEODESIC <- 500000 ## do not do shortest paths if more nodes than this
 MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 
-## for cycle length distribution (only used if do_cycledist = True)
-MAX_CYCLELEN <- 16 
 
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
@@ -292,9 +290,11 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##                      clustering coefficients using tnet package.
 ##                      Default FALSE (as is very slow)
 ##    do_cycledist : If TRUE, do cycle length distribution (up to
-##                   MAX_CYCLEDIST). Default FALSE (as is slow).
+##                   MAX_CYCLELEN). Default FALSE (as is slow).
 ##                   For bipartite, this replaces four-cycle distribution
 ##                   (since that it included within this).
+##    MAX_CYCLELEN : max length of cycles to do if do_cycledist = TRUE
+##                    default 16 (still too high for many networks)
 ##
 ## Return value:
 ##    list of ggplot2 objects
@@ -302,7 +302,8 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
 ##
 build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                                 do_geodesic=TRUE, do_dsp=TRUE,
-                                do_bipartite_cc=FALSE, do_cycledist=FALSE) {
+                                do_bipartite_cc=FALSE, do_cycledist=FALSE,
+                                MAX_CYCLELEN = 16) {
 
   num_sim <- length(sim_graphs)
   plotlist <- list()
@@ -874,10 +875,10 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     } else {
       cyclelens <- seq(3, MAX_CYCLELEN)
     }
-    cat('computing cycle length distirbution in observed graph...')
+    cat('computing cycle length distribution in observed graph...')
     print(system.time(obs_cycledist <- summary(net_obs ~ cycle(cyclelens))))
     cat('obs_cycledist = ', obs_cycledist, '\n')
-    cat('computing cycle length distirbution in simulated graphs...')
+    cat('computing cycle length distribution in simulated graphs...')
     print(system.time(sim_cycledist <- mclapply(sim_networks,
                                       function(g) summary(g ~ cycle(cyclelens)))))
     #print(sim_cycledist)
