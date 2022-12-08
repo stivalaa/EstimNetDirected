@@ -35,7 +35,7 @@ echo MC_CORES = $MC_CORES
 
 time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R stats_ifd_bpnet_A12000_B4000_sim.txt obs_stats_ifd_bpnet_A12000_B4000_sim_0.txt 
 
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y -s bpnet_A12000_B4000_sparse_sim770000000.net sim_gof_ifd_bpnet_A12000_B4000_sim
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 16 -s bpnet_A12000_B4000_sparse_sim770000000.net sim_gof_ifd_bpnet_A12000_B4000_sim
 
 
 echo -n "ended at: "; date
