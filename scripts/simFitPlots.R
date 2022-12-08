@@ -614,7 +614,9 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
   } else {
     num_dyads_obs <- choose(vcount(g_obs), 2) # N*(N-1)/2
     num_dyads_sim <- sapply(sim_graphs, function(h) choose(vcount(h), 2))
+    cat('computing observed geodesic distribution...')
     system.time(obs_geodesics <- distance_table(g_obs)$res)
+    cat('computing simulated geodesic distributions...')
     system.time(sim_geodesics <- sapply(sim_graphs,
                                         function(g) distance_table(g)$res,
                                         simplify = FALSE))
@@ -744,11 +746,14 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     library(statnet)   
     library(intergraph)
 
+    cutoff <- 50 # gw.cutoff default used in statnet is 30
+    cat('dsp cutoff = ', cutoff, '\n')
+    cat('computing observed dsp distribution...')
     system.time(net_obs <- asNetwork(g_obs))
+    cat('computing simuated dsp distributions...')
     system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
     statnet_loaded <- TRUE # also net_obs and sim_networks built
 
-    cutoff <- 50 # gw.cutoff default used in statnet is 30
     dsp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
                          dsp = rep(0:cutoff, num_sim),
                          count = NA)
