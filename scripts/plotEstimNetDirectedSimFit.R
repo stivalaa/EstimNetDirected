@@ -208,7 +208,8 @@ num_sim <- length(sim_graphs)
 
 ## build the list of plots
 plotlist <- build_sim_fit_plots(g_obs, sim_graphs, do_subplots, do_geodesic,
-                                do_dsp, do_bipartite_cc, do_cycledist)
+                                do_dsp, do_bipartite_cc, do_cycledist,
+                                MAX_CYCLELEN)
 
 if (cergm_mode) {
   ## add plot for number of nodes in each induced subgraph, with
