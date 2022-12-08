@@ -876,7 +876,8 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
       cyclelens <- seq(3, MAX_CYCLELEN)
     }
     cat('computing cycle length distribution in observed graph...')
-    print(system.time(obs_cycledist <- summary(net_obs ~ cycle(cyclelens))))
+    print(system.time(obs_cycledist <- simplify2array(mclapply(cyclelens,
+                                     function(x) summary(net_obs ~ cycle(x))))))
     cat('obs_cycledist = ', obs_cycledist, '\n')
     cat('computing cycle length distribution in simulated graphs...')
     print(system.time(sim_cycledist <- mclapply(sim_networks,
