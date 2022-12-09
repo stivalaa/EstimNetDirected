@@ -615,11 +615,11 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     num_dyads_obs <- choose(vcount(g_obs), 2) # N*(N-1)/2
     num_dyads_sim <- sapply(sim_graphs, function(h) choose(vcount(h), 2))
     cat('computing observed geodesic distribution...')
-    system.time(obs_geodesics <- distance_table(g_obs)$res)
+    print(system.time(obs_geodesics <- distance_table(g_obs)$res)
     cat('computing simulated geodesic distributions...')
-    system.time(sim_geodesics <- sapply(sim_graphs,
+    print(system.time(sim_geodesics <- sapply(sim_graphs,
                                         function(g) distance_table(g)$res,
-                                        simplify = FALSE))
+                                        simplify = FALSE)))
     maxgeodesic <- max(length(obs_geodesics),
                        sapply(sim_geodesics, function(v) length(v)))
     cat("Max geodesic distance is ", maxgeodesic, "\n")
@@ -756,7 +756,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
                          dsp = rep(0:cutoff, num_sim),
                          count = NA)
     cat('computing observed dsp distribution...')
-    system.time(obs_dsp <- summary(net_obs ~ dsp(0:cutoff)))
+    print(system.time(obs_dsp <- summary(net_obs ~ dsp(0:cutoff))))
     cat('computing simulated dsp distributions...')
     start <- Sys.time()
     for (i in 1:num_sim) {
