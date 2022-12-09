@@ -748,16 +748,16 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
 
     cutoff <- 50 # gw.cutoff default used in statnet is 30
     cat('dsp cutoff = ', cutoff, '\n')
-    cat('computing observed dsp distribution...')
     system.time(net_obs <- asNetwork(g_obs))
-    cat('computing simuated dsp distributions...')
     system.time(sim_networks <- lapply(sim_graphs, function(g) asNetwork(g)))
     statnet_loaded <- TRUE # also net_obs and sim_networks built
 
     dsp_df <- data.frame(sim = rep(1:num_sim, each = cutoff+1),
                          dsp = rep(0:cutoff, num_sim),
                          count = NA)
+    cat('computing observed dsp distribution...')
     system.time(obs_dsp <- summary(net_obs ~ dsp(0:cutoff)))
+    cat('computing simulated dsp distributions...')
     start <- Sys.time()
     for (i in 1:num_sim) {
       dsp_df[which(dsp_df[, "sim"] == i), "count"] <-  summary(sim_networks[[i]] ~ dsp(0:cutoff))
