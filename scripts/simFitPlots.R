@@ -615,7 +615,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     num_dyads_obs <- choose(vcount(g_obs), 2) # N*(N-1)/2
     num_dyads_sim <- sapply(sim_graphs, function(h) choose(vcount(h), 2))
     cat('computing observed geodesic distribution...')
-    print(system.time(obs_geodesics <- distance_table(g_obs)$res)
+    print(system.time(obs_geodesics <- distance_table(g_obs)$res))
     cat('computing simulated geodesic distributions...')
     print(system.time(sim_geodesics <- sapply(sim_graphs,
                                         function(g) distance_table(g)$res,
