@@ -617,9 +617,8 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     cat('computing observed geodesic distribution...')
     print(system.time(obs_geodesics <- distance_table(g_obs)$res))
     cat('computing simulated geodesic distributions...')
-    print(system.time(sim_geodesics <- sapply(sim_graphs,
-                                        function(g) distance_table(g)$res,
-                                        simplify = FALSE)))
+    print(system.time(sim_geodesics <- mclapply(sim_graphs,
+                                        function(g) distance_table(g)$res)))
     maxgeodesic <- max(length(obs_geodesics),
                        sapply(sim_geodesics, function(v) length(v)))
     cat("Max geodesic distance is ", maxgeodesic, "\n")
