@@ -128,7 +128,12 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode, btype=NULL) {
     }
     deg_df$degree <- as.factor(deg_df$degree)
     deg_df$count[which(is.na(deg_df$count))] <- 0
-    deg_df$nodefraction <- deg_df$count / sapply(sim_graphs, vcount)
+    if (is.bipartite(g_obs)) {
+      deg_df$nodefraction <- deg_df$count / sapply(sim_graphs,
+                                 function(g) length(which(V(g)$type == btype)))
+    } else {
+      deg_df$nodefraction <- deg_df$count / sapply(sim_graphs, vcount)
+    }
     end = Sys.time()
     cat(mode, "-degree sim data frame construction took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -151,7 +156,12 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode, btype=NULL) {
     ## simulated degree distribution)
     obs_deg_df$degree <- as.factor(obs_deg_df$degree)
     obs_deg_df$count[which(is.na(obs_deg_df$count))] <- 0
-    obs_deg_df$nodefraction <- obs_deg_df$count / vcount(g_obs)
+    if (is.bipartite(g_obs)) {
+      obs_deg_df$nodefraction <- obs_deg_df$count /
+                                         length(which(V(g_obs)$type == btype))
+    } else {
+      obs_deg_df$nodefraction <- obs_deg_df$count / vcount(g_obs)
+    }
     ##print(obs_deg_df)#XXX
     end = Sys.time()
     cat(mode, "-degree obs data frame construction took",
@@ -175,6 +185,11 @@ deg_distr_plot <- function(g_obs, sim_graphs, mode, btype=NULL) {
       degreetype <- paste(mode, 'degree', sep='-')
     }
     p <- p + xlab(degreetype) + ylab('fraction of nodes')
+    if (is.bipartite(g_obs)) {
+      p <- p + ylab(paste('fraction of', ifelse(btype, 'B', 'A'), 'nodes'))
+    } else {
+      p <- p + ylab('fraction of nodes')
+    }
     if (maxdeg > 200) {
         p <- p + scale_x_discrete(breaks = seq(0, maxdeg, by = 200))
     } else if (maxdeg > 50) {
