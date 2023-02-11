@@ -6,8 +6,6 @@ The source code is written in C and (optionally) uses MPI to run multiple estima
 
 Also included is a simple Python demonstration implementation. The Python implementation uses the NumPy library for vector and matrix data types and functions. In addition, there are R scripts for estimating standard errors and plotting results from the output.
 
-For more information, and the original implementation for undirected networks, see http://www.estimnet.org/.
-
 As well as some simulated networks, as empirical examples, the political bloggers network from the paper:
 
 Adamic, Lada A, & Glance, Natalie. (2005). The political blogosphere and the 2004 US election: divided they blog. Pages 36-43 of: Proceedings of the 3rd international workshop on link discovery. ACM.
