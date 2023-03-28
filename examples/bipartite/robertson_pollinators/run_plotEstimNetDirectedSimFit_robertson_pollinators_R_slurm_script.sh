@@ -14,7 +14,7 @@ ROOT=../../..
 
 module load r
 
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R robertson_pollinators_bipartite.net sim_ifd_robertson_pollinators
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ../../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net sim_ifd_robertson_pollinators
 
 echo -n "ended at: "; date
 
