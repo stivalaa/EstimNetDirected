@@ -36,7 +36,7 @@ computeStats = True # compute observed sufficient statistics
 # [note this part is optional for EstimeNetDirected] then *edges
 # followed by edges list one per line.
 
-arclistFile = ../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net
+arclistFile = ../../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net
 
 # Attribute files
 # binattr_file for binary attributes (0 or 1 only)
