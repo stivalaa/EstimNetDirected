@@ -89,7 +89,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 # Structural parameters
 #
 
-structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltK4CyclesA(5.0), BipartiteAltK4CyclesB(5.0)}
+structParams =  { Edge, Isolates, BipartiteAltStarsA(4.0), BipartiteAltStarsB(5.0), BipartiteAltK4CyclesA(2.0), BipartiteAltK4CyclesB(4.0)}
 
 ##Does not converge:
 ##structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltKCyclesA(5.0), BipartiteAltKCyclesB(5.0)}
