@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --time=0-01:00:00
 #SBATCH --cpus-per-task=20
-#SBATCH --mem-per-cpu=2GB
+#SBATCH --mem-per-cpu=500MB
 #SBATCH --partition=slim
 #SBATCH --output=PlotGofSimFit-robertson_pollinators-%j.out
 #SBATCH --error=PlotGofSimFit-robertson_pollinators-%j.err
@@ -19,7 +19,8 @@ module load r
 export MC_CORES=${SLURM_CPUS_ON_NODE}
 echo MC_CORES = $MC_CORES
 
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 12  -s ../../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net sim_gof_robertson_pollinators
+# even -y 8 does not complete in an hour (started at 12 and worked down)
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 6  -s ../../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net sim_gof_robertson_pollinators
 
 echo -n "ended at: "; date
 
