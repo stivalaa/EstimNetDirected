@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --time=0-01:00:00
 #SBATCH --cpus-per-task=20
-#SBATCH --mem-per-cpu=500MB
+#SBATCH --mem-per-cpu=1GB
 #SBATCH --partition=slim
 #SBATCH --output=PlotGofSimFit-robertson_pollinators-%j.out
 #SBATCH --error=PlotGofSimFit-robertson_pollinators-%j.err
