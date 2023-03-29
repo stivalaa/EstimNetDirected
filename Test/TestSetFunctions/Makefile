@@ -7,7 +7,7 @@ CC = gcc
 
 CFLAGS += -I$(SRCDIR)
 
-OBJS = $(SRCDIR)/changeStatisticsGeneral.o $(SRCDIR)/graph.o $(SRCDIR)/utils.o  $(SRCDIR)/loadGraph.o
+OBJS = $(SRCDIR)/changeStatisticsGeneral.o $(SRCDIR)/graph.o $(SRCDIR)/utils.o  $(SRCDIR)/loadGraph.o $(SRCDIR)/changeStatisticsBipartiteUndirected.o $(SRCDIR)/changeStatisticsUndirected.o
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 

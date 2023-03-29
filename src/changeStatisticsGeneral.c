@@ -66,6 +66,7 @@
 #include <math.h>
 #include <assert.h>
 #include "changeStatisticsGeneral.h"
+#include "changeStatisticsBipartiteUndirected.h"
 
 
 /*****************************************************************************
@@ -594,6 +595,10 @@ double *empty_graph_stats(graph_t *g,
     if (change_stats_funcs[l] == changeIsolates) {
       /* The Isolates statistic is the number of nodes for empty graph */
       emptystats[param_i] = g->num_nodes;
+    } else if (change_stats_funcs[l] == changeBipartiteIsolatesA) {
+      emptystats[param_i] = g->num_A_nodes;
+    } else if (change_stats_funcs[l] == changeBipartiteIsolatesB) {
+      emptystats[param_i] = g->num_B_nodes;
     } else {
       emptystats[param_i] = 0;
     }

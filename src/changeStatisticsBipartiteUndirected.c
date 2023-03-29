@@ -304,6 +304,42 @@ double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda
   return delta;
 }
 
+/*
+ * Change statistic for Isolates for mode A nodes
+ */
+double changeBipartiteIsolatesA(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  double delta = 0;
+  (void)lambda; /* unused parameter */
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  if (g->degree[i] == 0) {
+    delta--;
+  }
+  return delta;
+}
+
+/*
+ * Change statistic for Isolates for mode B nodes
+ */
+double changeBipartiteIsolatesB(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  double delta = 0;
+  (void)lambda; /* unused parameter */
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  if (g->degree[j] == 0) {
+    delta--;
+  }
+  return delta;
+}
+
 /************************* Actor attribute (binary) **************************/
 
 

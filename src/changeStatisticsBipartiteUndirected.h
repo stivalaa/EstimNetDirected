@@ -108,6 +108,8 @@ double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartiteIsolatesA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartiteIsolatesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
