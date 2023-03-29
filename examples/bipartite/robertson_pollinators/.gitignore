@@ -1,2 +1,11 @@
 EstimNetDirected_mpi.exe
 EstimNetDirected_mpi
+EstimNetDirected-ifd_robertson_pollinators-*.???
+PlotEstimNetDirectedSimFit-robertson_pollinators-*.???
+PlotGofSimFit-robertson_pollinators-*.???
+SimulateERGM-robertson_pollinators-*.???
+config_gof_robertson_pollinators.txt
+config_gof_robertson_pollinators.txt.OLD
+sim_gof_robertson_pollinators_cycledist.eps
+stats_gof_robertson_pollinators-plots.eps
+stats_gof_robertson_pollinators.txt
