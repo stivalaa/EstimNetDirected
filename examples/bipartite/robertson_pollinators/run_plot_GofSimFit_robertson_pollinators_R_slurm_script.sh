@@ -20,7 +20,8 @@ export MC_CORES=${SLURM_CPUS_ON_NODE}
 echo MC_CORES = $MC_CORES
 
 # even -y 8 does not complete in an hour (started at 12 and worked down)
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 6  -s ../../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net sim_gof_robertson_pollinators
+# and -y 6 over half an hour
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -s ../../../Test/TestChangeStatsBipartite/robertson_pollinators_bipartite.net sim_gof_robertson_pollinators
 
 echo -n "ended at: "; date
 
