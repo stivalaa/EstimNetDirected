@@ -90,6 +90,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 #
 
 # There are no mode B isolates
+## GoF simulation shows this is not really a converged model:
 structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(4.0),  BipartiteAltKCyclesA(2.0), BipartiteAltKCyclesB(4.0), BipartiteAltK4CyclesA(2.0), BipartiteAltK4CyclesB(4.0)}
 
 ##Does not converge:
