@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Stivala"
+  given-names: "Alex"
+  orcid: "https://orcid.org/0000-0002-2442-4743"
+- family-names: "Robins"
+  given-names: "Garry"
+- family-names: "Lomi"
+  given-names: "Alessandro"
+title: "EstimNetDirected"
+url: "https://github.com/stivalaa/EstimNetDirected"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Stivala"
+      given-names: "Alex"
+      orcid: "https://orcid.org/0000-0002-2442-4743"
+    - family-names: "Robins"
+      given-names: "Garry"
+    - family-names: "Lomi"
+      given-names: "Alessandro"
+  title: "Exponential random graph model parameter estimation for very large directed networks"
+  doi: 10.1371/journal.pone.0227804
+  journal: PLOS ONE
+  year: 2020
+  volume: 15
+  issue: 1
+  start: e0227804
