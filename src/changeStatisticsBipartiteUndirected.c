@@ -53,7 +53,7 @@
  * 
  * especially Ch. 10:
  *
- *   Weng, P. (2013). Exponential random graph model extensions:
+ *   Wang, P. (2013). Exponential random graph model extensions:
  *   models for multiple networks and bipartite networks. In
  *   "Exponential random graph models for social networks: Theory,
  *   methods, and applications." (pp. 115-129). New York, NY: Cambridge
@@ -255,7 +255,7 @@ double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for alternating k-4-cycles for type A nodes
  * (new change statistic suggested in email (basically paper outline, 
- * with spreadsheet attachments for literature search, exampels, etc.)
+ * with spreadsheet attachments for literature search, examples, etc.)
  * "idea for a (slightly) new bipartite change statistic" sent 23 Nov 2022)
  */
 double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
@@ -281,7 +281,7 @@ double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda
 /*
  * Change statistic for alternating k-4-cycles for type B nodes
  * (new change statistic suggested in email (basically paper outline, 
- * with spreadsheet attachments for literature search, exampels, etc.)
+ * with spreadsheet attachments for literature search, examples, etc.)
  * "idea for a (slightly) new bipartite change statistic" sent 23 Nov 2022)
  */
 double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
