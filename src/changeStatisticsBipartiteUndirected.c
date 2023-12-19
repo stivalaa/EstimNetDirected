@@ -766,7 +766,7 @@ double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, 
           g->catattr[a][v] != CAT_NA &&
           g->catattr[a][i] != g->catattr[a][v]) {
         /* Note pow0 defines pow0(0, 0) = 0
-           as per Bomiryia et al. (2023)xo [see p. 7 after eqn (7)] */
+           as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
         delta += (pow0(twopaths_not_via_k_A(g, i, v, j) + 1, alpha) -
                   pow0(twopaths_not_via_k_A(g, i, v, j), alpha));
       }
