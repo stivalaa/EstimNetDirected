@@ -376,11 +376,18 @@ static int parse_struct_params(FILE *infile, param_config_t *pconfig,
  * (supplied with name = value format) for use in simulation (otherwise
  * no value allowed, used for estimation).
  *
+ * If the attr_exponent_type is ATTR_EXP_TYPE_EXPONENT then the
+ * attribute name must be followed by an exponent value (a floating
+ * point value in the interval [0, 1]) as used by some change
+ * stasistics, specifically for example BipartiteNodematchAlphaA and
+ * BipartiteNodematchBetaA for the alpha and beta values
+ * respectively. e.g.: "BipartiteNodematchBetaA(gender, 0.1)"
  */
 static int parse_one_attr_param(const char *paramName,
                                 attr_change_stats_func_t *attr_change_stats_func,
                                 FILE *infile, param_config_t *pconfig,
-                                bool requireErgmValue)
+                                bool requireErgmValue,
+                                attr_exponent_type_e exponent_type)
 {
   char      tokenbuf[TOKSIZE];
   char     *token;
@@ -389,6 +396,7 @@ static int parse_one_attr_param(const char *paramName,
   double    value   = 0;
   char     *endptr; /* for strtod() */
   char      attrname[TOKSIZE];  /* attribute name buffer */
+  double    exponent_value = DEFAULT_EXPONENT_VALUE;
   
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for attrParam %s\n", paramName);
@@ -416,6 +424,37 @@ static int parse_one_attr_param(const char *paramName,
         CONFIG_DEBUG_PRINT(("attrParam %s('%s')\n", paramName, token));
         last_token_was_attrname = TRUE;
         strncpy(attrname, token, TOKSIZE);
+
+        if (exponent_type == ATTR_EXP_TYPE_EXPONENT) {
+          /* The attribute name must be followed by floating
+             point value in interval [0, 1] used e.g. as an exponent
+             or decay parameter */
+          CONFIG_DEBUG_PRINT(("attrParam %s('%s') expecting exponent\n",
+                              paramName, attrname));
+          if (!(token = get_token(infile, tokenbuf)) ||
+              strcmp(token, ",") != 0) {
+            fprintf(stderr, "attrParam %s('%s') expecting comma then exponent\n",
+                    paramName, attrname);
+            return 1;
+          }
+          if (!(token = get_token(infile, tokenbuf))) {
+            fprintf(stderr, "attrParam %s('%s') expecting exponent\n",
+                    paramName, attrname);
+            return 1;
+          }
+          CONFIG_DEBUG_PRINT(("parse_one_attr_param token '%s'\n", token));        
+          exponent_value = strtod(token, &endptr);
+          if (*endptr != '\0') {
+            fprintf(stderr, "ERROR: expecting floating point value for attrParam %s(%s) exponent but got '%s'\n", paramName, attrname, token);
+            return 1;
+          }
+          CONFIG_DEBUG_PRINT(("attrParam %s(%s) exponent %g\n", paramName, attrname, exponent_value));
+          if (exponent_value < 0.0 || exponent_value > 1.0) {
+            fprintf(stderr, "ERROR: attrParam %s(%s) exponent value %g is not in interval [0, 1]\n",
+                    paramName, attrname, exponent_value);
+          }
+        }
+                
 
         if (requireErgmValue) {
           if (!(token = get_token(infile, tokenbuf))) {
@@ -451,10 +490,16 @@ static int parse_one_attr_param(const char *paramName,
                        sizeof(attr_change_stats_func_t *));
         pconfig->attr_names = (char **)safe_realloc(pconfig->attr_names,
               (pconfig->num_attr_change_stats_funcs + 1) * sizeof(const char *));
+        pconfig->attr_param_exponents = (double *)
+          safe_realloc(pconfig->attr_param_exponents,
+                       (pconfig->num_attr_change_stats_funcs + 1) *
+                       sizeof(double));
         pconfig->attr_param_names[pconfig->num_attr_change_stats_funcs] = paramName;
         pconfig->attr_change_stats_funcs[pconfig->num_attr_change_stats_funcs] =
           attr_change_stats_func;
         pconfig->attr_names[pconfig->num_attr_change_stats_funcs] = safe_strdup(attrname);
+        pconfig->attr_param_exponents[pconfig->num_attr_change_stats_funcs] =
+          exponent_value;
         if (requireErgmValue) {
           pconfig->attr_param_values =
             (double *)safe_realloc(pconfig->attr_param_values,
@@ -539,7 +584,8 @@ static int parse_attr_params(FILE *infile, param_config_t *pconfig,
       last_token_was_paramname = TRUE;
       if (parse_one_attr_param(ATTR_PARAMS[i].name,
                                ATTR_PARAMS[i].attr_change_stats_func,
-                               infile, pconfig, requireErgmValue)) {
+                               infile, pconfig, requireErgmValue,
+                               ATTR_PARAMS[i].attr_exponent_type)) {
         fprintf(stderr, "ERROR parsing attrParams %s\n", ATTR_PARAMS[i].name);
         return 1;
       }
