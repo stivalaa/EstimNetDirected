@@ -119,37 +119,39 @@ static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
  */
 static const attr_param_t ATTR_PARAMS[] =
 {
-  {"Sender",                      ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeSender},
-  {"Receiver",                    ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeReceiver},
-  {"Interaction",                 ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeInteraction},
-  {"Matching",                    ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeMatching},
-  {"MatchingReciprocity",         ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMatchingReciprocity},
-  {"Mismatching",                 ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeMismatching},
-  {"MismatchingReciprocity",      ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingReciprocity},
-  {"MismatchingTransitiveTriad",  ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingTransitiveTriad},
-  {"MismatchingTransitiveTies",   ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingTransitiveTies},
-  {"ContinuousSender",            ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousSender},
-  {"ContinuousReceiver",          ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousReceiver},
-  {"Diff",                        ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeDiff},
-  {"Sum",                         ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeSum},
-  {"DiffReciprocity",             ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffReciprocity},
-  {"DiffSign",                    ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffSign},
-  {"DiffDirSR",                   ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirSR},
-  {"DiffDirRS",                   ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirRS},
-  {"JaccardSimilarity",           ATTR_TYPE_SET,         ATTR_EXP_TYPE_NONE, NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeJaccardSimilarity},
-  {"Activity",                    ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeActivity},
-  {"BipartiteActivityA",          ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityA},
-  {"BipartiteActivityB",          ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityB},
-  {"BipartiteContinuousActivityA",ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteContinuousActivityA},
-  {"BipartiteContinuousActivityB",ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteContinuousActivityB},
-  {"BipartiteTwoPathSumA",        ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathSumA},
-  {"BipartiteTwoPathSumB",        ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathSumB},
-  {"BipartiteTwoPathDiffA",       ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathDiffA},
-  {"BipartiteTwoPathDiffB",       ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathDiffB},
-  {"BipartiteTwoPathMatchingA",   ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingA},
-  {"BipartiteTwoPathMatchingB",   ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingB},
-  {"BipartiteTwoPathMismatchingA",ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingA},
-  {"BipartiteTwoPathMismatchingB",ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingB}
+  {"Sender",                      ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeSender},
+  {"Receiver",                    ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeReceiver},
+  {"Interaction",                 ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeInteraction},
+  {"Matching",                    ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeMatching},
+  {"MatchingReciprocity",         ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMatchingReciprocity},
+  {"Mismatching",                 ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeMismatching},
+  {"MismatchingReciprocity",      ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingReciprocity},
+  {"MismatchingTransitiveTriad",  ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingTransitiveTriad},
+  {"MismatchingTransitiveTies",   ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeMismatchingTransitiveTies},
+  {"ContinuousSender",            ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousSender},
+  {"ContinuousReceiver",          ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeContinuousReceiver},
+  {"Diff",                        ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeDiff},
+  {"Sum",                         ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeSum},
+  {"DiffReciprocity",             ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffReciprocity},
+  {"DiffSign",                    ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffSign},
+  {"DiffDirSR",                   ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirSR},
+  {"DiffDirRS",                   ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_DIRECTED,   NETWORK_MODE_ONEMODE, changeDiffDirRS},
+  {"JaccardSimilarity",           ATTR_TYPE_SET,         ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_BOTH,       NETWORK_MODE_BOTH,    changeJaccardSimilarity},
+  {"Activity",                    ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changeActivity},
+  {"BipartiteActivityA",          ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityA},
+  {"BipartiteActivityB",          ATTR_TYPE_BINARY,      ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteActivityB},
+  {"BipartiteContinuousActivityA",ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteContinuousActivityA},
+  {"BipartiteContinuousActivityB",ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteContinuousActivityB},
+  {"BipartiteTwoPathSumA",        ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathSumA},
+  {"BipartiteTwoPathSumB",        ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathSumB},
+  {"BipartiteTwoPathDiffA",       ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathDiffA},
+  {"BipartiteTwoPathDiffB",       ATTR_TYPE_CONTINUOUS,  ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathDiffB},
+  {"BipartiteTwoPathMatchingA",   ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingA},
+  {"BipartiteTwoPathMatchingB",   ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingB},
+  {"BipartiteTwoPathMismatchingA",ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingA},
+  {"BipartiteTwoPathMismatchingB",ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingB},
+  {"BipartiteNodematchAlphaA",    ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchAlphaA},
+  {"BipartiteNodematchBetaA",     ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchAlphaA}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
@@ -1219,14 +1221,16 @@ void dump_parameter_names(void)
   }
   fprintf(stderr, "Attribute parameters (%s):\n", ATTR_PARAMS_STR);
   for (i = 0; i < NUM_ATTR_PARAMS; i++) {
-    fprintf(stderr, "  %s (%s, %s) (%s)\n", ATTR_PARAMS[i].name,
+    fprintf(stderr, "  %s (%s, %s) (%s)%s\n", ATTR_PARAMS[i].name,
             network_type_str(ATTR_PARAMS[i].network_type),
             network_mode_str(ATTR_PARAMS[i].network_mode),
             ATTR_PARAMS[i].type == ATTR_TYPE_BINARY ? "binary" :
             (ATTR_PARAMS[i].type == ATTR_TYPE_CATEGORICAL ? "categorical" :
              (ATTR_PARAMS[i].type == ATTR_TYPE_CONTINUOUS ? "continuous" :
               (ATTR_PARAMS[i].type == ATTR_TYPE_SET ? "set" :
-               "*UNKNOWN*"))));
+               "*UNKNOWN*"))),
+            ATTR_PARAMS[i].attr_exponent_type == ATTR_EXP_TYPE_EXPONENT ?
+            " requires exponent value in [0, 1]" : "");
   }
   fprintf(stderr, "Dyadic covariate parameters (%s):\n", DYADIC_PARAMS_STR);
   for (i = 0; i < NUM_DYADIC_PARAMS; i++) {

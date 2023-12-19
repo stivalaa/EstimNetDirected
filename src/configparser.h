@@ -41,9 +41,6 @@
 /* default value of lambda (decay) parameter for struct params that use it */
 #define DEFAULT_LAMBDA                2.0  
 
-/* default value of exponent (e.g. alpha or beta) parameter for
-   attr params that use it */
-#define DEFAULT_EXPONENT_VALUE        1.0
 
 /*****************************************************************************
  *
