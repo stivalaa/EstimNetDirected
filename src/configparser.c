@@ -454,6 +454,7 @@ static int parse_one_attr_param(const char *paramName,
           if (exponent_value < 0.0 || exponent_value > 1.0) {
             fprintf(stderr, "ERROR: attrParam %s(%s) exponent value %g is not in interval [0, 1]\n",
                     paramName, attrname, exponent_value);
+            return 1;
           }
         }
                 
