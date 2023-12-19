@@ -125,6 +125,7 @@ double calcChangeStats(graph_t *g, uint_t i, uint_t j,
                        attr_interaction_change_stats_func_t 
                                         *attr_interaction_change_stats_funcs[],
                        uint_t attr_indices[],
+                       double exponent_values[],
                        uint_pair_t attr_interaction_pair_indices[],
                        const double theta[],
                        bool isDelete,
@@ -143,6 +144,7 @@ double *empty_graph_stats(graph_t *g,
                           attr_interaction_change_stats_func_t 
                           *attr_interaction_change_stats_funcs[],
                           uint_t attr_indices[],
+                          double exponent_values[],                          
                           uint_pair_t attr_interaction_pair_indices[],
                           double emptystats[]);
 

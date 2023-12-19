@@ -28,6 +28,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           attr_interaction_change_stats_func_t
                                          *attr_interaction_change_stats_funcs[],
                                           uint_t attr_indices[],
+                                          double exponent_values[],
                                           uint_pair_t
                                           attr_interaction_pair_indices[],
                                           double addChangeStats[],

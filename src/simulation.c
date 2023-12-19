@@ -59,6 +59,8 @@
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values    - array of exponent values for attr change stats funcs
+ *                          length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -93,6 +95,7 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
                                      attr_interaction_change_stats_func_t
                                      *attr_interaction_change_stats_funcs[],
                                      uint_t attr_indices[],
+                                     double exponent_values[],
                                      uint_pair_t attr_interaction_pair_indices[],                                     
                                      bool useConditionalEstimation,
                                      bool forbidReciprocity,
@@ -175,7 +178,7 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
                           attr_change_stats_funcs,
                           dyadic_change_stats_funcs,
                           attr_interaction_change_stats_funcs,
-                          attr_indices,
+                          attr_indices, exponent_values,
                           attr_interaction_pair_indices,
                           theta, FALSE, changestats);
     for (l = 0; l < n; l++)
@@ -228,6 +231,8 @@ static void make_erdos_renyi_digraph(graph_t *g, uint_t numArcs,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values    - array of exponent values for attr change stats funcs
+ *                          length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -274,6 +279,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   attr_interaction_change_stats_func_t
                   *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
+                  double exponent_values[],
                   uint_pair_t attr_interaction_pair_indices[],
                   uint_t sample_size, ulong_t interval, ulong_t burnin,
                   double theta[],
@@ -346,6 +352,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
                                    attr_indices,
+                                   exponent_values,
                                    attr_interaction_pair_indices,
                                    theta,
                                    addChangeStats, delChangeStats, burnin,
@@ -363,6 +370,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
                                    attr_indices,
+                                   exponent_values,
                                    attr_interaction_pair_indices,
                                    theta,
                                    addChangeStats, delChangeStats,
@@ -381,6 +389,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
                                      attr_indices,
+                                     exponent_values,
                                      attr_interaction_pair_indices,
                                      theta,
                                      addChangeStats, delChangeStats,
@@ -410,6 +419,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
                                    attr_indices,
+                                   exponent_values,
                                    attr_interaction_pair_indices,
                                    theta,
                                    addChangeStats, delChangeStats, interval,
@@ -427,6 +437,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
                                    attr_indices,
+                                   exponent_values,
                                    attr_interaction_pair_indices,
                                    theta,
                                    addChangeStats, delChangeStats,
@@ -445,6 +456,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
                                      attr_indices,
+                                     exponent_values,
                                      attr_interaction_pair_indices,
                                      theta,
                                      addChangeStats, delChangeStats,
@@ -791,6 +803,7 @@ int do_simulation(sim_config_t * config)
                     config->param_config.dyadic_change_stats_funcs,
                     config->param_config.attr_interaction_change_stats_funcs,
                     config->param_config.attr_indices,
+                    config->param_config.attr_param_exponents,
                     config->param_config.attr_interaction_pair_indices,
                     dzA);
   if (config->citationERGM) {
@@ -835,6 +848,7 @@ int do_simulation(sim_config_t * config)
                                        config->param_config.dyadic_change_stats_funcs,
                                        config->param_config.attr_interaction_change_stats_funcs,
                                        config->param_config.attr_indices,
+                                       config->param_config.attr_param_exponents,                                     
                                        config->param_config.attr_interaction_pair_indices,
                                        dzA, theta);
     if (add_cergm_terms_to_digraph(g, config->term_filename)) {
@@ -872,6 +886,7 @@ int do_simulation(sim_config_t * config)
                             config->param_config.dyadic_change_stats_funcs,
                             config->param_config.attr_interaction_change_stats_funcs,
                             config->param_config.attr_indices,
+                            config->param_config.attr_param_exponents,
                             config->param_config.attr_interaction_pair_indices,
                             theta,
                             TRUE, /*isDelete*/
@@ -904,6 +919,7 @@ int do_simulation(sim_config_t * config)
                                config->param_config.dyadic_change_stats_funcs,
                                config->param_config.attr_interaction_change_stats_funcs,
                                config->param_config.attr_indices,
+                               config->param_config.attr_param_exponents,
                                config->param_config.attr_interaction_pair_indices,                              
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
@@ -924,6 +940,7 @@ int do_simulation(sim_config_t * config)
                                config->param_config.dyadic_change_stats_funcs,
                                config->param_config.attr_interaction_change_stats_funcs,
                                config->param_config.attr_indices,
+                               config->param_config.attr_param_exponents,
                                config->param_config.attr_interaction_pair_indices,                              
                                config->useConditionalSimulation,
                                config->forbidReciprocity,
@@ -999,6 +1016,7 @@ int do_simulation(sim_config_t * config)
                 config->param_config.dyadic_change_stats_funcs,
                 config->param_config.attr_interaction_change_stats_funcs,
                 config->param_config.attr_indices,
+                config->param_config.attr_param_exponents,                
                 config->param_config.attr_interaction_pair_indices,
                 config->sampleSize, config->interval, config->burnin,
                 theta,

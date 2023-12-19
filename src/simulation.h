@@ -21,6 +21,7 @@ int simulate_ergm(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   attr_interaction_change_stats_func_t
                   *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
+                  double exponent_values[],
                   uint_pair_t attr_interaction_pair_indices[],
                   uint_t sample_size, ulong_t interval, ulong_t burnin,
                   double theta[],

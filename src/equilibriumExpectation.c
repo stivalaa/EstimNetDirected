@@ -98,6 +98,8 @@
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values - array of exponent values for attr change stats funcs
+ *                     length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -136,6 +138,7 @@ void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  attr_interaction_change_stats_func_t
                                   *attr_interaction_change_stats_funcs[],
                  uint_t attr_indices[],
+                 double exponent_values[],
                  uint_pair_t attr_interaction_pair_indices[],
                  uint_t M1,
                  uint_t sampler_m,
@@ -181,6 +184,7 @@ void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
                                    attr_indices,
+                                   exponent_values,
                                    attr_interaction_pair_indices,
                                    theta,
                                    addChangeStats, delChangeStats, sampler_m,
@@ -200,6 +204,7 @@ void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                    dyadic_change_stats_funcs,
                                    attr_interaction_change_stats_funcs,
                                    attr_indices,
+                                   exponent_values,
                                    attr_interaction_pair_indices,
                                    theta,
                                    addChangeStats, delChangeStats, sampler_m,
@@ -216,6 +221,7 @@ void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
                                      attr_indices,
+                                     exponent_values,
                                      attr_interaction_pair_indices,
                                      theta,
                                      addChangeStats, delChangeStats, sampler_m,
@@ -279,6 +285,8 @@ void algorithm_S(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values - array of exponent values for attr change stats funcs
+ *                     length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -335,6 +343,7 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                   attr_interaction_change_stats_func_t
                                    *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
+                  double exponent_values[],
                   uint_pair_t attr_interaction_pair_indices[],
                   uint_t Mouter, uint_t Minner,
                   uint_t sampler_m,
@@ -405,6 +414,7 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
                                      attr_indices,
+                                     exponent_values,
                                      attr_interaction_pair_indices,
                                      theta,
                                      addChangeStats, delChangeStats, sampler_m,
@@ -428,6 +438,7 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                      dyadic_change_stats_funcs,
                                      attr_interaction_change_stats_funcs,
                                      attr_indices,
+                                     exponent_values,
                                      attr_interaction_pair_indices,
                                      theta,
                                      addChangeStats, delChangeStats,
@@ -445,6 +456,7 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                                        dyadic_change_stats_funcs,
                                        attr_interaction_change_stats_funcs,
                                        attr_indices,
+                                       exponent_values,
                                        attr_interaction_pair_indices,
                                        theta,
                                        addChangeStats, delChangeStats,
@@ -541,6 +553,8 @@ void algorithm_EE(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values - array of exponent values for attr change stats funcs
+ *                     length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -596,6 +610,7 @@ int ee_estimate(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                 attr_interaction_change_stats_func_t
                                  *attr_interaction_change_stats_funcs[],
                 uint_t attr_indices[],
+                double exponent_values[],
                 uint_pair_t attr_interaction_pair_indices[],
                 uint_t sampler_m, uint_t M1_steps, uint_t Mouter,
                 uint_t Msteps, double ACA_S, double ACA_EE, double compC,
@@ -676,7 +691,7 @@ int ee_estimate(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
               lambda_values,
               attr_change_stats_funcs, dyadic_change_stats_funcs,
               attr_interaction_change_stats_funcs,
-              attr_indices, attr_interaction_pair_indices,
+              attr_indices, exponent_values, attr_interaction_pair_indices,
               M1, sampler_m, ACA_S, theta, Dmean, theta_outfile, useIFDsampler,
               ifd_K, useConditionalEstimation, forbidReciprocity,
               useTNTsampler, citationERGM, allowLoops);
@@ -720,7 +735,7 @@ int ee_estimate(graph_t *g, uint_t n, uint_t n_attr, uint_t n_dyadic,
                  change_stats_funcs, lambda_values,
                  attr_change_stats_funcs, dyadic_change_stats_funcs,
                  attr_interaction_change_stats_funcs,
-                 attr_indices, attr_interaction_pair_indices,
+                 attr_indices, exponent_values, attr_interaction_pair_indices,
                  Mouter, M, sampler_m, ACA_EE, compC,
                  Dmean, theta, theta_outfile, dzA_outfile, outputAllSteps,
                  useIFDsampler, ifd_K, useConditionalEstimation,
@@ -903,6 +918,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
                       config->param_config.dyadic_change_stats_funcs,
                       config->param_config.attr_interaction_change_stats_funcs,
                       config->param_config.attr_indices,
+                      config->param_config.attr_param_exponents,
                       config->param_config.attr_interaction_pair_indices,
                       graphStats);
   }
@@ -932,6 +948,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
                                      config->param_config.dyadic_change_stats_funcs,
                                      config->param_config.attr_interaction_change_stats_funcs,
                                      config->param_config.attr_indices,
+                                     config->param_config.attr_param_exponents,
                                      config->param_config.attr_interaction_pair_indices,
                                      graphStats, theta);
   gettimeofday(&end_timeval, NULL);
@@ -1213,6 +1230,7 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
               config->param_config.dyadic_change_stats_funcs,
               config->param_config.attr_interaction_change_stats_funcs,
               config->param_config.attr_indices,
+              config->param_config.attr_param_exponents,
               config->param_config.attr_interaction_pair_indices,
               config->samplerSteps, config->Ssteps,
               config->EEsteps, config->EEinnerSteps,

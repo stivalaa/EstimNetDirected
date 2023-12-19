@@ -91,6 +91,8 @@
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values    - array of exponent values for attr change stats funcs
+ *                        length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction attribute
  *                    pair indices (as above but each element is pair of
  *                    such indices) for attribute interaction effects.
@@ -131,6 +133,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                     attr_interaction_change_stats_func_t
                                      *attr_interaction_change_stats_funcs[],
                     uint_t attr_indices[],
+                    double exponent_values[],
                     uint_pair_t attr_interaction_pair_indices[],
                     double theta[],
                     double addChangeStats[], double delChangeStats[],
@@ -233,9 +236,11 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
     total = calcChangeStats(g, i, j, n, n_attr, n_dyadic,
                             n_attr_interaction, change_stats_funcs,
                             lambda_values,
-                            attr_change_stats_funcs, dyadic_change_stats_funcs,
+                            attr_change_stats_funcs,
+                            dyadic_change_stats_funcs,
                             attr_interaction_change_stats_funcs,
-                            attr_indices, attr_interaction_pair_indices,
+                            attr_indices,  exponent_values,
+                            attr_interaction_pair_indices,
                             theta, isDelete, changestats);
     
     /* now exp(total) is the acceptance probability */

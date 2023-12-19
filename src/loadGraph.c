@@ -98,6 +98,8 @@ static const size_t BUFSIZE = 16384;  /* line buffer size for reading files */
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values - array of exponent values for attr change stats funcs
+ *                     length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -131,6 +133,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
                                           attr_interaction_change_stats_func_t
                                          *attr_interaction_change_stats_funcs[],
                                           uint_t attr_indices[],
+                                          double exponent_values[],
                                           uint_pair_t
                                           attr_interaction_pair_indices[],
                                           double *addChangeStats,
@@ -275,7 +278,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
                             attr_change_stats_funcs,
                             dyadic_change_stats_funcs,
                             attr_interaction_change_stats_funcs,
-                            attr_indices,
+                            attr_indices, exponent_values,
                             attr_interaction_pair_indices,
                             theta, FALSE, changestats);
       for (l = 0; l < n; l++)

@@ -461,6 +461,8 @@ double changeMatchingInteraction(graph_t *g, uint_t i, uint_t j,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values    - array of exponent values for attr change stats funcs
+ *                          length is n_attr 
  *   attr_interaction_pair_indices - array of n_attr_interaction attribute pair
  *                                   indices (as above, but each element is
  *                                   a pair of such indices) for attribute
@@ -483,6 +485,7 @@ double calcChangeStats(graph_t *g, uint_t i, uint_t j,
                        attr_interaction_change_stats_func_t 
                                         *attr_interaction_change_stats_funcs[],
                        uint_t attr_indices[],
+                       double exponent_values[],
                        uint_pair_t attr_interaction_pair_indices[],
                        const double theta[],
                        bool isDelete,
@@ -501,7 +504,7 @@ double calcChangeStats(graph_t *g, uint_t i, uint_t j,
   /* nodal attribute effects */
   for (l = 0; l < n_attr; l++) {
     changestats[param_i] = (*attr_change_stats_funcs[l])
-      (g, i, j, attr_indices[l], isDelete);
+      (g, i, j, attr_indices[l], isDelete, exponent_values[param_i]);
     total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
     param_i++;
   }
@@ -556,6 +559,8 @@ double calcChangeStats(graph_t *g, uint_t i, uint_t j,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values    - array of exponent values for attr change stats funcs
+ *                        same length as attr_change_stats_funcs
  *   attr_interaction_pair_indices - array of n_attr_interaction attribute pair
  *                                   indices (as above, but each element is
  *                                   a pair of such indices) for attribute
@@ -576,6 +581,7 @@ double *empty_graph_stats(graph_t *g,
                           attr_interaction_change_stats_func_t 
                           *attr_interaction_change_stats_funcs[],
                           uint_t attr_indices[],
+                          double exponent_values[],                          
                           uint_pair_t attr_interaction_pair_indices[],
                           double emptystats[])
 {
@@ -584,6 +590,7 @@ double *empty_graph_stats(graph_t *g,
   (void)attr_change_stats_funcs; /* unused parameter */
   (void)lambda_values;           /* unused parameter */
   (void)dyadic_change_stats_funcs; /* unused parameter */
+  (void)exponent_values;         /* unused parameter */
   (void)attr_interaction_change_stats_funcs; /* unused parameter */
   (void)attr_indices; /* unused parameter */
   (void)attr_interaction_pair_indices; /* unused parameter */

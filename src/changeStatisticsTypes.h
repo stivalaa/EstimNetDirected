@@ -73,7 +73,7 @@
 typedef double (change_stats_func_t)(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /* version for change statistics with nodal attribute */
-typedef double (attr_change_stats_func_t)(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+typedef double (attr_change_stats_func_t)(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /* version for change statistics with dyadic covariate */
 /* for the moment just hte same as change_stats_func_t as treated specially,

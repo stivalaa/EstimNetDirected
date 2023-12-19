@@ -163,12 +163,15 @@ typedef struct param_config_s {
   const char          **param_names;        /* names corresponding to above */
   double               *param_lambdas;      /* lambda params corr. to above */
   double               *param_values;       /* initial values corr. to above */
+
   uint_t num_attr_change_stats_funcs;  /* length of attr_change_stats_funcs */
   attr_change_stats_func_t **attr_change_stats_funcs; /* attr param stats */
   char                     **attr_names; /* names of attributes for above */
   uint_t *attr_indices;   /* idx into digraph binattr/cattr/contattr for above */
   const char **attr_param_names; /* names corresponding to above two */
+  double      *attr_param_exponents;  /* exponent params corr. to above */  
   double      *attr_param_values;     /* initial values corr. to above */
+
   uint_t num_dyadic_change_stats_funcs;  /* length of dyadic_change_stats_funcs */
   dyadic_change_stats_func_t **dyadic_change_stats_funcs;/* dyadic change stats*/
   char                       **dyadic_names; /* names corresponding to above */
@@ -176,6 +179,7 @@ typedef struct param_config_s {
   dyadic_type_e *dyadic_types; /* dyadic paramter type corresponding to above */
   const char **dyadic_param_names; /* names corresponding to above two */
   double      *dyadic_param_values;  /* initial values corr. to above */
+
   uint_t num_attr_interaction_change_stats_funcs;  /* length of attr_interaction_change_stats_funcs */
   attr_interaction_change_stats_func_t **attr_interaction_change_stats_funcs; /* attr interaction param stats */
   string_pair_t *attr_interaction_pair_names; /* names of pairs of attributes for above */

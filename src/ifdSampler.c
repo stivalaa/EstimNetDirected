@@ -154,6 +154,8 @@ double arcCorrection(const graph_t *g, bool useConditionalEstimation,
  *                    E.g. for Sender effect on the first binary attribute,
  *                    attr_indices[x] = 0 and attr_change_stats_funcs[x] =
  *                    changeSender
+ *   exponent_values    - array of exponent values for attr change stats funcs
+ *                        length is n_attr
  *   attr_interaction_pair_indices - array of n_attr_interaction pairs
  *                          of attribute inidices similar to above but
  *                          for attr_interaction_change_setats_funcs which
@@ -194,6 +196,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                   attr_interaction_change_stats_func_t
                                    *attr_interaction_change_stats_funcs[],
                   uint_t attr_indices[],
+                  double exponent_values[],
                   uint_pair_t attr_interaction_pair_indices[],
                   double theta[],
                   double addChangeStats[], double delChangeStats[],
@@ -368,7 +371,7 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
     total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, n_attr_interaction,
                             change_stats_funcs, lambda_values,
-                            attr_change_stats_funcs,
+                            attr_change_stats_funcs, exponent_values,
                             dyadic_change_stats_funcs,
                             attr_interaction_change_stats_funcs,
                             attr_indices,
