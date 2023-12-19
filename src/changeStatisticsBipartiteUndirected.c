@@ -757,15 +757,16 @@ double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, 
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[i]; k++) {
-    v = g->edgelist[i][k];
-    assert(v != i);
-    if (v != j) {
-      if (g->catattr[a][j] != CAT_NA &&
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    assert(bipartite_node_mode(g, v) == MODE_A);
+    if (v != i) {
+      if (g->catattr[a][i] != CAT_NA &&
           g->catattr[a][v] != CAT_NA &&
-          g->catattr[a][j] != g->catattr[a][v]) {
+          g->catattr[a][i] != g->catattr[a][v]) {
         /* Note pow0 defines pow0(0, 0) = 0
-           as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
+           as per Bomiryia et al. (2023)xo [see p. 7 after eqn (7)] */
         delta += (pow0(twopaths_not_via_k_A(g, i, v, j) + 1, alpha) -
                   pow0(twopaths_not_via_k_A(g, i, v, j), alpha));
       }
