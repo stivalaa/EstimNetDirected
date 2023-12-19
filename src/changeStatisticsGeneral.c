@@ -510,7 +510,7 @@ double calcChangeStats(graph_t *g, uint_t i, uint_t j,
   /* nodal attribute effects */
   for (l = 0; l < n_attr; l++) {
     changestats[param_i] = (*attr_change_stats_funcs[l])
-      (g, i, j, attr_indices[l], isDelete, exponent_values[param_i]);
+      (g, i, j, attr_indices[l], isDelete, exponent_values[l]);
     total += theta[param_i] * (isDelete ? -1 : 1) * changestats[param_i];
     param_i++;
   }
