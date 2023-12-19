@@ -805,7 +805,8 @@ double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, d
       }
     }
   }
-
-  delta = 0.5 * ( (1 + u)*pow0(u, beta) - u*pow(u - 1, beta) );
+  /* Note pow0 defines pow0(0, 0) = 0 as per Bomiryia et al. (2023)
+     [see p. 7 after eqn (7)] */
+  delta = 0.5 * ( (1 + u)*pow0(u, beta) - u*pow0(u - 1, beta) );
   return delta;
 }
