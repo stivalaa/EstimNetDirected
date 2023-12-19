@@ -1351,7 +1351,7 @@ int build_dyadic_indices_from_names(param_config_t *pconfig,  graph_t *g,
   int    firstEuclideanIndex   = -1;
   char  *tmpGeoName, *tmpEuclideanName, *tmpGeoParamName, *tmpEuclideanParamName;
   dyadic_change_stats_func_t *tmpGeoFunc, *tmpEuclideanFunc;
-  double tmpGeoValue, tmpEuclideanValue;
+  double tmpGeoValue = 0, tmpEuclideanValue = 0;
   
   pconfig->dyadic_indices = safe_malloc(pconfig->num_dyadic_change_stats_funcs *
                                      sizeof(uint_t));
