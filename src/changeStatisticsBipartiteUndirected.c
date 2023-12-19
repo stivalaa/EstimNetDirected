@@ -406,9 +406,10 @@ double changeBipartiteIsolatesB(graph_t *g, uint_t i, uint_t j, double lambda)
  * Change statistic for Bipartite Activity for type A nodes
  * (RA in BPNet, XEdgeA (binary) in MPNet)
  */
-double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -421,9 +422,10 @@ double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
  * Change statistic for Bipartite Activity for type B nodes
  * (RP in BPNet, XEdgeB (binary) in MPNet)
  */
-double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -445,9 +447,10 @@ double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
  * Change statistic for Bipartite Continuous Activity for type A nodes
  * (RAC in BPNet, XEdgeA (continuous) in MPNet)
  */
-double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -464,9 +467,10 @@ double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t
  * Change statistic for Bipartite Continuous Activity for type B nodes
  * (RPC in BPNet, XEdgeB (continuous) in MPNet)
  */
-double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -484,11 +488,12 @@ double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t
  * Change statistic for Bipartite 2-path sum for type A nodes
  * (TSOACS in BPNet, X2StarASum in MPNet)
  */
-double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   double delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -512,11 +517,12 @@ double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool
  * Change statistic for Bipartite 2-path sum for type B nodes
  * (TSOPCS in BPNet, X2StarBSum in MPNet)
  */
-double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   double delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -539,11 +545,12 @@ double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool
  * Change statistic for Bipartite 2-path abs difference for type A nodes
  * (TSOACD in BPNet, X2StarADifference in MPNet)
  */
-double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   double delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -567,11 +574,12 @@ double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, boo
  * Change statistic for Bipartite 2-path abs diff for type B nodes
  * (TSOPCD in BPNet, X2StarBDifference in MPNet)
  */
-double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   double delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -602,11 +610,12 @@ double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, boo
  * Change statistic for Bipartite 2-path matching for type A nodes
  * (2path_match_A in BPNet, X2StarAMatch in MPNet)
  */
-double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   uint_t delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -631,11 +640,12 @@ double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a,
  * Change statistic for Bipartite 2-path mismatching for type B nodes
  * (2path_mismatch_P in BPNet, X2StarBMismatch in MPNet)
  */
-double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   uint_t delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -659,11 +669,12 @@ double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a,
  * Change statistic for Bipartite 2-path mismatching for type A nodes
  * (2path_mismatch_A in BPNet, X2StarAMismatch in MPNet)
  */
-double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   uint_t delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -688,11 +699,12 @@ double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t
  * Change statistic for Bipartite 2-path matching for type B nodes
  * (2path_match_P in BPNet, X2StarBMatch in MPNet)
  */
-double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t k,v;
   uint_t delta = 0;
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -735,11 +747,11 @@ double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t
  * This change statistic is defined by equation (12) in Bomiriya et al. (2023)
  *
  */
-double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, double alpha)
+double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha)
 {
   uint_t k, v;
   double delta = 0;
-
+  (void)isDelete; /*unused parameter*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
@@ -781,12 +793,12 @@ double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, 
  *
  * This change statistic is defined by equation (14) in Bomiriya et al. (2023)
  */
-double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, double beta)
+double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta)
 {
   uint_t k, v;
   uint_t u = 0; /* number of edges to j from nodes (not i) matching i */
   double delta = 0;
-
+  (void)isDelete; /*unused parameter*/
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);

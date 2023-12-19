@@ -90,25 +90,25 @@ double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
-double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 
 /********************* Actor attribute (categorical) *************************/
 
-double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /********************* Actor attribute (continuous) *************************/
 
-double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 
 

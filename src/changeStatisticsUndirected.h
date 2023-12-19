@@ -86,7 +86,7 @@ double changeIsolateEdges(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
-double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /************ Actor attribute interaction (binary) *********************/
 

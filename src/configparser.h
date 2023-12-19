@@ -85,6 +85,13 @@ typedef enum attr_type_e {
   ATTR_TYPE_SET             /* set attribute type (array of set_elem_e) */
 } attr_type_e;
 
+/* ERGM attribute parameter exponent type */
+typedef enum attr_exponent_type_e {
+  ATTR_EXP_TYPE_INVALID,  /* invalid type, used as error return value */
+  ATTR_EXP_TYPE_NONE,     /* no exponent paramter for this change statistic */
+  ATTR_EXP_TYPE_EXPONENT  /* has exponent value, double in [0, 1] */
+} attr_exponent_type_e;
+
 /* ERGM dyadic covariate parameter type */
 typedef enum dyadic_type_e {
   DYADIC_TYPE_INVALID,       /* invalid type, used as error return value */
@@ -129,6 +136,7 @@ typedef struct struct_param_s {
 typedef struct attr_param_s {
   const char          *name;                 /* attribute parameter name */
   attr_type_e          type;                 /* attribute parameter type */
+  attr_exponent_type_e attr_exponent_type;   /* does it have exponent parameter */
   network_type_e       network_type;         /* network type it works with */
   network_mode_e       network_mode;         /* network type it works with (one-mode, two-mode) */
   attr_change_stats_func_t *attr_change_stats_func;  /* corresponding func. */

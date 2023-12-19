@@ -333,9 +333,10 @@ double changeIsolateEdges(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for Activity
  */
-double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeActivity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(!g->is_directed);
   slow_assert(!isEdge(g, i, j));
   return ((g->binattr[a][i] == BIN_NA ? 0 : g->binattr[a][i]) +

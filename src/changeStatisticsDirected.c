@@ -539,9 +539,10 @@ double changeLoopInteraction(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for Sender
  */
-double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete) 
+double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent) 
 {
   (void)j; (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameter*/
   slow_assert(!isArc(g, i, j));
   assert(g->is_directed);
   return g->binattr[a][i] != BIN_NA && g->binattr[a][i];
@@ -550,9 +551,10 @@ double changeSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 /*
  * Change statistic for receiver
  */
-double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)i; (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   return g->binattr[a][j] != BIN_NA && g->binattr[a][j];
@@ -565,9 +567,11 @@ double changeReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 /*
  * Change statistic for categorical matching reciprocity
  */
-double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter*/
+  (void)exponent; /*unused parameters*/
+  
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (i == j) {
@@ -582,9 +586,10 @@ double changeMatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool 
 /*
  * Change statistic for categorical mismatching reciprocity
  */
-double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (i == j) {
@@ -603,11 +608,12 @@ double changeMismatchingReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bo
  * and of k.
  *
  */
-double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t v,k,l,w;
   uint_t  delta = 0;
   (void)isDelete; /* unused parameter */
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   
@@ -687,12 +693,14 @@ double changeMismatchingTransitiveTriad(graph_t *g, uint_t i, uint_t j, uint_t a
  * negate the value for deleting a tie here, since it is always done
  * in calcChangeStats().
  */
-double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t u, v,k,l;
   int L2th, L2tu, L2uh;
   int delta = 0;
   int ochange = isDelete ? -1 : 0;
+  (void)exponent; /*unused parameters*/
+  
   assert(g->is_directed);
   
   if (i == j) {
@@ -761,9 +769,10 @@ double changeMismatchingTransitiveTies(graph_t *g, uint_t i, uint_t j, uint_t a,
 /*
  * Change statistic for continuous Sender
  */
-double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)j; (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]))
@@ -775,9 +784,10 @@ double changeContinuousSender(graph_t *g, uint_t i, uint_t j, uint_t a, bool isD
 /*
  * Change statistic for continuous Receiver
  */
-double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)i; (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][j]))
@@ -792,9 +802,10 @@ double changeContinuousReceiver(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
  * Change statistic for continuous diff (absolute difference of attribute)
  * reciprocity
  */
-double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (i == j)
@@ -811,9 +822,10 @@ double changeDiffReciprocity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDe
  * for attr_i - attr_j (so +1 when sending node has higher attribute value and -1
  * when receiving node has higher attribute value).
  */
-double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
@@ -832,9 +844,10 @@ double changeDiffSign(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
  * Like diff(dir="t-h", sign.action="posonly") in statnet.
  * ("tail" is sender, "head" is receiver)
  */
-double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
@@ -858,9 +871,10 @@ double changeDiffDirSR(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
  * Like diff(dir="h-t", sign.action="posonly") in statnet.
  * ("tail" is sender, "head" is receiver)
  */
-double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeDiffDirRS(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /*unused parameters*/
   assert(g->is_directed);
   slow_assert(!isArc(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))

@@ -124,28 +124,28 @@ double changeBipartiteIsolatesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
-double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /*********************** Actor attribute (continuous) ************************/
 
-double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteContinuousActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteContinuousActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathSumA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /*********************** Actor attribute (categorical) ************************/
 
-double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /**************** Actor attribute (categorical, exponent) ********************/
 
-double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, double alpha);
-double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, double beta);
+double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha);
+double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta);
 
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
