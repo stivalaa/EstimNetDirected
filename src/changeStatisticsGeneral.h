@@ -78,22 +78,22 @@ double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda);
 
 /************************* Actor attribute (binary) **************************/
 
-double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /********************* Actor attribute (categorical) *************************/
 
-double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /********************* Actor attribute (continuous) *************************/
 
-double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
-double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 
 /********************* Actor attribute (set of categorical) *******************/
 
-double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
+double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 
 

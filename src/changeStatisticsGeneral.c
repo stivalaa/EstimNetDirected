@@ -240,9 +240,10 @@ double changeLoop(graph_t *g, uint_t i, uint_t j, double lambda)
 /*
  * Change statistic for Interaction
  */
-double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /* unused parameter */
   return g->binattr[a][i] != BIN_NA && g->binattr[a][j] != BIN_NA &&
          g->binattr[a][i] && g->binattr[a][j];
 }
@@ -253,9 +254,10 @@ double changeInteraction(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 /*
  * Change statistic for categorical matching
  */
-double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /* unused parameter */
   slow_assert(!isArcOrEdge(g, i, j));
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] == g->catattr[a][j];
@@ -264,9 +266,10 @@ double changeMatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 /*
  * Change statistic for categorical mismatching
  */
-double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /* unused parameter */
   slow_assert(!isArcOrEdge(g, i, j));
   return g->catattr[a][i] != CAT_NA && g->catattr[a][j] != CAT_NA &&
          g->catattr[a][i] != g->catattr[a][j];
@@ -278,9 +281,10 @@ double changeMismatching(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete
 /*
  * Change statistic for continuous diff (absolute difference of attributes)
  */
-double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /* unused parameter */
   slow_assert(!isArcOrEdge(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
@@ -292,9 +296,10 @@ double changeDiff(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 /*
  * Change statistic for continuous sum (sum of attributes)
  */
-double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   (void)isDelete; /* unused parameter */
+  (void)exponent; /* unused parameter */
   slow_assert(!isArcOrEdge(g, i, j));
   if (isnan(g->contattr[a][i]) || isnan(g->contattr[a][j]))
     return 0;
@@ -310,9 +315,10 @@ double changeSum(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
 /*
  * Change statistic for set Jaccard similarity
  */
-double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete)
+double changeJaccardSimilarity(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
-  (void)isDelete; /* unused parameter */    
+  (void)isDelete; /* unused parameter */
+  (void)exponent; /* unused parameter */
   slow_assert(!isArcOrEdge(g, i, j));
   /* For NA values all elements of set are set to NA so just check first */
   if (g->setattr[a][i][0] == SET_ELEM_NA || g->setattr[a][j][0] == SET_ELEM_NA)

@@ -371,10 +371,10 @@ double ifdSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
 
     total = calcChangeStats(g, i, j, n, n_attr, n_dyadic, n_attr_interaction,
                             change_stats_funcs, lambda_values,
-                            attr_change_stats_funcs, exponent_values,
+                            attr_change_stats_funcs,
                             dyadic_change_stats_funcs,
                             attr_interaction_change_stats_funcs,
-                            attr_indices,
+                            attr_indices, exponent_values,
                             attr_interaction_pair_indices,
                             theta, isDelete, changestats);
 
