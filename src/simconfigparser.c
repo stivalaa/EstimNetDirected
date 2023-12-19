@@ -196,6 +196,7 @@ sim_config_t SIM_CONFIG = {
     NULL,  /* attr_names */
     NULL,  /* attr_indices */
     NULL,  /* attr_param_names */
+    NULL,  /* attr_param_exponents */
     NULL,  /* attr_param_values */
     0,     /* num_dyadic_change_stats_funcs */
     NULL,  /* dyadic_change_stats_funcs */
