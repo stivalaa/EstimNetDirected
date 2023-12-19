@@ -396,7 +396,7 @@ static int parse_one_attr_param(const char *paramName,
   double    value   = 0;
   char     *endptr; /* for strtod() */
   char      attrname[TOKSIZE];  /* attribute name buffer */
-  double    exponent_value = DEFAULT_EXPONENT_VALUE;
+  double    exponent_value = -1; /* valid values are >= 0 */
   
   if (!(token = get_token(infile, tokenbuf))) {
     fprintf(stderr, "ERROR: no tokens for attrParam %s\n", paramName);

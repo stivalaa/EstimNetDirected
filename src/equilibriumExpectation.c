@@ -1179,9 +1179,20 @@ int do_estimation(estim_config_t * config, uint_t tasknum)
   for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) {
     if (!first_header_field)
       snprintf(fileheader+strlen(fileheader), HEADER_MAX," ");
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX, "%s_%s",
-             config->param_config.attr_param_names[i],
-             config->param_config.attr_names[i]);
+    /* print the exponent [hyper-] parameter value for attribute parameters
+       which used it; it is negative for those for which it is not applicable.
+       Format is to put it in parens after the name and attribute e.g.
+       BipartiteNodematchBetaA_gender(0.1) */
+    if (config->param_config.attr_param_exponents[i] >= 0.0) {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX, "%s_%s(%g)",
+               config->param_config.attr_param_names[i],
+               config->param_config.attr_names[i],
+               config->param_config.attr_param_exponents[i]);
+    } else {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX, "%s_%s",
+               config->param_config.attr_param_names[i],
+               config->param_config.attr_names[i]);
+    }
     first_header_field = FALSE;
   }
   
