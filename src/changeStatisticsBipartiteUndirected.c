@@ -90,6 +90,17 @@
  * the names used here are consistent with MPNet e.g. XACB in MPNet
  * is AltKCyclesB here].
  *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *    Bomiriya, R. P. (2014). Topics in exponential random graph
+ *    modeling. (Doctoral dissertation, Pennsylvania State University).
+ *    https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *    Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *    S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *    Models for Bipartite Networks. arXiv preprint
+ *    arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
  *
  ****************************************************************************/
@@ -99,6 +110,54 @@
 #include "changeStatisticsUndirected.h"
 #include "changeStatisticsBipartiteUndirected.h"
 
+
+/*****************************************************************************
+ *
+ * utility functions
+ *
+ ****************************************************************************/
+
+/*
+ * Compute value of integer x raised to the power y (double in [0,1]),
+ * defining pow(0, 0) = 0 as per Bomiryia et al. (2023) [see p. 7
+ * after eqn (7)]
+ */
+static double pow0(uint_t x, double y)
+{
+  return (x == 0 && DOUBLE_APPROX_EQ(y, 0)) ? 0 : pow(x, y);
+}
+
+/*
+ * In Bomiriya et al. (2023) [Appendix A] change statistics definition
+ * for node-centered (alpha-based homompily), t(i, j, k) in eqn (12)
+ * is defined as the number of two-paths from i to j not passing
+ * through k. Since only one two-path from i to j can pass through k,
+ * this is just the number of two-paths from i to j, less one if
+ * k is a neighbour of both i and j.
+ */
+static uint_t twopaths_not_via_k_A(const graph_t *g, uint_t i, uint_t j, uint_t k)
+{
+  uint_t count = GET_A2PATH_ENTRY(g, i, j);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_A);
+  assert(bipartite_node_mode(g, k) == MODE_B);
+  if (isEdge(g, i, k) && isEdge(g, j, k)) {
+    count--;
+  }
+  return count;
+}
+
+static uint_t twopaths_not_via_k_B(const graph_t *g, uint_t i, uint_t j, uint_t k)
+{
+  uint_t count = GET_B2PATH_ENTRY(g, i, j);
+  assert(bipartite_node_mode(g, i) == MODE_B);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  assert(bipartite_node_mode(g, k) == MODE_A);
+  if (isEdge(g, i, k) && isEdge(g, j, k)) {
+    count--;
+  }
+  return count;
+}
 
 
 /*****************************************************************************
@@ -651,4 +710,102 @@ double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t
     }
   }
   return (double)delta;
+}
+
+
+/**************** Actor attribute (categorical, exponent) ********************/
+
+/*
+ * Change statistic for Bipartite node-centered (alpha-based) homophily
+ * for type A node (b1nodematch(alpha) statnet ergm term)
+ *
+ * alpha is the exponent in the range [0, 1]
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * This change statistic is defined by equation (12) in Bomiriya et al. (2023)
+ *
+ */
+double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, double alpha)
+{
+  uint_t k, v;
+  double delta = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    assert(v != i);
+    if (v != j) {
+      if (g->catattr[a][j] != CAT_NA &&
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][j] != g->catattr[a][v]) {
+        /* Note pow0 defines pow0(0, 0) = 0
+           as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
+        delta += (pow0(twopaths_not_via_k_A(g, i, v, j) + 1, alpha) -
+                  pow0(twopaths_not_via_k_A(g, i, v, j), alpha));
+      }
+    }
+  }
+  return delta;
+}
+
+/*
+ * Change statistic for Bipartite edge-centered (beta-based) homophily
+ * for type A node (b1nodematch(beta) statnet ergm term)
+ *
+ * beta is the exponent in the range [0, 1]
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * This change statistic is defined by equation (14) in Bomiriya et al. (2023)
+ */
+double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, double beta)
+{
+  uint_t k, v;
+  uint_t u = 0; /* number of edges to j from nodes (not i) matching i */
+  double delta = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+
+  /* count u = number of edges to j from nodes (not i) matching i */
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    if (v != i) {
+      if (g->catattr[a][i] != CAT_NA &&
+          g->catattr[a][v] != CAT_NA &&
+          g->catattr[a][i] != g->catattr[a][v]) {
+        u++;
+      }
+    }
+  }
+
+  delta = 0.5 * ( (1 + u)*pow0(u, beta) - u*pow(u - 1, beta) );
+  return delta;
 }

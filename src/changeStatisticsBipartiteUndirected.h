@@ -89,6 +89,17 @@
  * So e.g. alternating k-star for for P (k-P-star) is called KSp in BPNet,
  * and changeAltStarsA here (and KSa is changeAltStarsB),
  *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *    Bomiriya, R. P. (2014). Topics in exponential random graph
+ *    modeling. (Doctoral dissertation, Pennsylvania State University).
+ *    https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *    Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *    S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *    Models for Bipartite Networks. arXiv preprint
+ *    arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
  *
  ****************************************************************************/
@@ -132,6 +143,9 @@ double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a,
 double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete);
 
+/**************** Actor attribute (categorical, exponent) ********************/
 
+double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, double alpha);
+double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, double beta);
 
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
