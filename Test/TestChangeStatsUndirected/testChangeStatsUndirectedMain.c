@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
   }
   g = load_graph_from_arclist_file(file, g, FALSE,
                                      0, 0, 0, 0, NULL, NULL, NULL, NULL,
-                                     NULL, NULL, NULL, NULL, NULL);
+                                     NULL, NULL, NULL, NULL, NULL, NULL);
   gettimeofday(&end_timeval, NULL);
   timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
   etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
