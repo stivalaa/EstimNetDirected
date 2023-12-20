@@ -37,7 +37,6 @@
 
 int main(int argc, char *argv[]) 
 {
-  char buf[1024];
   uint_t i,j;
   char *edgelist_filename = NULL;
   FILE *file           = NULL;
@@ -47,7 +46,7 @@ int main(int argc, char *argv[])
   graph_t *g         = NULL;
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int    etime;
-  char *binattr_filename, *conattr_filename, *catattr_filename;
+  char *catattr_filename;
  
   srand(time(NULL));
 
@@ -64,14 +63,6 @@ int main(int argc, char *argv[])
     return -1;
   }
   
-  gettimeofday(&start_timeval, NULL);
-#ifdef TWOPATH_LOOKUP
-  fprintf(stderr, "loading edge list from %s and building two-path tables...",
-         edgelist_filename);
-#else
-    fprintf(stderr, "loading edge list from %s...",
-         edgelist_filename);
-#endif
   get_num_vertices_from_bipartite_pajek_file(file,
 					     &num_nodes,
 					     &num_A_nodes);/* closes file */
@@ -90,22 +81,46 @@ int main(int argc, char *argv[])
             edgelist_filename, strerror(errno));
     return -1;
   }
-  g = load_graph_from_arclist_file(file, g, FALSE,
-                                     0, 0, 0, 0, NULL, NULL, NULL, NULL,
-                                     NULL, NULL, NULL, NULL, NULL, NULL);
-  gettimeofday(&end_timeval, NULL);
-  timeval_subtract(&elapsed_timeval, &end_timeval, &start_timeval);
-  etime = 1000 * elapsed_timeval.tv_sec + elapsed_timeval.tv_usec/1000;
-  fprintf(stderr, "%.2f s\n", (double)etime/1000);
+
+
 
   
   /* hardcoding indices of attributes to match input files*/
   /* catattr_all.txt: catattrA catattrP catattrAP */
-  uint_t catattrA_index = 0;
-  uint_t catattrP_index = 1;
-  uint_t catattrAP_index = 2;
+  const uint_t catattrA_index = 0;
+  const uint_t catattrP_index = 1;
+  const uint_t catattrAP_index = 2;
+
+#define NUM_FUNCS 2
+  uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
+  uint_t attr_indices[NUM_FUNCS];
+  static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
+  double exponent_values[NUM_FUNCS], obs_stats[NUM_FUNCS];
+  static double theta[NUM_FUNCS]; /* init to zero, unused */
+  attr_change_stats_func_t *attr_change_stats_funcs[NUM_FUNCS];
+
   
-    
+  attr_change_stats_funcs[0] = &changeBipartiteNodematchAlphaA;
+  attr_indices[0]            = catattrA_index;
+  exponent_values[0]         = 0.1;
+  
+  attr_change_stats_funcs[1] = &changeBipartiteNodematchBetaA;
+  attr_indices[1]            = catattrA_index;
+  exponent_values[1]         = 0.1;
+
+  for (i = 0; i < NUM_FUNCS; i++) {
+    obs_stats[i] = 0;
+  }
+  g = load_graph_from_arclist_file(file, g, TRUE,
+                                   n_total, n_attr, 0, 0, NULL,
+                                   lambda_values, attr_change_stats_funcs,
+                                   NULL, NULL, attr_indices, exponent_values,
+                                   NULL, obs_stats, theta);
+  for (i = 0; i < NUM_FUNCS; i++) {
+    printf("%g ", obs_stats[i]);
+  }
+  printf("\n");
+  
   free_graph(g);
   exit(0);
 }
