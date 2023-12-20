@@ -810,6 +810,7 @@ double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, b
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
     assert(v != j);
+    assert(bipartite_node_mode(g, v) == MODE_A);
     if (v != i) {
       if (g->catattr[a][i] != CAT_NA &&
           g->catattr[a][v] != CAT_NA &&
