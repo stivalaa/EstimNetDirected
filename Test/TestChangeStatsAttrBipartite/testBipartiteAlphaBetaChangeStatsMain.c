@@ -154,6 +154,7 @@ static double BipartiteNodematchBetaA(const graph_t *g, uint_t a,
     for (l = 0; l < g->degree[i]; l++) {
       k = g->edgelist[i][l]; /* k iterates over neighbours of i */
       assert(bipartite_node_mode(g, k) == MODE_B);
+      uint_t u = 0; /* number of edges to k from nodes (not i) matching i */
       for (m = 0; m < g->degree[k]; m++) {
 	j = g->edgelist[k][m]; /* j iterates over neighbours of k */
 	assert(bipartite_node_mode(g, j) == MODE_A);
@@ -161,11 +162,12 @@ static double BipartiteNodematchBetaA(const graph_t *g, uint_t a,
 	    g->catattr[a][i] != CAT_NA &&
 	    g->catattr[a][j] != CAT_NA &&
 	    g->catattr[a][i] == g->catattr[a][j]) {
-	  /* Note pow0 defines pow0(0, 0) = 0
-	     as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
-	  value += pow0(GET_A2PATH_ENTRY(g, i, j), beta);
+	  u++;
 	}
       }
+      /* Note pow0 defines pow0(0, 0) = 0
+	 as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
+      value += pow0(u, beta);
     }
   }
   value /= 2;
@@ -272,10 +274,10 @@ int main(int argc, char *argv[])
   printf("\n");
 
   stat_value= BipartiteNodematchAlphaA(g, attr_indices[0], exponent_values[0]);
-  /*printf("%g\n", stat_value);*/
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
 
   stat_value= BipartiteNodematchBetaA(g, attr_indices[1], exponent_values[1]);
+  printf("%g\n", stat_value);
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
   
   free_graph(g);
