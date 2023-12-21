@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
   const uint_t catattrP_index = 1;
   const uint_t catattrAP_index = 2;
 
-#define NUM_FUNCS 2
+#define NUM_FUNCS 4
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
   static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
@@ -384,6 +384,14 @@ int main(int argc, char *argv[])
   attr_change_stats_funcs[1] = &changeBipartiteNodematchBetaA;
   attr_indices[1]            = catattrA_index;
   exponent_values[1]         = exponent;
+
+  attr_change_stats_funcs[2] = &changeBipartiteNodematchAlphaB;
+  attr_indices[2]            = catattrP_index;
+  exponent_values[2]         = exponent;
+  
+  attr_change_stats_funcs[3] = &changeBipartiteNodematchBetaB;
+  attr_indices[3]            = catattrP_index;
+  exponent_values[3]         = exponent;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -403,7 +411,13 @@ int main(int argc, char *argv[])
 
   stat_value= BipartiteNodematchBetaA(g, attr_indices[1], exponent_values[1]);
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
-  
+
+  stat_value= BipartiteNodematchAlphaB(g, attr_indices[2], exponent_values[2]);
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[2]));
+
+  stat_value= BipartiteNodematchBetaB(g, attr_indices[3], exponent_values[3]);
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
+
   free_graph(g);
   exit(0);
 }
