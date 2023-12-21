@@ -134,6 +134,15 @@ double pow0(uint_t x, double y)
  ****************************************************************************/
 
 /*
+ * Given a bipartite node mode, return the other mode
+ */
+static bipartite_node_mode_e other_mode(bipartite_node_mode_e mode) {
+  assert(mode == MODE_A || mode == MODE_B);
+  return mode == MODE_A ? MODE_B : MODE_A;
+}
+
+
+/*
  * In Bomiriya et al. (2023) [Appendix A] change statistics definition
  * for node-centered (alpha-based homompily), t(i, j, k) in eqn (12)
  * is defined as the number of two-paths from i to j not passing
@@ -141,24 +150,18 @@ double pow0(uint_t x, double y)
  * this is just the number of two-paths from i to j, less one if
  * k is a neighbour of both i and j.
  */
-static uint_t twopaths_not_via_k_A(const graph_t *g, uint_t i, uint_t j, uint_t k)
+static uint_t twopaths_not_via_k(const graph_t *g, uint_t i, uint_t j,
+				 uint_t k, bipartite_node_mode_e mode)
 {
-  uint_t count = GET_A2PATH_ENTRY(g, i, j);
-  assert(bipartite_node_mode(g, i) == MODE_A);
-  assert(bipartite_node_mode(g, j) == MODE_A);
-  assert(bipartite_node_mode(g, k) == MODE_B);
-  if (isEdge(g, i, k) && isEdge(g, j, k)) {
-    count--;
+  uint_t count;
+  if (mode == MODE_A) {
+    count = GET_A2PATH_ENTRY(g, i, j);
+  } else {
+    count = GET_B2PATH_ENTRY(g, i, j);
   }
-  return count;
-}
-
-static uint_t twopaths_not_via_k_B(const graph_t *g, uint_t i, uint_t j, uint_t k)
-{
-  uint_t count = GET_B2PATH_ENTRY(g, i, j);
-  assert(bipartite_node_mode(g, i) == MODE_B);
-  assert(bipartite_node_mode(g, j) == MODE_B);
-  assert(bipartite_node_mode(g, k) == MODE_A);
+  assert(bipartite_node_mode(g, i) == mode);
+  assert(bipartite_node_mode(g, j) == mode);
+  assert(bipartite_node_mode(g, k) == other_mode(mode));
   if (isEdge(g, i, k) && isEdge(g, j, k)) {
     count--;
   }
@@ -773,8 +776,8 @@ double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, 
           g->catattr[a][i] == g->catattr[a][v]) {
         /* Note pow0 defines pow0(0, 0) = 0
            as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
-        delta += (pow0(twopaths_not_via_k_A(g, i, v, j) + 1, alpha) -
-                  pow0(twopaths_not_via_k_A(g, i, v, j), alpha));
+        delta += (pow0(twopaths_not_via_k(g, i, v, j, MODE_A) + 1, alpha) -
+                  pow0(twopaths_not_via_k(g, i, v, j, MODE_A), alpha));
       }
     }
   }
