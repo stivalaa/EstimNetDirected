@@ -13,13 +13,26 @@
  * Reads graph from Pajek format <in_edgelistfile> and attributes from
  *  <catattr_file>
  *
- * Outputs observed statistics value for the statistics, which are compute
+ * Outputs observed statistics value for the statistics, which are computed
  * by summing the change stats over all edges in the data, and verifies
  * that these indeed sum to the statistic value computed directly (in this
  * code). Outputs the observed statistics for external validation
  * (by scripts with hardcoded manually checked values and/or comparison
  * to results from statnet for example)
  *
+ * Example:
+ * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/catattr_all.txt
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *    Bomiriya, R. P. (2014). Topics in exponential random graph
+ *    modeling. (Doctoral dissertation, Pennsylvania State University).
+ *    https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *    Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *    S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *    Models for Bipartite Networks. arXiv preprint
+ *    arXiv:2312.05673. https://arxiv.org/abs/2312.05673
  *
  ****************************************************************************/
 
@@ -34,10 +47,75 @@
 #include "changeStatisticsBipartiteUndirected.h"
 #include "loadGraph.h"
 
+/*****************************************************************************
+ *
+ * statistics functions (summing change statistics is verified against these)
+ *
+ ****************************************************************************/
 
-int main(int argc, char *argv[]) 
+/*
+ * Statistic for Bipartite node-centered (alpha-based) homophily
+ * for type A node (b1nodematch(alpha) statnet ergm term)
+ *
+ * alpha is the exponent in the range [0, 1]
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * This statistic is defined by equation (6) in Bomiriya et al. (2023)
+ *
+ * Parameters:
+ *     g     - undirected bipartite graph
+ *     a     - index of categorical attribute
+ *     alpha - exponent in range [0, 1]
+ *
+ * Return value:
+ *     node-centered (alpha-based) homophily statistic for g with cat attr a
+
+ */
+static double BipartiteNodematchAlphaA(const graph_t *g, uint_t a,
+				       double alpha)
 {
   uint_t i,j;
+  double value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 0; i < g->num_A_nodes; i++) {
+    for (j = 0; j < g->num_A_nodes; j++) {
+      if (j != i &&
+	  g->catattr[a][i] != CAT_NA &&
+	  g->catattr[a][j] != CAT_NA &&
+	  g->catattr[a][i] == g->catattr[a][j]) {
+	/* Note pow0 defines pow0(0, 0) = 0
+           as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
+	value += pow0(GET_A2PATH_ENTRY(g, i, j), alpha);
+      }
+    }
+  }
+  value /= 2; /* adjust for double-counting two-paths */
+  return value;
+}
+
+
+/*****************************************************************************
+ *
+ * main
+ *
+ ****************************************************************************/
+
+int main(int argc, char *argv[])
+{
+  uint_t i;
   char *edgelist_filename = NULL;
   FILE *file           = NULL;
   uint_t     num_nodes = 0;
@@ -47,6 +125,7 @@ int main(int argc, char *argv[])
   struct timeval start_timeval, end_timeval, elapsed_timeval;
   int    etime;
   char *catattr_filename;
+  double stat_value;
  
   srand(time(NULL));
 
@@ -102,11 +181,11 @@ int main(int argc, char *argv[])
   
   attr_change_stats_funcs[0] = &changeBipartiteNodematchAlphaA;
   attr_indices[0]            = catattrA_index;
-  exponent_values[0]         = 0.1;
+  exponent_values[0]         = 1;
   
   attr_change_stats_funcs[1] = &changeBipartiteNodematchBetaA;
   attr_indices[1]            = catattrA_index;
-  exponent_values[1]         = 0.1;
+  exponent_values[1]         = 1;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -120,6 +199,10 @@ int main(int argc, char *argv[])
     printf("%g ", obs_stats[i]);
   }
   printf("\n");
+
+  stat_value= BipartiteNodematchAlphaA(g, attr_indices[0], exponent_values[0]);
+  printf("%g\n", stat_value);/*XXX*/
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
   
   free_graph(g);
   exit(0);

@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <float.h>
+#include <math.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -122,10 +122,16 @@
  * defining pow(0, 0) = 0 as per Bomiryia et al. (2023) [see p. 7
  * after eqn (7)]
  */
-static double pow0(uint_t x, double y)
+double pow0(uint_t x, double y)
 {
   return (x == 0 && DOUBLE_APPROX_EQ(y, 0)) ? 0 : pow(x, y);
 }
+
+/*****************************************************************************
+ *
+ * local utility functions
+ *
+ ****************************************************************************/
 
 /*
  * In Bomiriya et al. (2023) [Appendix A] change statistics definition

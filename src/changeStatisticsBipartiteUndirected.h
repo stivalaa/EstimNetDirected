@@ -108,6 +108,9 @@
 #include "graph.h"
 #include "changeStatisticsTypes.h"
 
+/************************* Utility functions *********************************/
+double pow0(uint_t x, double y);
+
 /************************* Structural ****************************************/
 double changeBipartiteTwoStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteTwoStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
