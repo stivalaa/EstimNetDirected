@@ -6,3 +6,5 @@ testChangeStatsAttrBipartite_hash
 bpnet_A12000_B4000_attr_test_results*.out
 bpnet_A12000_B4000_attr_test_results*.diff
 bpnet_A12000_B4000_attr_test_results_baseline_no2pathtables.txt
+.Rhistory
+.RData
