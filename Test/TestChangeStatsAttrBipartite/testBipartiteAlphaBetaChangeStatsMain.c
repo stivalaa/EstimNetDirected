@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
   printf("\n");
 
   stat_value= BipartiteNodematchAlphaA(g, attr_indices[0], exponent_values[0]);
-  printf("%g\n", stat_value);/*XXX*/
+  /*printf("%g\n", stat_value);*/
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
   
   free_graph(g);
