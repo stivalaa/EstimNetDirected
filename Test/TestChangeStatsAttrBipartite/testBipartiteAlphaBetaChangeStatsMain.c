@@ -91,7 +91,9 @@ static double BipartiteNodematchAlphaA(const graph_t *g, uint_t a,
   assert(!g->is_directed);
 
   for (i = 0; i < g->num_A_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_A);    
     for (j = 0; j < i; j++) { /* do not double-count (i,j) two-paths */
+      assert(bipartite_node_mode(g, j) == MODE_A);      
       if (j != i &&
 	  g->catattr[a][i] != CAT_NA &&
 	  g->catattr[a][j] != CAT_NA &&
@@ -102,6 +104,66 @@ static double BipartiteNodematchAlphaA(const graph_t *g, uint_t a,
       }
     }
   }
+  return value;
+}
+
+/*
+ * Statistic for Bipartite edge-centered (beta-based) homophily
+ * for type A node (b1nodematch(beta) statnet ergm term)
+ *
+ * alpha is the exponent in the range [0, 1]
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * This statistic is defined by equation (7) in Bomiriya et al. (2023)
+ *
+ * Parameters:
+ *     g     - undirected bipartite graph
+ *     a     - index of categorical attribute
+ *     alpha - exponent in range [0, 1]
+ *
+ * Return value:
+ *     edge-centered (beta-based) homophily statistic for g with cat attr a
+
+ */
+static double BipartiteNodematchBetaA(const graph_t *g, uint_t a,
+				      double beta)
+{
+  uint_t i,j,k,l,m;
+  double value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 0; i < g->num_A_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_A);
+    for (l = 0; l < g->degree[i]; l++) {
+      k = g->edgelist[i][l]; /* k iterates over neighbours of i */
+      assert(bipartite_node_mode(g, k) == MODE_B);
+      for (m = 0; m < g->degree[k]; m++) {
+	j = g->edgelist[k][m]; /* j iterates over neighbours of k */
+	assert(bipartite_node_mode(g, j) == MODE_A);
+	if (j != i &&
+	    g->catattr[a][i] != CAT_NA &&
+	    g->catattr[a][j] != CAT_NA &&
+	    g->catattr[a][i] == g->catattr[a][j]) {
+	  /* Note pow0 defines pow0(0, 0) = 0
+	     as per Bomiryia et al. (2023) [see p. 7 after eqn (7)] */
+	  value += pow0(GET_A2PATH_ENTRY(g, i, j), beta);
+	}
+      }
+    }
+  }
+  value /= 2;
   return value;
 }
 
@@ -202,6 +264,10 @@ int main(int argc, char *argv[])
   stat_value= BipartiteNodematchAlphaA(g, attr_indices[0], exponent_values[0]);
   /*printf("%g\n", stat_value);*/
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
+
+  stat_value= BipartiteNodematchBetaA(g, attr_indices[1], exponent_values[1]);
+  printf("%g\n", stat_value);
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
   
   free_graph(g);
   exit(0);
