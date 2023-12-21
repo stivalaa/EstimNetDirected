@@ -12,4 +12,5 @@
 (cd TestSetFunctions && ./run_test_sets.sh)
 (cd TestChangeStatsBipartite && ./run_all_bipartite_tests.sh)
 (cd TestChangeStatsAttrBipartite && ./run_test_bpnet_A12000_B4000_attr.sh)
+(cd TestChangeStatsAttrBipartite && ./run_test_b1nodematch_bpnet_A12000_B4000_attr.sh)
 ##(cd TestRandom && ./run_test_random.sh)
