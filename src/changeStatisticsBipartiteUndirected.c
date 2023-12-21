@@ -813,6 +813,32 @@ double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, 
 }
 
 /*
+ * Change statistic for Bipartite node-centered (alpha-based) homophily
+ * for type B node (b2nodematch(alpha) statnet ergm term)
+ *
+ * alpha is the exponent in the range [0, 1]
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * This change statistic is defined by equation (12) in Bomiriya et al. (2023)
+ *
+ */
+double changeBipartiteNodematchAlphaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha)
+{
+  (void)isDelete; /*unused parameter*/
+  return changeBipartiteNodematchAlpha(g, i, j, a, alpha, MODE_B);
+}
+
+/*
  * Change statistic for Bipartite edge-centered (beta-based) homophily
  * for type A or B node (b1nodematch(beta) or b2nodemach(beta) statnet
  * ergm term). An extra parameter, mode, is passed which determines
@@ -887,4 +913,29 @@ double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, b
 {
   (void)isDelete; /*unused parameter*/
   return changeBipartiteNodematchBeta(g, i, j, a, beta, MODE_A);
+}
+
+/*
+ * Change statistic for Bipartite edge-centered (beta-based) homophily
+ * for type B node (b2nodematch(beta) statnet ergm term)
+ *
+ * beta is the exponent in the range [0, 1]
+ *
+ * b1nodematch and b2nodematch (statnet ergm names) are defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * This change statistic is defined by equation (14) in Bomiriya et al. (2023)
+ */
+double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta)
+{
+  (void)isDelete; /*unused parameter*/
+  return changeBipartiteNodematchBeta(g, i, j, a, beta, MODE_B);
 }

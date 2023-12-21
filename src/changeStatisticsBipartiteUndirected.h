@@ -149,6 +149,8 @@ double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t
 /**************** Actor attribute (categorical, exponent) ********************/
 
 double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha);
+double changeBipartiteNodematchAlphaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha);
 double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta);
+double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta);
 
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
