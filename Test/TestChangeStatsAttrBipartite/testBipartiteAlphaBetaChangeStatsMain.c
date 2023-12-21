@@ -183,8 +183,6 @@ int main(int argc, char *argv[])
   uint_t     num_A_nodes = 0;
   /*  uint_t     num_P_nodes = 0; */
   graph_t *g         = NULL;
-  struct timeval start_timeval, end_timeval, elapsed_timeval;
-  int    etime;
   char *catattr_filename;
   double stat_value;
  
