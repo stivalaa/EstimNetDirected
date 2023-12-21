@@ -835,7 +835,7 @@ double changeBipartiteNodematchAlphaA(graph_t *g, uint_t i, uint_t j, uint_t a, 
 double changeBipartiteNodematchAlphaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha)
 {
   (void)isDelete; /*unused parameter*/
-  return changeBipartiteNodematchAlpha(g, i, j, a, alpha, MODE_B);
+  return changeBipartiteNodematchAlpha(g, j, i, a, alpha, MODE_B);
 }
 
 /*
@@ -937,5 +937,5 @@ double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, b
 double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta)
 {
   (void)isDelete; /*unused parameter*/
-  return changeBipartiteNodematchBeta(g, i, j, a, beta, MODE_B);
+  return changeBipartiteNodematchBeta(g, j, i, a, beta, MODE_B);
 }

@@ -153,9 +153,9 @@ static double BipartiteNodematchAlphaB(const graph_t *g, uint_t a,
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  for (i = 0; i < g->num_A_nodes; i++) {
-    assert(bipartite_node_mode(g, i) == MODE_B);    
-    for (j = 0; j < i; j++) { /* do not double-count (i,j) two-paths */
+  for (i = g->num_A_nodes; i < g->num_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_B);
+    for (j = g->num_A_nodes; j < i; j++) { /* do not double-count (i,j) two-paths */
       assert(bipartite_node_mode(g, j) == MODE_B);      
       if (j != i &&
 	  g->catattr[a][i] != CAT_NA &&
@@ -274,7 +274,7 @@ static double BipartiteNodematchBetaB(const graph_t *g, uint_t a,
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  for (i = 0; i < g->num_A_nodes; i++) {
+  for (i = g->num_A_nodes; i < g->num_nodes; i++) {
     assert(bipartite_node_mode(g, i) == MODE_B);
     for (l = 0; l < g->degree[i]; l++) {
       k = g->edgelist[i][l]; /* k iterates over neighbours of i */
