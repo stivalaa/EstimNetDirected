@@ -91,7 +91,7 @@ static double BipartiteNodematchAlphaA(const graph_t *g, uint_t a,
   assert(!g->is_directed);
 
   for (i = 0; i < g->num_A_nodes; i++) {
-    for (j = 0; j < g->num_A_nodes; j++) {
+    for (j = 0; j < i; j++) { /* do not double-count (i,j) two-paths */
       if (j != i &&
 	  g->catattr[a][i] != CAT_NA &&
 	  g->catattr[a][j] != CAT_NA &&
@@ -102,7 +102,6 @@ static double BipartiteNodematchAlphaA(const graph_t *g, uint_t a,
       }
     }
   }
-  value /= 2; /* adjust for double-counting two-paths */
   return value;
 }
 
