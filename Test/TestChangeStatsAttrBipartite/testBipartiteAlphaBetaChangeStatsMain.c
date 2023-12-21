@@ -54,6 +54,9 @@
  *
  ****************************************************************************/
 
+/* Approximate double floating point equality */
+#define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-08 )
+
 /*
  * Statistic for Bipartite node-centered (alpha-based) homophily
  * for type A node (b1nodematch(alpha) statnet ergm term)
@@ -278,7 +281,7 @@ int main(int argc, char *argv[])
 
   stat_value= BipartiteNodematchBetaA(g, attr_indices[1], exponent_values[1]);
   printf("%g\n", stat_value);
-  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   
   free_graph(g);
   exit(0);
