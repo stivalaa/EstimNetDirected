@@ -9,6 +9,8 @@
 ## changeBipartiteNodematchBetaB, changeBipartiteNodematchAlphaA, and
 ## changeBipartiteNodematchAlphaB in EstimNetDirected.
 ##
+options(width=9999)  # do not line wrap
+
 library(igraph)
 library(statnet)
 library(intergraph)
@@ -17,7 +19,8 @@ catattr <- read.table('../../examples/bipartite/simulation/catattr_all.txt', hea
 gn <- asNetwork(g)
 gn <- as.network(as.edgelist(gn), bipartite=12000, directed=FALSE)
 network::set.vertex.attribute(gn, 'catattrA', catattr$catattrA)
+network::set.vertex.attribute(gn, 'catattrP', catattr$catattrP)
 for (exponent in seq(0, 1, 0.1)) {
-  print(summary(gn ~ b1nodematch("catattrA", alpha=exponent) + b1nodematch("catattrA", beta=exponent)))
+  print(summary(gn ~ b1nodematch("catattrA", alpha=exponent) + b1nodematch("catattrA", beta=exponent) + b2nodematch("catattrP", alpha=exponent) + b2nodematch("catattrP", beta=exponent)))
 }
 
