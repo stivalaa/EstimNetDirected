@@ -8,10 +8,11 @@
  * (statnet ergm b1nodematch and b2nodematch) change statistics.
  *
  *
- * Usage:  testBipartiteAlphaBetaChangeStats  <in_edgelistfile>  <catattr_file>
+ * Usage:  testBipartiteAlphaBetaChangeStats  <in_edgelistfile>  <catattr_file> <exponent>
  *
  * Reads graph from Pajek format <in_edgelistfile> and attributes from
- *  <catattr_file>
+ *  <catattr_file> and compute stats with alpha or beta value <exponent>
+ * floating point in [0,1]
  *
  * Outputs observed statistics value for the statistics, which are computed
  * by summing the change stats over all edges in the data, and verifies
@@ -21,7 +22,7 @@
  * to results from statnet for example)
  *
  * Example:
- * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/catattr_all.txt
+ * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/catattr_all.txt 0.1
  *
  * b1nodematch and b2nodematch (statnet ergm names) are defined in:
  *
@@ -87,6 +88,8 @@ static double BipartiteNodematchAlphaA(const graph_t *g, uint_t a,
   uint_t i,j;
   double value = 0;
 
+  assert (alpha >= 0 && alpha <= 1);
+
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
@@ -141,6 +144,8 @@ static double BipartiteNodematchBetaA(const graph_t *g, uint_t a,
   uint_t i,j,k,l,m;
   double value = 0;
 
+  assert (beta >= 0 && beta <= 1);
+  
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
@@ -185,15 +190,22 @@ int main(int argc, char *argv[])
   graph_t *g         = NULL;
   char *catattr_filename;
   double stat_value;
+  double exponent;
+  char        *endptr; /* for strtod() */
  
   srand(time(NULL));
 
-  if (argc != 3) {
-    fprintf(stderr, "Usage: %s <inedgelist_file> <catattr_file>\n", argv[0]);
+  if (argc != 4) {
+    fprintf(stderr, "Usage: %s <inedgelist_file> <catattr_file> <exponent>\n", argv[0]);
     exit(1);
   }
   edgelist_filename = argv[1];
   catattr_filename = argv[2];
+  exponent = strtod(argv[3], &endptr);
+  if (exponent < 0.0 || exponent > 1.0) {
+    fprintf(stderr, "exponent %g is not in [0, 1]\n", exponent);
+    return -1;
+  }
 
   if (!(file = fopen(edgelist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n", 
@@ -240,11 +252,11 @@ int main(int argc, char *argv[])
   
   attr_change_stats_funcs[0] = &changeBipartiteNodematchAlphaA;
   attr_indices[0]            = catattrA_index;
-  exponent_values[0]         = 1;
+  exponent_values[0]         = exponent;
   
   attr_change_stats_funcs[1] = &changeBipartiteNodematchBetaA;
   attr_indices[1]            = catattrA_index;
-  exponent_values[1]         = 1;
+  exponent_values[1]         = exponent;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
