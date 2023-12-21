@@ -264,7 +264,6 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
 
   stat_value= BipartiteNodematchBetaA(g, attr_indices[1], exponent_values[1]);
-  printf("%g\n", stat_value);
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
   
   free_graph(g);
