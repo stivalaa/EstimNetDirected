@@ -151,7 +151,10 @@ static const attr_param_t ATTR_PARAMS[] =
   {"BipartiteTwoPathMismatchingA",ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingA},
   {"BipartiteTwoPathMismatchingB",ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathMatchingB},
   {"BipartiteNodematchAlphaA",    ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchAlphaA},
-  {"BipartiteNodematchBetaA",     ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchBetaA}
+  {"BipartiteNodematchBetaA",     ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchBetaA},
+  {"BipartiteNodematchAlphaB",    ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchAlphaB},
+  {"BipartiteNodematchBetaB",     ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchBetaB}
+
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
