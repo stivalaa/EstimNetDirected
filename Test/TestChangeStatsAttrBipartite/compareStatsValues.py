@@ -57,12 +57,9 @@ def main():
     if len(args) != 2:
         usage(sys.argv[0])
 
-    exitcode = 0
 
     baselinetext = args[0]
     testtext = args[1]
-
-    
 
     # Note in the following,
     #  map(list, zip(*[row.split() for row in open(filename).readlines()]))
