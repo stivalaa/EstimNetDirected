@@ -20,7 +20,8 @@ gn <- asNetwork(g)
 gn <- as.network(as.edgelist(gn), bipartite=12000, directed=FALSE)
 network::set.vertex.attribute(gn, 'catattrA', catattr$catattrA)
 network::set.vertex.attribute(gn, 'catattrP', catattr$catattrP)
+network::set.vertex.attribute(gn, 'catattrAP', catattr$catattrAP)
 for (exponent in seq(0, 1, 0.1)) {
-  print(summary(gn ~ b1nodematch("catattrA", alpha=exponent) + b1nodematch("catattrA", beta=exponent) + b2nodematch("catattrP", alpha=exponent) + b2nodematch("catattrP", beta=exponent)))
+  print(summary(gn ~ b1nodematch("catattrA", alpha=exponent) + b1nodematch("catattrA", beta=exponent) + b2nodematch("catattrP", alpha=exponent) + b2nodematch("catattrP", beta=exponent)  + b1nodematch("catattrAP", alpha=exponent) + b1nodematch("catattrAP", beta=exponent) + b2nodematch("catattrAP", alpha=exponent) + b2nodematch("catattrAP", beta=exponent) ))
 }
 

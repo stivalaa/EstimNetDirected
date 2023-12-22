@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
   const uint_t catattrP_index = 1;
   const uint_t catattrAP_index = 2;
 
-#define NUM_FUNCS 4
+#define NUM_FUNCS 8
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
   static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
@@ -392,6 +392,22 @@ int main(int argc, char *argv[])
   attr_change_stats_funcs[3] = &changeBipartiteNodematchBetaB;
   attr_indices[3]            = catattrP_index;
   exponent_values[3]         = exponent;
+  
+  attr_change_stats_funcs[4] = &changeBipartiteNodematchAlphaA;
+  attr_indices[4]            = catattrAP_index;
+  exponent_values[4]         = exponent;
+  
+  attr_change_stats_funcs[5] = &changeBipartiteNodematchBetaA;
+  attr_indices[5]            = catattrAP_index;
+  exponent_values[5]         = exponent;
+
+  attr_change_stats_funcs[6] = &changeBipartiteNodematchAlphaB;
+  attr_indices[6]            = catattrAP_index;
+  exponent_values[6]         = exponent;
+  
+  attr_change_stats_funcs[7] = &changeBipartiteNodematchBetaB;
+  attr_indices[7]            = catattrAP_index;
+  exponent_values[7]         = exponent;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
