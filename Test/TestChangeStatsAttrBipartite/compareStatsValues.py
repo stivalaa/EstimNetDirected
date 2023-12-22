@@ -76,8 +76,6 @@ def main():
     ## so we just get the statistic values (Which therefore must be
     ## in same order as those output by test program)
 
-    print(  list(list(map(str, col)) for col in map(list, list(zip(*[row.split() for row in [s for s in open(baselinetext).readlines() if not s.startswith("b")]])))) ) #XXX
-    
     baseline_values = list(list(map(float, col)) for col in map(list, list(zip(*[row.split() for row in [s for s in open(baselinetext).readlines() if not s.lstrip().startswith("b")]]))))
 
     test_values = list(list(map(float, col)) for col in map(list, list(zip(*[row.split() for row in open(testtext).readlines()]))))
