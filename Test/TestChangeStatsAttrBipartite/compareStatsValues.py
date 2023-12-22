@@ -81,9 +81,9 @@ def main():
     baseline_values = list(list(map(float, col)) for col in map(list, list(zip(*[row.split() for row in [s for s in open(baselinetext).readlines() if not s.startswith("b")]]))))
 
     test_values = list(list(map(float, col)) for col in map(list, list(zip(*[row.split() for row in open(testtext).readlines()]))))
-
-    print( baseline_values)
-    print(test_values)
+    
+    #print( baseline_values)
+    #print(test_values)
 
     assert len(baseline_values) == len(test_values)
 
