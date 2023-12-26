@@ -96,6 +96,6 @@ attrParams = {BipartiteActivityA(binattrA  =  0.50),
               BipartiteContinuousActivityA(conattrA = -0.80),
               BipartiteContinuousActivityB(conattrP =  0.30),
               Sum(conattrAP                         =  0.20),
-              BipartiteNodematchAlphaA(catattrA, 0.4) =  0.10),
-              BipartiteNodematchBetaB(catattrP, 0.75)  = -0.40)}
+              BipartiteNodematchAlphaA(catattrA, 0.4 =  0.10),
+              BipartiteNodematchBetaB(catattrP, 0.75  = -0.40)}
 
