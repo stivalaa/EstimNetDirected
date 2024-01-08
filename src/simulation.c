@@ -721,8 +721,15 @@ int do_simulation(sim_config_t * config)
   for (i = 0; i < config->param_config.num_attr_change_stats_funcs;
        i++, theta_i++)  {
     theta[theta_i] = config->param_config.attr_param_values[i];
-    printf("%s_%s = %g\n", config->param_config.attr_param_names[i],
-           config->param_config.attr_names[i], theta[theta_i]);
+    if (config->param_config.attr_param_exponents[i] > 0.0) {
+      printf("%s_%s(%g) = %g\n", config->param_config.attr_param_names[i],
+             config->param_config.attr_names[i],
+             config->param_config.attr_param_exponents[i], theta[theta_i]);
+      
+    } else {
+      printf("%s_%s = %g\n", config->param_config.attr_param_names[i],
+             config->param_config.attr_names[i], theta[theta_i]);
+    }
   }
    
   for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs;
@@ -976,11 +983,22 @@ int do_simulation(sim_config_t * config)
     }
   }
   
-  for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
-             config->param_config.attr_param_names[i],
-             config->param_config.attr_names[i]);
-  
+  for (i = 0; i < config->param_config.num_attr_change_stats_funcs; i++) {
+    /* print the exponent [hyper-] parameter value for attribute parameters
+       which used it; it is negative for those for which it is not applicable.
+       Format is to put it in parens after the name and attribute e.g.
+       BipartiteNodematchBetaA_gender(0.1) */
+    if (config->param_config.attr_param_exponents[i] >= 0.0) {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s(%g)",
+               config->param_config.attr_param_names[i],
+               config->param_config.attr_names[i],
+               config->param_config.attr_param_exponents[i]);
+    } else {
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
+               config->param_config.attr_param_names[i],
+               config->param_config.attr_names[i]);
+    }
+  }
   for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs; i++)
     snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s",
              config->param_config.dyadic_param_names[i]);

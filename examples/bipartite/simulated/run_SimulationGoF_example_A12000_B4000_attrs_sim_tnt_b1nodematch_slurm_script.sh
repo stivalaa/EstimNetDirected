@@ -19,7 +19,7 @@ if [ -f ${gof_sim_config} ]; then
   mv ${gof_sim_config} ${gof_sim_config}.OLD
 fi
 
-rm sim_gof_tnt_b1nodematch_bpnet_A12000_B4000_sim_*.net
+rm sim_gof_tnt_bpnet_A12000_B4000_attrs_sim_b1nodematch_sim_*.net
 
 module purge
 
