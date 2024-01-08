@@ -1,0 +1,5 @@
+v3.8.4 (8 January 2024)
+
+* Experimental statistics BipartiteAltK4CyclesA, BipartiteAltK4CyclesB
+* New statistics BipartiteIsolatesA, BipartiteIsolatesB
+* New statistics BipartriteNodeMatchBetaA, BipartiteNodeMatchBetaB, BipartiteNodeMatchAlphaA, and BipartiteNodeMatchAlphaB equivalent to b1nodematch and b2nodematch in statnet, defined by Bomiriya et al. (2023)
