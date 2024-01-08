@@ -107,7 +107,7 @@ attrParams = {BipartiteActivityA(binattrA),
               BipartiteContinuousActivityA(conattrA),
               BipartiteContinuousActivityB(conattrP),
               #BipartiteNodeMatchAlphaA(catattrA, 1),
-              BipartiteNodeMatchBetaA(catattrA, 1)}
+              BipartiteNodeMatchBetaA(catattrA, .1)}
 
 
 #
