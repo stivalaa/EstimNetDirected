@@ -143,7 +143,11 @@ if [ $? -eq 0 ]; then
   # to "MatchingReciprocity(value = -1.712176)"
   # Do not do attribute interaction parameters (just check for Interaction
   # in name)
-  cat ${estimnet_tmpfile2} | grep -vi '[a-z]\+interaction' | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9.]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g'
+  # Note attribute exponent parameters (e.g. BipartiteNodeMatchAlphaA) 
+  # are transformed by R from e.g. BipartiteNodeMAtchAlphaA_catattrA(1) to
+  # BipartiteNodeMatchAlphaA_catattrA.1. (replace parens with period) so
+  # have to change them back here
+  cat ${estimnet_tmpfile2} | grep -vi '[a-z]\+interaction' | fgrep _ | sed 's/\([a-zA-Z]*\)_\([a-zA-Z0-9.]*\) = \([0-9.e-]*\)/\1(\2 = \3)/g' | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g' | sed 's/\([a-zA-Z0-9]*\)Alpha\([AB]\)[(]\([a-zA-Z0-9]*\)[.]\([0-9.]*\)[.] = \([0-9.]*\)[)]/\1Alpha\2(\3, \4 = \5)/g'
   echo
 
   grep -qi '[a-z]\+interaction' ${estimnet_tmpfile2}
