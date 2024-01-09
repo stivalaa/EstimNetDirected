@@ -9,3 +9,6 @@ bpnet_A12000_B4000_attr_test_results_baseline_no2pathtables.txt
 .Rhistory
 .RData
 b1nodematch_test.out
+testBipartiteAlphaBetaChangeStats
+testBipartiteAlphaBetaChangeStats_array
+testBipartiteAlphaBetaChangeStats_hash
