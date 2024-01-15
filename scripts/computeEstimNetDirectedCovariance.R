@@ -30,7 +30,7 @@
 ## variance.
 ##
 ##
-## Usage: Rscript [-v] computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix
+## Usage: Rscript computeEstimNetDirectedCovariance.R [-v] hetaPrefix dzAprefix
 ##    thetaPrefix is prefix of filenames for theta values 
 ##    dzAprefix is prefix of filenames for dzA values 
 ##
