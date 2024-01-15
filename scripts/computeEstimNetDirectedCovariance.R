@@ -30,10 +30,11 @@
 ## variance.
 ##
 ##
-## Usage: Rscript computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix
+## Usage: Rscript [-v] computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix
 ##    thetaPrefix is prefix of filenames for theta values 
 ##    dzAprefix is prefix of filenames for dzA values 
 ##
+##    -v: verbose mode, output covariance matrices
 ##
 ## References:
 ##
@@ -75,6 +76,7 @@
 
 options(width=9999)  # do not line wrap
 
+library(optparse)
 library(mcmcse)
 
 alpha = 0.05  # for 95% confidence interval
@@ -105,9 +107,11 @@ inverse_variance_wm <- function(estimates, stderrs) {
 }
 
 
-################################################################################
+##############################################################################
+###
 ### Main
-################################################################################
+###
+##############################################################################
 
 
 ## Tables have parameter or statistics for each iteration of each run,
@@ -115,13 +119,22 @@ inverse_variance_wm <- function(estimates, stderrs) {
 nonParamVars <- c('run', 't', 'AcceptanceRate')
 
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) != 2) {
-  cat("Usage: Rscript computeEstimNetDirectedCovariance.R thetaPrefix dzAprefix\n")
-  quit(save="no")
-}
+option_list <- list(
+  make_option(c("-v", "--verbose"), action = "store_true", default = FALSE,
+              help = "Print extra output including covariance matrices")  
+
+  )
+parser <- OptionParser(
+     usage = "Usage: Rscript computeEximNetDirectedCovariance.R [options] thetaPrefix dzAprefix\n",
+     option_list = option_list)
+arguments <- parse_args(parser, positional_arguments = 2)
+opt <- arguments$options
+args <- arguments$args
+
 theta_prefix <- args[1]
 dzA_prefix <- args[2]
 
+verbose = opt$verbose
 
 
 ## get parameter estimates from theta files
@@ -248,6 +261,9 @@ if (keptcount > 0 ) {
       mle_cov = solve(acov) # solve(A) is matrix inverse of A
       
       total_cov <- mcmc_cov + mle_cov
+      if (verbose) {
+        print(total_cov)
+      }
       est_stderr <- sqrt(diag(total_cov))
       names(est_stderr) <- paramnames
   
