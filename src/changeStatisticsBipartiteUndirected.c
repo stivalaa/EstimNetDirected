@@ -657,8 +657,19 @@ static double changeBipartiteDiffBeta(graph_t *g, uint_t i, uint_t j, uint_t a, 
   assert(bipartite_node_mode(g, j) == other_mode(mode));
   slow_assert(!isEdge(g, i, j));
 
-  assert(FALSE); /* TODO not implemented yet */
-  
+    /* u = sum of abs diff of continuous attributes of nodes i and v
+       where  j -- v  (and v != i) */
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    assert(v != j);
+    assert(bipartite_node_mode(g, v) == mode);
+    if (v != i) {
+      if (!isnan(g->contattr[a][i]) && !isnan(g->contattr[a][v])) {
+          u += fabs(g->contattr[a][i] - g->contattr[a][v]);
+      }
+    }
+  }
+  delta = 0.5*pow(u, beta) + 0.5*g->degree[j]*pow(u, beta) - 0.5*g->degree[j]*pow(u, beta);
   return delta;
 }
 

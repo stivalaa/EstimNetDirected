@@ -527,8 +527,6 @@ int main(int argc, char *argv[])
 
   free_graph(g);
 
-#undef NOT_USED
-#ifdef NOT_USED
   /* experimntal statisic BipartiteDiffBetaA not used as no
      change statistic implemented */
   
@@ -573,8 +571,6 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
 
   free_graph(g);
-  
-#endif /*NOT_USED*/
   
   exit(0);
 }
