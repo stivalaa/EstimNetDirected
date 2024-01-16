@@ -527,8 +527,6 @@ int main(int argc, char *argv[])
 
   free_graph(g);
 
-  /* experimntal statisic BipartiteDiffBetaA not used as no
-     change statistic implemented */
   
   /*
    * Now do statistics involving continuous attribute, but no output
