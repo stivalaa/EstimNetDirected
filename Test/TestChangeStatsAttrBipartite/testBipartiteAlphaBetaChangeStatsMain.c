@@ -309,7 +309,7 @@ static double BipartiteNodematchBetaB(const graph_t *g, uint_t a,
  *
  * beta is the exponent in the range [0, 1]
  *
- * There is no setatnet equivalent for this term, but it is based on
+ * There is no statnet equivalent for this term, but it is based on
  * b1nodematch and b2nodematch (statnet ergm names) as defined in:
  *
  *  Bomiriya, R. P. (2014). Topics in exponential random graph
@@ -327,6 +327,8 @@ static double BipartiteNodematchBetaB(const graph_t *g, uint_t a,
  * original implementation for matching categorical attributres from which
  * this is derived).
  *
+ * This is experimental and not currently used as we do no have
+ * a change statistic derived for this statistic.
  */
 static double BipartiteDiffBetaA(graph_t *g, uint_t a, double beta)
 {
@@ -525,7 +527,11 @@ int main(int argc, char *argv[])
 
   free_graph(g);
 
-
+#undef NOT_USED
+#ifdef NOT_USED
+  /* experimntal statisic BipartiteDiffBetaA not used as no
+     change statistic implemented */
+  
   /*
    * Now do statistics involving continuous attribute, but no output
    * from this as there is no equivalent in statnet to test against,
@@ -566,8 +572,9 @@ int main(int argc, char *argv[])
   stat_value= BipartiteDiffBetaA(g, attr_indices[0], exponent_values[0]);
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
 
-
   free_graph(g);
+  
+#endif /*NOT_USED*/
   
   exit(0);
 }
