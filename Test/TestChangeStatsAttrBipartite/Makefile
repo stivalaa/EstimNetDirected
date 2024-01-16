@@ -52,3 +52,4 @@ clean:
 
 %_array.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DTWOPATH_LOOKUP -c -o $@ $<
+

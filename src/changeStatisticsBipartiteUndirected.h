@@ -139,6 +139,13 @@ double changeBipartiteTwoPathSumB(graph_t *g, uint_t i, uint_t j, uint_t a, bool
 double changeBipartiteTwoPathDiffA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
+
+/****************** Actor attribute (continuous, exponent) *******************/
+
+double changeBipartiteDiffBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha);
+double changeBipartiteDiffBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double alpha);
+
+
 /*********************** Actor attribute (categorical) ************************/
 
 double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);

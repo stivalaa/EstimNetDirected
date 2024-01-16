@@ -8,11 +8,12 @@
  * (statnet ergm b1nodematch and b2nodematch) change statistics.
  *
  *
- * Usage:  testBipartiteAlphaBetaChangeStats  <in_edgelistfile>  <catattr_file> <exponent>
+ * Usage:  testBipartiteAlphaBetaChangeStats  <in_edgelistfile> <conattr_file> <catattr_file> <exponent>
  *
- * Reads graph from Pajek format <in_edgelistfile> and attributes from
- *  <catattr_file> and compute stats with alpha or beta value <exponent>
- * floating point in [0,1]
+ * Reads graph from Pajek format <in_edgelistfile> and continuous
+ *  attributes from <conattR_file> and categorical attributes from
+ *  <catattr_file> and compute stats with alpha or beta value
+ *  <exponent> floating point in [0,1]
  *
  * Outputs observed statistics value for the statistics, which are computed
  * by summing the change stats over all edges in the data, and verifies
@@ -22,7 +23,7 @@
  * to results from statnet for example)
  *
  * Example:
- * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/catattr_all.txt 0.1
+ * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulation/conattr_all.txt ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/catattr_all.txt 0.1
  *
  * b1nodematch and b2nodematch (statnet ergm names) are defined in:
  *
@@ -300,6 +301,67 @@ static double BipartiteNodematchBetaB(const graph_t *g, uint_t a,
 }
 
 
+
+/*
+ * Statistic for Bipartite edge-centered (beta-based)
+ * continuous absolute difference (heterophily on continuous
+ * attribute) for type A node.
+ *
+ * beta is the exponent in the range [0, 1]
+ *
+ * There is no setatnet equivalent for this term, but it is based on
+ * b1nodematch and b2nodematch (statnet ergm names) as defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * But instead of counting two-paths between matching nodes, it sums
+ * the absolute differences between the continuous attributes of nodes
+ * connected by two-paths (see changeBipartiteNodeMatchBeta() for the
+ * original implementation for matching categorical attributres from which
+ * this is derived).
+ *
+ */
+static double BipartiteDiffBetaA(graph_t *g, uint_t a, double beta)
+{
+  uint_t i,j,k,l,m;
+  double value = 0;
+
+  assert (beta >= 0 && beta <= 1);
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 0; i < g->num_A_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_A);
+    for (l = 0; l < g->degree[i]; l++) {
+      k = g->edgelist[i][l]; /* k iterates over neighbours of i */
+      assert(bipartite_node_mode(g, k) == MODE_B);
+      double u = 0; /* accumulate sum of abs diff of continuous attributes on
+                       connected nodes i -- j where j != i */
+      for (m = 0; m < g->degree[k]; m++) {
+	j = g->edgelist[k][m]; /* j iterates over neighbours of k */
+	assert(bipartite_node_mode(g, j) == MODE_A);
+	if (j != i &&
+	    !isnan(g->contattr[a][i]) && !isnan(g->contattr[a][j])) {
+	  u += fabs(g->contattr[a][i] - g->contattr[a][j]);
+	}
+      }
+      value += pow(u, beta);
+    }
+  }
+  value /= 2;
+  return value;
+}
+
+
+
 /*****************************************************************************
  *
  * main
@@ -315,6 +377,7 @@ int main(int argc, char *argv[])
   uint_t     num_A_nodes = 0;
   /*  uint_t     num_P_nodes = 0; */
   graph_t *g         = NULL;
+  char *conattr_filename;
   char *catattr_filename;
   double stat_value;
   double exponent;
@@ -322,20 +385,21 @@ int main(int argc, char *argv[])
  
   srand(time(NULL));
 
-  if (argc != 4) {
-    fprintf(stderr, "Usage: %s <inedgelist_file> <catattr_file> <exponent>\n", argv[0]);
+  if (argc != 5) {
+    fprintf(stderr, "Usage: %s <inedgelist_file> <conattr_file> <catattr_file> <exponent>\n", argv[0]);
     exit(1);
   }
   edgelist_filename = argv[1];
-  catattr_filename = argv[2];
-  exponent = strtod(argv[3], &endptr);
+  conattr_filename = argv[2];
+  catattr_filename = argv[3];
+  exponent = strtod(argv[4], &endptr);
   if (exponent < 0.0 || exponent > 1.0) {
     fprintf(stderr, "exponent %g is not in [0, 1]\n", exponent);
     return -1;
   }
 
   if (!(file = fopen(edgelist_filename, "r"))) {
-    fprintf(stderr, "error opening file %s (%s)\n", 
+    fprintf(stderr, "error opening file %s (%s)\n",
             edgelist_filename, strerror(errno));
     return -1;
   }
@@ -347,18 +411,17 @@ int main(int argc, char *argv[])
   g = allocate_graph(num_nodes, FALSE/*undirected*/, TRUE/*bipartite*/,
 		     num_A_nodes);
 
-  if (load_attributes(g, NULL, catattr_filename, NULL,
+  if (load_attributes(g, NULL, catattr_filename, conattr_filename,
 		      NULL) != 0) {
     fprintf(stderr, "ERRROR: load node attributes failed\n");
     exit(1);
   }
 
   if (!(file = fopen(edgelist_filename, "r"))) {
-    fprintf(stderr, "error opening file %s (%s)\n", 
+    fprintf(stderr, "error opening file %s (%s)\n",
             edgelist_filename, strerror(errno));
     return -1;
   }
-
 
 
   
@@ -368,6 +431,13 @@ int main(int argc, char *argv[])
   const uint_t catattrP_index = 1;
   const uint_t catattrAP_index = 2;
 
+  /* hardcoding indices of attributes to match input files*/
+  /* conattr_all.txt: conattrA conattrP conattrAP */
+  const uint_t conattrA_index = 0;
+  const uint_t conattrP_index = 1;
+  const uint_t conattrAP_index = 2;
+
+
 #define NUM_FUNCS 8
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
@@ -376,6 +446,13 @@ int main(int argc, char *argv[])
   static double theta[NUM_FUNCS]; /* init to zero, unused */
   attr_change_stats_func_t *attr_change_stats_funcs[NUM_FUNCS];
 
+
+  /*
+   * First do statisics involving categorical attributes, outputting
+   * statistic values for comparison against statnet output from
+   * b1nodematch and b2nodematch (see script
+   * run_test_b1nodematch_bpnet_A12000_B4000_attr.sh)
+   */
   
   attr_change_stats_funcs[0] = &changeBipartiteNodematchAlphaA;
   attr_indices[0]            = catattrA_index;
@@ -434,6 +511,63 @@ int main(int argc, char *argv[])
   stat_value= BipartiteNodematchBetaB(g, attr_indices[3], exponent_values[3]);
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
 
+  stat_value= BipartiteNodematchAlphaA(g, attr_indices[4], exponent_values[4]);
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[4]));
+
+  stat_value= BipartiteNodematchBetaA(g, attr_indices[5], exponent_values[5]);
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[5]));
+
+  stat_value= BipartiteNodematchAlphaB(g, attr_indices[6], exponent_values[6]);
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[6]));
+
+  stat_value= BipartiteNodematchBetaB(g, attr_indices[7], exponent_values[7]);
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[7]));
+
   free_graph(g);
+
+
+  /*
+   * Now do statistics involving continuous attribute, but no output
+   * from this as there is no equivalent in statnet to test against,
+   * we just use the internal tests (assertions) here.
+   */
+  g = allocate_graph(num_nodes, FALSE/*undirected*/, TRUE/*bipartite*/,
+		     num_A_nodes);
+
+  if (load_attributes(g, NULL, catattr_filename, conattr_filename,
+		      NULL) != 0) {
+    fprintf(stderr, "ERRROR: load node attributes failed\n");
+    exit(1);
+  }
+
+  if (!(file = fopen(edgelist_filename, "r"))) {
+    fprintf(stderr, "error opening file %s (%s)\n",
+            edgelist_filename, strerror(errno));
+    return -1;
+  }
+
+
+  n_total = 1;
+  n_attr = 1;
+
+  attr_change_stats_funcs[0] = &changeBipartiteDiffBetaA;
+  attr_indices[0]            = conattrA_index;
+  exponent_values[0]         = exponent;
+
+  for (i = 0; i < n_total; i++) {
+    obs_stats[i] = 0;
+  }
+  g = load_graph_from_arclist_file(file, g, TRUE,
+                                   n_total, n_attr, 0, 0, NULL,
+                                   lambda_values, attr_change_stats_funcs,
+                                   NULL, NULL, attr_indices, exponent_values,
+                                   NULL, obs_stats, theta);
+
+  stat_value= BipartiteDiffBetaA(g, attr_indices[0], exponent_values[0]);
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
+
+
+  free_graph(g);
+  
   exit(0);
 }
