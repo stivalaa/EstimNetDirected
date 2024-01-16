@@ -615,6 +615,83 @@ double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, boo
 
 
 
+/****************** Actor attribute (continuous, exponent) *******************/
+
+/*
+ * Change statistic for Bipartite edge-centered (beta-based)
+ * continuous absolute difference (heterophily on continuous
+ * attribute) for type A or B node. An extra parameter, mode, is
+ * passed which determines if it is for A or B type node - the actual
+ * change statistic function with the usual signature calls this with
+ * appropriate mode.
+ *
+ * beta is the exponent in the range [0, 1]
+ *
+ * There is no setatnet equivalent for this term, but it is based on
+ * b1nodematch and b2nodematch (statnet ergm names) as defined in:
+ *
+ *  Bomiriya, R. P. (2014). Topics in exponential random graph
+ *  modeling. (Doctoral dissertation, Pennsylvania State University).
+ *  https://etda.libraries.psu.edu/files/final_submissions/9857
+ *
+ *  Bomiriya, R. P., Kuvelkar, A. R., Hunter, D. R., & Triebel,
+ *  S. (2023). Modeling Homophily in Exponential-Family Random Graph
+ *  Models for Bipartite Networks. arXiv preprint
+ *  arXiv:2312.05673. https://arxiv.org/abs/2312.05673
+ *
+ * But instead of counting two-paths between matching nodes, it sums
+ * the absolute differences between the continuous attributes of nodes
+ * connected by two-paths (see changeBipartiteNodeMatchBeta() for the
+ * original implementation for matching categorical attributres from
+ * which this is derived).
+ *
+ */
+static double changeBipartiteDiffBeta(graph_t *g, uint_t i, uint_t j, uint_t a, double beta, bipartite_node_mode_e mode)
+{
+  uint_t k, v;
+  double u = 0;
+  double delta = 0;
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == mode);
+  assert(bipartite_node_mode(g, j) == other_mode(mode));
+  slow_assert(!isEdge(g, i, j));
+
+  assert(FALSE); /* TODO not implemented yet */
+  
+  return delta;
+}
+
+/*
+ * Change statistic for Bipartite edge-centered (beta-based)
+ * continuous absolute difference (heterophily on continuous
+ * attribute) for type A node.
+ *
+ * beta is the exponent in the range [0, 1]
+ *
+ */
+double changeBipartiteDiffBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta)
+{
+  (void)isDelete; /*unused parameter*/
+  return changeBipartiteDiffBeta(g, i, j, a, beta, MODE_A);
+}
+
+/*
+ * Change statistic for Bipartite edge-centered (beta-based)
+ * continuous absolute difference (heterophily on continuous
+ * attribute) for type B node.
+ *
+ * beta is the exponent in the range [0, 1]
+ *
+ */
+double changeBipartiteDiffBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta)
+{
+  (void)isDelete; /*unused parameter*/
+  return changeBipartiteDiffBeta(g, j, i, a, beta, MODE_B);
+}
+
+
+
 
 /*********************** Actor attribute (categorical) ***********************/
 
