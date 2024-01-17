@@ -669,7 +669,8 @@ static double changeBipartiteDiffBeta(graph_t *g, uint_t i, uint_t j, uint_t a, 
       }
     }
   }
-  delta = 0.5*pow(u, beta) + 0.5*g->degree[j]*pow(u, beta) - 0.5*g->degree[j]*pow(u, beta);
+  delta = 0.5*pow(u, beta);
+  //XXX delta = 0.5*pow(u, beta) + 0.5*g->degree[j]*pow(u, beta) - 0.5*g->degree[j]*pow(u, beta);
   return delta;
 }
 
