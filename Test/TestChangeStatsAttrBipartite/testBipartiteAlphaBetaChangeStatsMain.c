@@ -346,7 +346,7 @@ static double BipartiteDiffBetaA(graph_t *g, uint_t a, double beta)
       k = g->edgelist[i][l]; /* k iterates over neighbours of i */
       assert(bipartite_node_mode(g, k) == MODE_B);
       double u = 0; /* accumulate sum of abs diff of continuous attributes on
-                       connected nodes i -- j where j != i */
+                       i and j in two-path i -- k -- j, j where j != i */
       for (m = 0; m < g->degree[k]; m++) {
 	j = g->edgelist[k][m]; /* j iterates over neighbours of k */
 	assert(bipartite_node_mode(g, j) == MODE_A);
