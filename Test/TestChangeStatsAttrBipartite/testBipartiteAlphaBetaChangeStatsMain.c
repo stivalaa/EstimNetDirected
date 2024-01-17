@@ -328,7 +328,13 @@ static double BipartiteNodematchBetaB(const graph_t *g, uint_t a,
  * this is derived).
  *
  * This is experimental and not currently used as we do no have
- * a change statistic derived for this statistic.
+ * a change statistic derived for this statistic, and also it
+ * is not clear this statistic is useful: BipartiteNodeMatchBeta
+ * makes sense as raising the count of matching noes to a power
+ * in [0, 1] down-weights the contribution of each additional
+ * matching node, however it is not clear that doing this with a
+ * sum of differences in continuous attributes has any sensible
+ * interpretation.
  */
 static double BipartiteDiffBetaA(graph_t *g, uint_t a, double beta)
 {
