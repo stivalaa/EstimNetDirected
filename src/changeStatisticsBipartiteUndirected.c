@@ -645,6 +645,17 @@ double changeBipartiteTwoPathDiffB(graph_t *g, uint_t i, uint_t j, uint_t a, boo
  * original implementation for matching categorical attributres from
  * which this is derived).
  *
+ * Not used, as this change statistic is not correct 
+ * (note there are tst cases impleemnted for
+ * it based on comparing sum of change
+ * stats to statistic computed explicitly and they fail) and 
+ * anyway it is not clear this statistic is useful: 
+ * BipartiteNodeMatchBeta  makes sense as raising the count of matching 
+ * nodes to a power in [0, 1] down-weights the contribution of each 
+ * additional matching node, however it is not clear that doing this with a
+ * sum of differences in continuous attributes has any sensible
+ * interpretation.
+ *
  */
 static double changeBipartiteDiffBeta(graph_t *g, uint_t i, uint_t j, uint_t a, double beta, bipartite_node_mode_e mode)
 {
@@ -669,6 +680,7 @@ static double changeBipartiteDiffBeta(graph_t *g, uint_t i, uint_t j, uint_t a, 
       }
     }
   }
+  /* FIXME this change statistic is not correct */
   delta = 0.5*pow(u, beta);
   //XXX delta = 0.5*pow(u, beta) + 0.5*g->degree[j]*pow(u, beta) - 0.5*g->degree[j]*pow(u, beta);
   return delta;

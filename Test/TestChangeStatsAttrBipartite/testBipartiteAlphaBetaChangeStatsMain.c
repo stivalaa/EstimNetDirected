@@ -328,7 +328,13 @@ static double BipartiteNodematchBetaB(const graph_t *g, uint_t a,
  * this is derived).
  *
  * This is experimental and not currently used as we do no have
- * a change statistic derived for this statistic.
+ * a change statistic derived for this statistic, and also it
+ * is not clear this statistic is useful: BipartiteNodeMatchBeta
+ * makes sense as raising the count of matching noes to a power 
+ * in [0, 1] down-weights the contribution of each additional
+ * matching node, however it is not clear that doing this with a
+ * sum of differences in continuous attributes has any sensible
+ * interpretation.
  */
 static double BipartiteDiffBetaA(graph_t *g, uint_t a, double beta)
 {
@@ -346,7 +352,7 @@ static double BipartiteDiffBetaA(graph_t *g, uint_t a, double beta)
       k = g->edgelist[i][l]; /* k iterates over neighbours of i */
       assert(bipartite_node_mode(g, k) == MODE_B);
       double u = 0; /* accumulate sum of abs diff of continuous attributes on
-                       i and j in two-path i -- k -- j, j where j != i */
+                       connected nodes i -- j where j != i */
       for (m = 0; m < g->degree[k]; m++) {
 	j = g->edgelist[k][m]; /* j iterates over neighbours of k */
 	assert(bipartite_node_mode(g, j) == MODE_A);
@@ -569,6 +575,7 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
 
   free_graph(g);
+  
   
   exit(0);
 }
