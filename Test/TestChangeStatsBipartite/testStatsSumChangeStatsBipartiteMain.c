@@ -87,7 +87,7 @@ static double BipartiteAltKCyclesA(const graph_t *g, double lambda)
 
 
 /*
- * Statistic for BipartiteAltKCyclesA, alternating k-cycles for type B
+ * Statistic for BipartiteAltKCyclesB, alternating k-cycles for type B
  * nodes (K-Cp in BPNet, XACB in MPNet) defined by eqn (6.12) in:
  *
  *   Wang, P., Sharpe, K., Robins, G. L., & Pattison,
