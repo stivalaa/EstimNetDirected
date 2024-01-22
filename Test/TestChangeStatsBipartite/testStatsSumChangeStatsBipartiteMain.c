@@ -9,7 +9,8 @@
  * to the definition of the statistic (implemented in this test module).
  *
  *
- * Usage:  testStatsSumChangeStatsBipartite  <in_edgelistfile> <lambda>
+ * Usage:  testStatsSumChangeStatsBipartite  [-s]<in_edgelistfile> <lambda>
+ *          -s : also test with slow implementations of statistic funcion
  *
  * Reads graph from Pajek format <in_edgelistfile> and compute stats with
  * weighting parameter <lambda> where real value lambda > 1.
@@ -32,6 +33,7 @@
 #include <string.h>
 #include <time.h>
 #include <assert.h>
+#include <getopt.h>
 #include "graph.h"
 #include "changeStatisticsBipartiteUndirected.h"
 #include "loadGraph.h"
@@ -225,8 +227,17 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
  *
  ****************************************************************************/
 
+static void usage(const char *progname)
+{
+  fprintf(stderr, "Usage: %s [-s] <edgelist_file> <lambda>\n"
+          "  -s : also test with slow statistics functions\n"
+          , progname);
+  exit(1);
+}
+
 int main(int argc, char *argv[])
 {
+  int c;
   uint_t i;
   char *edgelist_filename = NULL;
   FILE *file           = NULL;
@@ -237,15 +248,27 @@ int main(int argc, char *argv[])
   double stat_value;
   double lambda;
   char  *endptr; /* for strtod() */
+  bool also_use_slow_functions = FALSE;
  
   srand(time(NULL));
 
-  if (argc != 3) {
-    fprintf(stderr, "Usage: %s <edgelist_file> <lambda>\n", argv[0]);
-    exit(1);
+  while ((c = getopt(argc, argv, "s")) != -1)  {
+    switch (c)   {
+      case 's':
+        also_use_slow_functions = TRUE;
+        break;
+      default:
+        usage(argv[0]);
+        break;
+    }
   }
-  edgelist_filename = argv[1];
-  lambda = strtod(argv[2], &endptr);
+
+  if (argc - optind != 2) {
+    usage(argv[0]);
+  }
+  
+  edgelist_filename = argv[optind];
+  lambda = strtod(argv[optind+1], &endptr);
   if (lambda <= 1.0) {
     fprintf(stderr, "lambda value %g is not > 1.0\n", lambda);
     return -1;
@@ -303,10 +326,12 @@ int main(int argc, char *argv[])
   /*fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);*/
   /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));*/
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
-  stat_value = BipartiteAltKCyclesA_SLOW(g, lambda_values[0]);
-  /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]); */
-  /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0]))); */
-  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
+  if (also_use_slow_functions) {
+    stat_value = BipartiteAltKCyclesA_SLOW(g, lambda_values[0]);
+    /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]); */
+    /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0]))); */
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
+  }
   
 
     stat_value = BipartiteAltKCyclesB(g, lambda_values[1]);
