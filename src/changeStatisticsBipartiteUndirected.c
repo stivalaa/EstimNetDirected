@@ -273,7 +273,11 @@ double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for alternating k-cycles for type A nodes
- * (K-Ca in BPNet, XACA in MPNet)
+ * (K-Ca in BPNet, XACA in MPNet) defined by eqn (6.14) in:
+ *
+ *   Wang, P., Sharpe, K., Robins, G. L., & Pattison,
+ *   P. E. (2009). Exponential random graph (p∗) models for affiliation
+ *   networks. Social Networks, 31(1), 12-25.
  */
 double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
@@ -296,7 +300,11 @@ double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 
 /*
  * Change statistic for alternating k-cycles for type B nodes
- * (K-Cp in BPNet, XACB in MPNet)
+ * (K-Cp in BPNet, XACB in MPNet) defined by eqn (6.14) in:
+ *
+ *   Wang, P., Sharpe, K., Robins, G. L., & Pattison,
+ *   P. E. (2009). Exponential random graph (p∗) models for affiliation
+ *   networks. Social Networks, 31(1), 12-25.
  * 
  */
 double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
