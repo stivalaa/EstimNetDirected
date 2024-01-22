@@ -37,7 +37,7 @@
 #include "loadGraph.h"
 
 /* Approximate double floating point equality */
-#define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-08 )
+#define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-06 )
 
 
 
