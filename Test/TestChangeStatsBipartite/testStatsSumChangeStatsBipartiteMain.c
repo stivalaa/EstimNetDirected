@@ -50,7 +50,7 @@
 
 /*
  * Statistic for BipartiteAltKCyclesA, alternating k-cycles for type A
- * nodes (K-Ca in bPNet, XACA in MPNet) defined by eqn (6.12) in:
+ * nodes (K-Ca in BPNet, XACA in MPNet) defined by eqn (6.12) in:
  *
  *   Wang, P., Sharpe, K., Robins, G. L., & Pattison,
  *   P. E. (2009). Exponential random graph (p∗) models for affiliation
@@ -80,6 +80,44 @@ static double BipartiteAltKCyclesA(const graph_t *g, double lambda)
       assert(bipartite_node_mode(g, i) == MODE_B);
       assert(bipartite_node_mode(g, l) == MODE_B);
       value += 1 - POW_LOOKUP(1-1/lambda, GET_B2PATH_ENTRY(g, i, l));
+    }
+  }
+  return lambda * value;
+}
+
+
+/*
+ * Statistic for BipartiteAltKCyclesA, alternating k-cycles for type B
+ * nodes (K-Cp in BPNet, XACB in MPNet) defined by eqn (6.12) in:
+ *
+ *   Wang, P., Sharpe, K., Robins, G. L., & Pattison,
+ *   P. E. (2009). Exponential random graph (p∗) models for affiliation
+ *   networks. Social Networks, 31(1), 12-25.
+ *
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *     lambda - decay value > 1.0
+ *
+ * Return value:
+ *      statistic for g with decay value lambda
+
+ */
+static double BipartiteAltKCyclesB(const graph_t *g, double lambda)
+{
+  uint_t i,l;
+  double value = 0;
+
+  assert (lambda > 1.0);
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (l = 1; l < g->num_A_nodes; l++) {
+    for (i = 0; i < l; i++) {
+      assert(bipartite_node_mode(g, i) == MODE_A);
+      assert(bipartite_node_mode(g, l) == MODE_A);
+      value += 1 - POW_LOOKUP(1-1/lambda, GET_A2PATH_ENTRY(g, i, l));
     }
   }
   return lambda * value;
@@ -139,7 +177,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 1
+#define NUM_FUNCS 2
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -149,6 +187,9 @@ int main(int argc, char *argv[])
 
   change_stats_funcs[0] = &changeBipartiteAltKCyclesA;
   lambda_values[0]      = lambda;
+
+  change_stats_funcs[1] = &changeBipartiteAltKCyclesB;
+  lambda_values[1]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -167,6 +208,11 @@ int main(int argc, char *argv[])
   /*fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);*/
   /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));*/
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
+
+    stat_value = BipartiteAltKCyclesB(g, lambda_values[1]);
+  /*fprintf(stderr,"stat_value   = %.10f\nobs_stats[1] = %.10f\n", stat_value, obs_stats[0]);*/
+  /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1])));*/
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
 
 
   free_graph(g);
