@@ -77,7 +77,7 @@ static double BipartiteAltKCyclesA(const graph_t *g, double lambda)
 
   for (l = g->num_A_nodes + 1; l < g->num_A_nodes + g->num_B_nodes; l++) {
     for (i = 0; i < l; i++) {
-      value += 1 - POW_LOOKUP(1-1/lambda, GET_A2PATH_ENTRY(g, i, l));
+      value += 1 - POW_LOOKUP(1-1/lambda, GET_B2PATH_ENTRY(g, i, l));
     }
   }
   return lambda * value;
@@ -162,7 +162,9 @@ int main(int argc, char *argv[])
   printf("\n");
 
   stat_value = BipartiteAltKCyclesA(g, lambda_values[0]);
-  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);/*XXX*/
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));/*XXX*/
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
 
 
   free_graph(g);
