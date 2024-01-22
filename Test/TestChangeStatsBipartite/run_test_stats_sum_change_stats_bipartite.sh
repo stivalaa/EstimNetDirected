@@ -16,7 +16,7 @@ do
         for i in `seq 1 50`
         do
             lambda=`echo "1 + $i / 10" | bc -l`
-            echo lambda = ${lambda}
+            #echo lambda = ${lambda}
             ${implementation} ${netfile}  ${lambda} > /dev/null
             if [ $? -ne 0 ]; then
                 echo "**** FAILED ****"
