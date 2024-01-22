@@ -98,7 +98,24 @@ static ulonglong_t k_two_paths_A(const graph_t *g, uint_t k)
   }
   return count;
 }
- 
+
+static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
+{
+  uint_t l,i;
+  ulonglong_t count = 0;
+
+  assert(k > 0);
+
+  for (l = 1; l < g->num_A_nodes; l++){
+    for (i = 0; i < l; i++) {
+      assert(bipartite_node_mode(g, i) == MODE_A);
+      assert(bipartite_node_mode(g, l) == MODE_A);
+      count += n_choose_k(GET_A2PATH_ENTRY(g, i, l), k);
+    }
+  }
+  return count;
+}
+
 
 /*****************************************************************************
  *
@@ -221,6 +238,42 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
   return value;
 }
 
+/*
+ * Statistic for BipartiteAltKCyclesB, alternating k-cycles for type B
+ * nodes (K-Cp in BPNet, XACB in MPNet), alternative (inefficient)
+ * implementation, defined by eqn (6.12) in:
+ *
+ *   Wang, P., Sharpe, K., Robins, G. L., & Pattison,
+ *   P. E. (2009). Exponential random graph (p∗) models for affiliation
+ *   networks. Social Networks, 31(1), 12-25.
+ *
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *     lambda - decay value > 1.0
+ *
+ * Return value:
+ *      statistic for g with decay value lambda
+
+ */
+static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
+{
+  uint_t i;
+  double value;
+
+  assert (lambda > 1.0);
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  value = k_two_paths_B(g, 1) - k_two_paths_A(g, 2)/lambda;
+
+  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
+    value += pow(-1/lambda, i-1) * k_two_paths_B(g, i);
+  }
+  return value;
+}
+
 /*****************************************************************************
  *
  * main
@@ -338,6 +391,12 @@ int main(int argc, char *argv[])
   /*fprintf(stderr,"stat_value   = %.10f\nobs_stats[1] = %.10f\n", stat_value, obs_stats[0]);*/
   /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1])));*/
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
+  if (also_use_slow_functions) {
+    stat_value = BipartiteAltKCyclesB_SLOW(g, lambda_values[0]);
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);
+    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
+  }
 
 
   free_graph(g);
