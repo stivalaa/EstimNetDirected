@@ -76,7 +76,9 @@ static double BipartiteAltKCyclesA(const graph_t *g, double lambda)
   assert(!g->is_directed);
 
   for (l = g->num_A_nodes + 1; l < g->num_A_nodes + g->num_B_nodes; l++) {
-    for (i = 0; i < l; i++) {
+    for (i = g->num_A_nodes; i < l; i++) {
+      assert(bipartite_node_mode(g, i) == MODE_B);
+      assert(bipartite_node_mode(g, l) == MODE_B);
       value += 1 - POW_LOOKUP(1-1/lambda, GET_B2PATH_ENTRY(g, i, l));
     }
   }
