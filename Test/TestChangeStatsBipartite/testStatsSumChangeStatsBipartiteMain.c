@@ -93,14 +93,8 @@ static ulonglong_t k_two_paths_A(const graph_t *g, uint_t k)
       assert(bipartite_node_mode(g, l) == MODE_B);
       count += n_choose_k(GET_B2PATH_ENTRY(g, i, l), k);
     }
-  }  
-  if (k == 2) {
-    return count;//XXX
-    assert(count % 2 == 0);
-    return count / 2;
-  }  else {
-    return count;
   }
+  return count;
 }
  
 
@@ -217,7 +211,7 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  value = k_two_paths_A(g, 1) - 1*k_two_paths_A(g, 2)/lambda;
+  value = k_two_paths_A(g, 1) - k_two_paths_A(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_A(g, i);
