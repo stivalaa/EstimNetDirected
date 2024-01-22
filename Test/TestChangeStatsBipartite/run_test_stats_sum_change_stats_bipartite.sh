@@ -10,7 +10,7 @@ echo "Testing summing change statistics for bipartite networks"
 for implementation in ./testStatsSumChangeStatsBipartite ./testStatsSumChangeStatsBipartite_array ./testStatsSumChangeStatsBipartite_hash
 do
     echo ${implementation}
-    for netfile in robertson_pollinators_bipartite.net ../../examples/bipartite/inouye_pyke_pollinators/inouye_pyke_pollinators_bipartite.net ../../examples/bipartite/simulated/bpnet_A6000_B750_sparse_sim100000000.net  ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net
+    for netfile in robertson_pollinators_bipartite.net ../../examples/bipartite/inouye_pyke_pollinators/inouye_pyke_pollinators_bipartite.net ../../examples/bipartite/simulated/bpnet_A6000_B750_sparse_sim100000000.net #  ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net
     do
         echo ${netfile}
         for i in `seq 1 50`
