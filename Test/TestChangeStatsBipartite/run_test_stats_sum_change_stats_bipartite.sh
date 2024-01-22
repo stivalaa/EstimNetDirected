@@ -13,11 +13,19 @@ do
     for netfile in ../../examples/bipartite/inouye_pyke_pollinators/inouye_pyke_pollinators_bipartite.net   ../../examples/bipartite/simulated/bpnet_A6000_B750_sparse_sim100000000.net robertson_pollinators_bipartite.net #  ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net
     do
         echo ${netfile}
+        # Only test also the slow implementations of the statistics funcions
+        # on the network that is small enough that they are not too slow
+        if [ `basename ${netfile}` == "inouye_pyke_pollinators_bipartite.net" ]
+        then
+            flags="-s"
+        else
+            flags=""
+        fi
         for i in `seq 1 50`
         do
             lambda=`echo "1 + $i / 10" | bc -l`
             #echo lambda = ${lambda}
-            ${implementation} ${netfile}  ${lambda} > /dev/null
+            ${implementation} ${flags} ${netfile}  ${lambda} > /dev/null
             if [ $? -ne 0 ]; then
                 echo "**** FAILED ****"
                 exit 1
