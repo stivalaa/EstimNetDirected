@@ -304,8 +304,8 @@ int main(int argc, char *argv[])
   /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));*/
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
   stat_value = BipartiteAltKCyclesA_SLOW(g, lambda_values[0]);
-  fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);
-  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));
+  /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]); */
+  /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0]))); */
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
   
 
