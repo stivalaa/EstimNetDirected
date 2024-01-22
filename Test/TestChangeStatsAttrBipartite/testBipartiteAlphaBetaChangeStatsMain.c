@@ -23,7 +23,7 @@
  * to results from statnet for example)
  *
  * Example:
- * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulation/conattr_all.txt ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/catattr_all.txt 0.1
+ * ./testBipartiteAlphaBetaChangeStats ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/conattr_all.txt  ../../examples/bipartite/simulation/catattr_all.txt 0.1
  *
  * b1nodematch and b2nodematch (statnet ergm names) are defined in:
  *

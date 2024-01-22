@@ -11,7 +11,7 @@ OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsBipartiteU
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 
-all: testChangeStatsBipartite testChangeStatsBipartite_hash testChangeStatsBipartite_array
+all: testChangeStatsBipartite testChangeStatsBipartite_hash testChangeStatsBipartite_array testStatsSumChangeStatsBipartite testStatsSumChangeStatsBipartite_hash testStatsSumChangeStatsBipartite_array
 
 
 testChangeStatsBipartite: testChangeStatsBipartiteMain.o $(OBJS)
@@ -25,10 +25,25 @@ testChangeStatsBipartite_array: testChangeStatsBipartiteMain_array.o $(ARRAY_OBJ
 
 
 
+testStatsSumChangeStatsBipartite: testStatsSumChangeStatsBipartiteMain.o $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testStatsSumChangeStatsBipartite_hash: testStatsSumChangeStatsBipartiteMain_hash.o $(HASH_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testStatsSumChangeStatsBipartite_array: testStatsSumChangeStatsBipartiteMain_array.o $(ARRAY_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+
+
+
 clean:
 	$(RM) testChangeStatsBipartite testChangeStatsBipartite_hash
 	$(RM) testChangeStatsBipartiteMain.o testChangeStatsBipartiteMain_hash.o
 	$(RM) testChangeStatsBipartite_array testChangeStatsBipartiteMain_array.o
+	$(RM) testStatsSumChangeStatsBipartite testStatsSumChangeStatsBipartite_hash
+	$(RM) testStatsSumChangeStatsBipartiteMain.o testStatsSumChangeStatsBipartiteMain_hash.o
+	$(RM) testStatsSumChangeStatsBipartite_array testStatsSumChangeStatsBipartiteMain_array.o
 
 %_hash.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DTWOPATH_LOOKUP -DTWOPATH_HASHTABLES -c -o $@ $<
