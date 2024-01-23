@@ -247,7 +247,7 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
 
   value = k_two_paths_A(g, 1) - k_two_paths_A(g, 2)/lambda;
 
-  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
+  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_A(g, i);
   }
   return value;
@@ -283,7 +283,7 @@ static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
 
   value = k_two_paths_B(g, 1) - k_two_paths_B(g, 2)/lambda;
 
-  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
+  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_B(g, i);
   }
   return value;
