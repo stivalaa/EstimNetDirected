@@ -275,6 +275,49 @@ static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
   return value;
 }
 
+
+
+/*
+ * Statistic for alternating k-4-cycles for type A nodes (new change
+ * statistic suggested in email (basically paper outline, with
+ * spreadsheet attachments for literature search, examples, etc.)
+ * "idea for a (slightly) new bipartite change statistic" sent 23 Nov
+ * 2022):
+ *
+ *   The proposed new statistic is a very simple modification of the
+ *   "Alternating k-two-paths" bipartite statistic (K-Ca and K-Cp)
+ *   statistics described by Wang et al. (2009, p.19). I propose to
+ *   simply remove the first term of Wang et al. (2009) equation 6.12,
+ *   and reverse the signs, so that it no longer counts open two-paths,
+ *   but the first, positive, term actually counts four-cycles.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *     lambda - decay value > 1.0
+ *
+ * Return value:
+ *      statistic for g with decay value lambda
+
+ */
+static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
+{
+  uint_t i;
+  double value;
+
+  assert (lambda > 1.0);
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  value = k_two_paths_A(g, 2)/lambda;
+
+  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
+    value += -1 * pow(-1/lambda, i-1) * k_two_paths_A(g, i);
+  }
+  return value;
+}
+
+
 /*****************************************************************************
  *
  * main
@@ -349,7 +392,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 2
+#define NUM_FUNCS 3
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -362,6 +405,9 @@ int main(int argc, char *argv[])
 
   change_stats_funcs[1] = &changeBipartiteAltKCyclesB;
   lambda_values[1]      = lambda;
+
+  change_stats_funcs[2] = &changeBipartiteAltK4CyclesA;
+  lambda_values[2]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -377,31 +423,28 @@ int main(int argc, char *argv[])
   printf("\n");
 
   stat_value = BipartiteAltKCyclesA(g, lambda_values[0]);
-  /*fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);*/
-  /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));*/
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
   if (also_use_slow_functions) {
     stat_value = BipartiteAltKCyclesA_SLOW(g, lambda_values[0]);
-    /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]); */
-    /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0]))); */
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
   }
   
 
-    stat_value = BipartiteAltKCyclesB(g, lambda_values[1]);
-  /*fprintf(stderr,"stat_value   = %.10f\nobs_stats[1] = %.10f\n", stat_value, obs_stats[0]);*/
-  /*fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1])));*/
+  stat_value = BipartiteAltKCyclesB(g, lambda_values[1]);
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   if (also_use_slow_functions) {
-    stat_value = BipartiteAltKCyclesB_SLOW(g, lambda_values[0]);
-    /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[1]); */
-    /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1]))); */
+    stat_value = BipartiteAltKCyclesB_SLOW(g, lambda_values[1]);
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   }
 
 
-  free_graph(g);
+  if (also_use_slow_functions) {
+    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[2]);
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[2]);
+    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
+  }
 
-  
+  free_graph(g);
   exit(0);
 }
