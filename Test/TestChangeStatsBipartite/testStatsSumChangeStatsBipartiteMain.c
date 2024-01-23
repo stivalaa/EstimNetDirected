@@ -98,8 +98,9 @@ static ulonglong_t k_two_paths_A(const graph_t *g, uint_t k)
     }
   }
   if (k == 2) {
-    assert(count % 2 == 0);
-    return count/2;
+    return count; //XXX
+    //XXX assert(count % 2 == 0);
+    //XXX return count/2;
   }
   else {
     return count;
@@ -121,8 +122,9 @@ static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
     }
   }
   if (k == 2) {
-    assert(count % 2 == 0);
-    return count/2;
+    return count; //XXX
+    //XXX assert(count % 2 == 0);
+    //XXX return count/2;
   }
   else {
     return count;
@@ -243,7 +245,7 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  value = k_two_paths_A(g, 1) - 2*k_two_paths_A(g, 2)/lambda;
+  value = k_two_paths_A(g, 1) - k_two_paths_A(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_A(g, i);
@@ -279,7 +281,7 @@ static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  value = k_two_paths_B(g, 1) - 2*k_two_paths_B(g, 2)/lambda;
+  value = k_two_paths_B(g, 1) - k_two_paths_B(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_B(g, i);
