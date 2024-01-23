@@ -98,7 +98,7 @@ static ulonglong_t k_two_paths_A(const graph_t *g, uint_t k)
     }
   }
   if (k == 2) {
-    assert(k % 2 == 0);
+    assert(count % 2 == 0);
     return count/2;
   }
   else {
@@ -121,7 +121,7 @@ static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
     }
   }
   if (k == 2) {
-    assert(k % 2 == 0);
+    assert(count % 2 == 0);
     return count/2;
   }
   else {
