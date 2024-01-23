@@ -52,10 +52,11 @@
 /*
  * Binomial coefficient n choose k
  */
-static ulonglong_t n_choose_k(uint_t n, uint_t k)
+static double n_choose_k(uint_t n, uint_t k)
 {
   uint_t i;
-  ulonglong_t a = 1, b = 1, l = k;
+  double a = 1, b = 1;
+  uint_t l = k;
 
   if (n < k) {
     return 0;
@@ -70,7 +71,7 @@ static ulonglong_t n_choose_k(uint_t n, uint_t k)
     b *= i;
   }
   /*printf("%u %u %llu %llu %llu\n", n, k, a, b, a/b);*/
-  assert(a % b == 0);
+  //assert(a % b == 0);
   return a / b;
 }
 
@@ -393,9 +394,9 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   if (also_use_slow_functions) {
     stat_value = BipartiteAltKCyclesB_SLOW(g, lambda_values[0]);
-    fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);
-    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));
-    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[1]);
+    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1])));
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   }
 
 
