@@ -478,7 +478,9 @@ int main(int argc, char *argv[])
   }
 
 
-  if (FALSE/*XXX*/&& also_use_slow_functions) {
+ /* test for experimental BipartiteAltK4CyclesA statisic is disable as the change statisic is not correct */
+  const bool DISABLED_TEST_CASE = TRUE;
+  if (!DISABLED_TEST_CASE && also_use_slow_functions) {
     stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[2]);
     fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]);
     fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
