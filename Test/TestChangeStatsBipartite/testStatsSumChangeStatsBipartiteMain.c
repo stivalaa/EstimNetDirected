@@ -462,8 +462,8 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
   if (also_use_slow_functions) {
     stat_value = BipartiteAltKCyclesA_SLOW(g, lambda_values[0]);
-    fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]);
-    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0])));
+    /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[0] = %.10f\n", stat_value, obs_stats[0]); */
+    /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[0]))); */
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
   }
   
@@ -472,8 +472,8 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   if (also_use_slow_functions) {
     stat_value = BipartiteAltKCyclesB_SLOW(g, lambda_values[1]);
-    fprintf(stderr,"stat_value   = %.10f\nobs_stats[1] = %.10f\n", stat_value, obs_stats[1]);
-    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1])));
+    /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[1] = %.10f\n", stat_value, obs_stats[1]); */
+    /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1]))); */
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   }
 
