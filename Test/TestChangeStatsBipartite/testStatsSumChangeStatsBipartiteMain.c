@@ -97,14 +97,19 @@ static ulonglong_t k_two_paths_A(const graph_t *g, uint_t k)
       count += n_choose_k(GET_B2PATH_ENTRY(g, i, l), k);
     }
   }
-  if (k == 2) {
-    return count; //XXX
-    //XXX assert(count % 2 == 0);
-    //XXX return count/2;
-  }
-  else {
-    return count;
-  }
+  /* Note despite eqn (6.11) in Wang et al. (2009) having this
+     statistic multiplied by 1/2 when k = 2 "due to symmetry", this is
+     not actually correct for bipartite networks here as we are
+     considering only either mode A or mdoe B nodes (not both at
+     once). So the symmetry which exists for one-mode networks as per
+     Snijders et al. (2006) "New specifications for exponential random
+     graph models" [eqns (25a,b) and (26a), pp. 123-124] when the
+     summation over all i < j means two pairs of nodes are considered
+     in a four-cycle, is not true here as the summation over i < l
+     considers only one pair of nodes (mode B nodes in k_two_paths_A()
+     or mode A nodes in k_two_paths_B) are considered.
+  */
+  return count;
 }
 
 static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
@@ -121,14 +126,19 @@ static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
       count += n_choose_k(GET_A2PATH_ENTRY(g, i, l), k);
     }
   }
-  if (k == 2) {
-    return count; //XXX
-    //XXX assert(count % 2 == 0);
-    //XXX return count/2;
-  }
-  else {
-    return count;
-  }
+  /* Note despite eqn (6.11) in Wang et al. (2009) having this
+     statistic multiplied by 1/2 when k = 2 "due to symmetry", this is
+     not actually correct for bipartite networks here as we are
+     considering only either mode A or mdoe B nodes (not both at
+     once). So the symmetry which exists for one-mode networks as per
+     Snijders et al. (2006) "New specifications for exponential random
+     graph models" [eqns (25a,b) and (26a), pp. 123-124] when the
+     summation over all i < j means two pairs of nodes are considered
+     in a four-cycle, is not true here as the summation over i < l
+     considers only one pair of nodes (mode B nodes in k_two_paths_A()
+     or mode A nodes in k_two_paths_B) are considered.
+  */
+  return count;
 }
 
 
@@ -245,6 +255,12 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
+  /* Note despite eqn (6.12) in Wang et al. (2009) multipliying the
+     second term [k_two_paths_A(g, 2)/lambda] by 2, this is not
+     actually correct as the division by two in eqn (6.11) is not
+     correct (see comment in k_two_paths_A()), so there is no factor
+     of 2 here.
+  */
   value = k_two_paths_A(g, 1) - k_two_paths_A(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
@@ -281,7 +297,13 @@ static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  value = k_two_paths_B(g, 1) - k_two_paths_B(g, 2)/lambda;
+  /* Note despite eqn (6.12) in Wang et al. (2009) multipliying the
+     second term [k_two_paths_A(g, 2)/lambda] by 2, this is not
+     actually correct as the division by two in eqn (6.11) is not
+     correct (see comment in k_two_paths_B()), so there is no factor
+     of 2 here.
+  */
+    value = k_two_paths_B(g, 1) - k_two_paths_B(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_B(g, i);
