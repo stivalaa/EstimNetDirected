@@ -478,7 +478,7 @@ int main(int argc, char *argv[])
   }
 
 
- /* test for experimental BipartiteAltK4CyclesA statisic is disable as the change statisic is not correct */
+ /* test for experimental BipartiteAltK4CyclesA statisic is disabled as the change statisic is not correct */
   const bool DISABLED_TEST_CASE = TRUE;
   if (!DISABLED_TEST_CASE && also_use_slow_functions) {
     stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[2]);
