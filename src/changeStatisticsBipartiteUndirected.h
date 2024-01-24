@@ -120,8 +120,6 @@ double changeBipartiteAltStarsA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltStarsB(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
-double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
-double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteIsolatesA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteIsolatesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
@@ -155,4 +153,7 @@ double changeBipartiteNodematchAlphaB(graph_t *g, uint_t i, uint_t j, uint_t a, 
 double changeBipartiteNodematchBetaA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta);
 double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double beta);
 
+/******************************** Experimental *******************************/
+double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
