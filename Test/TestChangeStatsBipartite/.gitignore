@@ -35,3 +35,5 @@ testStatsSumChangeStatsBipartite
 testStatsSumChangeStatsBipartite.exe
 testStatsSumChangeStatsBipartite_hash.exe
 testStatsSumChangeStatsBipartite_hash
+*.eps
+*.png
