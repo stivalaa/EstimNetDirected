@@ -6,11 +6,15 @@
 #
 # Run all the regression  / unit tests.
 #
-
-(cd TestChangeStatsDirected && ./run_test_polblogs.sh)
-(cd TestChangeStatsUndirected && ./run_test_netscience.sh)
-(cd TestSetFunctions && ./run_test_sets.sh)
-(cd TestChangeStatsBipartite && ./run_all_bipartite_tests.sh)
-(cd TestChangeStatsAttrBipartite && ./run_test_bpnet_A12000_B4000_attr.sh)
-(cd TestChangeStatsAttrBipartite && ./run_test_b1nodematch_bpnet_A12000_B4000_attr.sh)
-##(cd TestRandom && ./run_test_random.sh)
+fail=0
+(cd TestChangeStatsDirected && ./run_test_polblogs.sh) || fail=1
+(cd TestChangeStatsUndirected && ./run_test_netscience.sh) || fail=1
+(cd TestSetFunctions && ./run_test_sets.sh) || fail=1
+(cd TestChangeStatsBipartite && ./run_all_bipartite_tests.sh) || fail=1
+(cd TestChangeStatsAttrBipartite && ./run_test_bpnet_A12000_B4000_attr.sh) || fail=1
+(cd TestChangeStatsAttrBipartite && ./run_test_b1nodematch_bpnet_A12000_B4000_attr.sh) || fail=1
+##(cd TestRandom && ./run_test_random.sh) || fail=1
+if [ $fail -ne 0 ]; then
+    echo "***** A test FAILED *****"
+fi
+exit $fail
