@@ -478,7 +478,7 @@ int main(int argc, char *argv[])
   }
 
 
-  if (also_use_slow_functions) {
+  if (FALSE/*XXX*/&& also_use_slow_functions) {
     stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[2]);
     fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]);
     fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
