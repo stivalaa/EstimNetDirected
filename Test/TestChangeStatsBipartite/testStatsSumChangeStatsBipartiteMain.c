@@ -347,7 +347,7 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
 
   value = k_two_paths_A(g, 2)/lambda;
 
-  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 2; i++) {
+  for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += -1 * pow(-1/lambda, i-1) * k_two_paths_A(g, i);
   }
   return value;
@@ -478,7 +478,7 @@ int main(int argc, char *argv[])
   }
 
 
-  if (FALSE/*XXX*/&& also_use_slow_functions) {
+  if (also_use_slow_functions) {
     stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[2]);
     fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]);
     fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
