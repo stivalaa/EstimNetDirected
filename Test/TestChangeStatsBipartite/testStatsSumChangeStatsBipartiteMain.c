@@ -164,7 +164,6 @@ static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
  *
  * Return value:
  *      statistic for g with decay value lambda
-
  */
 static double BipartiteAltKCyclesA(const graph_t *g, double lambda)
 {
@@ -202,7 +201,6 @@ static double BipartiteAltKCyclesA(const graph_t *g, double lambda)
  *
  * Return value:
  *      statistic for g with decay value lambda
-
  */
 static double BipartiteAltKCyclesB(const graph_t *g, double lambda)
 {
@@ -243,7 +241,6 @@ static double BipartiteAltKCyclesB(const graph_t *g, double lambda)
  *
  * Return value:
  *      statistic for g with decay value lambda
-
  */
 static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
 {
@@ -285,7 +282,6 @@ static double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda)
  *
  * Return value:
  *      statistic for g with decay value lambda
-
  */
 static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
 {
@@ -333,7 +329,6 @@ static double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
  *
  * Return value:
  *      statistic for g with decay value lambda
-
  */
 static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
 {
