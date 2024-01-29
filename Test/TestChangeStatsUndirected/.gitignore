@@ -19,3 +19,10 @@ netscience_test_results_baseline_no2pathtables.txt
 *.bak
 .RData
 .Rhistory
+testStatsSumChangeStatsUndirected.exe
+testStatsSumChangeStatsUndirected_array.exe
+testStatsSumChangeStatsUndirected_hash.exe
+testStatsSumChangeStatsUndirected
+testStatsSumChangeStatsUndirected_array
+testStatsSumChangeStatsUndirected_hash
+
