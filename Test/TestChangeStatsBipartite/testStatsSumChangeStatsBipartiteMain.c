@@ -470,11 +470,11 @@ int main(int argc, char *argv[])
   }
   
   get_num_vertices_from_bipartite_pajek_file(file,
-					     &num_nodes,
-					     &num_A_nodes);/* closes file */
+                                             &num_nodes,
+                                             &num_A_nodes);/* closes file */
   
   g = allocate_graph(num_nodes, FALSE/*undirected*/, TRUE/*bipartite*/,
-		     num_A_nodes);
+                     num_A_nodes);
 
   if (!(file = fopen(edgelist_filename, "r"))) {
     fprintf(stderr, "error opening file %s (%s)\n",
