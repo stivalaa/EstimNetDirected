@@ -52,7 +52,7 @@
 /*
  * Binomial coefficient n choose k
  */
-static double n_choose_k(uint_t n, uint_t k)
+static ulonglong_t n_choose_k(uint_t n, uint_t k)
 {
   uint_t i;
   double a = 1, b = 1;
@@ -70,8 +70,6 @@ static double n_choose_k(uint_t n, uint_t k)
     a *= (n + 1 - i);
     b *= i;
   }
-  /*printf("%u %u %llu %llu %llu\n", n, k, a, b, a/b);*/
-  //assert(a % b == 0);
   return a / b;
 }
 
