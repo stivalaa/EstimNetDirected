@@ -89,7 +89,7 @@ static ulonglong_t n_choose_k(uint_t n, uint_t k)
  * Return value:
  *      number of four-cycles in undirected graph g
  */
-static double FourCycles(const graph_t *g)
+static ulonglong_t FourCycles(const graph_t *g)
 {
   uint_t i,l;
   ulonglong_t value = 0;
