@@ -539,8 +539,8 @@ int main(int argc, char *argv[])
   stat_value = FourCyclesA(g);
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
   stat_value = FourCyclesB(g);
-  fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]);
-  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
+  /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]); */
+  /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2]))); */
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
 
 
