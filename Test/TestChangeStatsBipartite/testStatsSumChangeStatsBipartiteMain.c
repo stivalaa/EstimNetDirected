@@ -35,6 +35,7 @@
 #include <assert.h>
 #include <getopt.h>
 #include "graph.h"
+#include "changeStatisticsUndirected.h"
 #include "changeStatisticsBipartiteUndirected.h"
 #include "loadGraph.h"
 
@@ -147,6 +148,66 @@ static ulonglong_t k_two_paths_B(const graph_t *g, uint_t k)
  * statistics functions (summing change statistics is verified against these)
  *
  ****************************************************************************/
+
+/*
+ * Statistic for FourCycles, number of four-cycles in a bipartite graph.
+ *
+ * This version counting over pairs of mode A nodes, but result must be
+ * equal to that counting over pairs of mode B nodes instead.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+static double FourCyclesA(const graph_t *g)
+{
+  uint_t i,l;
+  double value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 1; i < g->num_A_nodes; i++) {
+    for (l = 0; l < i; l++) {
+      assert(bipartite_node_mode(g, i) == MODE_A);
+      assert(bipartite_node_mode(g, l) == MODE_A);
+      value += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
+    }
+  }
+  return value;
+}
+
+/*
+ * Statistic for FourCycles, number of four-cycles in a bipartite graph.
+ *
+ * This version counting over pairs of mode B nodes, but result must be
+ * equal to that counting over pairs of mode A nodes instead.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+static double FourCyclesB(const graph_t *g)
+{
+  uint_t i,l;
+  double value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = g->num_A_nodes + 1; i < g->num_A_nodes + g->num_B_nodes; i++) {
+    for (l = g->num_A_nodes; l < i; l++) {
+      assert(bipartite_node_mode(g, i) == MODE_B);
+      assert(bipartite_node_mode(g, l) == MODE_B);
+      value += n_choose_k(GET_B2PATH_ENTRY(g, i, l), 2);
+    }
+  }
+  return value;
+}
 
 
 /*
@@ -423,7 +484,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 3
+#define NUM_FUNCS 4
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -437,8 +498,11 @@ int main(int argc, char *argv[])
   change_stats_funcs[1] = &changeBipartiteAltKCyclesB;
   lambda_values[1]      = lambda;
 
-  change_stats_funcs[2] = &changeBipartiteAltK4CyclesA;
-  lambda_values[2]      = lambda;
+  change_stats_funcs[2] = &changeFourCycles;
+  lambda_values[2]      = 0; /* not used */
+
+  change_stats_funcs[3] = &changeBipartiteAltK4CyclesA;
+  lambda_values[3]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -472,14 +536,21 @@ int main(int argc, char *argv[])
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   }
 
+  stat_value = FourCyclesA(g);
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
+  stat_value = FourCyclesB(g);
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]);
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
+
 
  /* test for experimental BipartiteAltK4CyclesA statisic is disabled as the change statisic is not correct */
   const bool DISABLED_TEST_CASE = TRUE;
   if (!DISABLED_TEST_CASE && also_use_slow_functions) {
-    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[2]);
-    fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]);
-    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2])));
-    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
+    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[3]);
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[3] = %.10f\n", stat_value, obs_stats[3]);
+    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[3])));
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
   }
 
   free_graph(g);
