@@ -8,7 +8,7 @@
 #
 fail=0
 (cd TestChangeStatsDirected && ./run_test_polblogs.sh) || fail=1
-(cd TestChangeStatsUndirected && ./run_test_netscience.sh) || fail=1
+(cd TestChangeStatsUndirected && ./run_all_tests.sh) || fail=1
 (cd TestSetFunctions && ./run_test_sets.sh) || fail=1
 (cd TestChangeStatsBipartite && ./run_all_bipartite_tests.sh) || fail=1
 (cd TestChangeStatsAttrBipartite && ./run_test_bpnet_A12000_B4000_attr.sh) || fail=1
