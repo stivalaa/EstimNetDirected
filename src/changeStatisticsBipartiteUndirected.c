@@ -604,8 +604,8 @@ double changeBipartiteTwoPathMatchingA(graph_t *g, uint_t i, uint_t j, uint_t a,
 
 
 /*
- * Change statistic for Bipartite 2-path mismatching for type B nodes
- * (2path_mismatch_P in BPNet, X2StarBMismatch in MPNet)
+ * Change statistic for Bipartite 2-path matching for type B nodes
+ * (2path_match_P in BPNet, X2StarBMatch in MPNet)
  */
 double changeBipartiteTwoPathMatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
@@ -663,8 +663,8 @@ double changeBipartiteTwoPathMismatchingA(graph_t *g, uint_t i, uint_t j, uint_t
 
 
 /*
- * Change statistic for Bipartite 2-path matching for type B nodes
- * (2path_match_P in BPNet, X2StarBMatch in MPNet)
+ * Change statistic for Bipartite 2-path mismatching for type B nodes
+ * (2path_mismatch_P in BPNet, X2StarBMismatch in MPNet)
  */
 double changeBipartiteTwoPathMismatchingB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
