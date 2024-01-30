@@ -429,13 +429,14 @@ static double PowerFourCyclesA(const graph_t *g, double lambda)
 {
   uint_t i,l;
   double alpha = 1/lambda;
-  double value = 0;
   uint_t count = 0;
+  double value = 0;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
   for (i = 1; i < g->num_A_nodes; i++) {
+    value = 0;
     for (l = 0; l < i; l++) {
       assert(bipartite_node_mode(g, i) == MODE_A);
       assert(bipartite_node_mode(g, l) == MODE_A);
