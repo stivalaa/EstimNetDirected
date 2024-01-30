@@ -104,6 +104,62 @@ ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s)
   return s == 2 ? g->degree[v] : num_s_stars(g, v, s - 1);
 }
 
+
+/*****************************************************************************
+ *
+ * local utility functions
+ *
+ ****************************************************************************/
+
+/*
+ * Binomial coefficient n choose 2
+ */
+static ulong_t n_choose_2(uint_t n)
+{
+  if (n < 2) {
+    return 0;
+  }
+  return n * (n - 1) / 2;
+}
+
+/*
+ * Count number of four-cycles that a particular node u is involved in.
+ *
+ * Note can also be used as for bipartite networks.
+ */
+static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
+{
+  uint_t k,v;
+  uint_t count = 0;
+
+  /* TODO implement this more efficiently instead of iterating over all nodes */
+  if (g->is_bipartite) {
+    if (bipartite_node_mode(g, u) == MODE_A) {
+      for (v = 0; v < g->num_A_nodes; v++) {
+        if (v != u) {
+          assert(bipartite_node_mode(g, v) == MODE_A);
+          count += n_choose_2(GET_A2PATH_ENTRY(g, u, v));
+        }
+      }
+    } else {
+      for (v = g->num_A_nodes; v < g->num_A_nodes + g->num_B_nodes; v++) {
+        if (v != u) {
+          assert(bipartite_node_mode(g, v) == MODE_B);
+          count += n_choose_2(GET_B2PATH_ENTRY(g, u, v));
+        }
+      }
+    }
+  } else {
+    for (v = 0; v < g->num_nodes; v++){
+      if (v != u) {
+        count += n_choose_2(GET_2PATH_ENTRY(g, u, v));
+      }
+    }
+  }
+  return count;
+}
+
+
 /*****************************************************************************
  *
  * change statistics functions
@@ -398,6 +454,7 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t  v,k,tmp;
   ulong_t delta = 0;
+  ulong_t count = 0;
   double  alpha = 1/lambda;
 
   slow_assert(!isEdge(g, i, j));
@@ -406,30 +463,11 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     return 0;
   }
 
-  /* iterate over neighbours of node with smaller degree */
-  if (g->degree[i] < g->degree[j]) {
-    tmp = i;
-    i = j;
-    j = tmp;
-  }
+  /* Number of four-cycles that nodes i or j are already inolved in */
+  count = num_four_cycles_node(g, i) + num_four_cycles_node(g, j);
 
-  for (k = 0; k < g->degree[j]; k++) {
-    v = g->edgelist[j][k];
-    if (v == i || v == j) {
-      continue;
-    }
-    if (g->is_bipartite) {
-      if (bipartite_node_mode(g, j) == MODE_A) {
-        assert(bipartite_node_mode(g, v) == MODE_B);
-        delta += GET_B2PATH_ENTRY(g, i, v);
-      } else {
-        assert(bipartite_node_mode(g, v) == MODE_A);
-        delta += GET_A2PATH_ENTRY(g, i, v);
-      }
-    } else {
-      assert(GET_2PATH_ENTRY(g, i, v) == GET_2PATH_ENTRY(g, v, i));
-      delta += GET_2PATH_ENTRY(g, i, v);
-    }
-  }
-  return pow(delta, alpha);
+  /* change statistic for four-cycles */
+  delta = changeFourCycles(g, i, j, lambda);
+
+  return pow(count + delta, alpha) - pow(count, alpha);
 }
