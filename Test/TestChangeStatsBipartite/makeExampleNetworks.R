@@ -180,3 +180,21 @@ V(g8)$type <- bimapping$type
 print_graph_stats(g8, 'Two-path')
 write.graph(g8,'twopath_bipartite.net', format='pajek')
 plot_graph_viz(g8, 'twopath_bipartite.eps')
+
+g10 <- graph.ring(6)
+g10 <- g10 %>% add_edges(c(2,5))
+bimapping <- bipartite.mapping(g10)
+stopifnot(bimapping$res)
+V(g10)$type <- bimapping$type
+print_graph_stats(g10, 'Grid')
+write.graph(g10,'grid_bipartite.net', format='pajek')
+plot_graph_viz(g10, 'grid_bipartite.eps')
+
+g11 <- g10 %>% delete.edges("5|6")
+bimapping <- bipartite.mapping(g11)
+stopifnot(bimapping$res)
+V(g11)$type <- bimapping$type
+print_graph_stats(g11, 'Grid-open')
+write.graph(g11,'grid_open_bipartite.net', format='pajek')
+plot_graph_viz(g11, 'grid_open_bipartite.eps')
+
