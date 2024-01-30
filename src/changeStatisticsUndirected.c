@@ -384,65 +384,6 @@ double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
  *
  ****************************************************************************/
 
-/*
- * Binomial coefficient n choose k
- */
-static double n_choose_k(uint_t n, uint_t k)
-{
-  uint_t i;
-  double a = 1, b = 1;
-  uint_t l = k;
-
-  if (n < k) {
-    return 0;
-  }
-
-  if (n - k < k) {
-    l = n - k;
-  }
-
-  for (i = 1; i <= l; i++) {
-    a *= (n + 1 - i);
-    b *= i;
-  }
-  /*printf("%u %u %llu %llu %llu\n", n, k, a, b, a/b);*/
-  //assert(a % b == 0);
-  return a / b;
-}
-
-
-
-/*
- * In Bomiriya et al. (2023) [Appendix A] change statistics definition
- * for node-centered (alpha-based homompily), t(i, j, k) in eqn (12)
- * is defined as the number of two-paths from i to j not passing
- * through k. Since only one two-path from i to j can pass through k,
- * this is just the number of two-paths from i to j, less one if
- * k is a neighbour of both i and j.
- */
-static uint_t twopaths_not_via_k(const graph_t *g, uint_t i, uint_t j,
-				 uint_t k, bipartite_node_mode_e mode)
-{
-  uint_t count = 0;
-  if (g->is_bipartite) {
-    if (mode == MODE_A) {
-      count = GET_A2PATH_ENTRY(g, i, j);
-    } else {
-      count = GET_B2PATH_ENTRY(g, i, j);
-    }
-    assert(bipartite_node_mode(g, i) == mode);
-    assert(bipartite_node_mode(g, j) == mode);
-    assert(bipartite_node_mode(g, k) == other_mode(mode));
-  } else {
-    count = GET_2PATH_ENTRY(g, i, j);
-  }
-  if (isEdge(g, i, k) && isEdge(g, j, k)) {
-    count--;
-  }
-  return count;
-}
-
-
 
 /*
  * Change statistic for 4-cycles raised to a power. The lambda
@@ -457,7 +398,6 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t  v,k,tmp;
   ulong_t delta = 0;
-  bipartite_node_mode_e mode = MODE_INVALID;
   double  alpha = 1/lambda;
 
   slow_assert(!isEdge(g, i, j));
@@ -471,10 +411,6 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     tmp = i;
     i = j;
     j = tmp;
-  }
-
-  if (g->is_bipartite) {
-    mode = bipartite_node_mode(g, i);
   }
 
   for (k = 0; k < g->degree[j]; k++) {
