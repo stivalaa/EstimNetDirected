@@ -343,6 +343,7 @@ void insertArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j);
 void removeArcOrEdge_updateinnerlist(graph_t *g, uint_t i, uint_t j, uint_t idx);
 
 bipartite_node_mode_e bipartite_node_mode(const graph_t *g, uint_t i);
-
+bipartite_node_mode_e other_mode(bipartite_node_mode_e mode);
+  
 #endif /* GRAPH_H */
 

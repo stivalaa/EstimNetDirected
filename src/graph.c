@@ -3063,3 +3063,13 @@ bipartite_node_mode_e bipartite_node_mode(const graph_t *g, uint_t i)
   assert(i < g->num_nodes);
   return (i < g->num_A_nodes ? MODE_A : MODE_B);
 }
+
+
+/*
+ * Given a bipartite node mode, return the other mode
+ */
+bipartite_node_mode_e other_mode(bipartite_node_mode_e mode) {
+  assert(mode == MODE_A || mode == MODE_B);
+  return mode == MODE_A ? MODE_B : MODE_A;
+}
+

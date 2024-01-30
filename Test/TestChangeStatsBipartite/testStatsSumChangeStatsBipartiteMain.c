@@ -428,7 +428,9 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
 static double PowerFourCyclesA(const graph_t *g, double lambda)
 {
   uint_t i,l;
+  double alpha = 1/lambda;
   double value = 0;
+  uint_t count = 0;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
@@ -437,10 +439,11 @@ static double PowerFourCyclesA(const graph_t *g, double lambda)
     for (l = 0; l < i; l++) {
       assert(bipartite_node_mode(g, i) == MODE_A);
       assert(bipartite_node_mode(g, l) == MODE_A);
-      value += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
+      count += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
     }
+    value += pow(count, alpha);
   }
-  return pow(value, 1/lambda);
+  return value;
 }
 
 

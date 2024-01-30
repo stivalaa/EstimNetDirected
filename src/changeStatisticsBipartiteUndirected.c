@@ -133,14 +133,6 @@ double pow0(uint_t x, double y)
  *
  ****************************************************************************/
 
-/*
- * Given a bipartite node mode, return the other mode
- */
-static bipartite_node_mode_e other_mode(bipartite_node_mode_e mode) {
-  assert(mode == MODE_A || mode == MODE_B);
-  return mode == MODE_A ? MODE_B : MODE_A;
-}
-
 
 /*
  * In Bomiriya et al. (2023) [Appendix A] change statistics definition
