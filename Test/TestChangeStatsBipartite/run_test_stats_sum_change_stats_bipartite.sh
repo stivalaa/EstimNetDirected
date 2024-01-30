@@ -10,7 +10,7 @@ echo "Testing summing change statistics for bipartite networks"
 for implementation in ./testStatsSumChangeStatsBipartite ./testStatsSumChangeStatsBipartite_array ./testStatsSumChangeStatsBipartite_hash
 do
     echo ${implementation}
-    for netfile in chain_bipartite.net fourcycle3_bipartite.net fourcycle4_fourcycle_components_bipartite.net fourcycle6_bipartite.net fourcycle_bipartite.net opsahl_bipartite.net ring_bipartite.net  star_bipartite.net twopath_bipartite.net grid_open_bipartite.net grid_bipartite.net  ../../examples/bipartite/inouye_pyke_pollinators/inouye_pyke_pollinators_bipartite.net   ../../examples/bipartite/simulated/bpnet_A6000_B750_sparse_sim100000000.net robertson_pollinators_bipartite.net #  ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net
+    for netfile in chain_bipartite.net fourcycle3_bipartite.net fourcycle4_fourcycle_components_bipartite.net fourcycle6_bipartite.net fourcycle_bipartite.net opsahl_bipartite.net ring_bipartite.net  star_bipartite.net twopath_bipartite.net grid_open_bipartite.net grid_bipartite.net fourcycle3_open_bipartite.net  ../../examples/bipartite/inouye_pyke_pollinators/inouye_pyke_pollinators_bipartite.net   ../../examples/bipartite/simulated/bpnet_A6000_B750_sparse_sim100000000.net robertson_pollinators_bipartite.net #  ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net
     do
         echo ${netfile}
         # Only test also the slow implementations of the statistics funcions

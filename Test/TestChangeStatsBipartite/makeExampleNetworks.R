@@ -198,3 +198,10 @@ print_graph_stats(g11, 'Grid-open')
 write.graph(g11,'grid_open_bipartite.net', format='pajek')
 plot_graph_viz(g11, 'grid_open_bipartite.eps')
 
+g12 <- g7 %>% delete.edges("3|5")
+bimapping <- bipartite.mapping(g12)
+stopifnot(bimapping$res)
+V(g12)$type <- bimapping$type
+print_graph_stats(g12, 'Four-cycles-3-open')
+write.graph(g12,'fourcycle3_open_bipartite.net', format='pajek')
+plot_graph_viz(g12, 'fourcycle3_open_bipartite.eps', layout = layout.sugiyama)
