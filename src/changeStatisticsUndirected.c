@@ -375,3 +375,124 @@ double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
   return g->binattr[a][i] != BIN_NA && g->binattr[b][j] != BIN_NA &&
     g->binattr[a][i] && g->binattr[b][j];
 }
+
+
+
+/*****************************************************************************
+ *
+ * experimental change statistics functions
+ *
+ ****************************************************************************/
+
+/*
+ * Binomial coefficient n choose k
+ */
+static double n_choose_k(uint_t n, uint_t k)
+{
+  uint_t i;
+  double a = 1, b = 1;
+  uint_t l = k;
+
+  if (n < k) {
+    return 0;
+  }
+
+  if (n - k < k) {
+    l = n - k;
+  }
+
+  for (i = 1; i <= l; i++) {
+    a *= (n + 1 - i);
+    b *= i;
+  }
+  /*printf("%u %u %llu %llu %llu\n", n, k, a, b, a/b);*/
+  //assert(a % b == 0);
+  return a / b;
+}
+
+/*
+ * Statistic for FourCycles, number of four-cycles in a bipartite graph.
+ *
+ * This version counting over pairs of mode A nodes, but result must be
+ * equal to that counting over pairs of mode B nodes instead.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+static double FourCyclesA(const graph_t *g)
+{
+  uint_t i,l;
+  double value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 1; i < g->num_A_nodes; i++) {
+    for (l = 0; l < i; l++) {
+      assert(bipartite_node_mode(g, i) == MODE_A);
+      assert(bipartite_node_mode(g, l) == MODE_A);
+      value += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
+    }
+  }
+  return value;
+}
+
+
+/*
+ * Change statistic for 4-cycles raised to a power. The lambda
+ * parameter (> 1.0) (mis)used to specify the value 1/lambda as the
+ * epxonent. Note this is not the same meaning of lambda as its
+ * original use in the "alternating" parameters.
+ *
+ * Note can also be used as for bipartite networks.
+ *
+ */
+double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  uint_t  v,k,tmp;
+  ulong_t delta = 0;
+  double  alpha = 1/lambda;
+
+  slow_assert(!isEdge(g, i, j));
+
+  if (i == j) {
+    return 0;
+  }
+
+  /* iterate over neighbours of node with smaller degree */
+  if (g->degree[i] < g->degree[j]) {
+    tmp = i;
+    i = j;
+    j = tmp;
+  }
+
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    if (v == i || v == j) {
+      continue;
+    }
+    if (g->is_bipartite) {
+      if (bipartite_node_mode(g, j) == MODE_A) {
+	assert(bipartite_node_mode(g, v) == MODE_B);
+	delta += GET_B2PATH_ENTRY(g, i, v);
+      } else {
+	assert(bipartite_node_mode(g, v) == MODE_A);
+	delta += GET_A2PATH_ENTRY(g, i, v);
+      }
+    } else {
+      assert(GET_2PATH_ENTRY(g, i, v) == GET_2PATH_ENTRY(g, v, i));
+      delta += GET_2PATH_ENTRY(g, i, v);
+    }
+  }
+  double h0 = FourCyclesA(g);
+  insertArcOrEdge(g, i, j);
+  double h = FourCyclesA(g);
+  removeArcOrEdge(g, i, j);
+  double val = (h0 == 0 ? 0 : (alpha / pow(h0, 1-alpha)) * delta);
+  double diff =  pow(h, alpha) - pow(h0, alpha);
+  assert(DOUBLE_APPROX_EQ(val, diff));
+  return diff;
+}

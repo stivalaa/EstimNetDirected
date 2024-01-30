@@ -410,6 +410,40 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
 }
 
 
+/*
+ * Statistic for 4-cycles raised to a power. The lambda parameter (>
+ * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
+ * this is not the same meaning of lambda as its original use in the
+ * "alternating" parameters.
+ *
+ * This version counting over pairs of mode A nodes, but result must be
+ * equal to that counting over pairs of mode B nodes instead.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+static double PowerFourCyclesA(const graph_t *g, double lambda)
+{
+  uint_t i,l;
+  double value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 1; i < g->num_A_nodes; i++) {
+    for (l = 0; l < i; l++) {
+      assert(bipartite_node_mode(g, i) == MODE_A);
+      assert(bipartite_node_mode(g, l) == MODE_A);
+      value += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
+    }
+  }
+  return pow(value, 1/lambda);
+}
+
+
 /*****************************************************************************
  *
  * main
@@ -484,7 +518,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 4
+#define NUM_FUNCS 5
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -501,8 +535,11 @@ int main(int argc, char *argv[])
   change_stats_funcs[2] = &changeFourCycles;
   lambda_values[2]      = 0; /* not used */
 
-  change_stats_funcs[3] = &changeBipartiteAltK4CyclesA;
+  change_stats_funcs[3] = &changePowerFourCycles;
   lambda_values[3]      = lambda;
+
+  change_stats_funcs[4] = &changeBipartiteAltK4CyclesA;
+  lambda_values[4]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -544,13 +581,19 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
 
 
- /* test for experimental BipartiteAltK4CyclesA statisic is disabled as the change statisic is not correct */
+  stat_value = PowerFourCyclesA(g, lambda_values[3]);
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[3] = %.10f\n", stat_value, obs_stats[3]);
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[3])));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
+
+
+  /* test for experimental BipartiteAltK4CyclesA statisic is disabled as the change statisic is not correct */
   const bool DISABLED_TEST_CASE = TRUE;
   if (!DISABLED_TEST_CASE && also_use_slow_functions) {
-    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[3]);
-    fprintf(stderr,"stat_value   = %.10f\nobs_stats[3] = %.10f\n", stat_value, obs_stats[3]);
-    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[3])));
-    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
+    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[4]);
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[4] = %.10f\n", stat_value, obs_stats[4]);
+    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[4])));
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[4]));
   }
 
   free_graph(g);

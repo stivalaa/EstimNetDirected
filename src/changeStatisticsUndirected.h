@@ -94,5 +94,9 @@ double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
                                    uint_t a, uint_t b);
 
 
+/******************************** Experimental *******************************/
+
+double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda);
+
 #endif /* CHANGESTATISTICSUNDIRECTED_H */
 
