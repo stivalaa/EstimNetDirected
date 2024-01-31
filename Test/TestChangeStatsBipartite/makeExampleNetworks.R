@@ -220,3 +220,10 @@ print_graph_stats(g14, 'Four-cycles-3-leaf-revmode')
 write.graph(g14,'fourcycle3_leaf_revmode_bipartite.net', format='pajek')
 plot_graph_viz(g14, 'fourcycle3_leaf_revmode_bipartite.eps', layout = layout.sugiyama)
 
+g15 <- g7
+V(g15)$type = !V(g15)$type
+V(g15)$type <- !V(g15)$type
+print_graph_stats(g15, 'Four-cycles-3-revmode')
+write.graph(g15,'fourcycle3_revmode_bipartite.net', format='pajek')
+plot_graph_viz(g15, 'fourcycle3_revmode_bipartite.eps', layout = layout.sugiyama)
+
