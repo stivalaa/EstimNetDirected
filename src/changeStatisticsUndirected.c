@@ -471,5 +471,6 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   /* change statistic for four-cycles */
   delta = changeFourCycles(g, i, j, lambda);
 
-  return pow(count + delta, alpha) - pow(count, alpha);
+  //return pow(count + delta, alpha) - pow(count, alpha);
+  return pow(count_i + delta, alpha) - pow(count_i, alpha) + pow(count_j + delta, alpha) - pow(count_j, alpha);
 }
