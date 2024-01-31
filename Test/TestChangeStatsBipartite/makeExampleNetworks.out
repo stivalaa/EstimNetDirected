@@ -10,3 +10,5 @@ Two-path 3 2 0
 Grid 6 7 2 
 Grid-open 6 6 1 
 Four-cycles-3-open 5 5 1 
+Four-cycles-3-leaf 6 7 3 
+Four-cycles-3-leaf-revmode 6 7 3 

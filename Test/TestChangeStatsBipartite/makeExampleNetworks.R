@@ -205,3 +205,18 @@ V(g12)$type <- bimapping$type
 print_graph_stats(g12, 'Four-cycles-3-open')
 write.graph(g12,'fourcycle3_open_bipartite.net', format='pajek')
 plot_graph_viz(g12, 'fourcycle3_open_bipartite.eps', layout = layout.sugiyama)
+
+g13 <- g7 %>% add_vertices(1) %>% add_edges(c(5,6))
+bimapping <- bipartite.mapping(g13)
+stopifnot(bimapping$res)
+V(g13)$type <- bimapping$type
+print_graph_stats(g13, 'Four-cycles-3-leaf')
+write.graph(g13,'fourcycle3_leaf_bipartite.net', format='pajek')
+plot_graph_viz(g13, 'fourcycle3_leaf_bipartite.eps', layout = layout.sugiyama)
+
+g14 <- g13
+V(g14)$type <- !V(g14)$type
+print_graph_stats(g14, 'Four-cycles-3-leaf-revmode')
+write.graph(g14,'fourcycle3_leaf_revmode_bipartite.net', format='pajek')
+plot_graph_viz(g14, 'fourcycle3_leaf_revmode_bipartite.eps', layout = layout.sugiyama)
+
