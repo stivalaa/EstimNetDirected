@@ -427,10 +427,10 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
  */
 static double PowerFourCyclesA(const graph_t *g, double lambda)
 {
-  uint_t i,l;
-  double alpha = 1/lambda;
-  uint_t count = 0;
-  double value = 0;
+  uint_t  i,l;
+  double  alpha = 1/lambda;
+  ulong_t count = 0;
+  double  value = 0;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
