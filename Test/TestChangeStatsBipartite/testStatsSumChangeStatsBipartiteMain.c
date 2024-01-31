@@ -409,15 +409,13 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
   return value;
 }
 
-
 /*
  * Statistic for 4-cycles raised to a power. The lambda parameter (>
  * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
  * this is not the same meaning of lambda as its original use in the
  * "alternating" parameters.
  *
- * This version counting over pairs of mode A nodes, but result must be
- * equal to that counting over pairs of mode B nodes instead.
+ * This version counting over pairs of mode A nodes only.
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -446,6 +444,66 @@ static double PowerFourCyclesA(const graph_t *g, double lambda)
   }
   return value;
 }
+
+
+/*
+ * Statistic for 4-cycles raised to a power. The lambda parameter (>
+ * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
+ * this is not the same meaning of lambda as its original use in the
+ * "alternating" parameters.
+ *
+ * This version counting over pairs of mode B nodes only.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+static double PowerFourCyclesB(const graph_t *g, double lambda)
+{
+  uint_t  i,l;
+  double  alpha = 1/lambda;
+  ulong_t count = 0;
+  double  value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = g->num_A_nodes + 1; i < g->num_A_nodes + g->num_B_nodes; i++) {
+    count = 0;
+    for (l = g->num_A_nodes; l < i; l++) {
+      assert(bipartite_node_mode(g, i) == MODE_B);
+      assert(bipartite_node_mode(g, l) == MODE_B);
+      count += n_choose_k(GET_B2PATH_ENTRY(g, i, l), 2);
+    }
+    value += pow(count, alpha);
+  }
+  return value;
+}
+
+
+
+/*
+ * Statistic for 4-cycles raised to a power. The lambda parameter (>
+ * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
+ * this is not the same meaning of lambda as its original use in the
+ * "alternating" parameters.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+static double PowerFourCycles(const graph_t *g, double lambda)
+{
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  return PowerFourCyclesA(g, lambda) + PowerFourCyclesB(g, lambda);
+}
+
 
 
 /*****************************************************************************
@@ -585,7 +643,7 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
 
 
-  stat_value = PowerFourCyclesA(g, lambda_values[3]);
+  stat_value = PowerFourCycles(g, lambda_values[3]);
   fprintf(stderr,"stat_value   = %.10f\nobs_stats[3] = %.10f\n", stat_value, obs_stats[3]);
   fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[3])));
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
