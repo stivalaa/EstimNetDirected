@@ -501,7 +501,9 @@ static double PowerFourCycles(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  return PowerFourCyclesA(g, lambda) + PowerFourCyclesB(g, lambda);
+  double power_4cycles_A = PowerFourCyclesA(g, lambda);
+  double power_4cycles_B = PowerFourCyclesB(g, lambda);
+  return power_4cycles_A + power_4cycles_B;
 }
 
 
