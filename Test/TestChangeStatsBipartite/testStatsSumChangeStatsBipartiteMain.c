@@ -51,6 +51,17 @@
 #define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-06 )
 
 /*
+ * Binomial coefficient n choose 2
+ */
+static ulong_t n_choose_2(uint_t n)
+{
+  if (n < 2) {
+    return 0;
+  }
+  return n * (n - 1) / 2;
+}
+
+/*
  * Binomial coefficient n choose k
  */
 static double n_choose_k(uint_t n, uint_t k)
@@ -409,6 +420,45 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
   return value;
 }
 
+
+/*
+ * Count number of four-cycles that a particular node u is involved in.
+ *
+ * Note can also be used as for bipartite networks.
+ */
+static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
+{
+  uint_t k,v;
+  uint_t count = 0;
+
+  /* TODO implement this more efficiently instead of iterating over all nodes */
+  if (g->is_bipartite) {
+    if (bipartite_node_mode(g, u) == MODE_A) {
+      for (v = 0; v < g->num_A_nodes; v++) {
+        if (v != u) {
+          assert(bipartite_node_mode(g, v) == MODE_A);
+          count += n_choose_2(GET_A2PATH_ENTRY(g, u, v));
+        }
+      }
+    } else {
+      for (v = g->num_A_nodes; v < g->num_A_nodes + g->num_B_nodes; v++) {
+        if (v != u) {
+          assert(bipartite_node_mode(g, v) == MODE_B);
+          count += n_choose_2(GET_B2PATH_ENTRY(g, u, v));
+        }
+      }
+    }
+  } else {
+    for (v = 0; v < g->num_nodes; v++){
+      if (v != u) {
+        count += n_choose_2(GET_2PATH_ENTRY(g, u, v));
+      }
+    }
+  }
+  return count;
+}
+
+
 /*
  * Statistic for 4-cycles raised to a power. The lambda parameter (>
  * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
@@ -421,7 +471,7 @@ static double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
  *     g      - undirected bipartite graph
  *
  * Return value:
- *      number of four-cycles in bipartite graph g
+ *      
  */
 static double PowerFourCyclesA(const graph_t *g, double lambda)
 {
@@ -433,14 +483,8 @@ static double PowerFourCyclesA(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  for (i = 1; i < g->num_A_nodes; i++) {
-    count = 0;
-    for (l = 0; l < i; l++) {
-      assert(bipartite_node_mode(g, i) == MODE_A);
-      assert(bipartite_node_mode(g, l) == MODE_A);
-      count += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
-    }
-    value += pow(count, alpha);
+  for (i = 0; i < g->num_A_nodes; i++) {
+    value += pow(num_four_cycles_node(g, i), alpha);
   }
   return value;
 }
@@ -458,7 +502,7 @@ static double PowerFourCyclesA(const graph_t *g, double lambda)
  *     g      - undirected bipartite graph
  *
  * Return value:
- *      number of four-cycles in bipartite graph g
+ *      
  */
 static double PowerFourCyclesB(const graph_t *g, double lambda)
 {
@@ -470,14 +514,8 @@ static double PowerFourCyclesB(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  for (i = g->num_A_nodes + 1; i < g->num_A_nodes + g->num_B_nodes; i++) {
-    count = 0;
-    for (l = g->num_A_nodes; l < i; l++) {
-      assert(bipartite_node_mode(g, i) == MODE_B);
-      assert(bipartite_node_mode(g, l) == MODE_B);
-      count += n_choose_k(GET_B2PATH_ENTRY(g, i, l), 2);
-    }
-    value += pow(count, alpha);
+  for (i = g->num_A_nodes; i < g->num_A_nodes + g->num_B_nodes; i++) {
+    value += pow(num_four_cycles_node(g, i), alpha);
   }
   return value;
 }
