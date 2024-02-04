@@ -481,11 +481,13 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     change += pow(ncount + delta, alpha) - pow(ncount, alpha);
   }
 
-  /* neighbours of j */
+  /* neighbours of j that are not also neibhours of i and so already counted */
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
-    ncount = num_four_cycles_node(g, v);
-    change += pow(ncount + delta, alpha) - pow(ncount, alpha);
+    if (!isEdge(g, v, i)) {
+      ncount = num_four_cycles_node(g, v);
+      change += pow(ncount + delta, alpha) - pow(ncount, alpha);
+    }
   }
 
   return change;
