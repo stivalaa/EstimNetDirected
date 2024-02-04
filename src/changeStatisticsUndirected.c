@@ -454,8 +454,9 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t  v,k,tmp;
   ulong_t delta = 0;
-  ulong_t count = 0;
+  ulong_t count = 0, ncount = 0;
   double  alpha = 1/lambda;
+  double  change = 0;
 
   slow_assert(!isEdge(g, i, j));
 
@@ -470,7 +471,22 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 
   /* change statistic for four-cycles */
   delta = changeFourCycles(g, i, j, lambda);
+  change = pow(count_i + delta, alpha) - pow(count_i, alpha) +
+    pow(count_j + delta, alpha) - pow(count_j, alpha);
 
-  //return pow(count + delta, alpha) - pow(count, alpha);
-  return pow(count_i + delta, alpha) - pow(count_i, alpha) + pow(count_j + delta, alpha) - pow(count_j, alpha);
+  /* neighbours of i */
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    ncount = num_four_cycles_node(g, v);
+    change += pow(ncount + delta, alpha) - pow(ncount, alpha);
+  }
+
+  /* neighbours of j */
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    ncount = num_four_cycles_node(g, v);
+    change += pow(ncount + delta, alpha) - pow(ncount, alpha);
+  }
+
+  return change;
 }
