@@ -50,6 +50,17 @@
 #define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-06 )
 
 /*
+ * Binomial coefficient n choose 2
+ */
+static ulong_t n_choose_2(uint_t n)
+{
+  if (n < 2) {
+    return 0;
+  }
+  return n * (n - 1) / 2;
+}
+
+/*
  * Binomial coefficient n choose k
  */
 static ulonglong_t n_choose_k(uint_t n, uint_t k)
@@ -105,6 +116,75 @@ static ulonglong_t FourCycles(const graph_t *g)
   assert(value % 2 == 0);
   return value / 2;
 }
+
+
+
+/*
+ * Count number of four-cycles that a particular node u is involved in.
+ *
+ * Note can also be used as for bipartite networks.
+ */
+static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
+{
+  uint_t k,v;
+  uint_t count = 0;
+
+  /* TODO implement this more efficiently instead of iterating over all nodes */
+  if (g->is_bipartite) {
+    if (bipartite_node_mode(g, u) == MODE_A) {
+      for (v = 0; v < g->num_A_nodes; v++) {
+        if (v != u) {
+          assert(bipartite_node_mode(g, v) == MODE_A);
+          count += n_choose_2(GET_A2PATH_ENTRY(g, u, v));
+        }
+      }
+    } else {
+      for (v = g->num_A_nodes; v < g->num_A_nodes + g->num_B_nodes; v++) {
+        if (v != u) {
+          assert(bipartite_node_mode(g, v) == MODE_B);
+          count += n_choose_2(GET_B2PATH_ENTRY(g, u, v));
+        }
+      }
+    }
+  } else {
+    for (v = 0; v < g->num_nodes; v++){
+      if (v != u) {
+        count += n_choose_2(GET_2PATH_ENTRY(g, u, v));
+      }
+    }
+  }
+  return count;
+}
+
+
+
+/*
+ * Statistic for 4-cycles raised to a power. The lambda parameter (>
+ * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
+ * this is not the same meaning of lambda as its original use in the
+ * "alternating" parameters.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      
+ */
+static double PowerFourCycles(const graph_t *g, double lambda)
+{
+  uint_t  i,l;
+  double  alpha = 1/lambda;
+  ulong_t count = 0;
+  double  value = 0;
+
+  assert(!g->is_directed);
+
+  for (i = 0; i < g->num_nodes; i++) {
+    value += pow(num_four_cycles_node(g, i), alpha);
+  }
+  return value;
+}
+
 
 
 /*****************************************************************************
@@ -181,7 +261,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 1
+#define NUM_FUNCS 2
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -190,6 +270,9 @@ int main(int argc, char *argv[])
 
   change_stats_funcs[0] = &changeFourCycles;
   lambda_values[0]      = 0; /* not used */
+
+  change_stats_funcs[1] = &changePowerFourCycles;
+  lambda_values[1]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -206,6 +289,12 @@ int main(int argc, char *argv[])
 
   stat_value = FourCycles(g);
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[0]));
+
+  stat_value = PowerFourCycles(g, lambda_values[1]);
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[1] = %.10f\n", stat_value, obs_stats[1]);
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[1])));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
+
   
 
   free_graph(g);
