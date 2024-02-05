@@ -124,7 +124,7 @@ static ulong_t n_choose_2(uint_t n)
  */
 uint_t num_four_cycles_node(const graph_t *g, uint_t u)
 {
-  uint_t k,v,i,j,l;
+  uint_t k,i,j,l;
   uint_t count = 0;
   bool *visited = safe_calloc(g->num_nodes, sizeof(bool));
 
@@ -159,6 +159,7 @@ uint_t num_four_cycles_node(const graph_t *g, uint_t u)
       }
     }
   }
+  free(visited);
   return count;
 }
 
