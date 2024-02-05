@@ -458,7 +458,7 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t  v,k,tmp;
   ulong_t delta = 0;
-  ulong_t count = 0, ncount = 0;
+  ulong_t ncount = 0;
   double  alpha = 1/lambda;
   double  change = 0;
 
@@ -471,7 +471,6 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   /* Number of four-cycles that nodes i or j are already inolved in */
   ulong_t count_i =  num_four_cycles_node(g, i);
   ulong_t count_j =  num_four_cycles_node(g, j);
-  count = count_i + count_j;
 
   /* change statistic for four-cycles */
   delta = changeFourCycles(g, i, j, lambda);
