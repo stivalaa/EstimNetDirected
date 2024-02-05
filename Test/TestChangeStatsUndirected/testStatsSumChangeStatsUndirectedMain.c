@@ -124,33 +124,16 @@ static ulonglong_t FourCycles(const graph_t *g)
  *
  * Note can also be used as for bipartite networks.
  */
-static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
+static uint_t num_four_cycles_node_SLOW(const graph_t *g, uint_t u)
 {
-  uint_t k,v;
+  uint_t v;
   uint_t count = 0;
 
-  /* TODO implement this more efficiently instead of iterating over all nodes */
-  if (g->is_bipartite) {
-    if (bipartite_node_mode(g, u) == MODE_A) {
-      for (v = 0; v < g->num_A_nodes; v++) {
-        if (v != u) {
-          assert(bipartite_node_mode(g, v) == MODE_A);
-          count += n_choose_2(GET_A2PATH_ENTRY(g, u, v));
-        }
-      }
-    } else {
-      for (v = g->num_A_nodes; v < g->num_A_nodes + g->num_B_nodes; v++) {
-        if (v != u) {
-          assert(bipartite_node_mode(g, v) == MODE_B);
-          count += n_choose_2(GET_B2PATH_ENTRY(g, u, v));
-        }
-      }
-    }
-  } else {
-    for (v = 0; v < g->num_nodes; v++){
-      if (v != u) {
-        count += n_choose_2(GET_2PATH_ENTRY(g, u, v));
-      }
+  /* slow version that iterates over all nodes */
+  
+  for (v = 0; v < g->num_nodes; v++){
+    if (v != u) {
+      count += n_choose_2(GET_2PATH_ENTRY(g, u, v));
     }
   }
   return count;
@@ -172,15 +155,18 @@ static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
  */
 static double PowerFourCycles(const graph_t *g, double lambda)
 {
-  uint_t  i,l;
+  uint_t  i;
   double  alpha = 1/lambda;
-  ulong_t count = 0;
+  ulong_t fourcycle_count = 0;
   double  value = 0;
 
   assert(!g->is_directed);
 
   for (i = 0; i < g->num_nodes; i++) {
-    value += pow(num_four_cycles_node(g, i), alpha);
+    fourcycle_count = num_four_cycles_node(g, i);
+    uint_t fourcycle_count_SLOW = num_four_cycles_node_SLOW(g, i);
+    assert(fourcycle_count_SLOW == fourcycle_count);
+    value += pow(fourcycle_count, alpha);
   }
   return value;
 }

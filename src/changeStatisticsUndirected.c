@@ -105,11 +105,6 @@ ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s)
 }
 
 
-/*****************************************************************************
- *
- * local utility functions
- *
- ****************************************************************************/
 
 /*
  * Binomial coefficient n choose 2
@@ -127,13 +122,14 @@ static ulong_t n_choose_2(uint_t n)
  *
  * Note can also be used as for bipartite networks.
  */
-static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
+uint_t num_four_cycles_node(const graph_t *g, uint_t u)
 {
-  uint_t k,v;
+  uint_t k,v,i,j,l;
   uint_t count = 0;
+  bool *visited = safe_calloc(g->num_nodes, sizeof(bool));
 
-  /* TODO implement this more efficiently instead of iterating over all nodes */
   if (g->is_bipartite) {
+      /* TODO implement this more efficiently instead of iterating over all nodes */
     if (bipartite_node_mode(g, u) == MODE_A) {
       for (v = 0; v < g->num_A_nodes; v++) {
         if (v != u) {
@@ -150,14 +146,21 @@ static uint_t num_four_cycles_node(const graph_t *g, uint_t u)
       }
     }
   } else {
-    for (v = 0; v < g->num_nodes; v++){
-      if (v != u) {
-        count += n_choose_2(GET_2PATH_ENTRY(g, u, v));
+    /* iterate over all nodes that are distance 2 from u */
+    for (k = 0; k < g->degree[u]; k++){
+      i = g->edgelist[u][k];
+      for (l = 0; l < g->degree[i]; l++) {
+        j = g->edgelist[i][l];
+        if (j != u && !visited[j]) {
+          visited[j] = TRUE;
+          count += n_choose_2(GET_2PATH_ENTRY(g, u, j));
+        }
       }
     }
   }
   return count;
 }
+
 
 
 /*****************************************************************************

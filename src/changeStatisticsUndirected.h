@@ -71,7 +71,7 @@
 /************************* Utility functions *********************************/
 ulong_t num_s_stars(const graph_t *g, uint_t v, ulong_t s);
 ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s);
-
+uint_t num_four_cycles_node(const graph_t *g, uint_t u);
   
 /************************* Structural ****************************************/
 
