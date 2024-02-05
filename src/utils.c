@@ -216,7 +216,7 @@ double mean_and_sd(double values[], uint_t nvalues, double *sd)
 
 /*****************************************************************************
  *
- * simple stats functions
+ * other utility functions
  *
  ****************************************************************************/
 
@@ -322,6 +322,43 @@ void init_powtable(double x)
     POWTABLE[y] = pow(x, y);
   }
 #endif
+}
+
+
+
+/*
+ * Binomial coefficient n choose 2
+ */
+ulong_t n_choose_2(uint_t n)
+{
+  if (n < 2) {
+    return 0;
+  }
+  return n * (n - 1) / 2;
+}
+
+/*
+ * Binomial coefficient n choose k
+ */
+ulonglong_t n_choose_k(uint_t n, uint_t k)
+{
+  uint_t i;
+  double a = 1, b = 1;
+  uint_t l = k;
+
+  if (n < k) {
+    return 0;
+  }
+
+  if (n - k < k) {
+    l = n - k;
+  }
+  
+  for (i = 1; i <= l; i++) {
+    a *= (n + 1 - i);
+    b *= i;
+  }
+  return a / b;
 }
 
 

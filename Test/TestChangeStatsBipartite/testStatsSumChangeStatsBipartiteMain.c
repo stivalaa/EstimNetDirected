@@ -50,42 +50,6 @@
 /* Approximate double floating point equality */
 #define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-06 )
 
-/*
- * Binomial coefficient n choose 2
- */
-static ulong_t n_choose_2(uint_t n)
-{
-  if (n < 2) {
-    return 0;
-  }
-  return n * (n - 1) / 2;
-}
-
-/*
- * Binomial coefficient n choose k
- */
-static double n_choose_k(uint_t n, uint_t k)
-{
-  uint_t i;
-  double a = 1, b = 1;
-  uint_t l = k;
-
-  if (n < k) {
-    return 0;
-  }
-
-  if (n - k < k) {
-    l = n - k;
-  }
-  
-  for (i = 1; i <= l; i++) {
-    a *= (n + 1 - i);
-    b *= i;
-  }
-  /*printf("%u %u %llu %llu %llu\n", n, k, a, b, a/b);*/
-  //assert(a % b == 0);
-  return a / b;
-}
 
 /*
  * count k-two-paths, as defined by eqn (6.11) in

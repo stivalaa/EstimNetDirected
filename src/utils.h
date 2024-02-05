@@ -194,6 +194,9 @@ ulong_t factorial(ulong_t n);
   
 void init_powtable(double x);
 
+ulong_t n_choose_2(uint_t n);
+ulonglong_t n_choose_k(uint_t n, uint_t k)  ;
+
 #ifdef __cplusplus
 }
 #endif

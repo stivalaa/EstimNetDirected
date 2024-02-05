@@ -106,16 +106,6 @@ ulong_t change_s_stars(const graph_t *g, uint_t v, ulong_t s)
 
 
 
-/*
- * Binomial coefficient n choose 2
- */
-static ulong_t n_choose_2(uint_t n)
-{
-  if (n < 2) {
-    return 0;
-  }
-  return n * (n - 1) / 2;
-}
 
 /*
  * Count number of four-cycles that a particular node u is involved in.
