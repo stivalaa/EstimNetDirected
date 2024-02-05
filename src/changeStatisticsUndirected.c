@@ -129,19 +129,20 @@ uint_t num_four_cycles_node(const graph_t *g, uint_t u)
   bool *visited = safe_calloc(g->num_nodes, sizeof(bool));
 
   if (g->is_bipartite) {
-      /* TODO implement this more efficiently instead of iterating over all nodes */
-    if (bipartite_node_mode(g, u) == MODE_A) {
-      for (v = 0; v < g->num_A_nodes; v++) {
-        if (v != u) {
-          assert(bipartite_node_mode(g, v) == MODE_A);
-          count += n_choose_2(GET_A2PATH_ENTRY(g, u, v));
-        }
-      }
-    } else {
-      for (v = g->num_A_nodes; v < g->num_A_nodes + g->num_B_nodes; v++) {
-        if (v != u) {
-          assert(bipartite_node_mode(g, v) == MODE_B);
-          count += n_choose_2(GET_B2PATH_ENTRY(g, u, v));
+    /* iterate over all nodes that are distance 2 from u */
+    for (k = 0; k < g->degree[u]; k++){
+      i = g->edgelist[u][k];
+      assert(bipartite_node_mode(g, i) != bipartite_node_mode(g, u));
+      for (l = 0; l < g->degree[i]; l++) {
+        j = g->edgelist[i][l];
+        assert(bipartite_node_mode(g, j) == bipartite_node_mode(g, u));
+        if (j != u && !visited[j]) {
+          visited[j] = TRUE;
+          if (bipartite_node_mode(g, u) == MODE_A) {
+            count += n_choose_2(GET_A2PATH_ENTRY(g, u, j));
+          } else {
+            count += n_choose_2(GET_B2PATH_ENTRY(g, u, j));
+          }
         }
       }
     }
