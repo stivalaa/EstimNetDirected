@@ -437,10 +437,10 @@ double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
 
 
 /*
- * Change statistic for 4-cycles raised to a power. The lambda
- * parameter (> 1.0) (mis)used to specify the value 1/lambda as the
- * epxonent. Note this is not the same meaning of lambda as its
- * original use in the "alternating" parameters.
+ * Change statistic for number of 4-cycles at each node raised to a
+ * power. The lambda parameter (> 1.0) (mis)used to specify the value
+ * 1/lambda as the epxonent. Note this is not the same meaning of
+ * lambda as its original use in the "alternating" parameters.
  *
  * Note can also be used as for bipartite networks.
  *

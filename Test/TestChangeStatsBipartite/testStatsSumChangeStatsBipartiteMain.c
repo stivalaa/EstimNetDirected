@@ -417,10 +417,10 @@ static uint_t num_four_cycles_node_SLOW(const graph_t *g, uint_t u)
 
 
 /*
- * Statistic for 4-cycles raised to a power. The lambda parameter (>
- * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
- * this is not the same meaning of lambda as its original use in the
- * "alternating" parameters.
+ * Statistic for number of 4-cycles at each node raised to a
+ * power. The lambda parameter (> 1.0) (mis)used to specify the value
+ * 1/lambda as the epxonent. Note this is not the same meaning of
+ * lambda as its original use in the "alternating" parameters.
  *
  * This version counting over pairs of mode A nodes only.
  *
@@ -451,10 +451,10 @@ static double PowerFourCyclesA(const graph_t *g, double lambda)
 
 
 /*
- * Statistic for 4-cycles raised to a power. The lambda parameter (>
- * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
- * this is not the same meaning of lambda as its original use in the
- * "alternating" parameters.
+ * Statistic for number of 4-cycles at each node raised to a
+ * power. The lambda parameter (> 1.0) (mis)used to specify the value
+ * 1/lambda as the epxonent. Note this is not the same meaning of
+ * lambda as its original use in the "alternating" parameters.
  *
  * This version counting over pairs of mode B nodes only.
  *
@@ -486,10 +486,10 @@ static double PowerFourCyclesB(const graph_t *g, double lambda)
 
 
 /*
- * Statistic for 4-cycles raised to a power. The lambda parameter (>
- * 1.0) (mis)used to specify the value 1/lambda as the epxonent. Note
- * this is not the same meaning of lambda as its original use in the
- * "alternating" parameters.
+ * Statistic for count of 4-cycles at each node raised to a power. The
+ * lambda parameter (> 1.0) (mis)used to specify the value 1/lambda as
+ * the epxonent. Note this is not the same meaning of lambda as its
+ * original use in the "alternating" parameters.
  *
  * Parameters:
  *     g      - undirected bipartite graph
