@@ -131,8 +131,9 @@ done > ${estimnet_tmpfile2}
 echo 'structParams = {'
 # Note alternating stats like AltKTrianglesT(2.1) are transformed by R into
 # e.g. AltKTRianglesT.2.1. (replace parens with period) so have to 
-# chagne them back here
-cat ${estimnet_tmpfile2} | fgrep -v _ | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g' | sed 's/Alt\([a-zA-Z0-9]*\)[.]\([0-9.]*\)[.]/Alt\1(\2)/g'
+# chagne them back here (also do for "Power" parameters e.g.
+# FourCyclesNodePower(2.0))
+cat ${estimnet_tmpfile2} | fgrep -v _ | sed 's/$/,/' | tr -d '\n' | sed 's/,$/}/' | sed 's/,/,\n/g' | sed 's/Alt\([a-zA-Z0-9]*\)[.]\([0-9.]*\)[.]/Alt\1(\2)/g' | sed 's/\([a-zA-Z0-9]*\)Power[.]\([0-9.]*\)[.]/\1Power(\2)/g'
 echo
 echo
 # only do attrParams if any in estimation
