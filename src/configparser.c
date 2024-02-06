@@ -107,7 +107,8 @@ static const struct_param_t STRUCT_PARAMS[] =
 /*{"BipartiteAltK4CyclesA",STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltK4CyclesA},*/
 /*{"BipartiteAltK4CyclesB",STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteAltK4CyclesB},*/
   {"BipartiteIsolatesA",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteIsolatesA},
-  {"BipartiteIsolatesB",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteIsolatesB}
+  {"BipartiteIsolatesB",   STRUCT_PARAM_TYPE_NONE,   NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteIsolatesB},
+  {"FourCyclesNodePower",  STRUCT_PARAM_TYPE_LAMBDA, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_BOTH,    changePowerFourCycles}
 };
 static const uint_t NUM_STRUCT_PARAMS = sizeof(STRUCT_PARAMS) /
   sizeof(STRUCT_PARAMS[0]);
