@@ -108,6 +108,7 @@ do
                 # bc cannot handle scientific notation so use sed to convert it 
                 estimnet_lower=`echo "${estimnet_point} - ${zSigma} * ${estimnet_stderr}" | sed -e 's/[eE]+*/*10^/' | bc -l`
                 estimnet_upper=`echo "${estimnet_point} + ${zSigma} * ${estimnet_stderr}" | sed -e 's/[eE]+*/*10^/' | bc -l`
+                estimnet_point_scinotation="${estimnet_point}"
                 estimnet_point=`echo "${estimnet_point}" | sed -e 's/[eE]+*/*10^/'`
                 estimnet_tratio=`echo "${estimnet_tratio}" | sed -e 's/[eE]+*/*10^/'`
                 estimnet_stderr=`echo "${estimnet_stderr}" | sed -e 's/[eE]+*/*10^/'`
@@ -120,9 +121,9 @@ do
                 signif=`echo "${abs_tratio} <= ${tratioThreshold} && ${abs_estimate} > ${zSigma} * ${estimnet_stderr}" | bc -l`
                 echo ZZZ ${signif} >&2 
                 if [ ${signif} -eq 0 ]; then
-                    printf ' & $\\light{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
+                    printf ' & $\\light{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point_scinotation}
                 else
-                    printf ' & $\\heavy{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point}
+                    printf ' & $\\heavy{\\underset{(%.3f, %.3f)}{%.3f}}$' ${estimnet_lower} ${estimnet_upper} ${estimnet_point_scinotation}
                 fi
             fi
         fi
