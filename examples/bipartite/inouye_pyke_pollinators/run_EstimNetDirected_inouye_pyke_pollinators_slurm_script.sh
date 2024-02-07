@@ -17,7 +17,7 @@ module purge
 module load openmpi
 
 
-cp -p ${ROOT}/src/EstimNetDirected_mpi .
+cp -p ${ROOT}/src/EstimNetDirected_mpi_array .
 
 time mpirun ./EstimNetDirected_mpi config_inouye_pyke_pollinators_ifd.txt
 
