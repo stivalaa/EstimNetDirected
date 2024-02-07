@@ -89,12 +89,13 @@ observedStatsFilePrefix = obs_stats_ifd_inouye_pyke_pollinators
 # Structural parameters
 #
 
+structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), FourCyclesNodePower(5) }
 
 ## bad sim gof:
 #structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), FourCyclesNodePower }
 
 #converges, but bad fit on C4:
-structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), BipartiteAltKCyclesB(5.0) }
+#structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), BipartiteAltKCyclesB(5.0) }
 
 #
 # Attribute parameters
