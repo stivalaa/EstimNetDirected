@@ -11,7 +11,8 @@
 echo -n "started at: "; date
 uname -a
 
-ROOT=${HOME}/EstimNetDirected
+#ROOT=${HOME}/EstimNetDirected
+ROOT=../../../
 
 module purge
 

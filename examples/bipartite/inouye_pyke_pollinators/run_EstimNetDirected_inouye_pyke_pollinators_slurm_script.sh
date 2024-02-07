@@ -10,7 +10,8 @@
 
 echo -n "started at: "; date
 
-ROOT=${HOME}/EstimNetDirected
+#ROOT=${HOME}/EstimNetDirected
+ROOT=../../../
 
 module purge
 module load openmpi
