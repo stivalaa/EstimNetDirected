@@ -15,7 +15,7 @@ ROOT=../../../
 
 module load r
 
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R inouye_pyke_pollinators_bipartite.net sim_ifd_inouye_pyke_pollinators
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 16 inouye_pyke_pollinators_bipartite.net sim_ifd_inouye_pyke_pollinators
 
 echo -n "ended at: "; date
 
