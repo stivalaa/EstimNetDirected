@@ -17,7 +17,7 @@ do
     for i in `seq 0 10`
     do
         exponent=`echo "$i / 10" | bc -l`
-        time ${implementation} ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/conattr_all.txt ../../examples/bipartite/simulation/catattr_all.txt $exponent >> ${OUTPUT}
+        time ${implementation} ../../examples/bipartite/simulated/bpnet_A12000_B4000_attrs_sim830000000.net ../../examples/bipartite/simulation/conattr_all.txt ../../examples/bipartite/simulation/catattr_all.txt $exponent | grep -v DEBUG >> ${OUTPUT}
         if [ $? -ne 0 ]; then
             echo "**** FAILED ****"
             exit 1
