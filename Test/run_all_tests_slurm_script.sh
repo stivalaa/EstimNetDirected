@@ -3,7 +3,7 @@
 #SBATCH --job-name="EstimNetDirected_regression_tests"
 #SBATCH --ntasks=1
 #SBATCH --time=0-02:00:00
-#SBATCH --mem-per-cpu=8GB
+#SBATCH --mem-per-cpu=2GB
 #SBATCH --output=EstimNetDirected_regression_tests-%j.out
 #SBATCH --error=EstimNetDirected_regression_tests-%j.err
 
