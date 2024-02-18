@@ -1,3 +1,4 @@
+# vim:ft=config
 ##############################################################################
 #
 # example setting file for EstimNetDirected
