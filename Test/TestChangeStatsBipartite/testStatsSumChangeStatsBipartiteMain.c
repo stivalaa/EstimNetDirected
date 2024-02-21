@@ -583,7 +583,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 5
+#define NUM_FUNCS 7
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -603,8 +603,14 @@ int main(int argc, char *argv[])
   change_stats_funcs[3] = &changePowerFourCycles;
   lambda_values[3]      = lambda;
 
-  change_stats_funcs[4] = &changeBipartiteAltK4CyclesA;
+  change_stats_funcs[4] = &changeBipartitePowerFourCyclesA;
   lambda_values[4]      = lambda;
+
+  change_stats_funcs[5] = &changeBipartitePowerFourCyclesB;
+  lambda_values[5]      = lambda;
+
+  change_stats_funcs[6] = &changeBipartiteAltK4CyclesA;
+  lambda_values[6]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -651,14 +657,24 @@ int main(int argc, char *argv[])
   fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[3])));
   assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[3]));
 
+  stat_value = PowerFourCyclesA(g, lambda_values[4]);
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[4] = %.10f\n", stat_value, obs_stats[4]);
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[4])));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[4]));
+
+  stat_value = PowerFourCyclesB(g, lambda_values[5]);
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[5] = %.10f\n", stat_value, obs_stats[5]);
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[5])));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[5]));
+
 
   /* test for experimental BipartiteAltK4CyclesA statisic is disabled as the change statisic is not correct */
   const bool DISABLED_TEST_CASE = TRUE;
   if (!DISABLED_TEST_CASE && also_use_slow_functions) {
-    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[4]);
-    fprintf(stderr,"stat_value   = %.10f\nobs_stats[4] = %.10f\n", stat_value, obs_stats[4]);
-    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[4])));
-    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[4]));
+    stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[6]);
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[6] = %.10f\n", stat_value, obs_stats[6]);
+    fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[6])));
+    assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[6]));
   }
 
   free_graph(g);

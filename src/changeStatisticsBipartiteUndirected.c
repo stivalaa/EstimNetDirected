@@ -955,3 +955,85 @@ double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda
   }
   return delta;
 }
+
+
+
+/*
+ * Change statistic for number of 4-cycles at each node raised to a
+ * power. The lambda parameter (> 1.0) (mis)used to specify the value
+ * 1/lambda as the epxonent. Note this is not the same meaning of
+ * lambda as its original use in the "alternating" parameters.
+ *
+ * An extra parameter, mode, is passed which determines
+ * if it is for A or B type node - the actual change statistic
+ * function with the usual signature calls this with appropriate mode.
+ *
+ */
+static double changeBipartitePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda, bipartite_node_mode_e mode)
+{
+  uint_t  v,k,tmp;
+  ulong_t delta = 0;
+  ulong_t ncount = 0;
+  double  alpha = 1/lambda;
+  double  change = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == mode);
+  assert(bipartite_node_mode(g, j) == other_mode(mode));
+  slow_assert(!isEdge(g, i, j));
+
+  /* Number of four-cycles that node of selected mode is already inolved in */
+  ulong_t count =  (bipartite_node_mode(g, i) == mode ?
+                    num_four_cycles_node(g, i) :
+                    num_four_cycles_node(g, j));
+    
+  /* change statistic for four-cycles */
+  delta = changeFourCycles(g, i, j, lambda);
+  change = pow(count + delta, alpha) - pow(count, alpha);
+
+  /* neighbours of node of the opposite of the selected mode, so these
+     are nodes of the selected mode */
+  uint_t oppnode = bipartite_node_mode(g, i) == mode ? j : i;
+  for (k = 0; k < g->degree[oppnode]; k++) {
+    v = g->edgelist[oppnode][k];
+    assert(bipartite_node_mode(g, v) == mode);
+    ncount = num_four_cycles_node(g, v);
+
+    /* TODO compute delta directly instead of counting with/without edge */
+    insertEdge(g, i, j);
+    uint newcount = num_four_cycles_node(g, v);
+    removeEdge(g, i, j);
+    change += pow(newcount, alpha) - pow(ncount, alpha);
+  }
+
+  return change;
+}
+
+/*
+ * Change statistic for number of 4-cycles at each node raised to a
+ * power. The lambda parameter (> 1.0) (mis)used to specify the value
+ * 1/lambda as the epxonent. Note this is not the same meaning of
+ * lambda as its original use in the "alternating" parameters.
+ *
+ * This change statistic for type A nodes.
+ *
+ */
+double changeBipartitePowerFourCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  return changeBipartitePowerFourCycles(g, i, j, lambda, MODE_A);
+}
+
+/*
+ * Change statistic for number of 4-cycles at each node raised to a
+ * power. The lambda parameter (> 1.0) (mis)used to specify the value
+ * 1/lambda as the epxonent. Note this is not the same meaning of
+ * lambda as its original use in the "alternating" parameters.
+ *
+ * This change statistic for type B nodes.
+ *
+ */
+double changeBipartitePowerFourCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
+{
+  return changeBipartitePowerFourCycles(g, j, i, lambda, MODE_B);
+}

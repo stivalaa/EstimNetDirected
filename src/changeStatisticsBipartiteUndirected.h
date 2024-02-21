@@ -156,4 +156,6 @@ double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, b
 /******************************** Experimental *******************************/
 double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
 double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartitePowerFourCyclesA(graph_t *g, uint_t i, uint_t j, double lambda);
+double changeBipartitePowerFourCyclesB(graph_t *g, uint_t i, uint_t j, double lambda);
 #endif /* CHANGESTATISTICSBIPARTITEUNDIRECTED_H */
