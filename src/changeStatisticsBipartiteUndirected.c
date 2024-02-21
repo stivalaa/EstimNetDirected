@@ -1001,9 +1001,17 @@ static double changeBipartitePowerFourCycles(graph_t *g, uint_t i, uint_t j, dou
     ncount = num_four_cycles_node(g, v);
 
     /* TODO compute delta directly instead of counting with/without edge */
-    insertEdge(g, i, j);
+    if (bipartite_node_mode(g, i) == MODE_A) {
+      insertEdge(g, i, j);
+    } else {
+      insertEdge(g, j, i);
+    }
     uint newcount = num_four_cycles_node(g, v);
-    removeEdge(g, i, j);
+    if (bipartite_node_mode(g, i) == MODE_A) {    
+      removeEdge(g, i, j);
+    } else {
+      removeEdge(g, j, i);      
+    }
     change += pow(newcount, alpha) - pow(ncount, alpha);
   }
 
