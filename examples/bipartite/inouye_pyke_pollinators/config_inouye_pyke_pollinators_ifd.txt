@@ -90,9 +90,16 @@ observedStatsFilePrefix = obs_stats_ifd_inouye_pyke_pollinators
 # Structural parameters
 #
 
+## sim gof OK, better fit on four (and six) cycles (and bipartite c.c.) but
+## still not great fit on these (e.g. obs 4cycles 830, sim around 400 to 838)
+structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
+
+## poor convergence plot (dzA not zero) on BipartiteFourCyclesNodePowerB(4):
+#structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), BipartiteFourCyclesNodePowerA(4), BipartiteFourCyclesNodePowerB(4) }
+
 ## good sim gof (non-degenerate, good fit on FourCyclesNodePower(5)) but
 ## bad fit on four-cycles (sim around 200 to 300 < obs 830):
-structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), FourCyclesNodePower(4) }
+#structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), FourCyclesNodePower(4) }
 
 ## convergence diagnostics not good:
 #structParams =  {       BipartiteAltStarsA(1.1), BipartiteAltStarsB(5), FourCyclesNodePower(3) }
