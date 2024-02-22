@@ -13,9 +13,12 @@ echo -n "started at: "; date
 #ROOT=${HOME}/EstimNetDirected
 ROOT=../../../
 
-module load r
+command -v module > /dev/null 2>&1 && module load r
 
-time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 16 inouye_pyke_pollinators_bipartite.net sim_ifd_inouye_pyke_pollinators
+time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 6 -t inouye_pyke_pollinators_bipartite.net sim_ifd_inouye_pyke_pollinators
+
+## too slow to count cycles (up to 16):
+#time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 16 inouye_pyke_pollinators_bipartite.net sim_ifd_inouye_pyke_pollinators
 
 echo -n "ended at: "; date
 
