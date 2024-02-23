@@ -90,6 +90,8 @@ observedStatsFilePrefix = obs_stats_ifd_inouye_pyke_pollinators
 # Structural parameters
 #
 
+## good convergence and better gof on mode A degree distribution
+## and geodesic distribution than bipartiteAltStarsA(1.1):
 structParams =  {       BipartiteAltStarsA(2.0), BipartiteAltStarsB(5), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
 
 ## good convergence, but worse gof on mode A degree distribution (and
