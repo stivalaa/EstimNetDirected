@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --time=0-01:00:00
 #SBATCH --cpus-per-task=20
-#SBATCH --mem-per-cpu=2GB
+#SBATCH --mem-per-cpu=1GB
 #SBATCH --output=PlotGofSimFit-inouye_pyke_pollinators-%j.out
 #SBATCH --error=PlotGofSimFit-inouye_pyke_pollinators-%j.err
 
