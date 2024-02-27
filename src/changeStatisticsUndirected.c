@@ -447,7 +447,7 @@ double changeBinaryPairInteraction(graph_t *g, uint_t i, uint_t j,
  */
 double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  uint_t  v,k,tmp;
+  uint_t  v,k;
   ulong_t delta = 0;
   ulong_t vcount = 0;
   double  alpha = 1/lambda;
@@ -474,7 +474,9 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     assert(v != i);
     vcount = num_four_cycles_node(g, v);
     delta = GET_2PATH_ENTRY(g, v, j);
+    /* if the graph is not bipartite then v can be a neighbour of both i and j */
     if (isEdge(g, v, j)) {
+      assert(!g->is_bipartite);
       delta += GET_2PATH_ENTRY(g, v, i);
     }
     change += pow(vcount + delta, alpha) - pow(vcount, alpha);
