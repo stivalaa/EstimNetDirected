@@ -148,7 +148,7 @@ static double FourCyclesA(const graph_t *g)
     for (l = 0; l < i; l++) {
       assert(bipartite_node_mode(g, i) == MODE_A);
       assert(bipartite_node_mode(g, l) == MODE_A);
-      value += n_choose_k(GET_A2PATH_ENTRY(g, i, l), 2);
+      value += n_choose_2(GET_A2PATH_ENTRY(g, i, l));
     }
   }
   return value;
@@ -178,7 +178,7 @@ static double FourCyclesB(const graph_t *g)
     for (l = g->num_A_nodes; l < i; l++) {
       assert(bipartite_node_mode(g, i) == MODE_B);
       assert(bipartite_node_mode(g, l) == MODE_B);
-      value += n_choose_k(GET_B2PATH_ENTRY(g, i, l), 2);
+      value += n_choose_2(GET_B2PATH_ENTRY(g, i, l));
     }
   }
   return value;

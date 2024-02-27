@@ -75,7 +75,7 @@ static ulonglong_t FourCycles(const graph_t *g)
 
   for (i = 1; i < g->num_nodes; i++) {
     for (l = 0; l < i; l++) {
-      value += n_choose_k(GET_2PATH_ENTRY(g, i, l), 2);
+      value += n_choose_2(GET_2PATH_ENTRY(g, i, l));
     }
   }
   assert(value % 2 == 0);
