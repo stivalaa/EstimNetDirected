@@ -449,7 +449,7 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
 {
   uint_t  v,k,tmp;
   ulong_t delta = 0;
-  ulong_t ncount = 0;
+  ulong_t vcount = 0;
   double  alpha = 1/lambda;
   double  change = 0;
 
@@ -471,26 +471,20 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   /* neighbours of i */
   for (k = 0; k < g->degree[i]; k++) {
     v = g->edgelist[i][k];
-    ncount = num_four_cycles_node(g, v);
-
-    /* TODO compute delta directly instead of counting with/without edge */
-    insertEdge(g, i, j);
-    uint newcount = num_four_cycles_node(g, v);
-    removeEdge(g, i, j);
-    change += pow(newcount, alpha) - pow(ncount, alpha);
+    assert(v != i);
+    vcount = num_four_cycles_node(g, v);     
+    delta = GET_2PATH_ENTRY(g, v, j);
+    change += pow(vcount + delta, alpha) - pow(vcount, alpha);
   }
 
   /* neighbours of j that are not also neibhours of i and so already counted */
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
+    assert(v != j);
     if (!isEdge(g, v, i)) {
-      ncount = num_four_cycles_node(g, v);
-      
-      /* TODO compute delta directly instead of counting with/without edge */
-      insertEdge(g, i, j);
-      uint newcount = num_four_cycles_node(g, v);
-      removeEdge(g, i, j);
-      change += pow(newcount, alpha) - pow(ncount, alpha);
+      vcount = num_four_cycles_node(g, v);      
+      delta = GET_2PATH_ENTRY(g, v, i);
+      change += pow(vcount + delta, alpha) - pow(vcount, alpha);
     }
   }
   return change;
