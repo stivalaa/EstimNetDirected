@@ -472,7 +472,7 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
   for (k = 0; k < g->degree[i]; k++) {
     v = g->edgelist[i][k];
     assert(v != i);
-    vcount = num_four_cycles_node(g, v);     
+    vcount = num_four_cycles_node(g, v);
     delta = GET_2PATH_ENTRY(g, v, j);
     change += pow(vcount + delta, alpha) - pow(vcount, alpha);
   }
@@ -482,7 +482,7 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     v = g->edgelist[j][k];
     assert(v != j);
     if (!isEdge(g, v, i)) {
-      vcount = num_four_cycles_node(g, v);      
+      vcount = num_four_cycles_node(g, v);
       delta = GET_2PATH_ENTRY(g, v, i);
       change += pow(vcount + delta, alpha) - pow(vcount, alpha);
     }
