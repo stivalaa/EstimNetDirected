@@ -973,7 +973,7 @@ static double changeBipartitePowerFourCycles(graph_t *g, uint_t i, uint_t j, dou
 {
   uint_t  v,k,tmp;
   ulong_t delta = 0;
-  ulong_t ncount = 0;
+  ulong_t vcount = 0;
   double  alpha = 1/lambda;
   double  change = 0;
 
@@ -994,27 +994,19 @@ static double changeBipartitePowerFourCycles(graph_t *g, uint_t i, uint_t j, dou
 
   /* neighbours of node of the opposite of the selected mode, so these
      are nodes of the selected mode */
-  uint_t oppnode = bipartite_node_mode(g, i) == mode ? j : i;
+  uint_t oppnode   = bipartite_node_mode(g, i) == mode ? j : i;
+  uint_t othernode = bipartite_node_mode(g, i) == mode ? i : j;
   for (k = 0; k < g->degree[oppnode]; k++) {
     v = g->edgelist[oppnode][k];
     assert(bipartite_node_mode(g, v) == mode);
-    ncount = num_four_cycles_node(g, v);
-
-    /* TODO compute delta directly instead of counting with/without edge */
-    if (bipartite_node_mode(g, i) == MODE_A) {
-      insertEdge(g, i, j);
+    vcount = num_four_cycles_node(g, v);
+    if (bipartite_node_mode(g, v) == MODE_A) {
+      delta = GET_A2PATH_ENTRY(g, v, othernode);
     } else {
-      insertEdge(g, j, i);
+      delta = GET_B2PATH_ENTRY(g, v, othernode);      
     }
-    uint newcount = num_four_cycles_node(g, v);
-    if (bipartite_node_mode(g, i) == MODE_A) {    
-      removeEdge(g, i, j);
-    } else {
-      removeEdge(g, j, i);      
-    }
-    change += pow(newcount, alpha) - pow(ncount, alpha);
+    change += pow(vcount + delta, alpha) - pow(vcount, alpha);
   }
-
   return change;
 }
 

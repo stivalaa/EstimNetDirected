@@ -473,11 +473,20 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     v = g->edgelist[i][k];
     assert(v != i);
     vcount = num_four_cycles_node(g, v);
-    delta = GET_2PATH_ENTRY(g, v, j);
-    /* if the graph is not bipartite then v can be a neighbour of both i and j */
-    if (isEdge(g, v, j)) {
-      assert(!g->is_bipartite);
-      delta += GET_2PATH_ENTRY(g, v, i);
+    if (g->is_bipartite) {
+      if  (bipartite_node_mode(g, v) == MODE_A) {
+        delta = GET_A2PATH_ENTRY(g, v, j);
+      } else {
+        delta = GET_B2PATH_ENTRY(g, v, j);
+      }
+    } else {
+      delta = GET_2PATH_ENTRY(g, v, j);
+      /* if the graph is not bipartite then v can be a neighbour
+         of both i and j */
+      if (isEdge(g, v, j)) {
+        assert(!g->is_bipartite);
+        delta += GET_2PATH_ENTRY(g, v, i);
+      }
     }
     change += pow(vcount + delta, alpha) - pow(vcount, alpha);
   }
@@ -488,7 +497,15 @@ double changePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda)
     assert(v != j);
     if (!isEdge(g, v, i)) {
       vcount = num_four_cycles_node(g, v);
-      delta = GET_2PATH_ENTRY(g, v, i);
+      if (g->is_bipartite) {
+        if (bipartite_node_mode(g, v) == MODE_A) {
+          delta = GET_A2PATH_ENTRY(g, v, i);
+        } else {
+          delta = GET_B2PATH_ENTRY(g, v, i);
+        }
+      } else {
+        delta = GET_2PATH_ENTRY(g, v, i);
+      }
       change += pow(vcount + delta, alpha) - pow(vcount, alpha);
     }
   }
