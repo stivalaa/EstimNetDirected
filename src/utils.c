@@ -334,7 +334,7 @@ ulong_t n_choose_2(uint_t n)
   if (n < 2) {
     return 0;
   }
-  return n * (n - 1) / 2;
+  return (ulong_t)n * (n - 1) / 2;
 }
 
 /*
