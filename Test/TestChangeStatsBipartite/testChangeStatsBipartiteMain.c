@@ -30,6 +30,10 @@
 
 #define DEFAULT_NUM_TESTS 1000
 
+/* Approximate double floating point equality */
+#define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-06 )
+
+
 #ifdef TWOPATH_LOOKUP
 /* get stats and dump two-path hash table */
 static void dumpTwoPathTable(const graph_t *g) {
@@ -246,6 +250,13 @@ int main(int argc, char *argv[])
 	   changeBipartiteThreeStarsB(g, i, j, lambda),
 	   changeBipartiteThreeStarsA(g, i, j, lambda),
 	   changeThreePaths(g, i, j, lambda));
+
+    /* verify that the sum of two-mode changBipartitePowerFourCyclesA and
+       changeBipartiteFourCyclesB is equal to the one-mode
+       changePowerFourCycles applied to a bipartite graph */
+    assert(DOUBLE_APPROX_EQ_TEST(changeBipartitePowerFourCyclesA(g, i, j, lambda) + changeBipartitePowerFourCyclesB(g, i, j, lambda),
+                                 changePowerFourCycles(g, i, j, lambda)));
+
     num_tests++;
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
