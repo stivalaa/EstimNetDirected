@@ -99,7 +99,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 #structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltKCyclesA(5.0), BipartiteAltKCyclesB(5.0)}
 
 ## Very slow:
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(4.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
 
 
 #
