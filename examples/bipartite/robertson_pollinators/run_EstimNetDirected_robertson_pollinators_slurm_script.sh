@@ -2,8 +2,8 @@
 
 #SBATCH --job-name="EstimNetDirected_mpi-ifd_robertson_pollinators"
 #SBATCH --ntasks=20
-#SBATCH --time=0-04:00:00
-#SBATCH --mem-per-cpu=8GB
+#SBATCH --time=0-60:00:00
+#SBATCH --mem-per-cpu=500MB
 #SBATCH --partition=slim
 #SBATCH --output=EstimNetDirected-ifd_robertson_pollinators-%j.out
 #SBATCH --error=EstimNetDirected-ifd_robertson_pollinators-%j.err
