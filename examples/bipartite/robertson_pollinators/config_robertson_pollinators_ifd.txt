@@ -1,3 +1,4 @@
+# vim:ft=config
 ##############################################################################
 #
 # example setting file for EstimNetDirected
@@ -95,10 +96,10 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ##structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(4.0),  BipartiteAltKCyclesA(2.0), BipartiteAltKCyclesB(4.0), BipartiteAltK4CyclesA(2.0), BipartiteAltK4CyclesB(4.0)}
 
 ##Does not converge:
-structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltKCyclesA(5.0), BipartiteAltKCyclesB(5.0)}
+#structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltKCyclesA(5.0), BipartiteAltKCyclesB(5.0)}
 
 ## Very slow:
-#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(4.0),  BipartiteAltKCyclesA(2.0), FourCyclesNodePower(2) }
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(4.0),  BipartiteAltKCyclesA(2.0), BipartiteFourCyclesNodePowerA(2), BipartiteFourCyclesNodePowerB(2) }
 
 
 #
