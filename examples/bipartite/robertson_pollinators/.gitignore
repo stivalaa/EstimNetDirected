@@ -9,3 +9,5 @@ config_gof_robertson_pollinators.txt.OLD
 sim_gof_robertson_pollinators_cycledist.eps
 stats_gof_robertson_pollinators-plots.eps
 stats_gof_robertson_pollinators.txt
+EstimNetDirected_mpi_arrays.exe
+EstimNetDirected_mpi_arrays
