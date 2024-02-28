@@ -2,9 +2,8 @@
 
 #SBATCH --job-name="SimulateERGM-robertson_pollinators"
 #SBATCH --ntasks=1
-#SBATCH --time=0-1:00:00
+#SBATCH --time=0-24:00:00
 #SBATCH --mem-per-cpu=8GB
-#SBATCH --partition=slim
 #SBATCH --output=SimulateERGM-robertson_pollinators-%j.out
 #SBATCH --error=SimulateERGM-robertson_pollinators-%j.err
 
@@ -14,6 +13,8 @@ uname -a
 ROOT=../../..
 
 module purge
+module load gcc/11.3.0    # need this for 'toolchain' hierarchical modules
+module load openmpi/4.1.4 # module version numbers are required on Oz
 
 gof_sim_config=config_gof_robertson_pollinators.txt
 
@@ -29,7 +30,7 @@ echo 'numArcs = 15255' >> ${gof_sim_config}
 
 time ${ROOT}/src/SimulateERGM ${gof_sim_config}
 
-module load r
+module load r/4.2.1
 
 time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R stats_gof_robertson_pollinators.txt  obs_stats_ifd_robertson_pollinators_0.txt
 
