@@ -971,7 +971,7 @@ double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda
  */
 static double changeBipartitePowerFourCycles(graph_t *g, uint_t i, uint_t j, double lambda, bipartite_node_mode_e mode)
 {
-  uint_t  v,k,tmp;
+  uint_t  v,k;
   ulong_t delta = 0;
   ulong_t vcount = 0;
   double  alpha = 1/lambda;
