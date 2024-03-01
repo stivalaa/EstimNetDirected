@@ -24,7 +24,7 @@ fi
 
 rm sim_gof_robertson_pollinators_*.net
 
-${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh config_robertson_pollinators_ifd.txt estimation_ifd_robertson_pollinators.txt stats_gof_robertson_pollinators.txt sim_gof_robertson_pollinators  | sed 's/interval = 100000 /interval = 10000 /' | sed 's/burnin = 1000000 /burnin = 100000 /' | sed 's/TNT/IFD/g'  > ${gof_sim_config}
+${ROOT}/scripts/estimnetdirectedEstimation2simulationConfig.sh config_robertson_pollinators_ifd.txt estimation_ifd_robertson_pollinators.txt stats_gof_robertson_pollinators.txt sim_gof_robertson_pollinators  | sed 's/interval = 100000 /interval = 100000 /' | sed 's/burnin = 1000000 /burnin = 100000 /' | sed 's/TNT/IFD/g'  > ${gof_sim_config}
 echo 'numArcs = 15255' >> ${gof_sim_config}
 
 

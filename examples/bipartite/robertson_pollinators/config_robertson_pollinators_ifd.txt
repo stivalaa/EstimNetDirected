@@ -99,7 +99,31 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 #structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltKCyclesA(5.0), BipartiteAltKCyclesB(5.0)}
 
 ## Very slow (31 hours estimation) and GoF simulation shows not converged:
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
+
+## GoF sim bad, estim. diagnostic sim plot shows bad mode A degree fit
+## and dzA plot not good on BipartiteAltStarsB(5):
+#structParams =  { Edge,  BipartiteAltStarsA(2.0), BipartiteAltStarsB(5.0) }
+
+## does not converge:
+#structParams =  { Edge,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(2.0) }
+
+## GoF sim bad, estim. diagnostic sim plot shows bad mode A degree fit
+## and dzA plot not good on BipartiteAltStarsB(5):
+#structParams =  { Edge,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(5.0) }
+
+## GoF sim bad, but estim. diagnostic sim plot shows better mode A degree fit
+## than without BipartieIsolatesA, but bad fit on dsp;
+## and dzA plot very bad on BipartiteAltStarsB(5):
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(5.0) }
+
+## does not converge:
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(2.0) }
+
+## estim. diagnostic plots better (except dsp); sim gof converges (after 
+## increasing interval); sim gof ok on degrees, deodesic, giant component,
+## bad on dsp and four-cycles:
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0) }
 
 
 #
