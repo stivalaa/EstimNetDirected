@@ -98,7 +98,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ##Does not converge:
 #structParams =  { Edge, Isolates, BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteAltKCyclesA(5.0), BipartiteAltKCyclesB(5.0)}
 
-## Very slow:
+## Very slow (31 hours estimation) and GoF simulation shows not converged:
 structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
 
 
