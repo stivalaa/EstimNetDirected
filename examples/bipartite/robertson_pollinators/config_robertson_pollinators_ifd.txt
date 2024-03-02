@@ -123,7 +123,42 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## estim. diagnostic plots better (except dsp); sim gof converges (after 
 ## increasing interval); sim gof ok on degrees, deodesic, giant component,
 ## bad on dsp and four-cycles:
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0) }
+
+## bad sim gof on BipartiteAltKCyclesA(2) and BipartiteAltStarsB(10):
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesA(2.0) }
+
+## bad sim gof on BipartiteAltKCyclesA(10) (converges to lower than obs):
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesA(10.0) }
+
+## does not converge:
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesB(10.0) }
+
+## estim.diagnostic sim plot showing likely not converged (very high variance)
+## and theta plot shows BipartiteAltStarsA.10 not converegd;
+## and dzA plot bad on BipartieAltStarsB.10; gof sim bad
+##structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesB(2.0) }
+
+## estim.diagnostic sim plot showing likely not converged (very high variance)
+## and theta plot shows BipartiteAltStarsA.10 (and all oters) not converegd;
+## and dzA plot bad on BipartieAltStarsB.10 and BipartitIsolatesA; gof sim bad
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesB(5.0) }
+
+## estim.diagnostic sim plot showing likely not converged (very high variance)
+## and theta plot shows BipartiteAltStarsA.10 (and all oters) not converegd;
+## and dzA plot bad on BipartieAltStarsB.10 and BipartitIsolatesA; gof sim bad
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesB(5.0), BipartiteAltKCyclesA(5) }
+
+## estim.diagnostic sim plot showing likely not converged (very high variance)
+## and theta plot shows BipartiteAltStarsA.10 (and all oters) not converegd;
+## and dzA plot bad on BipartieAltStarsB.10 and BipartitIsolatesA; gof sim bad
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltKCyclesB(10.0), BipartiteAltKCyclesA(10) }
+
+## estim. diagnostic plots OK (although theta very noisy) but gof sim plot
+## shows not converged BipartiteAltStarsA(10) and BipartiteIsolatesA OK but
+## BipartiteAltStarsB(10) and both four-cycles-node-power significantly 
+## higher observed than simulated
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(2), BipartiteFourCyclesNodePowerB(2) }
 
 
 #
