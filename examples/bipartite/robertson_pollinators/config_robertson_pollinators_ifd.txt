@@ -101,6 +101,9 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## Very slow (31 hours estimation) and GoF simulation shows not converged:
 #structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(5.0), BipartiteAltStarsB(5.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
 
+## Very slow (31 hours estimation) and GoF simulation shows not converged:
+#structParams =  { Edge, BipartiteAltStarsA(2.0), BipartiteAltStarsB(5.0), BipartiteFourCyclesNodePowerA(5), BipartiteFourCyclesNodePowerB(5) }
+
 ## GoF sim bad, estim. diagnostic sim plot shows bad mode A degree fit
 ## and dzA plot not good on BipartiteAltStarsB(5):
 #structParams =  { Edge,  BipartiteAltStarsA(2.0), BipartiteAltStarsB(5.0) }
@@ -159,6 +162,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## BipartiteAltStarsB(10) and both four-cycles-node-power significantly 
 ## higher observed than simulated
 structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(2), BipartiteFourCyclesNodePowerB(2) }
+
 
 
 #
