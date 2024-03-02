@@ -161,6 +161,8 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## shows not converged BipartiteAltStarsA(10) and BipartiteIsolatesA OK but
 ## BipartiteAltStarsB(10) and both four-cycles-node-power significantly 
 ## higher observed than simulated
+## (Note all estimations with BipartiteFourCyclesNodePowerA/B are very slow,
+## i.e. take 31 hours instead of under 10 minutes wihtout them)
 structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(2), BipartiteFourCyclesNodePowerB(2) }
 
 
