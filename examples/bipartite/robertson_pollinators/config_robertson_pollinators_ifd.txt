@@ -163,7 +163,11 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## higher observed than simulated
 ## (Note all estimations with BipartiteFourCyclesNodePowerA/B are very slow,
 ## i.e. take 31 hours instead of under 10 minutes wihtout them)
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(2), BipartiteFourCyclesNodePowerB(2) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(2), BipartiteFourCyclesNodePowerB(2) }
+
+## estimation diagnostis (including sim pseudo-gof) good, but
+## gof sim shows obs outside 95% CI for StarsA and Fourcycles A and B.
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10), BipartiteFourCyclesNodePowerB(10) }
 
 
 
