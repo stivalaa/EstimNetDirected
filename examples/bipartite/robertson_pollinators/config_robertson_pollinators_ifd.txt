@@ -124,8 +124,9 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 #structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(2.0) }
 
 ## estim. diagnostic plots better (except dsp); sim gof converges (after 
-## increasing interval); sim gof ok on degrees, deodesic, giant component,
+## increasing interval); sim gof ok on degrees, geodesic, giant component,
 ## bad on dsp and four-cycles:
+## [this model is OK but no four-cycles parameters so bad fit on those]
 #structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0) }
 
 ## bad sim gof on BipartiteAltKCyclesA(2) and BipartiteAltStarsB(10):
@@ -167,7 +168,11 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 
 ## estimation diagnostis (including sim pseudo-gof) good, but
 ## gof sim shows obs outside 95% CI for StarsA and Fourcycles A and B.
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10), BipartiteFourCyclesNodePowerB(10) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10), BipartiteFourCyclesNodePowerB(10) }
+
+## estimation diagnostics (including sim pseudo-gof) OK, but
+## gof sim shows obs outside 95% CI for StarsA and Fourcycles A and B and IsolatesA
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(20), BipartiteFourCyclesNodePowerB(20) }
 
 
 
