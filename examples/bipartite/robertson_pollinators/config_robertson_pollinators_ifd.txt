@@ -172,7 +172,12 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 
 ## estimation diagnostics (including sim pseudo-gof) OK, but
 ## gof sim shows obs outside 95% CI for StarsA and Fourcycles A and B and IsolatesA
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(20), BipartiteFourCyclesNodePowerB(20) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(20), BipartiteFourCyclesNodePowerB(20) }
+
+## estimation diagnostics good (but mode A not great on pseudo-gof, and
+## dsp and four=cycles very bad on pseudo-gof) and sim gof good (could use
+## more burnin though), but sim gof bad on dsp and four-cycles:
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10) }
 
 
 
