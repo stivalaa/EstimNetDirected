@@ -177,7 +177,12 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## estimation diagnostics good (but mode A not great on pseudo-gof, and
 ## dsp and four=cycles very bad on pseudo-gof) and sim gof good (could use
 ## more burnin though), but sim gof bad on dsp and four-cycles:
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10) }
+
+## estimation diagnosics good but sim gof bad on all (except edge): sim
+## does not converge to obs value but above (StarsA.10, IsolateA)
+## or below (StarsB.10) it.
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerB(10) }
 
 
 
