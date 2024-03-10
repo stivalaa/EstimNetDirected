@@ -177,6 +177,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 ## estimation diagnostics good (but mode A not great on pseudo-gof, and
 ## dsp and four=cycles very bad on pseudo-gof) and sim gof good (could use
 ## more burnin though), but sim gof bad on dsp and four-cycles:
+## [This model is OK but only four-cycles for mode A so fit not good]
 #structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerA(10) }
 
 ## estimation diagnosics good but sim gof bad on all (except edge): sim
