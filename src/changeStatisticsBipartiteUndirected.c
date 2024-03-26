@@ -155,6 +155,7 @@ static uint_t twopaths_not_via_k(const graph_t *g, uint_t i, uint_t j,
   assert(bipartite_node_mode(g, j) == mode);
   assert(bipartite_node_mode(g, k) == other_mode(mode));
   if (isEdge(g, i, k) && isEdge(g, j, k)) {
+    assert(count > 0); /* because there is a path from i to j via k */
     count--;
   }
   return count;
