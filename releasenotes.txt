@@ -1,3 +1,9 @@
+v3.8.5 (27 March 2024)
+
+* Implemented experimental change statistics FourCyclesNodePower, BipartiteFourCyclesNodePowerA, BipartiteFourCyclesNodePowerB
+* More test cases, particularly for bipartite change statistics
+* Removed incorrect experimental change statistics BipartiteAltK4CyclesA, BipartiteAltK4CyclesB from parser configuration table
+
 v3.8.4 (8 January 2024)
 
 * Experimental statistics BipartiteAltK4CyclesA, BipartiteAltK4CyclesB
