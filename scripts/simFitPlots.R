@@ -860,7 +860,7 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
     }
 
     print(system.time(obs_4cycles <- summary(net_obs ~ cycle(4))))
-    print(system.time(sim_4cycles <- unlist(lapply(sim_networks,
+    print(system.time(sim_4cycles <- unlist(mclapply(sim_networks,
                                       function(g) summary(g ~ cycle(4))))))
     cat('obs 4-cycles: ', obs_4cycles, '\n')
     cat('sim 4-cycles: ', sim_4cycles, '\n')
