@@ -224,14 +224,6 @@ int main(int argc, char *argv[])
       break;
     }
   }
-  if (readNodeNums) {
-    fclose(nodenumfile);
-    if (!(nodenumfile = fopen(nodenumfilename, "r"))) {
-      fprintf(stderr, "open %s for read failed (%s)\n", nodenumfilename,
-              strerror(errno));
-      exit(1);
-    }
-  }
   
   
   if (readNodeNums) {
