@@ -42,7 +42,7 @@
 #include "loadGraph.h"
 #include "bipartiteStats.h"
 
-#define DEFAULT_NUM_TESTS 1000
+#define DEFAULT_NUM_TESTS 100
 
 
 static void usage(const char *progname)
@@ -73,6 +73,13 @@ int main(int argc, char *argv[])
   char  *endptr; /* for strtod() */
   bool also_use_slow_functions = FALSE;
   int  c;
+  bool edge_removed = FALSE;
+  double delta_BipartitePowerFourCyclesA, delta_BipartitePowerFourCyclesB,
+    delta_PowerFourCycles;
+  double without_BipartitePowerFourCyclesA, without_BipartitePowerFourCyclesB,
+    without_PowerFourCycles;
+
+
  
   srand(time(NULL));
 
@@ -131,8 +138,6 @@ int main(int argc, char *argv[])
                                      0, 0, 0, 0, NULL, NULL, NULL, NULL,
                                      NULL, NULL, NULL, NULL, NULL, NULL);
 
-  /* just change stats (no changes to graph) */
-  printf("testing change stats\n");
   num_tests = 0;
   while (TRUE) {
     if (readNodeNums) {
@@ -161,29 +166,37 @@ int main(int argc, char *argv[])
     }
 
     if (isEdge(g, i, j)) {
-      //fprintf(stderr, "edge %u -- %u already exists\n", i, j);
-      continue;
+      removeEdge(g, i, j);
+      edge_removed = TRUE;
     }
 
-    printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g\n", i, j - g->num_A_nodes,
-	   changeFourCycles(g, i, j, lambda),
-           changeBipartiteAltStarsA(g, i, j, lambda),
-           changeBipartiteAltStarsB(g, i, j, lambda),
-           changeBipartiteAltKCyclesB(g, i, j, lambda),
-           changeBipartiteAltKCyclesA(g, i, j, lambda),
-	   changeBipartiteTwoStarsB(g, i, j, lambda),
-	   changeBipartiteTwoStarsA(g, i, j, lambda),
-	   changeBipartiteThreeStarsB(g, i, j, lambda),
-	   changeBipartiteThreeStarsA(g, i, j, lambda),
-	   changeThreePaths(g, i, j, lambda));
+    delta_BipartitePowerFourCyclesA = changeBipartitePowerFourCyclesA(g, i, j,
+                                                                      lambda);
+    delta_BipartitePowerFourCyclesB = changeBipartitePowerFourCyclesB(g, i, j,
+                                                                      lambda);
+    delta_PowerFourCycles = changePowerFourCycles(g, i, j, lambda);
+
 
     /* verify that the sum of two-mode changBipartitePowerFourCyclesA and
        changeBipartiteFourCyclesB is equal to the one-mode
        changePowerFourCycles applied to a bipartite graph */
-    assert(DOUBLE_APPROX_EQ_TEST(changeBipartitePowerFourCyclesA(g, i, j, lambda) + changeBipartitePowerFourCyclesB(g, i, j, lambda),
-                                 changePowerFourCycles(g, i, j, lambda)));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartitePowerFourCyclesA +
+                                 delta_BipartitePowerFourCyclesB,
+                                 delta_PowerFourCycles));
+
+    /* verify that change statisic is used to difference of statistic
+       computed with edge and without edge */
+    without_BipartitePowerFourCyclesA = PowerFourCyclesA(g, lambda);
+    insertEdge(g, i, j);
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartitePowerFourCyclesA,
+                                 PowerFourCyclesA(g, lambda) -
+                                 without_BipartitePowerFourCyclesA));
+    removeEdge(g, i, j);
 
     num_tests++;
+    if (edge_removed) {
+      insertEdge(g, i, j);
+    }
     if (!readNodeNums && num_tests >= DEFAULT_NUM_TESTS) {
       break;
     }
