@@ -180,7 +180,6 @@ int main(int argc, char *argv[])
     delta_BipartiteAltKCyclesA = changeBipartiteAltKCyclesA(g, i, j, lambda);
     delta_BipartiteAltKCyclesB = changeBipartiteAltKCyclesB(g, i, j, lambda);
 
-
     /* verify that the sum of two-mode changBipartitePowerFourCyclesA and
        changeBipartiteFourCyclesB is equal to the one-mode
        changePowerFourCycles applied to a bipartite graph */
@@ -193,6 +192,10 @@ int main(int argc, char *argv[])
     without_BipartitePowerFourCyclesA = PowerFourCyclesA(g, lambda);
     without_BipartitePowerFourCyclesB = PowerFourCyclesB(g, lambda);
     without_BipartiteAltKCyclesA = BipartiteAltKCyclesA(g, lambda);
+    if (also_use_slow_functions) {
+      assert(DOUBLE_APPROX_EQ_TEST(BipartiteAltKCyclesA_SLOW(g, lambda),
+                                   without_BipartiteAltKCyclesA));
+    }
     insertEdge(g, i, j);
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartitePowerFourCyclesA,
                                  PowerFourCyclesA(g, lambda) -
