@@ -7,7 +7,7 @@
 
 . ./netfiles.sh
 
-echo "Testing change statistics against diff in stats for bipartite networks"
+echo "Testing change statistics against diff in stats for undirected networks"
 for implementation in ./testDiffStatsChangeStatsUndirected ./testDiffStatsChangeStatsUndirected_array ./testDiffStatsChangeStatsUndirected_hash
 do
     echo ${implementation}
