@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
                                  delta_BipartitePowerFourCyclesB,
                                  delta_PowerFourCycles));
 
-    /* verify that change statisic is used to difference of statistic
+    /* verify that change statisic is equal to difference of statistic
        computed with edge and without edge */
     without_BipartitePowerFourCyclesA = PowerFourCyclesA(g, lambda);
     without_BipartitePowerFourCyclesB = PowerFourCyclesB(g, lambda);

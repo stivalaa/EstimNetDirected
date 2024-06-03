@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
     delta_PowerFourCycles = changePowerFourCycles(g, i, j, lambda);
 
 
-    /* verify that change statisic is used to difference of statistic
+    /* verify that change statisic is equal to difference of statistic
        computed with edge and without edge */
     without_PowerFourCycles = PowerFourCycles(g, lambda);
     insertEdge(g, i, j);    
