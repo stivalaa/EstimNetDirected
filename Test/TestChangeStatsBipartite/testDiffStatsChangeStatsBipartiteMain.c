@@ -75,9 +75,11 @@ int main(int argc, char *argv[])
   int  c;
   bool edge_removed = FALSE;
   double delta_BipartitePowerFourCyclesA, delta_BipartitePowerFourCyclesB,
-    delta_PowerFourCycles;
+    delta_PowerFourCycles, delta_BipartiteAltKCyclesA,
+    delta_BipartiteAltKCyclesB;
   double without_BipartitePowerFourCyclesA, without_BipartitePowerFourCyclesB,
-    without_PowerFourCycles;
+    without_PowerFourCycles, without_BipartiteAltKCyclesA,
+    without_BipartiteAltKCyclesB;
 
 
  
@@ -175,6 +177,8 @@ int main(int argc, char *argv[])
     delta_BipartitePowerFourCyclesB = changeBipartitePowerFourCyclesB(g, i, j,
                                                                       lambda);
     delta_PowerFourCycles = changePowerFourCycles(g, i, j, lambda);
+    delta_BipartiteAltKCyclesA = changeBipartiteAltKCyclesA(g, i, j, lambda);
+    delta_BipartiteAltKCyclesB = changeBipartiteAltKCyclesB(g, i, j, lambda);
 
 
     /* verify that the sum of two-mode changBipartitePowerFourCyclesA and
@@ -187,10 +191,18 @@ int main(int argc, char *argv[])
     /* verify that change statisic is used to difference of statistic
        computed with edge and without edge */
     without_BipartitePowerFourCyclesA = PowerFourCyclesA(g, lambda);
+    without_BipartitePowerFourCyclesB = PowerFourCyclesB(g, lambda);
+    without_BipartiteAltKCyclesA = BipartiteAltKCyclesA(g, lambda);
     insertEdge(g, i, j);
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartitePowerFourCyclesA,
                                  PowerFourCyclesA(g, lambda) -
                                  without_BipartitePowerFourCyclesA));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartitePowerFourCyclesB,
+                                 PowerFourCyclesB(g, lambda) -
+                                 without_BipartitePowerFourCyclesB));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteAltKCyclesA,
+                                 BipartiteAltKCyclesA(g, lambda) -
+                                 without_BipartiteAltKCyclesA));
     removeEdge(g, i, j);
 
     num_tests++;
