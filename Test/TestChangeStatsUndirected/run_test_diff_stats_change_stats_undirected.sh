@@ -14,10 +14,8 @@ do
     for netfile in ${NETFILES}
     do
         echo ${netfile}
-        for i in `seq 1 50`
+        for lambda in 2 5 10
         do
-            lambda=`echo "1 + $i / 10" | bc -l`
-            #echo lambda = ${lambda}
             ${implementation} ${flags} ${netfile}  ${lambda} > /dev/null
             if [ $? -ne 0 ]; then
                 echo "**** FAILED ****"
