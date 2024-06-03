@@ -1,14 +1,14 @@
 #!/bin/sh
 
-## Run testStatsSumChangeStatsUndirected with different implementations
+## Run testDiffStatsChangeStatsUndirected with different implementations
 ## and different networks and different lambda values to verify that
 ## summing change statistics over all edges gives same value as
 ## computing statistic explicitly according to definition.
 
 . ./netfiles.sh
 
-echo "Testing summing change statistics for undirected networks"
-for implementation in ./testStatsSumChangeStatsUndirected ./testStatsSumChangeStatsUndirected_array ./testStatsSumChangeStatsUndirected_hash
+echo "Testing change statistics against diff in stats for bipartite networks"
+for implementation in ./testDiffStatsChangeStatsUndirected ./testDiffStatsChangeStatsUndirected_array ./testDiffStatsChangeStatsUndirected_hash
 do
     echo ${implementation}
     for netfile in ${NETFILES}

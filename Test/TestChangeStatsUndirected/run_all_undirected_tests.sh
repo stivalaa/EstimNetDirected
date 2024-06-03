@@ -9,6 +9,7 @@
 fail=0
 ./run_test_netscience.sh || fail=1
 ./run_test_stats_sum_change_stats_undirected.sh || fail=1
+./run_test_diff_stats_change_stats_undirected.sh || fail=1
 if [ $fail -ne 0 ]; then
     echo "***** A test in $0 FAILED *****"
 fi
