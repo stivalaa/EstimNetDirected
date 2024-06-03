@@ -7,7 +7,8 @@ CC = gcc
 
 CFLAGS += -I$(SRCDIR)
 
-OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsUndirected.o $(SRCDIR)/graph.o $(SRCDIR)/utils.o $(SRCDIR)/loadGraph.o $(SRCDIR)/changeStatisticsBipartiteUndirected.o
+LOCALOBJS = undirectedStats.o
+OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsUndirected.o $(SRCDIR)/graph.o $(SRCDIR)/utils.o $(SRCDIR)/loadGraph.o $(SRCDIR)/changeStatisticsBipartiteUndirected.o $(LOCALOBJS)
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 
@@ -41,6 +42,7 @@ clean:
 	$(RM) testStatsSumChangeStatsUndirected testStatsSumChangeStatsUndirected_hash
 	$(RM) testStatsSumChangeStatsUndirectedMain.o testStatsSumChangeStatsUndirectedMain_hash.o
 	$(RM) testStatsSumChangeStatsUndirected_array testStatsSumChangeStatsUndirectedMain_array.o
+	$(RM) $(LOCALOBJS) $(LOCALOBJS:.o=_hash.o) $(LOCALOBJS:.o=_array.o)
 
 
 %_hash.o: %.c
