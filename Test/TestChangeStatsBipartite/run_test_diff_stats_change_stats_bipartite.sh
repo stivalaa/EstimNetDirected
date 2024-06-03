@@ -11,7 +11,7 @@ echo "Testing change statistics against diff in stats for bipartite networks"
 for implementation in ./testDiffStatsChangeStatsBipartite ./testDiffStatsChangeStatsBipartite_array ./testDiffStatsChangeStatsBipartite_hash
 do
     echo ${implementation}
-    for netfile in ${NETFILES}
+    for netfile in ${FAST_NETFILES}
     do
         echo ${netfile}
         # Only test also the slow implementations of the statistics funcions
