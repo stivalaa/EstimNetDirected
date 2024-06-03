@@ -12,7 +12,7 @@ OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsBipartiteU
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 
-all: testChangeStatsBipartite testChangeStatsBipartite_hash testChangeStatsBipartite_array testStatsSumChangeStatsBipartite testStatsSumChangeStatsBipartite_hash testStatsSumChangeStatsBipartite_array
+all: testChangeStatsBipartite testChangeStatsBipartite_hash testChangeStatsBipartite_array testStatsSumChangeStatsBipartite testStatsSumChangeStatsBipartite_hash testStatsSumChangeStatsBipartite_array testDiffStatsChangeStatsBipartite testDiffStatsChangeStatsBipartite_hash testDiffStatsChangeStatsBipartite_array
 
 
 testChangeStatsBipartite: testChangeStatsBipartiteMain.o $(OBJS)
@@ -37,6 +37,17 @@ testStatsSumChangeStatsBipartite_array: testStatsSumChangeStatsBipartiteMain_arr
 
 
 
+testDiffStatsChangeStatsBipartite: testDiffStatsChangeStatsBipartiteMain.o $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testDiffStatsChangeStatsBipartite_hash: testDiffStatsChangeStatsBipartiteMain_hash.o $(HASH_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testDiffStatsChangeStatsBipartite_array: testDiffStatsChangeStatsBipartiteMain_array.o $(ARRAY_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+
+
 
 clean:
 	$(RM) testChangeStatsBipartite testChangeStatsBipartite_hash
@@ -45,6 +56,9 @@ clean:
 	$(RM) testStatsSumChangeStatsBipartite testStatsSumChangeStatsBipartite_hash
 	$(RM) testStatsSumChangeStatsBipartiteMain.o testStatsSumChangeStatsBipartiteMain_hash.o
 	$(RM) testStatsSumChangeStatsBipartite_array testStatsSumChangeStatsBipartiteMain_array.o
+	$(RM) testDiffStatsChangeStatsBipartite testDiffStatsChangeStatsBipartite_hash
+	$(RM) testDiffStatsChangeStatsBipartiteMain.o testDiffStatsChangeStatsBipartiteMain_hash.o
+	$(RM) testDiffStatsChangeStatsBipartite_array testDiffStatsChangeStatsBipartiteMain_array.o
 	$(RM) $(LOCALOBJS) $(LOCALOBJS:.o=_hash.o) $(LOCALOBJS:.o=_array.o)
 
 %_hash.o: %.c

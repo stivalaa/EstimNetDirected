@@ -6,10 +6,10 @@
  *
  * Test change statistics implementations by comparing sum of change
  * stats for all edges in network to statistic value computed according
- * to the definition of the statistic (implemented in this test module).
+ * to the definition of the statistic (implemented in bipartiteStats.c).
  *
  *
- * Usage:  testStatsSumChangeStatsBipartite  [-s]<in_edgelistfile> <lambda>
+ * Usage:  testStatsSumChangeStatsBipartite [-s] <in_edgelistfile> <lambda>
  *          -s : also test with slow implementations of statistic funcion
  *
  * Reads graph from Pajek format <in_edgelistfile> and compute stats with

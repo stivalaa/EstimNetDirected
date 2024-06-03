@@ -37,3 +37,9 @@ testStatsSumChangeStatsBipartite_hash.exe
 testStatsSumChangeStatsBipartite_hash
 *.eps
 *.png
+testDiffStatsChangeStatsBipartite_array.exe
+testDiffStatsChangeStatsBipartite_array
+testDiffStatsChangeStatsBipartite
+testDiffStatsChangeStatsBipartite.exe
+testDiffStatsChangeStatsBipartite_hash.exe
+testDiffStatsChangeStatsBipartite_hash
