@@ -191,7 +191,9 @@ int main(int argc, char *argv[])
        computed with edge and without edge */
     without_BipartitePowerFourCyclesA = PowerFourCyclesA(g, lambda);
     without_BipartitePowerFourCyclesB = PowerFourCyclesB(g, lambda);
-    without_BipartiteAltKCyclesA = BipartiteAltKCyclesA(g, lambda);
+    without_BipartiteAltKCyclesA = BipartiteAltKCyclesA(g, lambda); 
+    without_BipartiteAltKCyclesB = BipartiteAltKCyclesB(g, lambda);
+    without_PowerFourCycles = PowerFourCycles(g, lambda);
     if (also_use_slow_functions) {
       assert(DOUBLE_APPROX_EQ_TEST(BipartiteAltKCyclesA_SLOW(g, lambda),
                                    without_BipartiteAltKCyclesA));
@@ -206,6 +208,12 @@ int main(int argc, char *argv[])
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteAltKCyclesA,
                                  BipartiteAltKCyclesA(g, lambda) -
                                  without_BipartiteAltKCyclesA));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteAltKCyclesB,
+                                 BipartiteAltKCyclesB(g, lambda) -
+                                 without_BipartiteAltKCyclesB));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_PowerFourCycles,
+                                 PowerFourCycles(g, lambda) -
+                                 without_PowerFourCycles));
     removeEdge(g, i, j);
 
     num_tests++;
