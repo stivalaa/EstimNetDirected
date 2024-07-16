@@ -14,3 +14,8 @@ SimulateERGM-*.out
 sim_gof_inouye_pyke_pollinators_cycledist.eps
 EstimNetDirected_mpi_arrays.exe
 EstimNetDirected_mpi_arrays
+sim_gof_inouye_pyke_pollinators_altkcycles_cycledist.eps
+stats_gof_inouye_pyke_pollinators_altkcycles-plots.eps
+stats_gof_inouye_pyke_pollinators_altkcycles.txt
+config_gof_inouye_pyke_pollinators_altkcycles.txt
+
