@@ -91,6 +91,7 @@ double PowerFourCycles(const graph_t *g, double lambda)
   for (i = 0; i < g->num_nodes; i++) {
     fourcycle_count = num_four_cycles_node(g, i);
     uint_t fourcycle_count_SLOW = num_four_cycles_node_SLOW(g, i);
+    fprintf(stderr, "XXX num_four_cycles_node = %lu\n", fourcycle_count);
     assert(fourcycle_count_SLOW == fourcycle_count);
     value += pow(fourcycle_count, alpha);
   }
