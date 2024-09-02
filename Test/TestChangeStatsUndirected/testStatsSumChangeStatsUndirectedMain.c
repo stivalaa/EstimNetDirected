@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
   /*  uint_t     num_P_nodes = 0; */
   graph_t *g         = NULL;
   double stat_value;
-  ulonglong_t stat_value_int, alt_stat_value_int;
+  ulonglong_t stat_value_int;
   double lambda;
   char  *endptr; /* for strtod() */
   bool also_use_slow_functions = FALSE;
@@ -144,9 +144,6 @@ int main(int argc, char *argv[])
   printf("\n");
 
   stat_value_int = FourCycles(g);
-  alt_stat_value_int = FourCycles_sum_by_node(g);
-  fprintf(stderr, "stat_value_int = %llu\n", stat_value_int);/*XXX*/
-  assert(stat_value_int ==   alt_stat_value_int);
   assert(DOUBLE_APPROX_EQ_TEST((double)stat_value_int,  obs_stats[0]));
 
   stat_value = PowerFourCycles(g, lambda_values[1]);

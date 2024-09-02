@@ -41,33 +41,6 @@ ulonglong_t FourCycles(const graph_t *g)
 }
 
 
-/*
- * Statistic for FourCycles, number of four-cycles in an undirected graph.
- * This version computes it by summing number of four-cycles at each node
- * compuited with num_four_cycles_node().
- *
- * Parameters:
- *     g      - undirected bipartite graph
- *
- * Return value:
- *      number of four-cycles in undirected graph g
- */
-ulonglong_t FourCycles_sum_by_node(const graph_t *g)
-{
-  uint_t i;
-  ulonglong_t value = 0;
-
-  assert(!g->is_bipartite);
-  assert(!g->is_directed);
-
-  for (i = 1; i < g->num_nodes; i++) {
-    value += num_four_cycles_node(g, i);
-  }
-  fprintf(stderr, "value = %llu\n", value); /*XXX*/
-  assert(value % 4 == 0);
-  return value / 4;
-}
-
 
 
 /*
