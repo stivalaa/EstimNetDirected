@@ -4,7 +4,7 @@
  * Author:  Alex Stivala
  * Created: October 2017
  *
- * Test directed change stats and two-path table update.
+ * Test undirected change stats and two-path table update.
  *
  *
  * Usage:  testChangeStatsUndirected  <in_edgelistfile> [nodenums]
