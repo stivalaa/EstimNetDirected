@@ -80,7 +80,7 @@ if (do_obs) {
 for (statname in statnames) {
     simstats_statname <- simstats[which(simstats$variable == statname),]
 
-    p <- ggplot(simstats_statname, aes(x=t, y=value))
+    p <- ggplot(simstats_statname, aes(x=t, y=value)) + theme_classic()
     p <- p + geom_point()
     p <- p + geom_smooth(method = loess, color = "blue", linetype = "dashed",
                          se = FALSE)
@@ -97,7 +97,7 @@ for (statname in statnames) {
                                 labels = my_scientific_10)
     plotlist <- c(plotlist, list(p))
 
-    p <- ggplot(simstats_statname, aes(x=value))
+    p <- ggplot(simstats_statname, aes(x=value)) + theme_classic()
     p <- p + geom_histogram()
     p <- p + geom_vline(aes(xintercept = mean(value)), color = "blue",
                         linetype = "dashed")
