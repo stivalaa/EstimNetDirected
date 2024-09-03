@@ -51,7 +51,9 @@ MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
 
-ptheme <-  theme(legend.position = 'none')
+## Using theme_classic() to get no grey background and no gridlines
+## as required by some journals e.g. J. Complex Networks
+ptheme <- theme_classic() +  theme(legend.position = 'none')
 
 # http://stackoverflow.com/questions/10762287/how-can-i-format-axis-labels-with-exponents-with-ggplot2-and-scales
 orig_scientific_10 <- function(x) {
@@ -273,8 +275,8 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
       degreetype <- paste(mode, 'degree', sep='-')
     }
     p <- p + xlab(paste(ifelse(use_log, "log ", ""), degreetype, sep=''))
-    p <- p + theme(legend.title=element_blank(),
-                   legend.position = c(0.9, 0.8))
+    p <- p + ptheme + theme(legend.title=element_blank(),
+                            legend.position = c(0.9, 0.8))
     end <- Sys.time()
     cat(mode, "-degree histogram plotting took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
