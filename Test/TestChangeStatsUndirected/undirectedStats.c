@@ -60,7 +60,7 @@ ulonglong_t FourCycles_sum_by_node(const graph_t *g)
   assert(!g->is_bipartite);
   assert(!g->is_directed);
 
-  for (i = 1; i < g->num_nodes; i++) {
+  for (i = 0; i < g->num_nodes; i++) {
     value += num_four_cycles_node(g, i);
   }
   fprintf(stderr, "value = %llu\n", value); /*XXX*/
