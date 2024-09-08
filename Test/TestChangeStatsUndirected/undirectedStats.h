@@ -20,6 +20,7 @@
 
 
 ulonglong_t FourCycles(const graph_t *g);
+ulonglong_t FourCycles_sum_by_node(const graph_t *g);
 uint_t num_four_cycles_node_SLOW(const graph_t *g, uint_t u);
 double PowerFourCycles(const graph_t *g, double lambda);
 
