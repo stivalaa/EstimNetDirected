@@ -84,6 +84,7 @@ double PowerFourCycles(const graph_t *g, double lambda)
   uint_t  i;
   double  alpha = 1/lambda;
   ulong_t fourcycle_count = 0;
+  ulong_t fourcycle_count_sum = 0;
   double  value = 0;
 
   assert(!g->is_directed);
@@ -92,8 +93,10 @@ double PowerFourCycles(const graph_t *g, double lambda)
     fourcycle_count = num_four_cycles_node(g, i);
     uint_t fourcycle_count_SLOW = num_four_cycles_node_SLOW(g, i);
     assert(fourcycle_count_SLOW == fourcycle_count);
+    fourcycle_count_sum += fourcycle_count;
     value += pow(fourcycle_count, alpha);
   }
+  assert(fourcycle_count_sum % 4 == 0);
   return value;
 }
 
