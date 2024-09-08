@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
 
   stat_value_int = FourCycles(g);
   alt_stat_value_int = FourCycles_sum_by_node(g);
-  fprintf(stderr, "stat_value_int = %llu\n", stat_value_int);/*XXX*/
   assert(stat_value_int ==   alt_stat_value_int);
   assert(DOUBLE_APPROX_EQ_TEST((double)stat_value_int,  obs_stats[0]));
 

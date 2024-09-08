@@ -63,7 +63,7 @@ ulonglong_t FourCycles_sum_by_node(const graph_t *g)
   for (i = 0; i < g->num_nodes; i++) {
     value += num_four_cycles_node(g, i);
   }
-  fprintf(stderr, "value = %llu\n", value); /*XXX*/
+  /* Each four-cycle is counted 4 times, once for each node in it */
   assert(value % 4 == 0);
   return value / 4;
 }
@@ -125,9 +125,9 @@ double PowerFourCycles(const graph_t *g, double lambda)
   }
   /* Each four-cycle countains 4 nodes so is counted 4 times */
   assert(fourcycle_count_sum % 4 == 0);
-  fprintf(stderr, "fourcycle_count_sum = %llu\n", fourcycle_count_sum);
+  //fprintf(stderr, "fourcycle_count_sum = %llu\n", fourcycle_count_sum);
   num_fourcycles = FourCycles(g);
-  fprintf(stderr, "num_fourcycles =      %llu\n", num_fourcycles);
+  //fprintf(stderr, "num_fourcycles =      %llu\n", num_fourcycles);
   assert(fourcycle_count_sum / 4 == num_fourcycles);
   return value;
 }
