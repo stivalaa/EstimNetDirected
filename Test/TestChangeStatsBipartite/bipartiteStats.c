@@ -410,6 +410,8 @@ double PowerFourCyclesA(const graph_t *g, double lambda)
   double  alpha = 1/lambda;
   double  value = 0;
   uint_t  fourcycle_count = 0;
+  ulonglong_t fourcycle_count_sum = 0;
+  ulonglong_t num_fourcycles;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
@@ -418,8 +420,13 @@ double PowerFourCyclesA(const graph_t *g, double lambda)
     uint_t fourcycle_count_SLOW = num_four_cycles_node_SLOW(g, i);
     fourcycle_count = num_four_cycles_node(g, i);
     assert(fourcycle_count == fourcycle_count_SLOW);
+    fourcycle_count_sum += fourcycle_count;
     value += pow(num_four_cycles_node(g, i), alpha);
   }
+  /* Each four-cycle contains 2 nodes in mode A so is counted twice */
+  assert(fourcycle_count_sum % 2 == 0);
+  num_fourcycles = FourCyclesA(g);
+  assert(fourcycle_count_sum / 2 == num_fourcycles);
   return value;
 }
 
@@ -444,6 +451,8 @@ double PowerFourCyclesB(const graph_t *g, double lambda)
   double  alpha = 1/lambda;
   double  value = 0;
   uint_t  fourcycle_count = 0;
+  ulonglong_t fourcycle_count_sum = 0;
+  ulonglong_t num_fourcycles;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
@@ -452,8 +461,13 @@ double PowerFourCyclesB(const graph_t *g, double lambda)
     uint_t fourcycle_count_SLOW = num_four_cycles_node_SLOW(g, i);
     fourcycle_count = num_four_cycles_node(g, i);
     assert(fourcycle_count == fourcycle_count_SLOW);
+    fourcycle_count_sum += fourcycle_count;
     value += pow(num_four_cycles_node(g, i), alpha);
   }
+  /* Each four-cycle contains 2 nodes in mode B so is counted twice */
+  assert(fourcycle_count_sum % 2 == 0);
+  num_fourcycles = FourCyclesB(g);
+  assert(fourcycle_count_sum / 2 == num_fourcycles);
   return value;
 }
 
