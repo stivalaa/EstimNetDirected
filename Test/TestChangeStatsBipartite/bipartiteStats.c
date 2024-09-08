@@ -140,10 +140,10 @@ static uint_t num_four_cycles_node_SLOW(const graph_t *g, uint_t u)
  * Return value:
  *      number of four-cycles in bipartite graph g
  */
-double FourCyclesA(const graph_t *g)
+ulonglong_t FourCyclesA(const graph_t *g)
 {
   uint_t i,l;
-  double value = 0;
+  ulonglong_t value = 0;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
@@ -158,6 +158,37 @@ double FourCyclesA(const graph_t *g)
   return value;
 }
 
+
+/*
+ * Statistic for FourCycles, number of four-cycles in a bipartite graph.
+ *
+ * This version counting numbers of four-cycles at each node in mode A.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+ulonglong_t FourCyclesA_sum_by_node(const graph_t *g)
+{
+  uint_t i;
+  ulonglong_t value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = 0; i < g->num_A_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_A);
+    value += num_four_cycles_node(g, i);
+  }
+  /* Each four-cycle is counted twice, once for each of the nodes in mode A */
+  assert(value % 2 == 0);
+  return value / 2;
+}
+
+
+
 /*
  * Statistic for FourCycles, number of four-cycles in a bipartite graph.
  *
@@ -170,10 +201,10 @@ double FourCyclesA(const graph_t *g)
  * Return value:
  *      number of four-cycles in bipartite graph g
  */
-double FourCyclesB(const graph_t *g)
+ulonglong_t FourCyclesB(const graph_t *g)
 {
   uint_t i,l;
-  double value = 0;
+  ulonglong_t value = 0;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
@@ -187,6 +218,36 @@ double FourCyclesB(const graph_t *g)
   }
   return value;
 }
+
+
+/*
+ * Statistic for FourCycles, number of four-cycles in a bipartite graph.
+ *
+ * This version counting numbers of four-cycles at each node in mode B.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *
+ * Return value:
+ *      number of four-cycles in bipartite graph g
+ */
+ulonglong_t FourCyclesB_sum_by_node(const graph_t *g)
+{
+  uint_t i;
+  ulonglong_t value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = g->num_A_nodes; i < g->num_A_nodes + g->num_B_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_B);
+    value += num_four_cycles_node(g, i);
+  }
+  /* Each four-cycle is counted twice, once for each of the nodes in mode B */
+  assert(value % 2 == 0);
+  return value / 2;
+}
+
 
 
 /*

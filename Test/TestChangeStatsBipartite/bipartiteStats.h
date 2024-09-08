@@ -18,8 +18,10 @@
 /* Approximate double floating point equality */
 #define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-06 )
 
-double FourCyclesA(const graph_t *g);
-double FourCyclesB(const graph_t *g);
+ulonglong_t FourCyclesA(const graph_t *g);
+ulonglong_t FourCyclesA_sum_by_node(const graph_t *g);
+ulonglong_t FourCyclesB(const graph_t *g);
+ulonglong_t FourCyclesB_sum_by_node(const graph_t *g);
 double BipartiteAltKCyclesA(const graph_t *g, double lambda);
 double BipartiteAltKCyclesB(const graph_t *g, double lambda);
 double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda);

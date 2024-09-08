@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
   /*  uint_t     num_P_nodes = 0; */
   graph_t *g         = NULL;
   double stat_value;
+  ulonglong_t stat_value_int, alt_stat_value_int;  
   double lambda;
   char  *endptr; /* for strtod() */
   bool also_use_slow_functions = FALSE;
@@ -177,12 +178,14 @@ int main(int argc, char *argv[])
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[1]));
   }
 
-  stat_value = FourCyclesA(g);
-  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
-  stat_value = FourCyclesB(g);
-  /* fprintf(stderr,"stat_value   = %.10f\nobs_stats[2] = %.10f\n", stat_value, obs_stats[2]); */
-  /* fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[2]))); */
-  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[2]));
+  stat_value_int = FourCyclesA(g);
+  alt_stat_value_int = FourCyclesA_sum_by_node(g);
+  assert(stat_value_int == alt_stat_value_int);
+  assert(DOUBLE_APPROX_EQ_TEST((double)stat_value_int,  obs_stats[2]));
+  stat_value_int = FourCyclesB(g);
+  alt_stat_value_int = FourCyclesB_sum_by_node(g);
+  assert(stat_value_int == alt_stat_value_int);
+  assert(DOUBLE_APPROX_EQ_TEST((double)stat_value_int,  obs_stats[2]));
 
 
   stat_value = PowerFourCycles(g, lambda_values[3]);
