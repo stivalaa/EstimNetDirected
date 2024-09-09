@@ -51,7 +51,9 @@ MAX_SIZE_ESP_DSP <- 1000000 ## do not do shared partners if more nodes than this
 obscolour <- 'red' # colour to plot observed graph points/lines
 ## simulated graph statistics will be boxplot on same plot in default colour
 
-ptheme <-  theme(legend.position = 'none')
+## Using theme_classic() to get no grey background and no gridlines
+## as required by some journals e.g. J. Complex Networks
+ptheme <- theme_classic() +  theme(legend.position = 'none')
 
 # http://stackoverflow.com/questions/10762287/how-can-i-format-axis-labels-with-exponents-with-ggplot2-and-scales
 orig_scientific_10 <- function(x) {
@@ -273,8 +275,8 @@ deg_hist_plot <- function(g_obs, sim_graphs, mode, use_log, btype=NULL) {
       degreetype <- paste(mode, 'degree', sep='-')
     }
     p <- p + xlab(paste(ifelse(use_log, "log ", ""), degreetype, sep=''))
-    p <- p + theme(legend.title=element_blank(),
-                   legend.position = c(0.9, 0.8))
+    p <- p + ptheme + theme(legend.title=element_blank(),
+                            legend.position = c(0.9, 0.8))
     end <- Sys.time()
     cat(mode, "-degree histogram plotting took",
         as.numeric(difftime(end, start, unit="secs")), "s\n")
@@ -926,7 +928,10 @@ build_sim_fit_plots <- function(g_obs, sim_graphs, do_subplots=FALSE,
       ## too large and messay on combined plots)
       p <- p + geom_point(data = obs_cyclelen_df, aes(x = cyclelen, y = count,
                                                      colour = obscolour, group = 1))
-      p <- p + scale_y_log10(labels = my_scientific_10) 
+      p <- p + scale_y_log10(labels = my_scientific_10)
+      ## increase font size to make it readable when included as subfigure
+      ## and reduced to smaller panels in LaTeX
+      p <- p + theme_classic(base_size = 32) + theme(legend.position = 'none')
       cycledist_outfilename <- paste(simnetfileprefix, "_cycledist.eps", sep="")
       cat("writing cycle length distribution plot to EPS file ", cycledist_outfilename, "\n")
       postscript(cycledist_outfilename, horizontal = FALSE, onefile = FALSE,
