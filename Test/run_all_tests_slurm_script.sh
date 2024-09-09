@@ -8,6 +8,7 @@
 #SBATCH --error=EstimNetDirected_regression_tests-%j.err
 
 echo -n "started at: "; date
+uname -a
 
 module purge
 module load gcc/11.3.0     # need this for 'toolchain' hierarchical modules
