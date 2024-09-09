@@ -21,6 +21,7 @@ module load r/4.2.1
 export MC_CORES=${SLURM_CPUS_ON_NODE}
 echo MC_CORES = $MC_CORES
 
+## far too slow with -y 16 (obs not done afer 25 mins)
 time Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -y 12 -t  -s inouye_pyke_pollinators_bipartite.net sim_gof_inouye_pyke_pollinators_altkcycles
 
 echo -n "ended at: "; date
