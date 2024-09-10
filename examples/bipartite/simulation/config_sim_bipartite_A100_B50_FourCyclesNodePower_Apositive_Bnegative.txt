@@ -72,11 +72,11 @@ simNetFilePrefix = simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Apositi
 
 
 
-structParams =  {Edge                              = -6.00,
-                 BipartiteAltStarsA                = -1.00,
+structParams =  {Edge                              = -5.00,
+                 BipartiteAltStarsA                = -0.20,
                  BipartiteAltStarsB                =  1.00,
                  FourCycles                        =  0,
-                 BipartiteFourCyclesNodePowerA     =  1.00, 
-                 BipartiteFourCyclesNodePowerB     = -1.00}
+                 BipartiteFourCyclesNodePowerA     =  0.50, 
+                 BipartiteFourCyclesNodePowerB     = -0.50}
 
 
