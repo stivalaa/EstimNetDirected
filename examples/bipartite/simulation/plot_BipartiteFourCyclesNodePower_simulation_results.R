@@ -52,7 +52,7 @@ plotlist <- list()
 
 p <- ggplot(data = stats,
             aes(x = theta_BipartiteFourCyclesNodePowerAxB,
-                y = BipartiteFourCyclesNodePowerA.2.)) +
+                y = BipartiteFourCyclesNodePowerA.5.)) +
   theme_classic() +
   geom_boxplot()
 
@@ -60,7 +60,7 @@ plotlist <- c(plotlist, list(p))
 
 p <- ggplot(data = stats,
             aes(x = theta_BipartiteFourCyclesNodePowerAxB,
-                y = BipartiteFourCyclesNodePowerB.2.)) +
+                y = BipartiteFourCyclesNodePowerB.5.)) +
   theme_classic() +
   geom_boxplot()
 
