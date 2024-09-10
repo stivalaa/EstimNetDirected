@@ -1,0 +1,82 @@
+##############################################################################
+#
+# example setting file for SimulateERGM for bipartite network
+#
+#   note parameter and attribute names are not case sensitive (but filenames are)
+#
+
+isBipartite = True
+isDirected  = False
+
+numNodes  = 150  # Total number of nodes
+numNodesA = 100  # Number type A nodes for bipartite (rest are type B)
+
+
+################## Simulation settings #######################################
+
+sampleSize = 100 #number of network samples to take from simulation
+
+ 
+interval = 100000 # interval (iterations) between samples
+ 
+burnin = 100000 # number of iterations to throw away before first sample
+
+outputSimulatedNetworks = True  # write the simulated networks to file
+
+useTNTsampler = True # use the TNT sampler
+
+
+
+
+################## Input filenames ###########################################
+
+
+# Attribute files
+# binattr_file for binary attributes (0 or 1 only)
+# catattr_file for categorical attributes (any integer)
+# The format of the file is a header line with whitespace
+# delimited attribute names, and each subsequent line
+# the attribute values for each attribute.
+# The first line (after the header) has the values for
+# node 0, then the next line node 1, and so on.
+# 
+# E.g.:
+#
+# gender class
+# 0      1
+# 1      2
+# 1      3
+
+#binattrFile = 
+#catattrFile = 
+#conattrFile = 
+
+################## Output filenames ##########################################
+
+# Filename of file to write statistics to
+
+statsFile = stats_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bnegative.txt
+
+# Pajek .net file prefix for simulatd networks
+# Output filenames are constructed from the prefix specified here,
+# with _<i>.net added, where <i> is the iteration
+# So e.g. if simNetFilePrefix = sim then the output files are sim_10000.net etc.
+
+simNetFilePrefix = simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bnegative
+
+################## Parameters to estimate ####################################
+
+#
+# Structural parameters
+#
+
+
+
+structParams =  {Edge                              = -6.00,
+                 BipartiteAltStarsA                = -1.00,
+                 BipartiteAltStarsB                =  1.00,
+                 FourCycles                        =  0,
+                 BipartiteFourCyclesNodePowerA     = -1.00, 
+                 BipartiteFourCyclesNodePowerB     = -1.00}
+
+
