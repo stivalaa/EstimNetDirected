@@ -16,6 +16,7 @@ do
 done
 
 Rscript plot_BipartiteFourCyclesNodePower_simulation_results.R
+Rscript plot_BipartiteFourCyclesNodePower_simulation_graph_visualizations.R
 
 echo -n "ended at: "; date
 

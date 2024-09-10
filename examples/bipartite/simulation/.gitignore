@@ -3,3 +3,4 @@ stats_sim_*-plots.eps
 simulation_sim_*.net
 .pyhistory
 bipartite_fourcyclesnodepower_simulation_boxplots.eps
+bipartite_fourcyclesnodepower_simulation_visualizations.eps
