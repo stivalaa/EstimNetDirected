@@ -9,7 +9,7 @@ isBipartite = True
 isDirected  = False
 
 numNodes  = 150  # Total number of nodes
-numNodesA = 100  # Number type A nodes for bipartite (rest are type B)
+numNodesA = 75  # Number type A nodes for bipartite (rest are type B)
 
 
 ################## Simulation settings #######################################
