@@ -15,5 +15,7 @@ do
   time Rscript ${ROOT}/scripts/plotSimulationDiagnostics.R ${statsfile}
 done
 
+Rscript plot_BipartiteFourCyclesNodePower_simulation_results.R
+
 echo -n "ended at: "; date
 
