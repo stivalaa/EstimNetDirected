@@ -27,13 +27,13 @@ plot_graph <- function(g, name) {
 }
 
 graph_filenames <- list(
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bnegative_9900000.net',
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bpositive_9900000.net',
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bnegative_9900000.net',
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bpositive_9900000.net',
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bzero_9900000.net',
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bpositive_9900000.net',
-  'simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bzero_9900000.net')
+  'simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bnegative_9900000.net',
+  'simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bpositive_9900000.net',
+  'simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bnegative_9900000.net',
+  'simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bpositive_9900000.net',
+  'simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bzero_9900000.net',
+  'simulation_sim_bipartite_FourCyclesNodePower_Azero_Bpositive_9900000.net',
+  'simulation_sim_bipartite_FourCyclesNodePower_Azero_Bzero_9900000.net')
 
 ## lines up with filenames above
 graphnames <- list(

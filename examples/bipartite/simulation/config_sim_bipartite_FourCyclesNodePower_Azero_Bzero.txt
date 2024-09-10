@@ -55,14 +55,14 @@ useTNTsampler = True # use the TNT sampler
 
 # Filename of file to write statistics to
 
-statsFile = stats_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bzero.txt
+statsFile = stats_sim_bipartite_FourCyclesNodePower_Azero_Bzero.txt
 
 # Pajek .net file prefix for simulatd networks
 # Output filenames are constructed from the prefix specified here,
 # with _<i>.net added, where <i> is the iteration
 # So e.g. if simNetFilePrefix = sim then the output files are sim_10000.net etc.
 
-simNetFilePrefix = simulation_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bzero
+simNetFilePrefix = simulation_sim_bipartite_FourCyclesNodePower_Azero_Bzero
 
 ################## Parameters to estimate ####################################
 

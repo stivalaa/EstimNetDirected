@@ -18,13 +18,13 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 
-statfiles <- list('stats_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bnegative.txt',
-                  'stats_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bpositive.txt',
-                  'stats_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bnegative.txt',
-                  'stats_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bpositive.txt',
-                  'stats_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bzero.txt',
-                  'stats_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bpositive.txt',
-                  'stats_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bzero.txt')
+statfiles <- list('stats_sim_bipartite_FourCyclesNodePower_Anegative_Bnegative.txt',
+                  'stats_sim_bipartite_FourCyclesNodePower_Anegative_Bpositive.txt',
+                  'stats_sim_bipartite_FourCyclesNodePower_Apositive_Bnegative.txt',
+                  'stats_sim_bipartite_FourCyclesNodePower_Apositive_Bpositive.txt',
+                  'stats_sim_bipartite_FourCyclesNodePower_Apositive_Bzero.txt',
+                  'stats_sim_bipartite_FourCyclesNodePower_Azero_Bpositive.txt',
+                  'stats_sim_bipartite_FourCyclesNodePower_Azero_Bzero.txt')
 stats_dfs <- lapply(statfiles, function(x) read.table(x, header=T))
 stats_dfs[[1]]$theta_BipartiteFourCyclesNodePowerA <- "neg"
 stats_dfs[[2]]$theta_BipartiteFourCyclesNodePowerA <- "neg"

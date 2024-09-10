@@ -5,7 +5,7 @@ uname -a
 
 ROOT=../../..
 
-for configfile in config_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bnegative.txt config_sim_bipartite_A100_B50_FourCyclesNodePower_Anegative_Bpositive.txt config_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bnegative.txt config_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bpositive.txt config_sim_bipartite_A100_B50_FourCyclesNodePower_Apositive_Bzero.txt config_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bpositive.txt config_sim_bipartite_A100_B50_FourCyclesNodePower_Azero_Bzero.txt
+for configfile in config_sim_bipartite_FourCyclesNodePower_Anegative_Bnegative.txt config_sim_bipartite_FourCyclesNodePower_Anegative_Bpositive.txt config_sim_bipartite_FourCyclesNodePower_Apositive_Bnegative.txt config_sim_bipartite_FourCyclesNodePower_Apositive_Bpositive.txt config_sim_bipartite_FourCyclesNodePower_Apositive_Bzero.txt config_sim_bipartite_FourCyclesNodePower_Azero_Bpositive.txt config_sim_bipartite_FourCyclesNodePower_Azero_Bzero.txt
 do
   echo ========== ${configfile} ==========
   time ${ROOT}/src/SimulateERGM  ${configfile}
