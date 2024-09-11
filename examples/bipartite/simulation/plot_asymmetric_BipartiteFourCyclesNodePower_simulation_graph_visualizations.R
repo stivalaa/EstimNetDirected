@@ -44,19 +44,21 @@ graph_filenames <- lapply(graph_prefixes,
 
 ## lines up with filenames above
 graphnames <- list(
-  'Anegative_Bnegative',
-  'Apositive_Bnegative',  
-  'Anegative_Bpositive',
-  'Apositive_Bpositive',
-  'Azero_Bpositive',
-  'Apositive_Bzero',
-  'Azero_Bzero')
+  'neg.neg',
+  'pos.neg',  
+  'neg.pos',
+  'pos.pos',
+  'zero.pos',
+  'pos.zero',
+  'zero.zero')
 
 stopifnot(length(graphnames) == length(graph_filenames))
 
 postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_visualizations.eps")
 par(mfrow = c(2,4),
-    mar=c(1, 0, 1, 0)) 
+    mar=c(1, 0, 1, 0),
+    oma=c(0, 0, 0, 0),
+    cex.main = 2 )
 for (i in 1:length(graph_filenames)) {
   filename <- graph_filenames[[i]]
   g <- read.graph(filename, format='pajek')
