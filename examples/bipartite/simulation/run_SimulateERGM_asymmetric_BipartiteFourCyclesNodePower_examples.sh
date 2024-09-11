@@ -24,7 +24,8 @@ Rscript plot_asymmetric_BipartiteFourCyclesNodePower_simulation_graph_visualizat
 for prefix in simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bnegative simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bpositive simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bnegative simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bpositive simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bzero simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Azero_Bpositive simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Azero_Bzero
 do
   echo ========== ${prefix} ==========
-  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -t -y 16 ${prefix}_9900000.net ${prefix}
+  ## no -t as Opsahl cc too slow to compute on (at least) simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bnegative
+  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -y 16 ${prefix}_9900000.net ${prefix}
 done
 
 echo -n "ended at: "; date
