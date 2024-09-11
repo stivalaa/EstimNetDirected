@@ -26,10 +26,7 @@ library(stringr) # for str_wrap()
 ## using theme_classic() to get no grey background and no gridlines
 ## for some journal requirements e.g. J. Complex Networks
 
-theme_set(theme_classic(base_size = 20))
-
-## Also increase x axis x size specifically so subsript not too small
-#theme_update(axis.title.x = element_text(size = 20))
+theme_set(theme_classic(base_size = 14))
 
 
 
