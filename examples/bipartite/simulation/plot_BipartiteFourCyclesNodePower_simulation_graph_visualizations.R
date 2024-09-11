@@ -21,7 +21,8 @@ plot_graph <- function(g, name) {
        vertex.size = 4,
        vertex.color = ifelse(V(g)$type, 'blue', 'red'),
        vertex.shape = ifelse(V(g)$type, 'square', 'circle'),
-       layout = layout.kamada.kawai,
+       #layout = layout.kamada.kawai,
+       layout = layout.fruchterman.reingold,
        main = name
        )
 }
