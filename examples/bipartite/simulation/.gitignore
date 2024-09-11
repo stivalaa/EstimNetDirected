@@ -4,3 +4,4 @@ simulation_sim_*.net
 .pyhistory
 bipartite_fourcyclesnodepower_simulation_boxplots.eps
 bipartite_fourcyclesnodepower_simulation_visualizations.eps
+simulation_sim_bipartite_FourCyclesNodePower_*.pdf

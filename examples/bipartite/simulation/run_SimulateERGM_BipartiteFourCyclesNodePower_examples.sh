@@ -18,5 +18,14 @@ done
 Rscript plot_BipartiteFourCyclesNodePower_simulation_results.R
 Rscript plot_BipartiteFourCyclesNodePower_simulation_graph_visualizations.R
 
+# Also plot 'goodness-of-fit' plots where 'observed' network is the
+# single simulated network used in graph visualizations
+
+for prefix in simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bnegative simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bpositive simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bnegative simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bpositive simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bzero simulation_sim_bipartite_FourCyclesNodePower_Azero_Bpositive simulation_sim_bipartite_FourCyclesNodePower_Azero_Bzero
+do
+  echo ========== ${prefix} ==========
+  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R ${prefix}_9900000.net ${prefix}
+done
+
 echo -n "ended at: "; date
 
