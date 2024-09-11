@@ -73,8 +73,8 @@ simNetFilePrefix = simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bnegat
 
 
 structParams =  {Edge                              = -5.00,
-                 BipartiteAltStarsA                = -0.10,
-                 BipartiteAltStarsB                =  1.00,
+                 BipartiteAltStarsA                =  0.50,
+                 BipartiteAltStarsB                =  0.50,
                  FourCycles                        =  0,
                  BipartiteFourCyclesNodePowerA(2)     = -0.25, 
                  BipartiteFourCyclesNodePowerB(2)     = -0.25}
