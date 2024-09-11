@@ -76,7 +76,7 @@ structParams =  {Edge                              = -5.00,
                  BipartiteAltStarsA                =  0.50,
                  BipartiteAltStarsB                =  0.50,
                  FourCycles                        =  0,
-                 BipartiteFourCyclesNodePowerA(2)     =  0   , 
-                 BipartiteFourCyclesNodePowerB(2)     =  0.25}
+                 BipartiteFourCyclesNodePowerA(5)     =  0   , 
+                 BipartiteFourCyclesNodePowerB(5)     =  0.25}
 
 
