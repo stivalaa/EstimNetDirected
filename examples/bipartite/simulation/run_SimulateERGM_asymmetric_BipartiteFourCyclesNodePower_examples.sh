@@ -25,7 +25,8 @@ for prefix in simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_
 do
   echo ========== ${prefix} ==========
   ## no -t as Opsahl cc too slow to compute on (at least) simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bnegative
-  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -y 16 ${prefix}_9900000.net ${prefix}
+  ## -y 16 takes too long (not finished after 45 minutes on positive_positive) so does 12 (1.4 hours just for observed), changed to 8 (as even 10 was 421943596)
+  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -y 8 ${prefix}_9900000.net ${prefix}
 done
 
 echo -n "ended at: "; date
