@@ -17,6 +17,22 @@
 library(ggplot2)
 library(grid)
 library(gridExtra)
+library(stringr) # for str_wrap()
+
+## Change default font size to make it larger so readable when included in
+## LaTeX documents and reduced in smaller panels
+## https://ggplot2.tidyverse.org/articles/faq-customising.html
+
+## using theme_classic() to get no grey background and no gridlines
+## for some journal requirements e.g. J. Complex Networks
+
+theme_set(theme_classic(base_size = 20))
+
+## Also increase x axis x size specifically so subsript not too small
+#theme_update(axis.title.x = element_text(size = 20))
+
+
+
 
 statfiles <- list('stats_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bnegative.txt',
                   'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bpositive.txt',
@@ -53,17 +69,20 @@ plotlist <- list()
 p <- ggplot(data = stats,
             aes(x = theta_BipartiteFourCyclesNodePowerAxB,
                 y = BipartiteFourCyclesNodePowerA.5.)) +
-  theme_classic() +
-  ylab("BipartiteFourCyclesNodePowerA") +
-  geom_boxplot()
+  xlab("BipartiteFourCyclesNodePower A and B parameter signs") +
+  #ylab(str_wrap("Bipartite FourCycles NodePowerA", width = 5)) +
+  ylab("Bp. 4C N.P. A") +
+#R  theme(axis.title.y = element_text(angle=0)) +
+  geom_boxplot() 
 
 plotlist <- c(plotlist, list(p))
 
 p <- ggplot(data = stats,
             aes(x = theta_BipartiteFourCyclesNodePowerAxB,
                 y = BipartiteFourCyclesNodePowerB.5.)) +
-  theme_classic() +
-  ylab("BipartiteFourCyclesNodePowerB") +
+  xlab("BipartiteFourCyclesNodePower A and B parameter signs") +  
+  #ylab("BipartiteFourCyclesNodePowerB") +
+  ylab("Bp. 4C N.P. B") +  
   geom_boxplot()
 
 plotlist <- c(plotlist, list(p))
@@ -72,7 +91,7 @@ plotlist <- c(plotlist, list(p))
 p <- ggplot(data = stats,
             aes(x = theta_BipartiteFourCyclesNodePowerAxB,
                 y = FourCycles)) +
-  theme_classic() +
+  xlab("BipartiteFourCyclesNodePower A and B parameter signs") +  
   geom_boxplot()
 
 plotlist <- c(plotlist, list(p))
