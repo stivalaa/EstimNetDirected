@@ -26,7 +26,7 @@ library(stringr) # for str_wrap()
 ## using theme_classic() to get no grey background and no gridlines
 ## for some journal requirements e.g. J. Complex Networks
 
-theme_set(theme_classic(base_size = 14))
+theme_set(theme_classic(base_size = 12))
 
 
 
