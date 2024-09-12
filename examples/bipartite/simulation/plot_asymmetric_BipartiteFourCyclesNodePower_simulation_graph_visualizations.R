@@ -57,7 +57,7 @@ stopifnot(length(graphnames) == length(graph_filenames))
 postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_visualizations.eps")
 par(mfrow = c(2,4),
     mar=c(1, 0, 1, 0),
-    cex.main = 2 )
+    cex.main = 2, font.main=1)
 for (i in 1:length(graph_filenames)) {
   filename <- graph_filenames[[i]]
   g <- read.graph(filename, format='pajek')
