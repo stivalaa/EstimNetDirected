@@ -96,7 +96,7 @@ p <- ggplot(data = stats,
 plotlist <- c(plotlist, list(p))
 
 
-postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_boxplots.eps")
+postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_boxplots.eps", horizontal=FALSE, paper="special", width=9, height=6)
 do.call(grid.arrange, plotlist)
 dev.off()
 
