@@ -54,7 +54,7 @@ graphnames <- list(
 
 stopifnot(length(graphnames) == length(graph_filenames))
 
-postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_visualizations.eps")
+postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_visualizations.eps", horizontal=FALSE, paper="special", width=9, height=6)
 par(mfrow = c(2,4),
     mar=c(1, 0, 1, 0),
     cex.main = 2, font.main=1)
