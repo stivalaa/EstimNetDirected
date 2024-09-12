@@ -24,7 +24,8 @@ Rscript plot_BipartiteFourCyclesNodePower_simulation_graph_visualizations.R
 for prefix in simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bnegative simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bpositive simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bnegative simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bpositive simulation_sim_bipartite_FourCyclesNodePower_Apositive_Bzero simulation_sim_bipartite_FourCyclesNodePower_Azero_Bpositive simulation_sim_bipartite_FourCyclesNodePower_Azero_Bzero
 do
   echo ========== ${prefix} ==========
-  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R -t -y 16 ${prefix}_9900000.net ${prefix}
+  ## -t and -y 16 too slow on higher density / higher four-cycles graphs
+  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -y 8 ${prefix}_9900000.net ${prefix}
 done
 
 echo -n "ended at: "; date
