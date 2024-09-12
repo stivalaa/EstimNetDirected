@@ -31,7 +31,7 @@ plot_graph <- function(g, name) {
 ## (which itself is ordered by some ggplot2 internals, so arranged
 ## this plot to match since this one I can control the order easily).
 graph_prefixes <- list(
-  'simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bnegative',
+#unintersting; very sparse, like zero.zero:  'simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bnegative',
   'simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bnegative',  
   'simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bpositive',
   'simulation_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bpositive',
@@ -44,7 +44,7 @@ graph_filenames <- lapply(graph_prefixes,
 
 ## lines up with filenames above
 graphnames <- list(
-  'neg.neg',
+#  'neg.neg',
   'pos.neg',  
   'neg.pos',
   'pos.pos',
@@ -55,7 +55,7 @@ graphnames <- list(
 stopifnot(length(graphnames) == length(graph_filenames))
 
 postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_visualizations.eps", horizontal=FALSE, paper="special", width=9, height=6)
-par(mfrow = c(2,4),
+par(mfrow = c(2,3),
     mar=c(1, 0, 1, 0),
     cex.main = 2, font.main=1)
 for (i in 1:length(graph_filenames)) {

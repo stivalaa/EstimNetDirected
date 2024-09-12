@@ -33,7 +33,7 @@ theme_update(axis.text.x = element_text(size = 14))
 
 
 
-statfiles <- list('stats_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bnegative.txt',
+statfiles <- list(#uninterseting; very sparse like zero.zero: 'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bnegative.txt',
                   'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_Bpositive.txt',
                   'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bnegative.txt',
                   'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Apositive_Bpositive.txt',
@@ -41,24 +41,23 @@ statfiles <- list('stats_sim_bipartite_asymmetric_FourCyclesNodePower_Anegative_
                   'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Azero_Bpositive.txt',
                   'stats_sim_bipartite_asymmetric_FourCyclesNodePower_Azero_Bzero.txt')
 stats_dfs <- lapply(statfiles, function(x) read.table(x, header=T))
+#stats_dfs[[1]]$theta_BipartiteFourCyclesNodePowerA <- "neg"
 stats_dfs[[1]]$theta_BipartiteFourCyclesNodePowerA <- "neg"
-stats_dfs[[2]]$theta_BipartiteFourCyclesNodePowerA <- "neg"
+stats_dfs[[2]]$theta_BipartiteFourCyclesNodePowerA <- "pos"
 stats_dfs[[3]]$theta_BipartiteFourCyclesNodePowerA <- "pos"
 stats_dfs[[4]]$theta_BipartiteFourCyclesNodePowerA <- "pos"
-stats_dfs[[5]]$theta_BipartiteFourCyclesNodePowerA <- "pos"
+stats_dfs[[5]]$theta_BipartiteFourCyclesNodePowerA <- "zero"
 stats_dfs[[6]]$theta_BipartiteFourCyclesNodePowerA <- "zero"
-stats_dfs[[7]]$theta_BipartiteFourCyclesNodePowerA <- "zero"
-stats_dfs[[1]]$theta_BipartiteFourCyclesNodePowerB <- "neg"
-stats_dfs[[2]]$theta_BipartiteFourCyclesNodePowerB <- "pos"
-stats_dfs[[3]]$theta_BipartiteFourCyclesNodePowerB <- "neg"
-stats_dfs[[4]]$theta_BipartiteFourCyclesNodePowerB <- "pos"
-stats_dfs[[5]]$theta_BipartiteFourCyclesNodePowerB <- "zero"
-stats_dfs[[6]]$theta_BipartiteFourCyclesNodePowerB <- "pos"
-stats_dfs[[7]]$theta_BipartiteFourCyclesNodePowerB <- "zero"
+#stats_dfs[[1]]$theta_BipartiteFourCyclesNodePowerB <- "neg"
+stats_dfs[[1]]$theta_BipartiteFourCyclesNodePowerB <- "pos"
+stats_dfs[[2]]$theta_BipartiteFourCyclesNodePowerB <- "neg"
+stats_dfs[[3]]$theta_BipartiteFourCyclesNodePowerB <- "pos"
+stats_dfs[[4]]$theta_BipartiteFourCyclesNodePowerB <- "zero"
+stats_dfs[[5]]$theta_BipartiteFourCyclesNodePowerB <- "pos"
+stats_dfs[[6]]$theta_BipartiteFourCyclesNodePowerB <- "zero"
 
 stats <- rbind(stats_dfs[[1]], stats_dfs[[2]], stats_dfs[[3]],
-               stats_dfs[[4]], stats_dfs[[5]], stats_dfs[[6]],
-               stats_dfs[[7]])
+               stats_dfs[[4]], stats_dfs[[5]], stats_dfs[[6]])
 
 stats$theta_BipartiteFourCyclesNodePowerAxB <-  interaction(stats$theta_BipartiteFourCyclesNodePowerA, stats$theta_BipartiteFourCyclesNodePowerB)
 
