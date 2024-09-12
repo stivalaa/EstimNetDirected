@@ -28,6 +28,8 @@ library(stringr) # for str_wrap()
 
 theme_set(theme_classic(base_size = 12))
 
+# Also increase x axis labels specifically 
+theme_update(axis.text.x = element_text(size = 14))
 
 
 
