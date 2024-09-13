@@ -1,7 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+
+#SBATCH --job-name="SimulateERGM_asymmetric_BipartiteFourCyclesNodePower"
+#SBATCH --ntasks=1
+#SBATCH --time=0-02:00:00
+#SBATCH --mem-per-cpu=2GB
+#SBATCH --output=SimulateERGM_asymmetric_BipartiteFourCyclesNodePower-%j.out
+#SBATCH --error=SimulateERGM_asymmetric_BipartiteFourCyclesNodePower-%j.err
 
 echo -n "started at: "; date
 uname -a
+
+module load gcc/11.3.0 # needed by r/4.2.1
+module load openmpi/4.1.4 # needed by r/4.2.1
+module load r/4.2.1
 
 ROOT=../../..
 
