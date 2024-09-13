@@ -25,7 +25,8 @@ for prefix in simulation_sim_bipartite_FourCyclesNodePower_Anegative_Bnegative s
 do
   echo ========== ${prefix} ==========
   ## -t and -y 16 too slow on higher density / higher four-cycles graphs
-  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -y 8 ${prefix}_9900000.net ${prefix}
+  ## even -y 8 too slow on pos.pos
+  Rscript ${ROOT}/scripts/plotEstimNetDirectedSimFit.R  -y 6 ${prefix}_9900000.net ${prefix}
 done
 
 echo -n "ended at: "; date
