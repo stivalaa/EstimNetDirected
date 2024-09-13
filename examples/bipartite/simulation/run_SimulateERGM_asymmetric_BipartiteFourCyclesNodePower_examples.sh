@@ -3,7 +3,7 @@
 #SBATCH --job-name="SimulateERGM_asymmetric_BipartiteFourCyclesNodePower"
 #SBATCH --ntasks=1
 #SBATCH --time=0-02:00:00
-#SBATCH --mem-per-cpu=2GB
+#SBATCH --mem-per-cpu=1GB
 #SBATCH --output=SimulateERGM_asymmetric_BipartiteFourCyclesNodePower-%j.out
 #SBATCH --error=SimulateERGM_asymmetric_BipartiteFourCyclesNodePower-%j.err
 
