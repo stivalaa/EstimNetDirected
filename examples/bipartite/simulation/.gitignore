@@ -12,3 +12,4 @@ run_SimulateERGM_asymmetric_BipartiteFourCyclesNodePower_examples.out
 run_SimulateERGM_BipartiteFourCyclesNodePower_examples.out
 SimulateERGM_asymmetric_BipartiteFourCyclesNodePower-*.???
 SimulateERGM_BipartiteFourCyclesNodePower-*.???
+simulated_networks.tar
