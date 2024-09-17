@@ -226,3 +226,33 @@ print_graph_stats(g15, 'Four-cycles-3-revmode')
 write.graph(g15,'fourcycle3_revmode_bipartite.net', format='pajek')
 plot_graph_viz(g15, 'fourcycle3_revmode_bipartite.eps', layout = layout.sugiyama)
 
+##
+## See email "New four-cycles ERGM parameter" sent 13 Feburary 2024:
+##
+##   So far I have only a single FourCyclesNodePower parameter (and is
+##   equally applicable to one or two mode networks). But actually,
+##   since it is based on per- node counts, it is easily separable
+##   into FourCyclesNodePowerB and FourCyclesNodePowerA for the two
+##   modes separately. Which for two-mode (bipartite) networks, is
+##   likely to be desirable, e.g. for something like this structure
+##   they have different values (only the central node's count is > 1
+##   and hence affected by alpha) which is hidden if you just have the
+##   single statistic ignoring mode. (As far as I know this is not a
+##   named graph [https://en.wikipedia.org/wiki/List_of_graphs], but
+##   it is something like a bipartite version of the "Dutch windmill
+##   graph' otherwise known as the "Friendship graph" or "n-fan",
+##   where instead of joining n copies of the triangle graph C3 to a
+##   common vertex, I have joined n copies (n = 3 in the drawing) of
+##   the four-cycle C4 (which in a bipartite graph is necessarily
+##   chordless i.e. a hole) to a common vertex in a bipartite graph.)
+##
+
+g16 <- graph.ring(4) %>% add.vertices(3) %>%add.edges(c(1,5,5,6,6,7,7,1)) %>%
+  add.vertices(3) %>%  add.edges(c(1,8,8,9,9,10,10,1))
+bimapping <- bipartite.mapping(g16)
+stopifnot(bimapping$res)
+V(g16)$type <- bimapping$type
+print_graph_stats(g16, 'Four-fan-3')
+write.graph(g16,'fourfan3_bipartite.net', format='pajek')
+plot_graph_viz(g16, 'fourfan3_bipartite.eps', layout = layout.kamada.kawai)
+
