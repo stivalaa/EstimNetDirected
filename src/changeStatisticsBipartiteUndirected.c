@@ -170,13 +170,6 @@
  *    BipartiteAltKCyclesA = XACA = Kca
  *    BipartiteAltKCyclesB = XACB = Kcp
  *
- * See tests in ../Test/TestChangeStatsBipartite/ for validation that
- * changeKsp [BPNet] = changeBipartiteAltStarsA [EstimNetDirected],
- * changeKsa [BPNet] = changeBipartiteAltStarsB [EstimNetDirected],
- * changeKCp [BPNet] = changeBipartiteAltKCyclesB [EstimNetDirected],
- * changeKca [BPNet] = changeBipartiteAltKCyclesB [EstimNetDirected] etc.
- *
- *
  *
  * b1nodematch and b2nodematch (statnet ergm names) are defined in:
  *

@@ -239,6 +239,11 @@ int main(int argc, char *argv[])
       continue;
     }
 
+    /* Note this is extremely confusing as A and P types are swapped in the
+     * baseline generation BPNet test code testChangeStatsBipartiteMain.c
+     * [/switchdrive/Institution/USI/shared/ERGMXL/code/BPNetChangeStatistics/TestChangeStatsBipartite/]
+     * See changeStatsBipartiteUndirected.c comment block.
+     */
     printf("i = %d, j = %d, changeC4 = %g, changeKsp = %g, changeKsa = %g, changeKca = %g, changeKcp = %g, changeSa2 = %g, changeSp2 = %g, changeSa3 = %g, changeSp3 = %g, changeL3 = %g\n", i, j - g->num_A_nodes,
 	   changeFourCycles(g, i, j, lambda),
            changeBipartiteAltStarsA(g, i, j, lambda),
