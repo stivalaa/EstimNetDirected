@@ -93,6 +93,9 @@ observedStatsFilePrefix = obs_stats_ifd_inouye_pyke_pollinators_altkcycles
 #converges, but bad fit on C4:
 structParams =  {       BipartiteAltStarsA(2.0), BipartiteAltStarsB(5), BipartiteAltKCyclesB(2.0) }
 
+# does not converge:
+#structParams =  {       BipartiteAltStarsA(2.0), BipartiteAltStarsB(2), BipartiteAltKCyclesA(2.0), BipartiteAltKCyclesB(2.0) }
+
 #
 # Attribute parameters
 #

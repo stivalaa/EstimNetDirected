@@ -90,6 +90,94 @@
  * the names used here are consistent with MPNet e.g. XACB in MPNet
  * is AltKCyclesB here].
  *
+ * This is very confusing, so perhaps an example is necessary.
+ * For this purpose I will use the Inouye-Pyke pollinator web data
+ * from ../examples/bipartite/inouye_pyke_pollinators/.
+ * This network has 91 pollinators and 42 plants.
+ *
+ * For BPNet, supplying an affiliation matrix with 91 rows and 42 columns,
+ * we have from BPNet (in file start-statistics-inouye_pyke.txt):
+ *
+ *  ****This graph contains:****
+ * vertices_A	91
+ * vertices_P	42
+ * L	281
+ * Ksa	305.594483
+ * Ksp	415.502266
+ * Kcp	1167.875000
+ *
+ * (note this is already confusing, as although the supplied matrix
+ * has 91 rows representing the pollinators ("Persons") and 42 columns
+ * representing plants ("Affiliations") as conventional, BPNet takes the
+ * rows as type A and the columns as type P).
+ *
+ * MPNet using the same input matrix gives (with 91 A nodes and
+ * 42 B nodes in GUI under "Number of nodes", since A must be rows
+ * and B columns), at the top of the setting file inouye_mpnet.pnet:
+ *
+ * Session_Name
+ * inouye_mpnet
+ * Session_Folder
+ * C:\Users\user\switchdrive\Institution\USI\shared\ERGMXL\example_bipartite_networks\MPNet_estimations\ERGM\Inouye_Pyke_pollinator_web
+ * Num_nodes_A
+ * 91
+ * Num_nodes_P
+ * 42
+ *
+ * indicating that A in BPNet corresponds to A in MPNet and
+ * P in BPNet corresponds to B in MPNet. And with this
+ * model (inouye_mpnet_est.txt):
+ *
+ * Effects	Lambda	Parameter	Stderr	t-ratio	SACF
+ * XEdge	2.0000	-5.5726	0.197	0.024	0.678	*
+ * XASA	2.0000	0.7998	0.127	0.022	0.623	*
+ * XASB	2.0000	0.7301	0.174	0.020	0.649	*
+ * XACB	2.0000	0.0730	0.002	-0.012	0.806	*
+ *
+ * the observed statistics are (inouye_mpnet_est.txt):
+ *
+ * Observed graph statistics:
+ * 281.00	305.59	415.50	1167.88	
+ *
+ * i.e. XEdge = 281, XASA = 305.39, XASB = 415.50, XACB = 1167.88,
+ * showing that KSa in BPNet is XASA in MPNet, KSp in BPNet is XASB in
+ * MPNET, and Kcp in BPNet is XACB in MPNet. This is also confirmed
+ * with the GoF output (inouye_mpnet_gof.txt):
+ *
+ * Statistics      Observed        Mean    StdDev  t-ratio
+ * XEdge   281.00000000    177.69300000    85.37181473     1.21008321
+ * X3Path  15919.00000000  3548.88900000   3965.69826496   3.11927690      #
+ * X4Cycle 830.00000000    84.73700000     111.69013310    6.67259479      #
+ * XASA    305.59448338    163.21189795    112.98077897    1.26023724
+ * XASB    415.50226605    231.82008951    146.54563247    1.25341283
+ * XACA    586.65625000    224.56791016    163.67465093    2.21224446      #
+ * XACB    1167.87500000   516.95787500    411.77137307    1.58077314
+ *
+ *
+ * With EstimNetDirected (see ../examples/bipartite/inouye_pyke_pollinators/)
+ * we have (stdout):
+ *
+ * Two-mode Graph with 133 vertices (91 mode A, 42 mode B) and 281 edges (density 0.0735217) [loops not allowed]
+ *
+ * and (obs_stats_ifd_inouye_pyke_pollinators_altkcycles_0.txt):
+ *
+ * Edge BipartiteAltStarsA(2) BipartiteAltStarsB(2) BipartiteAltKCyclesA(2) BipartiteAltKCyclesB(2)
+ * 281 305.594 415.502 586.656 1167.88
+ *
+ *
+ * so BipartiteAltStarsA   = XASA = Ksa
+ *    BipartiteAltStasrB   = XASB = Ksp
+ *    BipartiteAltKCyclesA = XACA = Kca
+ *    BipartiteAltKCyclesB = XACB = Kcp
+ *
+ * See tests in ../Test/TestChangeStatsBipartite/ for validation that
+ * changeKsp [BPNet] = changeBipartiteAltStarsA [EstimNetDirected],
+ * changeKsa [BPNet] = changeBipartiteAltStarsB [EstimNetDirected],
+ * changeKCp [BPNet] = changeBipartiteAltKCyclesB [EstimNetDirected],
+ * changeKca [BPNet] = changeBipartiteAltKCyclesB [EstimNetDirected] etc.
+ *
+ *
+ *
  * b1nodematch and b2nodematch (statnet ergm names) are defined in:
  *
  *    Bomiriya, R. P. (2014). Topics in exponential random graph
