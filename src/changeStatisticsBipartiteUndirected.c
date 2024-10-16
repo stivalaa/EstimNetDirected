@@ -365,6 +365,7 @@ double changeBipartiteAltKCyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
   slow_assert(!isEdge(g, i, j));
   for (k = 0; k < g->degree[i]; k++) {
     v = g->edgelist[i][k];
+    assert(bipartite_node_mode(g, v) == MODE_B);
     if (v != j) {
       delta += POW_LOOKUP(1-1/lambda, GET_B2PATH_ENTRY(g, j, v));
     }
@@ -393,6 +394,7 @@ double changeBipartiteAltKCyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
   slow_assert(!isEdge(g, i, j));
   for (k = 0; k < g->degree[j]; k++) {
     v = g->edgelist[j][k];
+    assert(bipartite_node_mode(g, v) == MODE_A);
     if (v != i) {
       delta += POW_LOOKUP(1-1/lambda, GET_A2PATH_ENTRY(g, i, v));
     }
