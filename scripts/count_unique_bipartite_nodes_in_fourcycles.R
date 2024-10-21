@@ -58,7 +58,10 @@ if (!is.bipartite(g)) {
   cat('ERROR: graph is not bipartite\n')
   quit(save='no', status=1)
 }
-fourcycle_nodes <- unlist(get_fourcycle_nodes(g))
+
+fourcycles_list <- get_fourcycle_nodes(g)
+cat('Number of four-cycles:', length(fourcycles_list),'\n')
+fourcycle_nodes <- unlist(fourcycles_list)
 stopifnot(length(fourcycle_nodes) %% 4 == 0)
 ## must be same number of type FALSE(0) nodes as type TRUE(1) nodes in 4cycles
 stopifnot(sum((V(g)[fourcycle_nodes]$type)) == length(fourcycle_nodes)/2)
