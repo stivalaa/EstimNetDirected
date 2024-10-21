@@ -1,3 +1,4 @@
+
 ##
 ## File:    count_unique_bipartite_nodes_in_fourcycles.R
 ## Author:  Alex Stivala
@@ -58,6 +59,9 @@ if (!is.bipartite(g)) {
   cat('ERROR: graph is not bipartite\n')
   quit(save='no', status=1)
 }
+cat('Number of A nodes: ', sum(1-V(g)$type), '\n')
+cat('Number of B nodes: ', sum(V(g)$type), '\n')
+stopifnot(sum(1-V(g)$type) == vcount(g) - sum(V(g)$type))
 
 fourcycles_list <- get_fourcycle_nodes(g)
 cat('Number of four-cycles:', length(fourcycles_list),'\n')
