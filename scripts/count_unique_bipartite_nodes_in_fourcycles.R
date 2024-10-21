@@ -3,7 +3,7 @@
 ## Author:  Alex Stivala
 ## Created: October 2024
 ##
-## Function to get lists of nodes in four-cycles in a graph.
+## Script to get lists of nodes in four-cycles in a graph.
 ##
 ## The CYPATH directory containing cypath executable and Perl scripts
 ## (transgrh.pl etc.) must be in the PATH as this R script uses
