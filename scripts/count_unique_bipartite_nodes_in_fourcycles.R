@@ -53,7 +53,7 @@ if (length(args) != 1) {
 netfilename <- args[1]
 
 g <- read.graph(netfilename, format='pajek')
-print(summary(g))
+print(g)
 if (!is.bipartite(g)) {
   cat('ERROR: graph is not bipartite\n')
   quit(save='no', status=1)
