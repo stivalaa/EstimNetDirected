@@ -1,3 +1,11 @@
+v3.8.6 (18 November 2024)
+
+* Use mclapply() to parallelize four-cycle counting in gof sim plots
+* New tests for change stats, comparing to diff of directly computed stats
+* Use theme_classic() not default on simulation diagnostic plots so no background or gridlinese (as required by some journals)
+* More tests for four-cycle computations
+* Simulation examples for bipartite networks using BipartiteFourCyclesNodePower
+
 v3.8.5 (27 March 2024)
 
 * Implemented experimental change statistics FourCyclesNodePower, BipartiteFourCyclesNodePowerA, BipartiteFourCyclesNodePowerB
