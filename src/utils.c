@@ -281,7 +281,7 @@ timeval_subtract (struct timeval *result, struct timeval *x,
 char *rstrip(char *s)
 {
   int i;
-  for (i = strlen(s) - 1; i >= 0 && isspace(s[i]); i--)
+  for (i = strlen(s) - 1; i >= 0 && isspace((int)s[i]); i--)
     s[i] = '\0';
   return s;
 }
@@ -321,6 +321,8 @@ void init_powtable(double x)
   for (y = 0; y < POWTABLE_SIZE; y++) {
     POWTABLE[y] = pow(x, y);
   }
+#else
+  (void)x; /* unused parameter */
 #endif
 }
 
