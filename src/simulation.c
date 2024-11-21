@@ -858,6 +858,10 @@ int do_simulation(sim_config_t * config)
                                        config->param_config.attr_param_exponents,                                     
                                        config->param_config.attr_interaction_pair_indices,
                                        dzA, theta);
+    /* first free the cERGM terms added by prior call to add_cergm_terms_to_digraph() */
+    g->maxterm_nodes = 0;
+    free(g->maxterm_nodes);
+    /* before adding them back */
     if (add_cergm_terms_to_digraph(g, config->term_filename)) {
       fprintf(stderr, "ERROR: reading cERGM terms from %s failed\n",
               config->term_filename);
