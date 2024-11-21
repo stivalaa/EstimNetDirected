@@ -334,7 +334,14 @@ static void deleteAllHashTable(twopath_record_t *h)
      so do nothing here */
   /* Note that this means that valgind or address sanitizer is not much
      use on hashtables versions as it will show huge numbers of leaked
-     allocations */
+     allocations --- but this is already the case also with MPI 
+     (or at least OpenMPI) which has many "false positive" memory leaks.
+     See e.g.:
+       https://valgrind.org/docs/manual/mc-manual.html#mc-manual.mpiwrap
+       https://stackoverflow.com/questions/8471773/mpi-memory-leak
+       https://www.open-mpi.org/faq/?category=debugging#valgrind_clean
+     So it is best to debug memory leaks with versions compiled without MPI
+     and without hashtables. */
 #endif /*DO_DELETE_HASH_ENTRIES*/
 }
 #endif /*TWOPATH_HASHTABLES*/
