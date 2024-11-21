@@ -332,6 +332,9 @@ static void deleteAllHashTable(twopath_record_t *h)
   /* actually deleting all the entries can take a lot of time
      and there is really no point since this is only called on exit anyway
      so do nothing here */
+  /* Note that this means that valgind or address sanitizer is not much
+     use on hashtables versions as it will show huge numbers of leaked
+     allocations */
 #endif /*DO_DELETE_HASH_ENTRIES*/
 }
 #endif /*TWOPATH_HASHTABLES*/
