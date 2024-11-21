@@ -1956,6 +1956,7 @@ void free_graph(graph_t *g)
   free(g->inner_nodes);
   free(g->prev_wave_degree);
   free(g->allinnerarcs);
+  free(g->term);
   free(g->all_maxtermsender_arcs);
   free(g);
 }
