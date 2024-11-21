@@ -5,7 +5,7 @@
  * Created: October 2017
  *
  * Directed or undirected graph data structure.  Also handles bipartite
- * (two-mode)x
+ * (two-mode) graphs.
  *
  * For directed, stored as arc lists (both forward and a "reversed"
  * version, for fast iteration over both in- and out- neighbours).
