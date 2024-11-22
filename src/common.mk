@@ -31,7 +31,8 @@ WARNFLAGS  += -Wextra -Wfloat-equal  \
               -Wwrite-strings \
               -Wmissing-declarations -Wunreachable-code
 
-CDEBUG = -g -fsanitize=address  # -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBUG_SNOWBALL -DDEBUG_MEMUSAGE -DDEBUG_SIMULATE -DDEBUG_CERGM
+#CDEBUG = -g -fsanitize=address  # -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBUG_SNOWBALL -DDEBUG_MEMUSAGE -DDEBUG_SIMULATE -DDEBUG_CERGM
+CDEBUG = -g -fsanitize=undefined  # -DDEBUG_CONFIG  -DDEBUG_SAMPLER  -DDEBUG_DIGRAPH -DDEBUG_ALGS -DDEBUG_SNOWBALL -DDEBUG_MEMUSAGE -DDEBUG_SIMULATE -DDEBUG_CERGM
 # Do NOT use -ffast-math as we depend on IEEE handling of NaN
 OPTFLAGS = -O3 -DNDEBUG_SLOW  #-pg
 CFLAGS     = $(OPTFLAGS) $(WARNFLAGS)
@@ -62,7 +63,8 @@ LDFLAGS =   #-pg
 
 ifeq ($(MODE),DEBUG)
   CFLAGS = $(CDEBUG) $(WARNFLAGS)
-  LDFLAGS = -fsanitize=address -static-libasan
+#  LDFLAGS = -fsanitize=address -static-libasan
+  LDFLAGS = -fsanitize=undefined
 endif
 
 PTHREAD_CFLAGS = -pthread
