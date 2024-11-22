@@ -187,6 +187,7 @@ double basicSampler(graph_t *g,  uint_t n, uint_t n_attr, uint_t n_dyadic,
                (isArcIgnoreDirection(g, i, j) &&
                 ((g->zone[i] > g->zone[j] && g->prev_wave_degree[i] == 1) ||
                  (g->zone[j] > g->zone[i] && g->prev_wave_degree[j] == 1))));
+      isDelete = isArc(g, i, j);
     } else if (citationERGM) {
       /* cERGM: select random node i in last time period (term) and random
        * node j (in any term) and toggle arc i->j between them. In this way
