@@ -211,6 +211,12 @@ int main(int argc, char *argv[])
     fprintf(stderr,"stat_value   = %.10f\nobs_stats[6] = %.10f\n", stat_value, obs_stats[6]);
     fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[6])));
     assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[6]));
+    if (also_use_slow_functions) {
+      stat_value = BipartiteAltK4CyclesA_SLOW(g, lambda_values[6]);
+      fprintf(stderr,"stat_value   = %.10f\nobs_stats[6] = %.10f\n", stat_value, obs_stats[6]);
+      fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[6])));
+      assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[6]));
+    }
   }
 
   free_graph(g);
