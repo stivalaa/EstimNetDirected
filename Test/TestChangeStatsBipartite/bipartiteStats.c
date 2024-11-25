@@ -492,13 +492,11 @@ double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
      correct (see comment in k_two_paths_A()), so there is no factor
      of 2 here.
   */
-  //value = k_two_paths_A(g, 1) - k_two_paths_A(g, 2)/lambda;
   value = -1.0*k_two_paths_A(g, 2)/lambda;  
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_A(g, i);
   }
-  //return -(value - k_two_paths_A(g, 1));
   return -1.0*value;
 }
 
