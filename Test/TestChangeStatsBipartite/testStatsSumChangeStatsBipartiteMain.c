@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 7
+#define NUM_FUNCS 8
   uint_t n_total = NUM_FUNCS;
   static double lambda_values[NUM_FUNCS];
   double obs_stats[NUM_FUNCS];
@@ -145,6 +145,9 @@ int main(int argc, char *argv[])
 
   change_stats_funcs[6] = &changeBipartiteAltK4CyclesA;
   lambda_values[6]      = lambda;
+  
+  change_stats_funcs[7] = &changeBipartiteAltK4CyclesB;
+  lambda_values[7]      = lambda;
 
   for (i = 0; i < NUM_FUNCS; i++) {
     obs_stats[i] = 0;
@@ -215,6 +218,17 @@ int main(int argc, char *argv[])
       assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[6]));
   }
 
+  stat_value = BipartiteAltK4CyclesB(g, lambda_values[7]);
+  fprintf(stderr,"stat_value   = %.10f\nobs_stats[7] = %.10f\n", stat_value, obs_stats[7]);
+  fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[7])));
+  assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[7]));
+  if (also_use_slow_functions) {
+    stat_value = BipartiteAltK4CyclesB_SLOW(g, lambda_values[7]);
+    fprintf(stderr,"stat_value   = %.10f\nobs_stats[7] = %.10f\n", stat_value, obs_stats[7]);
+      fprintf(stderr, "diff = %g\n", fabs((stat_value) - (obs_stats[7])));
+      assert(DOUBLE_APPROX_EQ_TEST(stat_value,  obs_stats[7]));
+  }
+  
   free_graph(g);
   exit(0);
 }
