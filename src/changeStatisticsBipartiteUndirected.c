@@ -997,7 +997,7 @@ double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  return changeBipartiteAltKCyclesA(g, i, j, lambda) - change_s_stars(g, i, 2);
+  return -(changeBipartiteAltKCyclesA(g, i, j, lambda) - change_s_stars(g, i, 2));
 }
 
 /*

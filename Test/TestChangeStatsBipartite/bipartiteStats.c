@@ -423,11 +423,10 @@ double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
  *   and reverse the signs, so that it no longer counts open two-paths,
  *   but the first, positive, term actually counts four-cycles.
  *
- * However had troubles getting change statistic correct for this,
- * so now simply removing the first term, and not reversing the signs.
  * Then the change statistic is simply the same change statisic as
- * as Wang et al. (2009) eqn (6.12), but with the change statistic
- * for two-paths (note which is same as two-stars) subtracted.
+ * ing Wang et al. (2009) eqn (6.12), but with the change statistic
+ * for two-paths (note which is same as two-stars) subtracted, and with
+ * sign reversed.
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -443,7 +442,7 @@ double BipartiteAltK4CyclesA(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  return BipartiteAltKCyclesA(g, lambda) - k_two_paths_A(g, 1);
+  return -(BipartiteAltKCyclesA(g, lambda) - k_two_paths_A(g, 1));
 
 }
 
@@ -498,7 +497,7 @@ double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_A(g, i);
   }
-  return value - k_two_paths_A(g, 1);
+  return -(value - k_two_paths_A(g, 1));
 }
 
 
