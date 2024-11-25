@@ -76,10 +76,12 @@ int main(int argc, char *argv[])
   bool edge_removed = FALSE;
   double delta_BipartitePowerFourCyclesA, delta_BipartitePowerFourCyclesB,
     delta_PowerFourCycles, delta_BipartiteAltKCyclesA,
-    delta_BipartiteAltKCyclesB;
+    delta_BipartiteAltKCyclesB, delta_BipartiteAltK4CyclesA,
+    delta_BipartiteAltK4CyclesB;
   double without_BipartitePowerFourCyclesA, without_BipartitePowerFourCyclesB,
     without_PowerFourCycles, without_BipartiteAltKCyclesA,
-    without_BipartiteAltKCyclesB;
+    without_BipartiteAltKCyclesB, without_BipartiteAltK4CyclesA,
+    without_BipartiteAltK4CyclesB;
 
 
  
@@ -179,6 +181,9 @@ int main(int argc, char *argv[])
     delta_PowerFourCycles = changePowerFourCycles(g, i, j, lambda);
     delta_BipartiteAltKCyclesA = changeBipartiteAltKCyclesA(g, i, j, lambda);
     delta_BipartiteAltKCyclesB = changeBipartiteAltKCyclesB(g, i, j, lambda);
+    delta_BipartiteAltK4CyclesA = changeBipartiteAltK4CyclesA(g, i, j, lambda);
+    delta_BipartiteAltK4CyclesB = changeBipartiteAltK4CyclesB(g, i, j, lambda);
+    
 
     /* verify that the sum of two-mode changBipartitePowerFourCyclesA and
        changeBipartiteFourCyclesB is equal to the one-mode
@@ -193,10 +198,18 @@ int main(int argc, char *argv[])
     without_BipartitePowerFourCyclesB = PowerFourCyclesB(g, lambda);
     without_BipartiteAltKCyclesA = BipartiteAltKCyclesA(g, lambda); 
     without_BipartiteAltKCyclesB = BipartiteAltKCyclesB(g, lambda);
+    without_BipartiteAltK4CyclesA = BipartiteAltK4CyclesA(g, lambda); 
+    without_BipartiteAltK4CyclesB = BipartiteAltK4CyclesB(g, lambda);
     without_PowerFourCycles = PowerFourCycles(g, lambda);
     if (also_use_slow_functions) {
       assert(DOUBLE_APPROX_EQ_TEST(BipartiteAltKCyclesA_SLOW(g, lambda),
                                    without_BipartiteAltKCyclesA));
+      assert(DOUBLE_APPROX_EQ_TEST(BipartiteAltK4CyclesA_SLOW(g, lambda),
+                                   without_BipartiteAltK4CyclesA));
+      assert(DOUBLE_APPROX_EQ_TEST(BipartiteAltKCyclesB_SLOW(g, lambda),
+                                   without_BipartiteAltKCyclesB));
+      assert(DOUBLE_APPROX_EQ_TEST(BipartiteAltK4CyclesB_SLOW(g, lambda),
+                                   without_BipartiteAltK4CyclesB));
     }
     insertEdge(g, i, j);
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartitePowerFourCyclesA,
@@ -211,6 +224,12 @@ int main(int argc, char *argv[])
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteAltKCyclesB,
                                  BipartiteAltKCyclesB(g, lambda) -
                                  without_BipartiteAltKCyclesB));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteAltK4CyclesA,
+                                 BipartiteAltK4CyclesA(g, lambda) -
+                                 without_BipartiteAltK4CyclesA));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteAltK4CyclesB,
+                                 BipartiteAltK4CyclesB(g, lambda) -
+                                 without_BipartiteAltK4CyclesB));
     assert(DOUBLE_APPROX_EQ_TEST(delta_PowerFourCycles,
                                  PowerFourCycles(g, lambda) -
                                  without_PowerFourCycles));
