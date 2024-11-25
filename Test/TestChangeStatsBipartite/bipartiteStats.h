@@ -26,6 +26,7 @@ double BipartiteAltKCyclesA(const graph_t *g, double lambda);
 double BipartiteAltKCyclesB(const graph_t *g, double lambda);
 double BipartiteAltKCyclesA_SLOW(const graph_t *g, double lambda);
 double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda);
+double BipartiteAltK4CyclesA(const graph_t *g, double lambda);
 double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda);
 double PowerFourCyclesA(const graph_t *g, double lambda);
 double PowerFourCyclesB(const graph_t *g, double lambda);

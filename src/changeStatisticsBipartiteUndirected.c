@@ -988,27 +988,16 @@ double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, b
  * with spreadsheet attachments for literature search, examples, etc.)
  * "idea for a (slightly) new bipartite change statistic" sent 23 Nov 2022)
  *
- * DO NOT USE - this change statisic is not correct (see 
- * testStatsSumChangeStatsBipartiteMain.c)
  */
 double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  uint_t k,v;
-  double delta = 0;
   assert(lambda > 1);
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[i]; k++) {
-    v = g->edgelist[i][k];
-    if (v != j) {
-      uint_t b2p = GET_B2PATH_ENTRY(g, j, v);
-      delta += POW_LOOKUP(1-1/lambda, MAX(b2p - 1, 0));
-    }
-  }
-  return delta;
+  return changeBipartiteAltKCyclesA(g, i, j, lambda) - change_s_stars(g, i, 2);
 }
 
 /*
@@ -1017,27 +1006,17 @@ double changeBipartiteAltK4CyclesA(graph_t *g, uint_t i, uint_t j, double lambda
  * with spreadsheet attachments for literature search, examples, etc.)
  * "idea for a (slightly) new bipartite change statistic" sent 23 Nov 2022)
  *
- * DO NOT USE - this change statisic is not correct (see 
- * testStatsSumChangeStatsBipartiteMain.c)
  */
 double changeBipartiteAltK4CyclesB(graph_t *g, uint_t i, uint_t j, double lambda)
 {
-  uint_t k,v;
-  double delta = 0;
   assert(lambda > 1);
   assert(g->is_bipartite);
   assert(!g->is_directed);
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[j]; k++) {
-    v = g->edgelist[j][k];
-    if (v != i) {
-      uint_t a2p = GET_A2PATH_ENTRY(g, i, v);
-      delta += POW_LOOKUP(1-1/lambda, MAX(a2p - 1, 0));
-    }
-  }
-  return delta;
+  return (changeBipartiteAltKCyclesB(g, i, j, lambda) -
+          changeTwoStars(g, i, j, lambda));
 }
 
 

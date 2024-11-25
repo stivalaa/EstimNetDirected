@@ -400,13 +400,53 @@ double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
      correct (see comment in k_two_paths_B()), so there is no factor
      of 2 here.
   */
-    value = k_two_paths_B(g, 1) - k_two_paths_B(g, 2)/lambda;
+  value = k_two_paths_B(g, 1) - k_two_paths_B(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
     value += pow(-1/lambda, i-1) * k_two_paths_B(g, i);
   }
   return value;
 }
+
+
+/*
+ * Statistic for alternating k-4-cycles for type A nodes (new change
+ * statistic suggested in email (basically paper outline, with
+ * spreadsheet attachments for literature search, examples, etc.)
+ * "idea for a (slightly) new bipartite change statistic" sent 23 Nov
+ * 2022):
+ *
+ *   The proposed new statistic is a very simple modification of the
+ *   "Alternating k-two-paths" bipartite statistic (K-Ca and K-Cp)
+ *   statistics described by Wang et al. (2009, p.19). I propose to
+ *   simply remove the first term of Wang et al. (2009) equation 6.12,
+ *   and reverse the signs, so that it no longer counts open two-paths,
+ *   but the first, positive, term actually counts four-cycles.
+ *
+ * However had troubles getting change statistic correct for this,
+ * so now simply removing the first term, and not reversing the signs.
+ * Then the change statistic is simply the same change statisic as
+ * as Wang et al. (2009) eqn (6.12), but with the change statistic
+ * for two-paths (note which is same as two-stars) subtracted.
+ *
+ * Parameters:
+ *     g      - undirected bipartite graph
+ *     lambda - decay value > 1.0
+ *
+ * Return value:
+ *      statistic for g with decay value lambda
+ */
+double BipartiteAltK4CyclesA(const graph_t *g, double lambda)
+{
+  assert (lambda > 1.0);
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  return BipartiteAltKCyclesA(g, lambda) - k_two_paths_A(g, 1);
+
+}
+
 
 
 
@@ -423,6 +463,12 @@ double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
  *   simply remove the first term of Wang et al. (2009) equation 6.12,
  *   and reverse the signs, so that it no longer counts open two-paths,
  *   but the first, positive, term actually counts four-cycles.
+ *
+ * However had troubles getting change statistic correct for this,
+ * so now simply removing the first term, and not reversing the signs.
+ * Then the change statistic is simply the same change statisic as
+ * as Wang et al. (2009) eqn (6.12), but with the change statistic
+ * for two-paths (note which is same as two-stars) subtracted.
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -441,10 +487,16 @@ double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  value = k_two_paths_A(g, 2)/lambda;
+  /* Note despite eqn (6.12) in Wang et al. (2009) multipliying the
+     second term [k_two_paths_A(g, 2)/lambda] by 2, this is not
+     actually correct as the division by two in eqn (6.11) is not
+     correct (see comment in k_two_paths_B()), so there is no factor
+     of 2 here.
+  */
+  value = -k_two_paths_A(g, 2)/lambda;
 
   for (i = 3; i < g->num_A_nodes + g->num_B_nodes - 1; i++) {
-    value += -1 * pow(-1/lambda, i-1) * k_two_paths_A(g, i);
+    value += pow(-1/lambda, i-1) * k_two_paths_A(g, i);
   }
   return value;
 }
