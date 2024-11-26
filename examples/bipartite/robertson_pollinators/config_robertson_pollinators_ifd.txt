@@ -93,6 +93,9 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 # There are no mode B isolates
 
 ## GoF simulation shows this is not really a converged model:
+structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteAltK4Cyclesb(2.0) }
+
+## GoF simulation shows this is not really a converged model:
 ##structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(4.0),  BipartiteAltKCyclesA(2.0), BipartiteAltKCyclesB(4.0), BipartiteAltK4CyclesA(2.0), BipartiteAltK4CyclesB(4.0)}
 
 ##Does not converge:
@@ -187,7 +190,7 @@ observedStatsFilePrefix = obs_stats_ifd_robertson_pollinators
 
 ## estimation diagnosics good but sim gof bad on all (except edge, StarsB.10 OK)## sim does not converge to obs value but above (StarsA.10, IsolateA)
 ## or below (FourCyclesNodePowerB.20) it.
-structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerB(20) }
+#structParams =  { Edge, BipartiteIsolatesA,  BipartiteAltStarsA(10.0), BipartiteAltStarsB(10.0), BipartiteFourCyclesNodePowerB(20) }
 
 
 
