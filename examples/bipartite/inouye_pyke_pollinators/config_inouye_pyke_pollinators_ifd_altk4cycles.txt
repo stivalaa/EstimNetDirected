@@ -90,7 +90,7 @@ observedStatsFilePrefix = obs_stats_ifd_inouye_pyke_pollinators_altk4cycles
 # Structural parameters
 #
 
-# converges, 
+# converges, good GoF, including on cycle length distribution (up to 12)
 structParams =  {       BipartiteAltStarsA(5), BipartiteAltStarsB(5), BipartiteAltK4CyclesB(1.1) }
 
 # does not converge:
