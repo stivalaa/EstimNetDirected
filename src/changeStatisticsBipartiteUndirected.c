@@ -502,17 +502,17 @@ double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[i]; k++) {
-    v = g->edgelist[i][k];
-    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
-      num_neighbours_with_a++;
-      /* Note could shortcut and break out of loop as soon as
-         num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
-         but why complicate things? */
-    }
-  }
   /* the statistic can only change if j has binary attribute a */
   if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
+    for (k = 0; k < g->degree[i]; k++) {
+      v = g->edgelist[i][k];
+      if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+        num_neighbours_with_a++;
+        /* Note could shortcut and break out of loop as soon as
+           num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
+           but why complicate things? */
+      }
+    }
     if (num_neighbours_with_a == 0) {
       /* if i has no neighbours with a and j has a, then i--j creates
        * a type A node with exactly one neihbour with a */
@@ -549,17 +549,17 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[j]; k++) {
-    v = g->edgelist[j][k];
-    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
-      num_neighbours_with_a++;
-      /* Note could shortcut and break out of loop as soon as
-         num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
-         but why complicate things? */
-    }
-  }
   /* the statistic can only change if i has binary attribute a */
   if (g->binattr[a][i] != BIN_NA && g->binattr[a][i]) {
+    for (k = 0; k < g->degree[j]; k++) {
+      v = g->edgelist[j][k];
+      if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+        num_neighbours_with_a++;
+        /* Note could shortcut and break out of loop as soon as
+           num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
+           but why complicate things? */
+      }
+    }
     if (num_neighbours_with_a == 0) {
       /* if j has no neighbours with a and i has a, then i--j creates
        * a type B node with exactly one neihbour with a */
@@ -586,9 +586,7 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
  */
 double changeBipartiteNumNeighboursA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
-  uint_t num_neighbours_with_a = 0;
   uint_t delta = 0;
-  uint_t k, v;
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
@@ -596,12 +594,6 @@ double changeBipartiteNumNeighboursA(graph_t *g, uint_t i, uint_t j, uint_t a, b
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[i]; k++) {
-    v = g->edgelist[i][k];
-    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
-      num_neighbours_with_a++;
-    }
-  }
   /* the statistic can only change if j has binary attribute a */
   if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
     delta = 1; /* i--j adds one more neighbour with the a binary attribute */
@@ -620,9 +612,7 @@ double changeBipartiteNumNeighboursA(graph_t *g, uint_t i, uint_t j, uint_t a, b
  */
 double changeBipartiteNumNeighboursB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
-  uint_t num_neighbours_with_a = 0;
   uint_t delta = 0;
-  uint_t k, v;
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
@@ -630,12 +620,6 @@ double changeBipartiteNumNeighboursB(graph_t *g, uint_t i, uint_t j, uint_t a, b
   assert(bipartite_node_mode(g, i) == MODE_A);
   assert(bipartite_node_mode(g, j) == MODE_B);
   slow_assert(!isEdge(g, i, j));
-  for (k = 0; k < g->degree[j]; k++) {
-    v = g->edgelist[j][k];
-    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
-      num_neighbours_with_a++;
-    }
-  }
   /* the statistic can only change if i has binary attribute a */
   if (g->binattr[a][i] != BIN_NA && g->binattr[a][i]) {
     delta = 1; /* i--j adds one more neighbour with the a binary attribute */
