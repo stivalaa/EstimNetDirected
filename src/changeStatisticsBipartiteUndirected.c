@@ -493,8 +493,8 @@ double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t num_neighbours_with_a = 0;
-  uint_t delta = 0;
   uint_t k, v;
+  int    delta = 0; /* signed as can be negative */  
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
@@ -516,12 +516,12 @@ double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_
     if (num_neighbours_with_a == 0) {
       /* if i has no neighbours with a and j has a, then i--j creates
        * a type A node with exactly one neihbour with a */
-      delta++;
+      delta = 1;
     } else if (num_neighbours_with_a == 1) {
       /* if i has exactly one neighbour with a, and j has a, then i--j
        * decreases by one the number of type A nodes with exactly one
        * neighbour with a */
-      delta--;
+      delta = -1;
     }
     /* if i has > 1 neighgours with a, no change in statistic */
   }
@@ -540,8 +540,8 @@ double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_
 double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t num_neighbours_with_a = 0;
-  uint_t delta = 0;
   uint_t k, v;
+  int    delta = 0; /* signed as can be negative */
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
@@ -563,12 +563,12 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
     if (num_neighbours_with_a == 0) {
       /* if j has no neighbours with a and i has a, then i--j creates
        * a type B node with exactly one neihbour with a */
-      delta++;
+      delta = 1;
     } else if (num_neighbours_with_a == 1) {
       /* if j has exactly one neighbour with a, and i has a, then i--j
        * decreases by one the number of type B nodes with exactly one
        * neighbour with a */
-      delta--;
+      delta = -1;
     }
     /* if i has > 1 neighgours with a, no change in statistic */
   }
