@@ -127,6 +127,8 @@ double changeBipartiteIsolatesB(graph_t *g, uint_t i, uint_t j, double lambda);
 
 double changeBipartiteActivityA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
+double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent);
 
 /*********************** Actor attribute (continuous) ************************/
 

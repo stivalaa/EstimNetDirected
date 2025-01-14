@@ -481,6 +481,54 @@ double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
  */
 
 
+/*
+ * Change statistic for bipartite exactly one neighbour with binary attribute a
+ * for type A nodes.
+ *
+ * The statistic counts the number of type A nodes that have exactly one
+ * neighbour (therefore of type B) with the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type B nodes.
+ */
+double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
+{
+  uint_t num_neighbours_with_a = 0;
+  uint_t delta = 0;
+  uint_t k, v;
+  (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+      num_neighbours_with_a++;
+      /* Note could shortcut and break out of loop as soon as
+         num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
+         but why complicate things? */
+    }
+  }
+  /* the statistic can only change if j has binary attribute a */
+  if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
+    if (num_neighbours_with_a == 0) {
+      /* if i has no neighbours with a and j has a, then i--j creates
+       * a type A node with exactly one neihbour with A */
+      delta++;
+    } else if (num_neighbours_with_a == 1) {
+      /* if i has exactly one neighbour with a, and j has a, then i--j
+       * decreases by one the number of type A nodes with exactly one
+       * neighbour with a */
+      delta--;
+    }
+    /* if i has > 1 neighgours with a, no change in statistic */
+  }
+  return (double)delta;
+}
+
+
 /*********************** Actor attribute (continuous) ************************/
 
 /*
