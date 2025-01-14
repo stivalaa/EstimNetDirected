@@ -537,7 +537,7 @@ double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_
  *
  * Note that binary attribute a here is a binary attribute for type A nodes.
  */
-double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
+double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t num_neighbours_with_a = 0;
   uint_t delta = 0;
