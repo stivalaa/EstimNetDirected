@@ -575,6 +575,74 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
   return (double)delta;
 }
 
+/*
+ * Change statistic for bipartite number of neighbours with binary attribute a
+ * for type A nodes.
+ *
+ * The statistic sums over all type A nodes the number of their
+ * neighbours (therefore of type B) with the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type B nodes.
+ */
+double changeBipartiteNumNeighboursA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
+{
+  uint_t num_neighbours_with_a = 0;
+  uint_t delta = 0;
+  uint_t k, v;
+  (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+      num_neighbours_with_a++;
+    }
+  }
+  /* the statistic can only change if j has binary attribute a */
+  if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
+    delta = 1; /* i--j adds one more neighbour with the a binary attribute */
+  }
+  return (double)delta;
+}
+
+/*
+ * Change statistic for bipartite number of neighbours with binary attribute a
+ * for type B nodes.
+ *
+ * The statistic sums over all type B nodes the number of their
+ * neighbours (therefore of type A) with the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type A nodes.
+ */
+double changeBipartiteNumNeighboursB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
+{
+  uint_t num_neighbours_with_a = 0;
+  uint_t delta = 0;
+  uint_t k, v;
+  (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+  for (k = 0; k < g->degree[j]; k++) {
+    v = g->edgelist[j][k];
+    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+      num_neighbours_with_a++;
+    }
+  }
+  /* the statistic can only change if i has binary attribute a */
+  if (g->binattr[a][i] != BIN_NA && g->binattr[a][i]) {
+    delta = 1; /* i--j adds one more neighbour with the a binary attribute */
+  }
+  return (double)delta;
+}
+
 
 /*********************** Actor attribute (continuous) ************************/
 
