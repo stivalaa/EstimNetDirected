@@ -585,6 +585,59 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
 }
 
 
+/*
+ * Change statistic for Bipartite 2-path beween two type A nodes
+ * each of which has  exactly one neighbour with binary attribute a.
+ *
+ * The statistic counts the number of two-paths between pairs of type
+ * A nodes that both have exactly one neighbour (therefore of type B) with
+ * the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type B nodes.
+ */
+double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
+{
+  uint_t k,v;
+  uint_t delta = 0;
+  uint_t num_i_neighbours_with_a;
+  uint_t num_v_neighbours_with_a;
+  (void)isDelete; /*unused parameters*/
+  (void)exponent; /*unused parameters*/
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  assert(bipartite_node_mode(g, i) == MODE_A);
+  assert(bipartite_node_mode(g, j) == MODE_B);
+  slow_assert(!isEdge(g, i, j));
+
+  num_i_neighbours_with_a = count_neighbours_with_binattr_a(g, i, a);
+
+  if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
+    /* case where j has binattr so could change statistic both via additional
+       neighbour with attriute a and/or via adding a new two-path
+       (statistic can either increase or decrease in this case) */
+    /* TODO */
+  } else{
+    /* cases where j does not have binattr a so can only change statistic
+       via adding new two-paths i -- j -- v for one or more v */
+    if (num_i_neighbours_with_a == 1) {
+      for (k = 0; k < g->degree[j]; k++) {
+        v = g->edgelist[j][k];
+        assert(v != j);
+        assert(bipartite_node_mode(g, v) == MODE_A);
+        if (v != i) {
+          num_v_neighbours_with_a = count_neighbours_with_binattr_a(g, v, a);
+          if (num_v_neighbours_with_a == 1) {
+            delta++;
+          }
+        }
+      }
+    }
+  }
+  return (double)delta;
+}
+
+
+
 
 /*********************** Actor attribute (continuous) ************************/
 
