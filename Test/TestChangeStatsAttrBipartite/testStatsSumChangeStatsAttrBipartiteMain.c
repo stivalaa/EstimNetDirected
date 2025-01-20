@@ -265,6 +265,7 @@ int main(int argc, char *argv[])
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
 
   stat_value= BipartiteTwoPathExactlyOneNeighbourA(g, attr_indices[2]);
+  printf("%g\n", stat_value);//XXX
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[2]));
 
   free_graph(g);

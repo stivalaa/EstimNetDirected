@@ -597,10 +597,11 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
  */
 double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
-  uint_t k,v;
-  uint_t delta = 0;
+  uint_t k,v,l,w;
+  int    delta = 0; /* signed as can be negative */
   uint_t num_i_neighbours_with_a;
   uint_t num_v_neighbours_with_a;
+  uint_t num2paths;
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
@@ -613,9 +614,54 @@ double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j
 
   if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
     /* case where j has binattr so could change statistic both via additional
-       neighbour with attriute a and/or via adding a new two-path.
+       neighbour with attribute a and/or via adding a new two-path.
        In this case, the statistic can either increase or decrease. */
-    /* TODO */
+    if (num_i_neighbours_with_a == 0) {
+      /* adding i -- j means i now has exactly one neighbour with a, so
+         statistic increases by the number of two-paths i -- v -- w
+         for any v, w (w != i) where w has exactly one neighbour with a */
+      for (k = 0; k < g->degree[i]; k++)  {
+        v = g->edgelist[i][k];   /* i -- v */
+        assert(bipartite_node_mode(g, v) == MODE_B);
+        assert(v != j);
+        for (l = 0; l < g->degree[v]; l++) {
+          w = g->edgelist[v][l];   /* v -- w */
+          assert(bipartite_node_mode(g, w) == MODE_A);
+          if (w != i && count_neighbours_with_binattr_a(g, w, a) == 1) {
+            delta++;
+          }
+        }
+      }
+      /* and it also increases by the number of new two-paths i -- j -- v
+         (v != i) for one or more v where v has exactly one neighbour with a */
+      for (k = 0; k < g->degree[j]; k++) {
+        v = g->edgelist[j][k];
+        assert(v != j);
+        assert(bipartite_node_mode(g, v) == MODE_A);
+        if (v != i) {
+          num_v_neighbours_with_a = count_neighbours_with_binattr_a(g, v, a);
+          if (num_v_neighbours_with_a == 1) {
+            delta++;
+          }
+        }
+      }
+    } else if (num_i_neighbours_with_a == 1) {
+      /* adding i -- j means i now has more than one neighbour with a, so
+         statistic decreases by the number of two-paths i -- v -- w
+         for any v, w (w != i) where w has exactly one neighbour with a */
+      for (k = 0; k < g->degree[i]; k++)  {
+        v = g->edgelist[i][k];   /* i -- v */
+        assert(bipartite_node_mode(g, v) == MODE_B);
+        assert(v != j);
+        for (l = 0; l < g->degree[v]; l++) {
+          w = g->edgelist[v][l];   /* v -- w */
+          assert(bipartite_node_mode(g, w) == MODE_A);
+          if (w != i && count_neighbours_with_binattr_a(g, w, a) == 1) {
+            delta--;
+          }
+        }
+      }
+    }
   } else{
     /* cases where j does not have binattr a so can only change statistic
        via adding new two-paths i -- j -- v for one or more v */
@@ -633,6 +679,7 @@ double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j
       }
     }
   }
+  fprintf(stderr, "%d\n", delta);//XXX
   return (double)delta;
 }
 
