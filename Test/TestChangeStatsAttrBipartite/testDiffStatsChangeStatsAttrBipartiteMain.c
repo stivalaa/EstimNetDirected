@@ -63,9 +63,11 @@ int main(int argc, char *argv[])
   bool edge_removed = FALSE;
   char *binattr_filename;
   double delta_BipartiteExactlyOneNeighbourA,
-    delta_BipartiteExactlyOneNeighbourB;
+    delta_BipartiteExactlyOneNeighbourB,
+    delta_BipartiteTwoPathExactlyOneNeighbourA;
   double without_BipartiteExactlyOneNeighbourA,
-    without_BipartiteExactlyOneNeighbourB;
+    without_BipartiteExactlyOneNeighbourB,
+    without_BipartiteTwoPathExactlyOneNeighbourA;
  
   srand(time(NULL));
 
@@ -157,14 +159,16 @@ int main(int argc, char *argv[])
     }
 
     delta_BipartiteExactlyOneNeighbourA = changeBipartiteExactlyOneNeighbourA(g, i, j, binattrP_index, FALSE, 0);
-    delta_BipartiteExactlyOneNeighbourB = changeBipartiteExactlyOneNeighbourB(g, i, j, binattrA_index, FALSE, 0);    
+    delta_BipartiteExactlyOneNeighbourB = changeBipartiteExactlyOneNeighbourB(g, i, j, binattrA_index, FALSE, 0);
+    delta_BipartiteTwoPathExactlyOneNeighbourA = changeBipartiteTwoPathExactlyOneNeighbourA(g, i, j, binattrP_index, FALSE, 0);
     
 
 
     /* verify that change statisic is equal to difference of statistic
        computed with edge and without edge */
     without_BipartiteExactlyOneNeighbourA = BipartiteExactlyOneNeighbourA(g, binattrP_index);
-    without_BipartiteExactlyOneNeighbourB = BipartiteExactlyOneNeighbourB(g, binattrA_index);    
+    without_BipartiteExactlyOneNeighbourB = BipartiteExactlyOneNeighbourB(g, binattrA_index);
+    without_BipartiteTwoPathExactlyOneNeighbourA = BipartiteTwoPathExactlyOneNeighbourA(g, binattrP_index);
 
     insertEdge(g, i, j);
     
@@ -174,6 +178,10 @@ int main(int argc, char *argv[])
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteExactlyOneNeighbourB,
                                  BipartiteExactlyOneNeighbourB(g, binattrA_index) -
                                  without_BipartiteExactlyOneNeighbourB));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteTwoPathExactlyOneNeighbourA,
+                                 BipartiteTwoPathExactlyOneNeighbourA(g, binattrP_index) -
+                                 without_BipartiteTwoPathExactlyOneNeighbourA));
+
     
     removeEdge(g, i, j);
 
