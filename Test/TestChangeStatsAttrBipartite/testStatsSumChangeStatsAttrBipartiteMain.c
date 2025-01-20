@@ -114,6 +114,11 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  if (!(file = fopen(edgelist_filename, "r"))) {
+    fprintf(stderr, "error opening file %s (%s)\n",
+            edgelist_filename, strerror(errno));
+    return -1;
+  }
 
   
   /* hardcoding indices of attributes to match input files*/
