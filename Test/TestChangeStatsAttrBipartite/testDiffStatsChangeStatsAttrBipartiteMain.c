@@ -157,18 +157,24 @@ int main(int argc, char *argv[])
     }
 
     delta_BipartiteExactlyOneNeighbourA = changeBipartiteExactlyOneNeighbourA(g, i, j, binattrP_index, FALSE, 0);
+    delta_BipartiteExactlyOneNeighbourB = changeBipartiteExactlyOneNeighbourB(g, i, j, binattrA_index, FALSE, 0);    
     
 
 
     /* verify that change statisic is equal to difference of statistic
        computed with edge and without edge */
     without_BipartiteExactlyOneNeighbourA = BipartiteExactlyOneNeighbourA(g, binattrP_index);
+    without_BipartiteExactlyOneNeighbourB = BipartiteExactlyOneNeighbourB(g, binattrA_index);    
 
     insertEdge(g, i, j);
     
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteExactlyOneNeighbourA,
                                  BipartiteExactlyOneNeighbourA(g, binattrP_index) -
                                  without_BipartiteExactlyOneNeighbourA));
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteExactlyOneNeighbourB,
+                                 BipartiteExactlyOneNeighbourB(g, binattrA_index) -
+                                 without_BipartiteExactlyOneNeighbourB));
+    
     removeEdge(g, i, j);
 
     num_tests++;
