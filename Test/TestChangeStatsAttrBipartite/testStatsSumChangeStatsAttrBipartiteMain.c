@@ -90,6 +90,33 @@ static double BipartiteExactlyOneNeighbourA(const graph_t *g, uint_t a)
   assert(!g->is_directed);
 
   for (i = 0; i < g->num_A_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_A);
+    value += count_neighbours_with_binattr_a(g, i, a) == 1 ? 1 : 0;
+  }
+  return (double)value;
+}
+
+
+/*
+ * Statistic for bipartite exactly one neighbour with binary attribute a
+ * for type B nodes.
+ *
+ * The statistic counts the number of type B nodes that have exactly one
+ * neighbour (therefore of type A) with the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type A nodes.
+ */
+static double BipartiteExactlyOneNeighbourB(const graph_t *g, uint_t a)
+
+{
+  uint_t i;
+  uint_t value = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+
+  for (i = g->num_A_nodes; i < g->num_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_B);
     value += count_neighbours_with_binattr_a(g, i, a) == 1 ? 1 : 0;
   }
   return (double)value;
@@ -156,7 +183,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 1
+#define NUM_FUNCS 2
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
   static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
@@ -169,6 +196,9 @@ int main(int argc, char *argv[])
   
   attr_change_stats_funcs[0] = &changeBipartiteExactlyOneNeighbourA;
   attr_indices[0]            = binattrP_index;
+
+  attr_change_stats_funcs[1] = &changeBipartiteExactlyOneNeighbourB;
+  attr_indices[1]            = binattrA_index;
 
   
   for (i = 0; i < NUM_FUNCS; i++) {
@@ -186,6 +216,9 @@ int main(int argc, char *argv[])
 
   stat_value= BipartiteExactlyOneNeighbourA(g, attr_indices[0]);
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[0]));
+
+  stat_value= BipartiteExactlyOneNeighbourB(g, attr_indices[1]);
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
 
   free_graph(g);
 
