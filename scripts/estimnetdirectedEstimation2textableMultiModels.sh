@@ -9,7 +9,10 @@
 # estimated std. error and t-ratio computed from EstimNetDirected results
 # and build LaTeX table for multiple different models
 # 
-# Usage: estimnetdirectedEstimation2textableMultiModels.sh estimationoutputfile_model1 estimationoutputfile_model2 ...
+# Usage: estimnetdirectedEstimation2textableMultiModels.sh [-m <basemodelnum] estimationoutputfile_model1 estimationoutputfile_model2 ...
+#
+# If the -m <basemodelnum> option is specfieid, then the model numbers start
+# at <basemodelnum> rather than 1.
 #
 # E.g.:
 #   estimnetdirectedEstimation2textableMultiModels.sh  estimation.out model2/estimation.out
@@ -21,12 +24,25 @@
 zSigma=2 # multiplier of estimated standard error for nominal 95% C.I.
 tratioThreshold=0.3 # t-ratio must be <= this for significance
 
-if [ $# -lt 1 ]; then
-    echo "usage: $0 estimation1.out estimation2.out ..." >&2
-    exit 1
-fi
+usage() { echo "usage: $0 [-m <basemodelnum>] estimation1.out estimation2.out ..." >&2 ; exit 1; }
+
+basemodelnum=1
+while getopts "m:" opt; do
+    case "${opt}" in
+        m)
+            basemodelnum=${OPTARG}
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
 
 num_models=`expr $#`
+if [ $num_models -lt 1 ]; then
+    usage
+fi
 
 estimnet_tmpfile=`mktemp`
 
@@ -47,7 +63,7 @@ echo -n 'Effect '
 i=1
 while [ $i -le $num_models ]
 do
-  echo -n " & Model $i"
+  echo -n " & Model " `expr ${basemodelnum} - 1 + $i`
   i=`expr $i + 1`
 done
 echo '\\'
