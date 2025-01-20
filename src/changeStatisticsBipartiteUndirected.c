@@ -601,7 +601,6 @@ double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j
   int    delta = 0; /* signed as can be negative */
   uint_t num_i_neighbours_with_a;
   uint_t num_v_neighbours_with_a;
-  uint_t num2paths;
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
   assert(g->is_bipartite);
@@ -679,7 +678,6 @@ double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j
       }
     }
   }
-  fprintf(stderr, "%d\n", delta);//XXX
   return (double)delta;
 }
 
