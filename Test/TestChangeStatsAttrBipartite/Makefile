@@ -12,7 +12,7 @@ OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsBipartiteU
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 
-all: testChangeStatsAttrBipartite testChangeStatsAttrBipartite_hash testChangeStatsAttrBipartite_array testBipartiteAlphaBetaChangeStats testBipartiteAlphaBetaChangeStats_hash testBipartiteAlphaBetaChangeStats_array testStatsSumChangeStatsAttrBipartite testStatsSumChangeStatsAttrBipartite_hash testStatsSumChangeStatsAttrBipartite_array
+all: testChangeStatsAttrBipartite testChangeStatsAttrBipartite_hash testChangeStatsAttrBipartite_array testBipartiteAlphaBetaChangeStats testBipartiteAlphaBetaChangeStats_hash testBipartiteAlphaBetaChangeStats_array testStatsSumChangeStatsAttrBipartite testStatsSumChangeStatsAttrBipartite_hash testStatsSumChangeStatsAttrBipartite_array testDiffStatsChangeStatsAttrBipartite testDiffStatsChangeStatsAttrBipartite_hash testDiffStatsChangeStatsAttrBipartite_array
 
 
 testChangeStatsAttrBipartite: testChangeStatsAttrBipartiteMain.o $(OBJS)
@@ -51,6 +51,17 @@ testStatsSumChangeStatsAttrBipartite_array: testStatsSumChangeStatsAttrBipartite
 
 
 
+testDiffStatsChangeStatsAttrBipartite: testDiffStatsChangeStatsAttrBipartiteMain.o $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testDiffStatsChangeStatsAttrBipartite_hash: testDiffStatsChangeStatsAttrBipartiteMain_hash.o $(HASH_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testDiffStatsChangeStatsAttrBipartite_array: testDiffStatsChangeStatsAttrBipartiteMain_array.o $(ARRAY_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+
+
 
 clean:
 	$(RM) testChangeStatsAttrBipartite testChangeStatsAttrBipartite_hash
@@ -62,6 +73,9 @@ clean:
 	$(RM) testStatsSumChangeStatsAttrBipartite testStatsSumChangeStatsAttrBipartite_hash
 	$(RM) testStatsSumChangeStatsAttrBipartiteMain.o testStatsSumChangeStatsAttrBipartiteMain_hash.o
 	$(RM) testStatsSumChangeStatsAttrBipartite_array testStatsSumChangeStatsAttrBipartiteMain_array.o
+	$(RM) testDiffStatsChangeStatsAttrBipartite testDiffStatsChangeStatsAttrBipartite_hash
+	$(RM) testDiffStatsChangeStatsAttrBipartiteMain.o testDiffStatsChangeStatsAttrBipartiteMain_hash.o
+	$(RM) testDiffStatsChangeStatsAttrBipartite_array testDiffStatsChangeStatsAttrBipartiteMain_array.o
 	$(RM) $(LOCALOBJS) $(LOCALOBJS:.o=_hash.o) $(LOCALOBJS:.o=_array.o)
 
 
