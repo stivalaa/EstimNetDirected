@@ -10,6 +10,7 @@ fail=0
 ./run_test_bpnet_A12000_B4000_attr.sh || fail=1
 ./run_test_b1nodematch_bpnet_A12000_B4000_attr.sh || fail=1
 ./run_test_stats_sum_change_stats_attr_bipartite.sh || fail=1
+./run_test_diff_stats_change_stats_attr_bipartite.sh || fail=1
 if [ $fail -ne 0 ]; then
     echo "***** A test in $0 FAILED *****"
 fi
