@@ -38,12 +38,38 @@
 
 /*****************************************************************************
  *
- * statistics functions (summing change statistics is verified against these)
+ * utility functions
  *
  ****************************************************************************/
 
 /* Approximate double floating point equality */
 #define DOUBLE_APPROX_EQ_TEST(a, b) ( fabs((a) - (b)) <= 1e-08 )
+
+/*
+ * Return the number of neighbours of node i with binary attribute a.
+ */
+static uint_t count_neighbours_with_binattr_a(graph_t *g, uint_t i, uint_t a)
+{
+  uint_t num_neighbours_with_a = 0;
+  uint_t k, v;
+
+  assert(!g->is_directed);
+
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+      num_neighbours_with_a++;
+    }
+  }
+  return num_neighbours_with_a;
+}
+
+
+/*****************************************************************************
+ *
+ * statistics functions (summing change statistics is verified against these)
+ *
+ ****************************************************************************/
 
 /*
  * Statistic for bipartite exactly one neighbour with binary attribute a
@@ -57,14 +83,15 @@
 static double BipartiteExactlyOneNeighbourA(const graph_t *g, uint_t a)
 
 {
-  uint_t i,j;
+  uint_t i;
   uint_t value = 0;
 
   assert(g->is_bipartite);
   assert(!g->is_directed);
 
-  /* TODO */
-  
+  for (i = 0; i < g->num_A_nodes; i++) {
+    value += count_neighbours_with_binattr_a(g, i, a) == 1 ? 1 : 0;
+  }
   return (double)value;
 }
 
