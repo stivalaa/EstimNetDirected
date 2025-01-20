@@ -11,7 +11,7 @@ OBJS = $(SRCDIR)/changeStatisticsGeneral.o  $(SRCDIR)/changeStatisticsBipartiteU
 HASH_OBJS = $(OBJS:.o=_hash.o)
 ARRAY_OBJS = $(OBJS:.o=_array.o)
 
-all: testChangeStatsAttrBipartite testChangeStatsAttrBipartite_hash testChangeStatsAttrBipartite_array testBipartiteAlphaBetaChangeStats testBipartiteAlphaBetaChangeStats_hash testBipartiteAlphaBetaChangeStats_array
+all: testChangeStatsAttrBipartite testChangeStatsAttrBipartite_hash testChangeStatsAttrBipartite_array testBipartiteAlphaBetaChangeStats testBipartiteAlphaBetaChangeStats_hash testBipartiteAlphaBetaChangeStats_array testStatsSumChangeStatsAttrBipartite testStatsSumChangeStatsAttrBipartite_hash testStatsSumChangeStatsAttrBipartite_array
 
 
 testChangeStatsAttrBipartite: testChangeStatsAttrBipartiteMain.o $(OBJS)
@@ -38,6 +38,19 @@ testBipartiteAlphaBetaChangeStats_array: testBipartiteAlphaBetaChangeStatsMain_a
 
 
 
+
+testStatsSumChangeStatsAttrBipartite: testStatsSumChangeStatsAttrBipartiteMain.o $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testStatsSumChangeStatsAttrBipartite_hash: testStatsSumChangeStatsAttrBipartiteMain_hash.o $(HASH_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+testStatsSumChangeStatsAttrBipartite_array: testStatsSumChangeStatsAttrBipartiteMain_array.o $(ARRAY_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+
+
+
 clean:
 	$(RM) testChangeStatsAttrBipartite testChangeStatsAttrBipartite_hash
 	$(RM) testChangeStatsAttrBipartiteMain.o testChangeStatsAttrBipartiteMain_hash.o
@@ -45,6 +58,10 @@ clean:
 	$(RM) testBipartiteAlphaBetaChangeStats testBipartiteAlphaBetaChangeStats_hash
 	$(RM) testBipartiteAlphaBetaChangeStatsMain.o testBipartiteAlphaBetaChangeStatsMain_hash.o
 	$(RM) testBipartiteAlphaBetaChangeStats_array testBipartiteAlphaBetaChangeStatsMain_array.o
+	$(RM) testStatsSumChangeStatsAttrBipartite testStatsSumChangeStatsAttrBipartite_hash
+	$(RM) testStatsSumChangeStatsAttrBipartiteMain.o testStatsSumChangeStatsAttrBipartiteMain_hash.o
+	$(RM) testStatsSumChangeStatsAttrBipartite_array testStatsSumChangeStatsAttrBipartiteMain_array.o
+
 
 
 %_hash.o: %.c
