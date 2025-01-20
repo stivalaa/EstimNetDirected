@@ -243,8 +243,7 @@ static uint_t twopaths_not_via_k(const graph_t *g, uint_t i, uint_t j,
 }
 
 /*
- * Return the number of neibhours of node i that have exactly with number
- * with binary attribute a.
+ * Return the number of neighbours of node i with binary attribute a.
  */
 static uint_t count_neighbours_with_binattr_a(graph_t *g, uint_t i, uint_t a)
 {
