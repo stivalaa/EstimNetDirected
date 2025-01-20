@@ -613,8 +613,8 @@ double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j
 
   if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
     /* case where j has binattr so could change statistic both via additional
-       neighbour with attriute a and/or via adding a new two-path
-       (statistic can either increase or decrease in this case) */
+       neighbour with attriute a and/or via adding a new two-path.
+       In this case, the statistic can either increase or decrease. */
     /* TODO */
   } else{
     /* cases where j does not have binattr a so can only change statistic
