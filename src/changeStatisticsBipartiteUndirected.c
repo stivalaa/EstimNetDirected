@@ -242,6 +242,26 @@ static uint_t twopaths_not_via_k(const graph_t *g, uint_t i, uint_t j,
   return count;
 }
 
+/*
+ * Return the number of neibhours of node i that have exactly with number
+ * with binary attribute a.
+ */
+static uint_t count_neighbours_with_binattr_a(graph_t *g, uint_t i, uint_t a)
+{
+  uint_t num_neighbours_with_a = 0;
+  uint_t k, v;
+
+  assert(!g->is_directed);
+
+  for (k = 0; k < g->degree[i]; k++) {
+    v = g->edgelist[i][k];
+    if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
+      num_neighbours_with_a++;
+    }
+  }
+  return num_neighbours_with_a;
+}
+
 
 /*****************************************************************************
  *
@@ -493,7 +513,6 @@ double changeBipartiteActivityB(graph_t *g, uint_t i, uint_t j, uint_t a, bool i
 double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t num_neighbours_with_a = 0;
-  uint_t k, v;
   int    delta = 0; /* signed as can be negative */  
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
@@ -504,15 +523,11 @@ double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_
   slow_assert(!isEdge(g, i, j));
   /* the statistic can only change if j has binary attribute a */
   if (g->binattr[a][j] != BIN_NA && g->binattr[a][j]) {
-    for (k = 0; k < g->degree[i]; k++) {
-      v = g->edgelist[i][k];
-      if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
-        num_neighbours_with_a++;
-        /* Note could shortcut and break out of loop as soon as
-           num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
-           but why complicate things? */
-      }
-    }
+    num_neighbours_with_a = count_neighbours_with_binattr_a(g, i, a);
+    /* Note could shortcut and break out of loop in
+       count_neighbours_with_binattr_a() as soon as
+       num_neighbours_with_a == 2 as only need to know if 0, 1, or
+       > 1 but why complicate things? */
     if (num_neighbours_with_a == 0) {
       /* if i has no neighbours with a and j has a, then i--j creates
        * a type A node with exactly one neihbour with a */
@@ -540,7 +555,6 @@ double changeBipartiteExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j, uint_
 double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_t a, bool isDelete, double exponent)
 {
   uint_t num_neighbours_with_a = 0;
-  uint_t k, v;
   int    delta = 0; /* signed as can be negative */
   (void)isDelete; /*unused parameters*/
   (void)exponent; /*unused parameters*/
@@ -551,15 +565,11 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
   slow_assert(!isEdge(g, i, j));
   /* the statistic can only change if i has binary attribute a */
   if (g->binattr[a][i] != BIN_NA && g->binattr[a][i]) {
-    for (k = 0; k < g->degree[j]; k++) {
-      v = g->edgelist[j][k];
-      if (g->binattr[a][v] != BIN_NA && g->binattr[a][v]) {
-        num_neighbours_with_a++;
-        /* Note could shortcut and break out of loop as soon as
-           num_neighbours_with_a == 2 as only need to know if 0, 1, or > 1
-           but why complicate things? */
-      }
-    }
+    num_neighbours_with_a = count_neighbours_with_binattr_a(g, j, a);
+    /* Note could shortcut and break out of loop in
+       count_neighbours_with_binattr_a() as soon as
+       num_neighbours_with_a == 2 as only need to know if 0, 1, or
+       > 1 but why complicate things? */
     if (num_neighbours_with_a == 0) {
       /* if j has no neighbours with a and i has a, then i--j creates
        * a type B node with exactly one neihbour with a */
