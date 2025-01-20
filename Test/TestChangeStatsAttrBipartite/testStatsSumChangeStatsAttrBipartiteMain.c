@@ -48,7 +48,7 @@
 /*
  * Return the number of neighbours of node i with binary attribute a.
  */
-static uint_t count_neighbours_with_binattr_a(graph_t *g, uint_t i, uint_t a)
+static uint_t count_neighbours_with_binattr_a(const graph_t *g, uint_t i, uint_t a)
 {
   uint_t num_neighbours_with_a = 0;
   uint_t k, v;
@@ -122,6 +122,47 @@ static double BipartiteExactlyOneNeighbourB(const graph_t *g, uint_t a)
   return (double)value;
 }
 
+
+/*
+ * Statistic for Bipartite 2-path beween two type A nodes
+ * each of which has  exactly one neighbour with binary attribute a.
+ *
+ * The statistic counts the number of two-paths between pairs of type
+ * A nodes that both have exactly one neighbour (therefore of type B) with
+ * the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type B nodes.
+ */
+static double BipartiteTwoPathExactlyOneNeighbourA(const graph_t *g, uint_t a)
+{
+  uint_t i,j,k,l,v;
+  uint_t count = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  for (i = 0; i < g->num_A_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_A);
+    if (count_neighbours_with_binattr_a(g, i, a) != 1)
+      continue;
+    for (j = i+1; j < g->num_A_nodes; j++) {
+      assert(bipartite_node_mode(g, j) == MODE_A);
+      if (count_neighbours_with_binattr_a(g, j, a) != 1)
+        continue;
+      for (k = 0; k < g->degree[i]; k++)  {
+        v = g->edgelist[i][k];   /* i -- v */
+        assert(bipartite_node_mode(g, v) == MODE_B);
+        for (l = 0; l < g->degree[j]; l++) {
+          if (g->edgelist[j][l] == v) {   /* v -- j */
+            count++;
+          }
+        }
+      }
+    }
+  }
+  return (double)count;
+}
+
+
 /*****************************************************************************
  *
  * main
@@ -183,7 +224,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 2
+#define NUM_FUNCS 3
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
   static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
@@ -199,6 +240,9 @@ int main(int argc, char *argv[])
 
   attr_change_stats_funcs[1] = &changeBipartiteExactlyOneNeighbourB;
   attr_indices[1]            = binattrA_index;
+
+  attr_change_stats_funcs[2] = &changeBipartiteTwoPathExactlyOneNeighbourA;
+  attr_indices[2]            = binattrP_index;
 
   
   for (i = 0; i < NUM_FUNCS; i++) {
@@ -219,6 +263,9 @@ int main(int argc, char *argv[])
 
   stat_value= BipartiteExactlyOneNeighbourB(g, attr_indices[1]);
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[1]));
+
+  stat_value= BipartiteTwoPathExactlyOneNeighbourA(g, attr_indices[2]);
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[2]));
 
   free_graph(g);
 
