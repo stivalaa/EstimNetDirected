@@ -4,9 +4,9 @@
  * Author:  Alex Stivala
  * Created: January 2025
  *
- * Test the BipartiteNodeMatchAlpha[AB] and BipartiteNodeMatchBeta[AB]
- * (statnet ergm b1nodematch and b2nodematch) change statistics.
- *
+ * Test the bipartite attribute change statistics by comparing
+ * directly calculated statistics with values obtained by summing
+ * change statistics over all edges in network.
  *
  * Usage:  testStatsSumChangeStatsAttrBipartite  <in_edgelistfile> <binattr_file> 
  *
