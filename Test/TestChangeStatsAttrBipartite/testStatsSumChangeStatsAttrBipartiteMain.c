@@ -133,6 +133,7 @@ int main(int argc, char *argv[])
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
   static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
+  static double exponent_values[NUM_FUNCS]; /* init to zero, unused */
   double obs_stats[NUM_FUNCS];
   static double theta[NUM_FUNCS]; /* init to zero, unused */
   attr_change_stats_func_t *attr_change_stats_funcs[NUM_FUNCS];
@@ -149,7 +150,7 @@ int main(int argc, char *argv[])
   g = load_graph_from_arclist_file(file, g, TRUE,
                                    n_total, n_attr, 0, 0, NULL,
                                    lambda_values, attr_change_stats_funcs,
-                                   NULL, NULL, attr_indices, NULL,
+                                   NULL, NULL, attr_indices, exponent_values,
                                    NULL, obs_stats, theta);
   for (i = 0; i < NUM_FUNCS; i++) {
     printf("%g ", obs_stats[i]);
