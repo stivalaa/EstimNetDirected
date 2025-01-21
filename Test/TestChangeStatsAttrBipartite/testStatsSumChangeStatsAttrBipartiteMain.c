@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
 
 
-#define NUM_FUNCS 3
+#define NUM_FUNCS 4
   uint_t n_total = NUM_FUNCS, n_attr = NUM_FUNCS;
   uint_t attr_indices[NUM_FUNCS];
   static double lambda_values[NUM_FUNCS]; /* init to zero, unused */
@@ -117,6 +117,9 @@ int main(int argc, char *argv[])
 
   attr_change_stats_funcs[2] = &changeBipartiteTwoPathExactlyOneNeighbourA;
   attr_indices[2]            = binattrP_index;
+
+  attr_change_stats_funcs[3] = &changeBipartiteTwoPathExactlyOneNeighbourB;
+  attr_indices[3]            = binattrA_index;
 
   
   for (i = 0; i < NUM_FUNCS; i++) {
@@ -141,6 +144,9 @@ int main(int argc, char *argv[])
   stat_value= BipartiteTwoPathExactlyOneNeighbourA(g, attr_indices[2]);
   assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[2]));
 
+  stat_value= BipartiteTwoPathExactlyOneNeighbourB(g, attr_indices[3]);
+  assert(DOUBLE_APPROX_EQ(stat_value,  obs_stats[3]));
+  
   free_graph(g);
 
   exit(0);

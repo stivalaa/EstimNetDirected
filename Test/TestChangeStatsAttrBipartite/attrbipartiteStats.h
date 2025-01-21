@@ -22,5 +22,6 @@
 double BipartiteExactlyOneNeighbourA(const graph_t *g, uint_t a);
 double BipartiteExactlyOneNeighbourB(const graph_t *g, uint_t a);
 double BipartiteTwoPathExactlyOneNeighbourA(const graph_t *g, uint_t a);
+double BipartiteTwoPathExactlyOneNeighbourB(const graph_t *g, uint_t a);
 
 #endif /* ATTRBIPARTITESTATS_H */

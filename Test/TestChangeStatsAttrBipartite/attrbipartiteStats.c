@@ -138,3 +138,43 @@ double BipartiteTwoPathExactlyOneNeighbourA(const graph_t *g, uint_t a)
   }
   return (double)count;
 }
+
+
+/*
+ * Statistic for Bipartite 2-path beween two type B nodes
+ * each of which has  exactly one neighbour with binary attribute a.
+ *
+ * The statistic counts the number of two-paths between pairs of type
+ * B nodes that both have exactly one neighbour (therefore of type A) with
+ * the binary attribute a.
+ *
+ * Note that binary attribute a here is a binary attribute for type A nodes.
+ */
+double BipartiteTwoPathExactlyOneNeighbourB(const graph_t *g, uint_t a)
+{
+  uint_t i,j,k,l,v;
+  uint_t count = 0;
+
+  assert(g->is_bipartite);
+  assert(!g->is_directed);
+  for (i = g->num_A_nodes; i < g->num_nodes; i++) {
+    assert(bipartite_node_mode(g, i) == MODE_B);
+    if (count_neighbours_with_binattr_a(g, i, a) != 1)
+      continue;
+    for (j = i+1; j < g->num_nodes; j++) {
+      assert(bipartite_node_mode(g, j) == MODE_B);
+      if (count_neighbours_with_binattr_a(g, j, a) != 1)
+        continue;
+      for (k = 0; k < g->degree[i]; k++)  {
+        v = g->edgelist[i][k];   /* i -- v */
+        assert(bipartite_node_mode(g, v) == MODE_A);
+        for (l = 0; l < g->degree[j]; l++) {
+          if (g->edgelist[j][l] == v) {   /* v -- j */
+            count++;
+          }
+        }
+      }
+    }
+  }
+  return (double)count;
+}
