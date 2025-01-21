@@ -158,7 +158,9 @@ static const attr_param_t ATTR_PARAMS[] =
   {"BipartiteNodematchAlphaB",    ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchAlphaB},
   {"BipartiteNodematchBetaB",     ATTR_TYPE_CATEGORICAL, ATTR_EXP_TYPE_EXPONENT, NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteNodematchBetaB},
   {"BipartiteExactlyOneNeighbourA",ATTR_TYPE_BINARY,     ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteExactlyOneNeighbourA},
-  {"BipartiteExactlyOneNeighbourB",ATTR_TYPE_BINARY,     ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteExactlyOneNeighbourB}
+  {"BipartiteExactlyOneNeighbourB",ATTR_TYPE_BINARY,     ATTR_EXP_TYPE_NONE,     NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteExactlyOneNeighbourB},
+  {"BipartiteTwoPathExactlyOneNeighbourA", ATTR_TYPE_BINARY,ATTR_EXP_TYPE_NONE,  NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE, changeBipartiteTwoPathExactlyOneNeighbourA},
+  {"BipartiteTwoPathExactlyOneNeighbourB", ATTR_TYPE_BINARY,ATTR_EXP_TYPE_NONE,  NETWORK_TYPE_UNDIRECTED, NETWORK_MODE_TWOMODE ,changeBipartiteTwoPathExactlyOneNeighbourB}
 };
 static const uint_t NUM_ATTR_PARAMS = sizeof(ATTR_PARAMS) /
   sizeof(ATTR_PARAMS[0]);
