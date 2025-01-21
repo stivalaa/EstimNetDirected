@@ -15,6 +15,7 @@ do
         echo "**** FAILED ****"
         exit 1
     fi
+    echo ${stats}
     if [ "${stats}" != "0 2 0 1 " ]; then
         echo "**** FAILED ****"
         exit 1
