@@ -1002,6 +1002,7 @@ double changeBipartiteNodematchBetaB(graph_t *g, uint_t i, uint_t j, uint_t a, b
  *
  ****************************************************************************/
 
+/************************* Structural ****************************************/
 
 /*
  * Change statistic for alternating k-4-cycles for type A nodes
