@@ -64,10 +64,12 @@ int main(int argc, char *argv[])
   char *binattr_filename;
   double delta_BipartiteExactlyOneNeighbourA,
     delta_BipartiteExactlyOneNeighbourB,
-    delta_BipartiteTwoPathExactlyOneNeighbourA;
+    delta_BipartiteTwoPathExactlyOneNeighbourA,
+    delta_BipartiteTwoPathExactlyOneNeighbourB;
   double without_BipartiteExactlyOneNeighbourA,
     without_BipartiteExactlyOneNeighbourB,
-    without_BipartiteTwoPathExactlyOneNeighbourA;
+    without_BipartiteTwoPathExactlyOneNeighbourA,
+    without_BipartiteTwoPathExactlyOneNeighbourB;
  
   srand(time(NULL));
 
@@ -161,6 +163,7 @@ int main(int argc, char *argv[])
     delta_BipartiteExactlyOneNeighbourA = changeBipartiteExactlyOneNeighbourA(g, i, j, binattrP_index, FALSE, 0);
     delta_BipartiteExactlyOneNeighbourB = changeBipartiteExactlyOneNeighbourB(g, i, j, binattrA_index, FALSE, 0);
     delta_BipartiteTwoPathExactlyOneNeighbourA = changeBipartiteTwoPathExactlyOneNeighbourA(g, i, j, binattrP_index, FALSE, 0);
+    delta_BipartiteTwoPathExactlyOneNeighbourB = changeBipartiteTwoPathExactlyOneNeighbourB(g, i, j, binattrA_index, FALSE, 0);
     
 
 
@@ -169,6 +172,7 @@ int main(int argc, char *argv[])
     without_BipartiteExactlyOneNeighbourA = BipartiteExactlyOneNeighbourA(g, binattrP_index);
     without_BipartiteExactlyOneNeighbourB = BipartiteExactlyOneNeighbourB(g, binattrA_index);
     without_BipartiteTwoPathExactlyOneNeighbourA = BipartiteTwoPathExactlyOneNeighbourA(g, binattrP_index);
+    without_BipartiteTwoPathExactlyOneNeighbourB = BipartiteTwoPathExactlyOneNeighbourB(g, binattrA_index);
 
     insertEdge(g, i, j);
     
@@ -181,7 +185,9 @@ int main(int argc, char *argv[])
     assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteTwoPathExactlyOneNeighbourA,
                                  BipartiteTwoPathExactlyOneNeighbourA(g, binattrP_index) -
                                  without_BipartiteTwoPathExactlyOneNeighbourA));
-
+    assert(DOUBLE_APPROX_EQ_TEST(delta_BipartiteTwoPathExactlyOneNeighbourB,
+                                 BipartiteTwoPathExactlyOneNeighbourB(g, binattrA_index) -
+                                 without_BipartiteTwoPathExactlyOneNeighbourB));
     
     removeEdge(g, i, j);
 
