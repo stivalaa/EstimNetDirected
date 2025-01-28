@@ -1213,7 +1213,7 @@ double changeBipartiteExactlyOneNeighbourB(graph_t *g, uint_t i, uint_t j, uint_
 
 
 /*
- * Change statistic for Bipartite 2-path beween two type A nodes
+ * Change statistic for Bipartite 2-path between two type A nodes
  * each of which has  exactly one neighbour with binary attribute a.
  *
  * The statistic counts the number of two-paths between pairs of type
@@ -1310,7 +1310,7 @@ double changeBipartiteTwoPathExactlyOneNeighbourA(graph_t *g, uint_t i, uint_t j
 
 
 /*
- * Change statistic for Bipartite 2-path beween two type B nodes
+ * Change statistic for Bipartite 2-path between two type B nodes
  * each of which has  exactly one neighbour with binary attribute a.
  *
  * The statistic counts the number of two-paths between pairs of type
