@@ -256,3 +256,34 @@ print_graph_stats(g16, 'Four-fan-3')
 write.graph(g16,'fourfan3_bipartite.net', format='pajek')
 plot_graph_viz(g16, 'fourfan3_bipartite.eps', layout = layout.kamada.kawai)
 
+
+##
+## Reconstructing examples from Peng (email reply to "4C -Paper" 31/1/2025)
+##
+
+## pw1 is actually the same as Four-cycles-3
+pw1 <- graph.empty(n = 5, directed = FALSE)
+V(pw1)$type <- c(rep(FALSE, 2), rep(TRUE, 3))
+pw1 <- add.edges(pw1, c(1,3, 1,4, 1,5, 2,3, 2,4, 2,5))
+stopifnot(is.bipartite(pw1))
+print_graph_stats(pw1, 'pw1')
+write.graph(pw1, 'pw1_bipartite.net', format='pajek')
+plot_graph_viz(pw1, 'pw1_bipartite.eps', layout = layout.sugiyama)
+
+
+pw2 <- graph.empty(n = 6, directed = FALSE)
+V(pw2)$type <- c(rep(FALSE, 3), rep(TRUE, 3))
+pw2 <- add.edges(pw2, c(1,4, 1,6, 2,4, 2,5, 2,6, 3,5, 3,6))
+stopifnot(is.bipartite(pw2))
+print_graph_stats(pw2, 'pw2')
+write.graph(pw2, 'pw2_bipartite.net', format='pajek')
+plot_graph_viz(pw2, 'pw2_bipartite.eps', layout = layout.sugiyama)
+
+
+pw3 <- graph.empty(n = 7, directed = FALSE)
+V(pw3)$type <- c(rep(FALSE, 4), rep(TRUE, 3))
+pw3 <- add.edges(pw3, c(1,5, 1,7, 2,5, 2,7, 3,6, 3,7, 4,6, 4,7))
+stopifnot(is.bipartite(pw3))
+print_graph_stats(pw3, 'pw3')
+write.graph(pw3, 'pw3_bipartite.net', format='pajek')
+plot_graph_viz(pw3, 'pw3_bipartite.eps', layout = layout.sugiyama)
