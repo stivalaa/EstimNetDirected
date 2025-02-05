@@ -423,7 +423,7 @@ double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
  *   and reverse the signs, so that it no longer counts open two-paths,
  *   but the first, positive, term actually counts four-cycles.
  *
- * Then the change statistic is simply the same change statisic as
+ * Then the change statistic is simply the same change statistic as
  * ing Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted, and with
  * sign reversed.
@@ -467,7 +467,7 @@ double BipartiteAltK4CyclesA(const graph_t *g, double lambda)
  *   and reverse the signs, so that it no longer counts open two-paths,
  *   but the first, positive, term actually counts four-cycles.
  *
- * Then the change statistic is simply the same change statisic as
+ * Then the change statistic is simply the same change statistic as
  * ing Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted, and with
  * sign reversed.
@@ -514,7 +514,7 @@ double BipartiteAltK4CyclesB(const graph_t *g, double lambda)
  *
  * However had troubles getting change statistic correct for this,
  * so now simply removing the first term, and not reversing the signs.
- * Then the change statistic is simply the same change statisic as
+ * Then the change statistic is simply the same change statistic as
  * as Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted.
  *
@@ -572,7 +572,7 @@ double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
  *
  * However had troubles getting change statistic correct for this,
  * so now simply removing the first term, and not reversing the signs.
- * Then the change statistic is simply the same change statisic as
+ * Then the change statistic is simply the same change statistic as
  * as Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted.
  *
@@ -633,7 +633,7 @@ double BipartiteAltK4CyclesB_SLOW(const graph_t *g, double lambda)
  *     g      - undirected bipartite graph
  *
  * Return value:
- *    statisic value for BipartiteNodePowerFourCyclesA
+ *    statistic value for BipartiteNodePowerFourCyclesA
  */
 double PowerFourCyclesA(const graph_t *g, double lambda)
 {
@@ -681,7 +681,7 @@ double PowerFourCyclesA(const graph_t *g, double lambda)
  *     g      - undirected bipartite graph
  *
  * Return value:
- *     statisic valud for BipartiteFourCyclesNodePowerB
+ *     statistic valud for BipartiteFourCyclesNodePowerB
  */
 double PowerFourCyclesB(const graph_t *g, double lambda)
 {
