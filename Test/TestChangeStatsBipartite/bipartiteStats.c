@@ -428,6 +428,13 @@ double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
  * for two-paths (note which is same as two-stars) subtracted, and with
  * sign reversed.
  *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
+ *
  * Parameters:
  *     g      - undirected bipartite graph
  *     lambda - decay value > 1.0
@@ -464,6 +471,12 @@ double BipartiteAltK4CyclesA(const graph_t *g, double lambda)
  * ing Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted, and with
  * sign reversed.
+ *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -504,6 +517,12 @@ double BipartiteAltK4CyclesB(const graph_t *g, double lambda)
  * Then the change statistic is simply the same change statisic as
  * as Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted.
+ *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -557,6 +576,12 @@ double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
  * as Wang et al. (2009) eqn (6.12), but with the change statistic
  * for two-paths (note which is same as two-stars) subtracted.
  *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
  * Parameters:
  *     g      - undirected bipartite graph
  *     lambda - decay value > 1.0
@@ -598,11 +623,17 @@ double BipartiteAltK4CyclesB_SLOW(const graph_t *g, double lambda)
  *
  * This version counting over pairs of mode A nodes only.
  *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
  * Parameters:
  *     g      - undirected bipartite graph
  *
  * Return value:
- *      
+ *    statisic value for BipartiteNodePowerFourCyclesA
  */
 double PowerFourCyclesA(const graph_t *g, double lambda)
 {
@@ -639,11 +670,18 @@ double PowerFourCyclesA(const graph_t *g, double lambda)
  *
  * This version counting over pairs of mode B nodes only.
  *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
+ *
  * Parameters:
  *     g      - undirected bipartite graph
  *
  * Return value:
- *      
+ *     statisic valud for BipartiteFourCyclesNodePowerB
  */
 double PowerFourCyclesB(const graph_t *g, double lambda)
 {
@@ -682,8 +720,15 @@ double PowerFourCyclesB(const graph_t *g, double lambda)
  * Parameters:
  *     g      - undirected bipartite graph
  *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
  * Return value:
- *      number of four-cycles in bipartite graph g
+ *     sum of BipariteFourCyclesNoidePowerA and BipartiteFourCyclesNodePowerB
+ *     statistics
  */
 double PowerFourCycles(const graph_t *g, double lambda)
 {

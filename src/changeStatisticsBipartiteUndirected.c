@@ -182,6 +182,16 @@
  *    Models for Bipartite Networks. arXiv preprint
  *    arXiv:2312.05673. https://arxiv.org/abs/2312.05673
  *
+ *
+ * The changeBipartitePowerFourCyclesA and changeBipartitePowerFourCyclesB
+ * change statistics (for statistics BipartiteFourCyclesNodePowerA and
+ * BipartiteFourCyclesNodePowerB) are defined in:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
+ *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
  *
  ****************************************************************************/

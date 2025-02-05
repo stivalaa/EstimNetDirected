@@ -57,6 +57,13 @@
  * As well as the statnet ergm terms, and references for specific
  * change statistics where indicated.
  *
+ * The changePowerFourCycles change statistic (for statistic
+ * FourCyclesNodePower)is described in:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
  *
  * Do NOT compile with -ffast-math on gcc as we depend on IEEE handling of NaN
  *

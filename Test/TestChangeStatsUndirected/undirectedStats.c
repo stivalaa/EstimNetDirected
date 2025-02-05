@@ -99,11 +99,18 @@ uint_t num_four_cycles_node_SLOW(const graph_t *g, uint_t u)
  * 1/lambda as the epxonent. Note this is not the same meaning of
  * lambda as its original use in the "alternating" parameters.
  *
+ * For the definition of the statistic, see:
+ *
+ *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
+ *   exponential-family random graph models for bipartite networks.
+ *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *
  * Parameters:
  *     g      - undirected bipartite graph
  *
  * Return value:
- *      
+ *      FourCyclesNodePower statistic
+ *
  */
 double PowerFourCycles(const graph_t *g, double lambda)
 {
