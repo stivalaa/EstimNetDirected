@@ -432,7 +432,7 @@ double BipartiteAltKCyclesB_SLOW(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  *
  * Parameters:
@@ -476,7 +476,7 @@ double BipartiteAltK4CyclesA(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -522,7 +522,7 @@ double BipartiteAltK4CyclesB(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -580,7 +580,7 @@ double BipartiteAltK4CyclesA_SLOW(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -627,7 +627,7 @@ double BipartiteAltK4CyclesB_SLOW(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  * Parameters:
  *     g      - undirected bipartite graph
@@ -674,7 +674,7 @@ double PowerFourCyclesA(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  *
  * Parameters:
@@ -724,7 +724,7 @@ double PowerFourCyclesB(const graph_t *g, double lambda)
  *
  *   Stivala, A., Wang, P., & Lomi, A. (2025). Improving
  *   exponential-family random graph models for bipartite networks.
- *   arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+ *   arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
  *
  * Return value:
  *     sum of BipariteFourCyclesNoidePowerA and BipartiteFourCyclesNodePowerB

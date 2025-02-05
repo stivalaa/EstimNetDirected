@@ -41,4 +41,4 @@ Stivala, A. & Lomi, A. (2022) [A new scalable implementation of the citation exp
 
 Stivala, A., Robins, G., & Lomi, A. (2020). [Exponential random graph model parameter estimation for very large directed networks](https://doi.org/10.1371/journal.pone.0227804). *PloS ONE*, 15(1), e0227804. https://arxiv.org/abs/1904.08063
 
-Stivala, A., Wang, P., & Lomi, A. (2025). Improving exponential-family random graph models for bipartite networks. arXiv preprint arXiv:xxxx.xxxx. https://arxiv.org/abs/xxxx.xxxx
+Stivala, A., Wang, P., & Lomi, A. (2025). Improving exponential-family random graph models for bipartite networks. arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
