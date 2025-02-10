@@ -1,3 +1,13 @@
+v3.8.7 (10 February 2025)
+
+* Found and fixed memory leaks with address sanitizer
+* Implemented correct change statistics for BipartiteAltK4CyclesA and BipartiteAltK4CyclesB terms and restored to parser table
+* Implemented new terms BipartiteExaclyOneNeighbourA and BipartiteExactlyOneNeighbourB
+* Implemented new terms BipartiteTwoPathExactlyOneNeighbourA and BipartiteTwoPathExactlyOneNeighbourB
+* added -m <basemodelnum> option to scripts/estimnetdirectedEstimation2textableMultiModels.sh to start numbering models in table at numbers other than 1
+* Added more regression tests for bipartite change statistics
+
+
 v3.8.6 (18 November 2024)
 
 * Use mclapply() to parallelize four-cycle counting in gof sim plots
