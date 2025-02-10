@@ -1,6 +1,7 @@
 v3.8.7 (10 February 2025)
 
 * Found and fixed memory leaks with address sanitizer
+* Fixed bug in basic sampler when conditional estimation used
 * Implemented correct change statistics for BipartiteAltK4CyclesA and BipartiteAltK4CyclesB terms and restored to parser table
 * Implemented new terms BipartiteExaclyOneNeighbourA and BipartiteExactlyOneNeighbourB
 * Implemented new terms BipartiteTwoPathExactlyOneNeighbourA and BipartiteTwoPathExactlyOneNeighbourB
