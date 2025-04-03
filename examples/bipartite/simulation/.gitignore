@@ -13,3 +13,4 @@ run_SimulateERGM_BipartiteFourCyclesNodePower_examples.out
 SimulateERGM_asymmetric_BipartiteFourCyclesNodePower-*.???
 SimulateERGM_BipartiteFourCyclesNodePower-*.???
 simulated_networks.tar
+unique_bipartite_nodes_count_table_bipartite_asymmetric.txt
