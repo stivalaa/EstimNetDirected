@@ -8,6 +8,8 @@
 ## in simulated networks and write space delimited table of the counts
 ## for reading into R with read.table() to stdout.
 ##
+## Reads the output of run_SimulateERGM_asymmetric_BipartiteFourCyclesNodePower_examples.sh from this directory.
+##
 ## The CYPATH directory containing cypath executable and Perl scripts
 ## (transgrh.pl etc.) must be in the PATH as this R script uses
 ## system2() to call them in order to find (not just count)
