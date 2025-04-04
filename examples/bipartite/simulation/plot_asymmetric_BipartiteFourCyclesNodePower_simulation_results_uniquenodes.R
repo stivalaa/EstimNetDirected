@@ -15,7 +15,7 @@
 ##
 ## Output file in cwd (WARNING: overwrite if exists):
 ##
-##   bipartite_fourcyclesnodepower_simulation_uniquenodes_boxplots.eps
+##   bipartite_asymmetric_fourcyclesnodepower_simulation_uniquenodes_boxplots.eps
 ##
 
 library(ggplot2)
@@ -42,7 +42,7 @@ p <- ggplot(data = dat[dat$theta_BipartiteFourCyclesNodePowerAxB != "neg.neg",],
   theme_classic() + theme(axis.title.y = element_text(colour = 'red'),
                           axis.title.y.right = element_text(colour = 'blue'))
 
-postscript("bipartite_fourcyclesnodepower_simulation_uniquenodes_boxplots.eps")
+postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_uniquenodes_boxplots.eps")
 print(p)
 dev.off()
 
