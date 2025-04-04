@@ -22,6 +22,19 @@ library(ggplot2)
 
 setEPS()  # postscript() will use EPS settings
 
+## Change default font size to make it larger so readable when included in
+## LaTeX documents and reduced in smaller panels
+## https://ggplot2.tidyverse.org/articles/faq-customising.html
+
+## using theme_classic() to get no grey background and no gridlines
+## for some journal requirements e.g. J. Complex Networks
+
+theme_set(theme_classic(base_size = 12))
+
+# Also increase x axis labels specifically 
+theme_update(axis.text.x = element_text(size = 14))
+
+
 dat <- read.table('unique_bipartite_nodes_count_table_bipartite_asymmetric.txt',header=T, stringsAsFactors=TRUE)
 
 dat$theta_BipartiteFourCyclesNodePowerAxB<- interaction(dat$Aparam, dat$Bparam)
@@ -33,10 +46,9 @@ p <- ggplot(data = dat[dat$theta_BipartiteFourCyclesNodePowerAxB != "neg.neg",],
   geom_boxplot(aes(y = uniqueFourCyclesA), color='red') +
   geom_boxplot(aes(y = uniqueFourCyclesB), color='blue') +
   ylab('Unique A (red) or B (blue) nodes in four-cycles') +
-  theme_classic() + 
   xlab("BipartiteFourCyclesNodePower A and B parameter signs") 
 
-postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_uniquenodes_boxplots.eps")
+postscript("bipartite_asymmetric_fourcyclesnodepower_simulation_uniquenodes_boxplots.eps", horizontal=FALSE, paper="special", width=9, height=6)
 print(p)
 dev.off()
 
