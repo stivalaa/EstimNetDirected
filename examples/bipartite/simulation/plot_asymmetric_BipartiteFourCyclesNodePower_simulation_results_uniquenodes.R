@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 ##
-## File:    plotBipartiteFourCyclesNodePower_simulation_results_uniquenodes.R
+## File:    plot_asymmetric_BipartiteFourCyclesNodePower_simulation_results_uniquenodes.R
 ## Author:  Alex Stivala
 ## Created: April 2025
 ##
