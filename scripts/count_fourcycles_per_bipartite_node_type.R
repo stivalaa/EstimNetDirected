@@ -74,14 +74,14 @@ stopifnot(sum((V(g)[fourcycle_nodes]$type)) == length(fourcycle_nodes)/2)
 
 ## FALSE (0) type is A, TRUE (1) type is B
 
-c4distA <- sapply(which(!V(g)$type), function(i) sum(sapply(get_fourcycle_nodes(g), function(v) i %in% v)))
-c4distB <- sapply(which(V(g)$type), function(i) sum(sapply(get_fourcycle_nodes(g), function(v) i %in% v)))
-stopifnot(length(c4distA) == numnodesA)
-stopifnot(length(c4distB) == numnodesB)
-stopifnot(sum(c(c4distA, c4distB)) ==  4*length(fourcycles_list))
+c4countsA <- sapply(which(!V(g)$type), function(i) sum(sapply(get_fourcycle_nodes(g), function(v) i %in% v)))
+c4countsB <- sapply(which(V(g)$type), function(i) sum(sapply(get_fourcycle_nodes(g), function(v) i %in% v)))
+stopifnot(length(c4countsA) == numnodesA)
+stopifnot(length(c4countsB) == numnodesB)
+stopifnot(sum(c(c4countsA, c4countsB)) ==  4*length(fourcycles_list))
 
-cat('Counts of four-cycles for mode A nodes:', c4distA, '\n')
-cat('Counts of four-cycles for mode B nodes:', c4distB, '\n')
+cat('Counts of four-cycles for mode A nodes:', c4countsA, '\n')
+cat('Counts of four-cycles for mode B nodes:', c4countsB, '\n')
 
 
 
