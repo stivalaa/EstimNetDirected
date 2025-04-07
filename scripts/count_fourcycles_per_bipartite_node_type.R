@@ -74,8 +74,8 @@ stopifnot(sum((V(g)[fourcycle_nodes]$type)) == length(fourcycle_nodes)/2)
 
 ## FALSE (0) type is A, TRUE (1) type is B
 
-c4countsA <- sapply(which(!V(g)$type), function(i) sum(sapply(get_fourcycle_nodes(g), function(v) i %in% v)))
-c4countsB <- sapply(which(V(g)$type), function(i) sum(sapply(get_fourcycle_nodes(g), function(v) i %in% v)))
+c4countsA <- sapply(which(!V(g)$type), function(i) sum(sapply(fourcycles_list, function(v) i %in% v)))
+c4countsB <- sapply(which(V(g)$type), function(i) sum(sapply(fourcycles_list, function(v) i %in% v)))
 stopifnot(length(c4countsA) == numnodesA)
 stopifnot(length(c4countsB) == numnodesB)
 stopifnot(sum(c(c4countsA, c4countsB)) ==  4*length(fourcycles_list))
