@@ -16,7 +16,9 @@ Newman, M. E. (2006). Finding community structure in networks using the eigenvec
 
 are included. These networks were downloaded from Mark Newman's network data page.
 
-If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below (specifically Stivala, Robins, & Lomi (2020) for the EstimNetDirected software, and Byshkin et al. (2018) for the EE algorithm) in any resulting publications.
+If you use this software (or any alternative implementation of the algorithms described in the references), please cite the papers below (specifically Stivala, Robins, & Lomi (2020) for the EstimNetDirected software, and Byshkin et al. (2018) for the EE algorithm) in any resulting publications. There is also a DOI issued by Zenodo for the software itself: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15217043.svg)](https://doi.org/10.5281/zenodo.15217043)
+
+
 
 The "citation ERGM" (cERGM) model variant, which can also be estimated with this software, is described by:
 
