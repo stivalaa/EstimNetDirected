@@ -1,3 +1,12 @@
+v3.8.8 (15 April 2025)
+
+* New scripts to make table of unique A and B nodes in four-cycles
+* New scripts to make boxplots of unique nodes in four-cycles
+* New scripts to count number of four-cycles that each node is in
+* Added data conversion / preprocessing scripts for empirical examples used in manuscript
+
+
+
 v3.8.7 (10 February 2025)
 
 * Found and fixed memory leaks with address sanitizer
