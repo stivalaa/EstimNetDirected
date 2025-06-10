@@ -168,7 +168,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
    * for two-mode
    * for Pajek format
    */
-  fgets(buf, sizeof(buf)-1, pajek_file);
+  (void)fgets(buf, sizeof(buf)-1, pajek_file);
   for (p = buf; *p !='\0'; p++) {
     *p = tolower(*p);
   }
@@ -196,7 +196,7 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
   }
   
   do {
-    fgets(buf, sizeof(buf)-1, pajek_file);
+    (void)fgets(buf, sizeof(buf)-1, pajek_file);
     rstrip(buf);
   } while (!feof(pajek_file) && strcasecmp(buf, edges_start_string) != 0);
   if (feof(pajek_file)) {

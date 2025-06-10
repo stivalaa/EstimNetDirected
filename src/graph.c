@@ -1999,7 +1999,10 @@ uint_t get_num_vertices_from_arclist_file(FILE *pajek_file)
    * *vertices 36
    * for Pajek format
    */
-  fgets(buf, sizeof(buf)-1, pajek_file);
+  if (!fgets(buf, sizeof(buf)-1, pajek_file)) {
+    fprintf(stderr, "ERROR: expected *vertices n line but got no text\n");
+    exit(1);
+  }
   for (p = buf; *p !='\0'; p++) {
     *p = tolower(*p);
   }
@@ -2054,7 +2057,10 @@ void get_num_vertices_from_bipartite_pajek_file(FILE *pajek_file, uint_t *num_no
    * *vertices 36 10
    * for Pajek format two-mode network
    */
-  fgets(buf, sizeof(buf)-1, pajek_file);
+  if (!fgets(buf, sizeof(buf)-1, pajek_file)) {
+    fprintf(stderr, "ERROR: expected *vertices n n_A line but got no text\n");
+    exit(1);
+  }
   for (p = buf; *p !='\0'; p++) {
     *p = tolower(*p);
   }
