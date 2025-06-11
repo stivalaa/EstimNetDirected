@@ -64,7 +64,7 @@ do
   estimnet_point=`grep -w ${effect} ${estimnet_tmpfile} | awk '{print $2}'`
   estimnet_stderr=`grep -w ${effect} ${estimnet_tmpfile} | awk '{print $3}'`
   estimnet_tratio=`grep -w ${effect} ${estimnet_tmpfile} | awk '{print $4}'`
-  if [ "${estimnet_point}" == "" ];  then
+  if [ "${estimnet_point}" = "" ];  then
       echo -n " & ---"
   else 
       # bc cannot handle scientific notation so use sed to convert it 

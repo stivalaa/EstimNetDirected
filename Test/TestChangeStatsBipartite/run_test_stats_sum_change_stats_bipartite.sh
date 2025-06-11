@@ -16,7 +16,7 @@ do
         echo ${netfile}
         # Only test also the slow implementations of the statistics funcions
         # on the network that is small enough that they are not too slow
-        if [ `basename ${netfile}` == "inouye_pyke_pollinators_bipartite.net" ]
+        if [ `basename ${netfile}` = "inouye_pyke_pollinators_bipartite.net" ]
         then
             flags="-s"
         else

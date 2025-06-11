@@ -106,7 +106,7 @@ do
             estimnet_point=`grep -w ${effect} ${estimnet_tmpfile} | awk -vmodel=$model '$1 == model {print $3}'`
             estimnet_stderr=`grep -w ${effect} ${estimnet_tmpfile} | awk -vmodel=$model '$1 == model {print $4}'`
             estimnet_tratio=`grep -w ${effect} ${estimnet_tmpfile} | awk -vmodel=$model '$1 == model {print $5}'`
-            if [ "${estimnet_point}" == "" ];  then
+            if [ "${estimnet_point}" = "" ];  then
                 echo -n " & ---"
             else 
                 # put statistically significant results in "\heavy",
