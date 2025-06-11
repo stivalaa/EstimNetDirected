@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # File:    estimnetdirectedEstimation2textableSingleModel.sh
 # Author:  Alex Stivala
