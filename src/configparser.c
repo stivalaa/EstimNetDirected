@@ -1092,7 +1092,9 @@ char *get_token(FILE *infile, char *token)
   c = fskip(infile);
   while (c != EOF && c == COMMENT_CHAR) {
     /* keep disarding lines starting with comment char until we get a token*/
-    (void)fgets(buf, sizeof(buf), infile);
+    if (!fgets(buf, sizeof(buf), infile)) {
+      return NULL;
+    }
     c = fskip(infile);
   }
   if (c == EOF)
