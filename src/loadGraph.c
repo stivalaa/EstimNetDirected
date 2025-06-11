@@ -168,7 +168,10 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
    * for two-mode
    * for Pajek format
    */
-  (void)fgets(buf, sizeof(buf)-1, pajek_file);
+  if (!fgets(buf, sizeof(buf)-1, pajek_file)) {
+    fprintf(stderr, "ERROR: expected *vertices line but got no text\n");
+    exit(1);
+  }
   for (p = buf; *p !='\0'; p++) {
     *p = tolower(*p);
   }
@@ -196,9 +199,14 @@ graph_t *load_graph_from_arclist_file(FILE *pajek_file, graph_t *g,
   }
   
   do {
-    (void)fgets(buf, sizeof(buf)-1, pajek_file);
-    rstrip(buf);
-  } while (!feof(pajek_file) && strcasecmp(buf, edges_start_string) != 0);
+    if (fgets(buf, sizeof(buf)-1, pajek_file)) {
+      rstrip(buf);
+    }
+  } while (!ferror(pajek_file) && !feof(pajek_file) && strcasecmp(buf, edges_start_string) != 0);
+  if (ferror(pajek_file)) {
+    fprintf(stderr, "error trying to read %s line\n", edges_start_string);
+    exit(1);
+  }
   if (feof(pajek_file)) {
     fprintf(stderr, "did not find %s line\n", edges_start_string);
     exit(1);
