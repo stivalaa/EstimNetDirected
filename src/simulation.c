@@ -979,11 +979,13 @@ int do_simulation(sim_config_t * config)
      Format is to put it in parens after the name e.g. AltTwoPathsTD(2.5) */
   for (i = 0; i < config->param_config.num_change_stats_funcs; i++) {
     if (config->param_config.param_lambdas[i] > 0.0) {
-      snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s(%g)",
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX-strlen(fileheader)-1,
+               " %s(%g)",
                config->param_config.param_names[i],
                config->param_config.param_lambdas[i]);
     } else {
-      snprintf(fileheader+strlen(fileheader), HEADER_MAX," %s",
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX-strlen(fileheader)-1,
+               " %s",
                config->param_config.param_names[i]);      
     }
   }
@@ -994,22 +996,26 @@ int do_simulation(sim_config_t * config)
        Format is to put it in parens after the name and attribute e.g.
        BipartiteNodematchBetaA_gender(0.1) */
     if (config->param_config.attr_param_exponents[i] >= 0.0) {
-      snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s(%g)",
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX-strlen(fileheader)-1,
+               " %s_%s(%g)",
                config->param_config.attr_param_names[i],
                config->param_config.attr_names[i],
                config->param_config.attr_param_exponents[i]);
     } else {
-      snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s",
+      snprintf(fileheader+strlen(fileheader), HEADER_MAX-strlen(fileheader)-1,
+               " %s_%s",
                config->param_config.attr_param_names[i],
                config->param_config.attr_names[i]);
     }
   }
   for (i = 0; i < config->param_config.num_dyadic_change_stats_funcs; i++)
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s",
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX-strlen(fileheader)-1,
+             " %s",
              config->param_config.dyadic_param_names[i]);
 
   for (i = 0; i < config->param_config.num_attr_interaction_change_stats_funcs; i++) 
-    snprintf(fileheader+strlen(fileheader), HEADER_MAX, " %s_%s_%s",
+    snprintf(fileheader+strlen(fileheader), HEADER_MAX-strlen(fileheader)-1,
+             " %s_%s_%s",
              config->param_config.attr_interaction_param_names[i],
              config->param_config.attr_interaction_pair_names[i].first,
              config->param_config.attr_interaction_pair_names[i].second);
