@@ -1,10 +1,18 @@
+v.38.9 (12 June 2025)
+
+* Update README with Zenodo DOI
+* fix potential snprintf() buffer overflows
+* fix compiler warning for unusused return value on fgets() and handle fgets() errors
+* use = not == in shell scripts to avoid problems with [ ] in bash
+* use /bin/bash not /bin/sh in table formatting shell scripts to avoid problems with backslash in echo
+
+
 v3.8.8 (15 April 2025)
 
 * New scripts to make table of unique A and B nodes in four-cycles
 * New scripts to make boxplots of unique nodes in four-cycles
 * New scripts to count number of four-cycles that each node is in
 * Added data conversion / preprocessing scripts for empirical examples used in manuscript
-
 
 
 v3.8.7 (10 February 2025)
@@ -26,11 +34,13 @@ v3.8.6 (18 November 2024)
 * More tests for four-cycle computations
 * Simulation examples for bipartite networks using BipartiteFourCyclesNodePower
 
+
 v3.8.5 (27 March 2024)
 
 * Implemented experimental change statistics FourCyclesNodePower, BipartiteFourCyclesNodePowerA, BipartiteFourCyclesNodePowerB
 * More test cases, particularly for bipartite change statistics
 * Removed incorrect experimental change statistics BipartiteAltK4CyclesA, BipartiteAltK4CyclesB from parser configuration table
+
 
 v3.8.4 (8 January 2024)
 
