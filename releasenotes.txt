@@ -1,4 +1,4 @@
-v.38.9 (12 June 2025)
+v3.8.9 (12 June 2025)
 
 * Update README with Zenodo DOI
 * fix potential snprintf() buffer overflows
