@@ -41,6 +41,6 @@ Byshkin, M., Stivala, A., Mira, A., Robins, G., & Lomi, A. (2018). [Fast Maximum
 
 Stivala, A. & Lomi, A. (2022) [A new scalable implementation of the citation exponential random graph model (cERGM) and its application to a large patent citation network](https://stivalaa.github.io/AcademicWebsite/slides/patent_cergm_slides.pdf). INSNA Sunbelt XLII, July 12-16,  2022, Cairns, Australia (hybrid online/in-person conference). doi: [10.5281/zenodo.7951927](https://doi.org/10.5281/zenodo.7951927)
 
-Stivala, A., Robins, G., & Lomi, A. (2020). [Exponential random graph model parameter estimation for very large directed networks](https://doi.org/10.1371/journal.pone.0227804). *PloS ONE*, 15(1), e0227804. https://arxiv.org/abs/1904.08063
+Stivala, A., Robins, G., & Lomi, A. (2020). [Exponential random graph model parameter estimation for very large directed networks](https://doi.org/10.1371/journal.pone.0227804). *PLOS ONE*, 15(1), e0227804. https://arxiv.org/abs/1904.08063
 
-Stivala, A., Wang, P., & Lomi, A. (2025). Improving exponential-family random graph models for bipartite networks. arXiv preprint arXiv:2502.01892. https://arxiv.org/abs/2502.01892
+Stivala, A., Wang, P., & Lomi, A. 2025 [Improving exponential-family random graph models for bipartite networks](https://doi.org/10.1093/comnet/cnaf017). *Journal of Complex Networks*, 13(4):cnaf017. doi: [10.1093/comnet/cnaf017](https://doi.org/10.1093/comnet/cnaf017)
